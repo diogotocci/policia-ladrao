@@ -4,7 +4,7 @@ Data: 2026-10-03 · Status: aprovado em conversa, aguardando revisão da spec es
 
 ## 1. Visão
 
-Jogo de perseguição de carros em 3D low-poly estilo PlayStation 1 ("32 bit"), para celular em landscape (PC depois). Antes da partida o jogador escolhe **Polícia** ou **Ladrão**; a IA controla o outro lado. A polícia tenta destruir o ladrão o mais rápido possível; o ladrão tenta sobreviver o máximo de tempo e, se puder, destruir a polícia.
+Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, iluminação e reflexos; *revisado em 2026-10-03: o visual "32 bit"/PS1 da primeira versão foi descartado*), para celular em landscape (PC depois). Antes da partida o jogador escolhe **Polícia** ou **Ladrão**; a IA controla o outro lado. A polícia tenta destruir o ladrão o mais rápido possível; o ladrão tenta sobreviver o máximo de tempo e, se puder, destruir a polícia.
 
 **Critérios de sucesso da v1**
 - Partida completa jogável no celular (Android médio) a 60 fps, dos dois lados.
@@ -95,7 +95,7 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
 
 ## 6. Controles e HUD
 
-- Landscape. À esquerda: **◀ ▶**. À direita: **FREIO** e **ATIRAR**, mais **💣** contextual para o ladrão. Botões grandes, semitransparentes, dentro das safe areas, multitoque. Vibração ao levar dano (se suportado).
+- Landscape. À esquerda: **◀ ▶**. À direita: **FREIO** e **ATIRAR** (maior, com aro na cor do lado: azul polícia, âmbar ladrão), mais **💣** contextual para o ladrão. Botões redondos só com ícone (rótulo acessível em português), vidro escuro com aro, afundam e acendem ao tocar, área de toque maior que o desenho, dentro das safe areas, multitoque com deslizar entre ◀ e ▶. Vibração curta (10 ms) ao apertar e ao levar dano (se suportado). Respeitam "reduzir movimento".
 - Ladrão sem arma: ATIRAR fica cinza.
 - PC: ←/→ ou A/D, ↓/S freio, Espaço atira, B bomba, Esc pausa.
 - HUD: barras de vida dos dois, cronômetro, distância colorida, ícones dos upgrades ativos/permanentes (com timer nos temporários), nível de dificuldade discreto, botão de pausa.
@@ -120,8 +120,10 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
 
 ## 9. Visual e áudio
 
-- **Pipeline PS1**: render numa resolução interna baixa (altura ~270 px, largura pela proporção da tela) ampliada com `nearest`, texturas pequenas sem filtro, leve tremor de vértice (snap), neblina na distância, paleta saturada.
-- **Carros gerados em código** (sem arquivos de terceiros):
+- **Render**: resolução nativa da tela (densidade até 2×), antialias, tone mapping ACES, texturas filtradas com mipmaps. **Qualidade automática** em 3 níveis — alto (sombras 2048, 2×), médio (sombras 1024, 1,5×), baixo (sem sombras, 1×) — que desce um nível se a média ficar abaixo de 45 fps por 3 s e nunca sobe sozinha; `?quality=` força um nível.
+- **Cena**: céu em degradê, neblina leve ao longe, luz hemisférica, sol com sombras que acompanha o carro, sombra de contato suave sob cada carro (sempre ligada). Reflexos de ambiente (céu/cidade/asfalto) só nos carros.
+- **Rua e prédios**: asfalto granulado com marcas de pneu, calçada em placas, faixas nítidas; fachadas com janelas emolduradas que repetem conforme o tamanho do prédio (não esticam).
+- **Carros gerados em código** (sem arquivos de terceiros), silhueta extrudada de perfil lateral com caixas de roda e cantos chanfrados, pintura com verniz:
   - polícia branca e azul com giroscópio vermelho/azul piscando (luz alternada);
   - ladrão como muscle car preto;
   - tráfego com 3–4 modelos de cores variadas.
@@ -161,7 +163,7 @@ src/
 
 ## 12. Entregas
 
-1. **Fundação**: projeto, pipeline PS1, rua reta infinita com prédios, carro do jogador com ◀ ▶/freio/aceleração automática, controles touch e teclado.
+1. **Fundação**: projeto, render low-poly estilizado com qualidade automática, rua reta infinita com prédios, carro do jogador com ◀ ▶/freio/aceleração automática, controles touch e teclado.
 2. **Combate**: IA adversária, tiros com mira automática, colisões, vida, distância/turbo, fim de partida.
 3. **Mundo**: quebra-molas com pulo, tráfego, caixinhas e todos os itens, bomba, escalada de dificuldade.
 4. **Visual e áudio**: dano progressivo, giroscópio, fumaça, efeitos, retrovisor, sons e música.
