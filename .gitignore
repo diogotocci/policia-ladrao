@@ -7,3 +7,5 @@ playwright-report/
 test-results/
 .playwright-cli/
 scratch/
+.superpowers/
+Claude outputs/

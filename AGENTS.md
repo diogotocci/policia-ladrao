@@ -12,7 +12,7 @@ Skills de processo vêm primeiro (definem o como); skills de implementação vê
 |---|---|
 | Nova ideia, feature, mecânica, tela ou mudança de comportamento | `brainstorming` → depois `writing-plans` |
 | Escolher stack/engine, arquitetura do jogo, loop, input, save, performance | `game-studio` (roteador) → `web-game-foundations` |
-| Implementar gameplay 2D (cenas, física, câmera, sprites, HUD em DOM) | `phaser-2d-game` |
+| Render 3D: cena, câmeras, materiais, iluminação, performance WebGL (Three.js) | `three-webgl-game` |
 | HUD, menus, overlays, telas de pause/game over, layout responsivo no celular | `game-ui-frontend` + `frontend-design` |
 | Revisar UI/UX/acessibilidade de qualquer tela | `web-design-guidelines` |
 | Executar um plano já escrito | `subagent-driven-development` (preferido) ou `executing-plans` |
@@ -43,7 +43,9 @@ O usuário executa tudo de git que altera histórico/remoto por um script PowerS
 
 ## 3. Projeto
 - Repositório: `https://github.com/diogotocci/policia-ladrao` · branch padrão: `main` · pasta local: `C:\dev\policia-ladrao` (Windows).
-- Stack: a definir no `brainstorming` (sugestão padrão: TypeScript + Vite + Phaser, PWA, deploy na Vercel). Ao decidir, registre aqui os comandos reais de install/test/lint/build.
+- Stack: TypeScript + Vite + Three.js (3D low-poly estilizado, qualidade automática), Vitest (+ jsdom), Playwright, pnpm. Spec: `docs/superpowers/specs/2026-10-03-policia-ladrao-design.md`.
+- Comandos: `pnpm install` · `pnpm dev` · `pnpm test` · `pnpm typecheck` · `pnpm build` · `pnpm e2e` (1ª vez: `pnpm exec playwright install chromium`).
+- `src/sim/**` é TypeScript puro (sem `three`, DOM ou `window`); números de jogo só em `src/config/balance.ts`.
 - Mobile first: toque, retrato/paisagem, safe areas, 60 fps em celular médio.
 - Idioma: conversas e docs em português; código, commits e PRs em inglês (Conventional Commits).
 
