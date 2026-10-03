@@ -107,6 +107,6 @@ Use `../game-studio/references/frontend-prompts.md` for concrete prompt shapes.
 
 - Shared architecture: `../web-game-foundations/SKILL.md`
 - Prompt recipes: `../game-studio/references/frontend-prompts.md`
-- Low-chrome 3D layout patterns: `three-hud-layout-patterns.md` (não vendorizado — só para 3D)
+- Low-chrome 3D layout patterns: `../game-studio/references/three-hud-layout-patterns.md`
 - React-hosted 3D UI context: `react-three-fiber-game` (não instalado — instalar só se o jogo exigir; ver openai/plugins/game-studio)
 - Playtest review: `../game-studio/references/playtest-checklist.md`

@@ -42,7 +42,7 @@ Once the intent is clear, route to the most specific specialist skill and contin
 2. Route to the specialist skills immediately after classification:
    - Shared architecture and engine choice: `../web-game-foundations/SKILL.md`
    - Deep 2D implementation: `../phaser-2d-game/SKILL.md`
-   - Vanilla Three.js implementation: `three-webgl-game` (não instalado — instalar só se o jogo exigir; ver openai/plugins/game-studio)
+   - Vanilla Three.js implementation: `../three-webgl-game/SKILL.md`
    - React-hosted 3D implementation: `react-three-fiber-game` (não instalado — instalar só se o jogo exigir; ver openai/plugins/game-studio)
    - 3D asset shipping and optimization: `web-3d-asset-pipeline` (não instalado — instalar só se o jogo exigir; ver openai/plugins/game-studio)
    - HUD and menu direction: `../game-ui-frontend/SKILL.md`
@@ -76,10 +76,10 @@ Once the intent is clear, route to the most specific specialist skill and contin
 ## References
 
 - Engine selection: `../game-studio/references/engine-selection.md`
-- Three.js stack: `threejs-stack.md` (não vendorizado — ver openai/plugins/game-studio)
+- Three.js stack: `../game-studio/references/threejs-stack.md`
 - React Three Fiber stack: `react-three-fiber-stack.md` (não vendorizado — ver openai/plugins/game-studio)
-- 3D asset pipeline: `web-3d-asset-pipeline.md` (não vendorizado — ver openai/plugins/game-studio)
-- Vanilla Three.js starter: `threejs-vanilla-starter.md` (não vendorizado — ver openai/plugins/game-studio)
+- 3D asset pipeline: `../game-studio/references/web-3d-asset-pipeline.md`
+- Vanilla Three.js starter: `../game-studio/references/threejs-vanilla-starter.md`
 - React Three Fiber starter: `react-three-fiber-starter.md` (não vendorizado — ver openai/plugins/game-studio)
 - Frontend prompting patterns: `../game-studio/references/frontend-prompts.md`
 - Playtest checklist: `../game-studio/references/playtest-checklist.md`

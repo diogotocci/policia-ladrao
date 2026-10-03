@@ -89,7 +89,7 @@ Define these before writing core code:
 
 - Engine selection: `../game-studio/references/engine-selection.md`
 - Phaser structure: `../game-studio/references/phaser-architecture.md`
-- Three.js structure: `three-webgl-architecture.md` (não vendorizado — ver openai/plugins/game-studio)
-- Three.js ecosystem stack: `threejs-stack.md` (não vendorizado — ver openai/plugins/game-studio)
+- Three.js structure: `../game-studio/references/three-webgl-architecture.md`
+- Three.js ecosystem stack: `../game-studio/references/threejs-stack.md`
 - React Three Fiber stack: `react-three-fiber-stack.md` (não vendorizado — ver openai/plugins/game-studio)
-- 3D asset shipping: `web-3d-asset-pipeline.md` (não vendorizado — ver openai/plugins/game-studio)
+- 3D asset shipping: `../game-studio/references/web-3d-asset-pipeline.md`
