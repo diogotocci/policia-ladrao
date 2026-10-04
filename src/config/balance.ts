@@ -18,7 +18,9 @@ export const BALANCE = {
     thiefFireInterval: 1.2, // s
     thiefDamage: 1.5, // teste de balanço A
     thiefMinSpeedToFire: 8, // m/s
-    projectileSpeed: 300, // m/s
+    projectileSpeed: 300, // m/s (tiro do ladrão)
+    // tiro da polícia mais lento: ziguezague do ladrão desvia de longe (playtest 2026-10-04); de perto não dá tempo
+    policeProjectileSpeed: 150, // m/s
     range: 150, // m
     frontConeDeg: 35,
     sideConeDeg: 90, // frontal ±35° + laterais até 90° = semiplano à frente dentro do alcance
@@ -41,9 +43,9 @@ export const BALANCE = {
   difficulty: { levelEvery: 30, maxLevel: 10 },
   traffic: { baseCount: 3, perLevel: 0.08, speedMin: 0.5, speedMax: 0.7, spawnAheadMin: 120, spawnAheadMax: 240, despawnBehind: 80, laneChangePerSecond: 0.15, laneChangeSpeed: 3, minGap: 12, minGapToGameCar: 40, minGapToItem: 8 },
   items: {
-    boxEvery: 300,
-    boxJitter: 60,
-    firstBoxAt: 300,
+    boxEvery: 200, // m (~1 a cada 6 s no cruzeiro; playtest 2026-10-04: a cada 300 m vinham poucas)
+    boxJitter: 40,
+    firstBoxAt: 200,
     maxVisible: 2,
     spawnAhead: 250,
     wrongBoxDamage: 2,

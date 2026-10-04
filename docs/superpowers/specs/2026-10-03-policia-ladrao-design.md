@@ -37,6 +37,7 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 - Segurar ATIRAR dispara na cadência atual. Fora do cone, o botão pisca "sem alvo" e não gasta nada.
 - **Tráfego bloqueia tiros** (vira escudo), exceto com Tiro perfurante ativo.
 - Projéteis são rápidos (300 m/s) mas não instantâneos, e podem errar se o alvo desviar.
+- **Desviar em ziguezague** (*2026-10-04*): o tiro da polícia voa a 150 m/s (o do ladrão, 300 m/s) e mira onde o ladrão vai estar à frente, não para o lado. De longe, um ladrão mudando de faixa desvia; de perto (~15 m) não dá tempo.
 - **Arma do ladrão não funciona com o carro quase parado**: abaixo de 8 m/s (~30 km/h, configurável) o botão ATIRAR do ladrão fica bloqueado. A bomba continua liberada.
 
 ### 4.2 Tabela de dano (valores iniciais em `config/balance.ts`)
@@ -45,7 +46,7 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 |---|---|---|
 | Tiro da polícia | −1 × potência × fator de distância × armadura | — |
 | Tiro do ladrão (com arma) | — | −1,5 × fator de distância (*teste de balanço A, 2026-10-04*) |
-| Colisão polícia × ladrão (qualquer um iniciando) | −5 × armadura (−8 com aríete) | −3 (−1 com aríete) |
+| Colisão polícia × ladrão (qualquer um iniciando) | −5 × armadura (−8 com quebra-mato) | −3 (−1 com quebra-mato) |
 | Colisão com cenário (meio-fio/poste) ou tráfego | −5 | −5 |
 | Pegar caixinha da outra cor | −2 | −2 |
 | Passar sobre bomba (no chão) | — | −15 (*teste de balanço C, 2026-10-04*) |
@@ -67,7 +68,7 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 
 ## 5. Caixinhas e itens
 
-- Aparecem a cada 300 m ± 60 m, numa faixa aleatória, nunca sobre um quebra-molas. **No máximo 2 visíveis ao mesmo tempo.**
+- Aparecem a cada 200 m ± 40 m (*revisado em 2026-10-04: a cada 300 m vinham poucas*), numa faixa aleatória, nunca sobre um quebra-molas. **No máximo 2 visíveis ao mesmo tempo.**
 - Visual: **polícia = cubo azul**, **ladrão = losango vermelho**; casca colorida translúcida com núcleo branco brilhante (*revisado em 2026-10-04: só o núcleo era colorido e as duas se confundiam*).
 - Cor sorteada com 50/50 por padrão. A cor tende para o lado com menos vida (até 65/35) para ajudar quem está perdendo.
 - Pegar a da **própria** cor aplica um item sorteado do grupo. Pegar a da **outra** cor causa −2 e consome a caixinha. A IA busca as da sua cor e desvia das outras (melhor em níveis altos).
@@ -79,7 +80,7 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 | Potência | dano +0,5 por tiro (de 1 até máximo 3) | permanente |
 | Vida | +3 | instantâneo |
 | Nitro | +40% de velocidade por 3 s | ativa ao pegar |
-| Para-choque aríete | próximas 3 colisões com o ladrão: ladrão −8, polícia −1 | cargas |
+| Para-choque quebra-mato | próximas 3 colisões com o ladrão: ladrão −8, polícia −1 | cargas |
 | Helicóptero | 8 s sem queda de dano por distância | ativa ao pegar |
 | Tiro perfurante | 10 s com tiros atravessando o tráfego | ativa ao pegar |
 
@@ -104,6 +105,8 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
 - **Marcador do adversário**: seta de tamanho fixo na cor do outro lado (vermelha = ladrão, azul = polícia) flutuando sobre o carro dele, desenhada por cima de tudo e sem neblina; aparece quando ele está a mais de 15 m.
 - **Retrovisor**: segunda câmera, imagem espelhada, pequena (22% da largura) no canto superior direito, ativa sempre que o adversário está atrás do jogador (*revisado em 2026-10-04: no topo central e maior, cobria tráfego, caixinhas e quebra-molas*).
 - Retrato: overlay "gire o aparelho" e pausa automática. Perder o foco da aba também pausa.
+
+- **Webapp** (*antecipado da Entrega 5 em 2026-10-04*): manifest com ícones, abre em tela cheia e paisagem quando instalado ("Adicionar à tela de início"). No navegador, o primeiro toque pede tela cheia e trava em paisagem (Android; o iPhone só esconde as barras instalado). Sem zoom por toque duplo ou pinça. O modo offline (service worker) continua na Entrega 5.
 
 ## 7. Telas
 
@@ -138,7 +141,7 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
   | ≤ 40 | fumaça branca, para-choque pendurado, para-brisa trincado |
   | ≤ 20 | fumaça preta, faíscas, farol piscando |
 - Placas de titânio aparecem no carro do ladrão.
-- **Áudio** gerado com WebAudio: motor (pitch pela velocidade), sirene, tiros, impactos, explosão, coleta, música chiptune. Liga/desliga no título e na pausa. Durante a partida: botão 🔊/🔇 no HUD e tecla M (*2026-10-04*); ligado por padrão, a escolha fica salva. O som começa no primeiro toque/tecla (regra dos navegadores).
+- **Áudio** gerado com WebAudio (tiro da polícia é um estalo agudo e curto; o do ladrão, um estrondo grave — dá para saber quem atirou): motor (pitch pela velocidade), sirene, tiros, impactos, explosão, coleta, música chiptune. Liga/desliga no título e na pausa. Durante a partida: botão 🔊/🔇 no HUD e tecla M (*2026-10-04*); ligado por padrão, a escolha fica salva. O som começa no primeiro toque/tecla (regra dos navegadores).
 - **Atirador visível** (*2026-10-04*): boneco low-poly inclinado na janela do carona, girando para o alvo dentro do cone de tiro, com clarão no cano a cada tiro. Policial de quepe; ladrão de touca e lenço vermelho, visível só com a arma traseira.
 
 ## 10. Arquitetura

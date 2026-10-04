@@ -1,4 +1,4 @@
-html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; }
+html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; touch-action: none; overscroll-behavior: none; }
 body { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; font-family: system-ui, sans-serif; color: #fff; }
 #app { position: fixed; inset: 0; }
 .rotate-hint {

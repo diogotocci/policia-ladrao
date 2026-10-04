@@ -29,6 +29,7 @@ describe('pickupToast', () => {
     expect(pickupToast('bomb')).toBe(`+ ${ITEM_LABEL.bomb}`);
     expect(pickupToast('wrong')).toBe('−2 caixinha errada');
     expect(pickupToast('none')).toBe('Itens no máximo');
+    expect(pickupToast('ram')).toBe('+ Quebra-mato'); // playtest 2026-10-04: 'aríete' é pouco usado
   });
 });
 

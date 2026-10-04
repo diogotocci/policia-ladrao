@@ -1,5 +1,6 @@
 import type { Role } from './config/balance';
 import { startGame } from './game';
+import { installFullscreenOnFirstTap, installNoZoom } from './ui/mobileShell';
 import type { QualityTier } from './render/renderer';
 import type { ItemId } from './sim/world';
 
@@ -26,5 +27,8 @@ const debugGive = debug
 const traffic = debug && params.get('traffic') === '0' ? false : undefined;
 
 const mute = params.has('mute');
+
+installNoZoom(document);
+installFullscreenOnFirstTap(document, window);
 
 if (app) startGame(app, { role, seed, debug, quality, debugHp, debugGive, traffic, mute });
