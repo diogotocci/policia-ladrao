@@ -10,6 +10,21 @@ const SHAKE_AMP = 0.15; // m
 const TRACER_LEN = 2.2; // m
 const TRACER_Y = 0.9; // altura dos tiros
 
+/** ponto redondo: sem isso cada faísca vira um quadrado enorme quando passa perto da câmera */
+function dotTexture(): THREE.DataTexture {
+  const N = 16;
+  const data = new Uint8Array(N * N * 4);
+  for (let y = 0; y < N; y++)
+    for (let x = 0; x < N; x++) {
+      const d = Math.hypot((x + 0.5) / N - 0.5, (y + 0.5) / N - 0.5) * 2;
+      data.set([255, 255, 255, d <= 1 ? Math.round(255 * (1 - d * d)) : 0], (y * N + x) * 4);
+    }
+  const t = new THREE.DataTexture(data, N, N);
+  t.magFilter = THREE.LinearFilter;
+  t.needsUpdate = true;
+  return t;
+}
+
 export function createCombatFx(scene: THREE.Scene): {
   update(w: WorldState, events: GameEvent[], originS: number, dt: number): void;
   activeSparks(): number;
@@ -38,7 +53,7 @@ export function createCombatFx(scene: THREE.Scene): {
   sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkPos, 3));
   const sparks = new THREE.Points(
     sparkGeo,
-    new THREE.PointsMaterial({ color: 0xffc860, size: 0.18, toneMapped: false, transparent: true, depthWrite: false }),
+    new THREE.PointsMaterial({ color: 0xffc860, size: 0.1, map: dotTexture(), alphaTest: 0.5, toneMapped: false, transparent: true, depthWrite: false }),
   );
   sparks.name = 'sparks';
   sparks.frustumCulled = false;

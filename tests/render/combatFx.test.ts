@@ -61,6 +61,15 @@ describe('createCombatFx', () => {
     expect(fx.activeSparks()).toBeGreaterThanOrEqual(3);
   });
 
+  it('sparks are small round dots, not big squares near the camera (playtest)', () => {
+    const scene = new THREE.Scene();
+    createCombatFx(scene);
+    const m = (scene.getObjectByName('sparks') as THREE.Points).material as THREE.PointsMaterial;
+    expect(m.map).toBeTruthy();
+    expect(m.alphaTest).toBeGreaterThan(0);
+    expect(m.size).toBeLessThanOrEqual(0.12);
+  });
+
   it('a crash shakes the camera briefly', () => {
     const scene = new THREE.Scene();
     const fx = createCombatFx(scene);
