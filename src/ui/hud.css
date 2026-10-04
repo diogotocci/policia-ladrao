@@ -1,0 +1,45 @@
+/* HUD: mesma linguagem dos botões (vidro escuro, aro fino), pequeno e nas bordas para proteger a pista. */
+.hud {
+  --hud-glass: rgba(10, 13, 18, 0.55);
+  --hud-edge: rgba(255, 255, 255, 0.22);
+  --police: #4d8bff;
+  --thief: #ffb23e;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  font: 600 13px/1.1 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: #f3f5f8;
+  padding: max(10px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) 0 max(14px, env(safe-area-inset-left));
+}
+.hud-bars { position: absolute; top: max(10px, env(safe-area-inset-top)); left: max(14px, env(safe-area-inset-left)); display: grid; gap: 6px; }
+.hud-bar { display: grid; grid-template-columns: 52px 140px 28px; align-items: center; gap: 8px; padding: 5px 9px; border-radius: 10px; background: var(--hud-glass); border: 1px solid var(--hud-edge); }
+.hud-bar-label { font-weight: 600; opacity: 0.85; }
+.hud-bar-track { height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
+.hud-bar-fill { height: 100%; width: 100%; border-radius: 4px; transition: width 160ms ease-out; }
+.hud-bar--police .hud-bar-fill { background: var(--police); }
+.hud-bar--thief .hud-bar-fill { background: var(--thief); }
+.hud-bar-value { text-align: right; font-variant-numeric: tabular-nums; }
+
+.hud-center { position: absolute; top: max(10px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); display: flex; gap: 10px; align-items: center; padding: 6px 12px; border-radius: 12px; background: var(--hud-glass); border: 1px solid var(--hud-edge); }
+.hud-time { font: 700 17px/1 ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+.hud-distance { font-variant-numeric: tabular-nums; padding: 2px 7px; border-radius: 8px; }
+.hud-distance[data-band='near'] { background: rgba(46, 204, 113, 0.28); color: #b8f5cf; }
+.hud-distance[data-band='mid'] { background: rgba(241, 196, 15, 0.26); color: #ffeaa0; }
+.hud-distance[data-band='far'] { background: rgba(231, 76, 60, 0.3); color: #ffc2bb; }
+.hud-level { opacity: 0.7; font-size: 12px; }
+
+.hud-end { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(4, 6, 10, 0.55); pointer-events: auto; z-index: 20; }
+.hud-end[hidden] { display: none; }
+.hud-end-card { min-width: 260px; padding: 22px 28px; border-radius: 18px; text-align: center; background: rgba(12, 15, 20, 0.85); border: 1px solid var(--hud-edge); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); }
+.hud-end[data-result='win'] .hud-end-card { border-color: color-mix(in srgb, var(--police) 60%, transparent); }
+.hud[data-role='thief'] .hud-end[data-result='win'] .hud-end-card { border-color: color-mix(in srgb, var(--thief) 60%, transparent); }
+.hud-end-title { margin: 0 0 6px; font: 800 28px/1.1 system-ui, sans-serif; }
+.hud-end-reason { margin: 0 0 4px; opacity: 0.85; }
+.hud-end-time { margin: 0 0 16px; font: 600 15px/1 ui-monospace, Menlo, Consolas, monospace; opacity: 0.9; }
+.hud-end-again { font: 700 16px/1 system-ui, sans-serif; padding: 12px 22px; border-radius: 12px; border: 2px solid var(--police); background: rgba(77, 139, 255, 0.18); color: #fff; cursor: pointer; }
+.hud[data-role='thief'] .hud-end-again { border-color: var(--thief); background: rgba(255, 178, 62, 0.18); }
+
+@media (max-height: 380px) {
+  .hud-bar { grid-template-columns: 46px 100px 26px; padding: 4px 8px; }
+  .hud { font-size: 12px; }
+}

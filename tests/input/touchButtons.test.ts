@@ -109,3 +109,19 @@ describe('touch buttons', () => {
     expect(document.querySelector('button[data-intent]')).toBeNull();
   });
 });
+
+describe('fire button feedback', () => {
+  it('flashNoTarget adds .no-target briefly', async () => {
+    const r = document.createElement('div');
+    document.body.append(r);
+    const t = createTouchButtons(r);
+    t.setVisible('fire', true);
+    t.flashNoTarget();
+    const b = r.querySelector('button[data-intent="fire"]')!;
+    expect(b.classList.contains('no-target')).toBe(true);
+    await new Promise((res) => setTimeout(res, 350));
+    expect(b.classList.contains('no-target')).toBe(false);
+    t.dispose();
+    r.remove();
+  });
+});

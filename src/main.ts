@@ -11,4 +11,11 @@ const app = document.getElementById('app');
 const q = params.get('quality');
 const quality = q === 'high' || q === 'medium' || q === 'low' ? (q as QualityTier) : undefined;
 
-if (app) startGame(app, { role, seed, debug: params.has('debug'), quality });
+const debug = params.has('debug');
+const hpParam = (name: string) => {
+  const v = Number(params.get(name));
+  return debug && params.has(name) && Number.isFinite(v) && v > 0 ? v : undefined;
+};
+const debugHp = debug ? { police: hpParam('policeHp'), thief: hpParam('thiefHp') } : undefined;
+
+if (app) startGame(app, { role, seed, debug, quality, debugHp });
