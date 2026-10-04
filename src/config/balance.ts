@@ -25,7 +25,18 @@ export const BALANCE = {
     falloffStart: 40, // m
     falloffEnd: 150, // m
   },
-  collision: { carCarThief: 5, carCarPolice: 3, scenery: 5, immunity: 1, speedLoss: 0.3, pushBack: 0.4 },
+  collision: {
+    carCarThief: 5,
+    carCarPolice: 3,
+    scenery: 5,
+    immunity: 1,
+    speedLoss: 0.3, // cenário e tráfego
+    pushBack: 0.4,
+    // polícia × ladrão: só a polícia perde velocidade e fica sem turbo de compensação por um tempo (o ladrão escapa)
+    carCarPoliceSpeedLoss: 0.5,
+    carCarThiefSpeedLoss: 0,
+    policeTurboOff: 4, // s
+  },
   catchUp: { start: 20, end: 150, maxBonus: 0.35 },
   difficulty: { levelEvery: 30, maxLevel: 10 },
   traffic: { baseCount: 3, perLevel: 0.08, speedMin: 0.5, speedMax: 0.7, spawnAheadMin: 120, spawnAheadMax: 240, despawnBehind: 80, laneChangePerSecond: 0.15, laneChangeSpeed: 3, minGap: 12, minGapToGameCar: 40 },

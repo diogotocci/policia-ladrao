@@ -28,6 +28,23 @@ describe('pursuitBonus', () => {
     expect(pursuitBonus(setup({ s: 85 }, { s: 0 }))).toBeCloseTo(0.175, 10);
     expect(pursuitBonus(setup({ s: 50 }, { s: 50 }))).toBe(0);
   });
+
+  it('no catch-up turbo while the police is recovering from a hit (nitro still works)', () => {
+    const w = { ...setup({ s: 85 }, { s: 0 }), time: 10, policeTurboOffUntil: 12 };
+    expect(pursuitBonus(w)).toBe(0);
+    expect(pursuitBonus({ ...w, time: 12 })).toBeCloseTo(0.175, 10);
+    const nitro = withCar(w, 'police', { ...policeOf(w), upgrades: { ...policeOf(w).upgrades, nitroUntil: 20 } });
+    expect(pursuitBonus(nitro)).toBeCloseTo(BALANCE.items.police.nitroBonus, 10);
+  });
+
+  it('a rear-end lets the thief get away: ≥ 15 m ahead 4 s later, then the police comes back', () => {
+    let w = setup({ s: 200 + L * 0.6, speed: 34 }, { s: 200, speed: 34, x: thiefOf(createWorld({ seed: 1, playerRole: 'thief' })).x });
+    w = step(w);
+    for (let i = 0; i < 4 * 60; i++) w = { ...step(w), time: w.time + DT };
+    expect(thiefOf(w).s - policeOf(w).s).toBeGreaterThanOrEqual(15);
+    for (let i = 0; i < 8 * 60; i++) w = { ...step(w), time: w.time + DT };
+    expect(thiefOf(w).s - policeOf(w).s).toBeLessThanOrEqual(25);
+  });
 });
 
 describe('enforceNoOvertake', () => {

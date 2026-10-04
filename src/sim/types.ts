@@ -84,6 +84,8 @@ export interface WorldState {
   nextBombId: number;
   /** o botão de bomba do ladrão estava apertado no passo anterior (borda de subida) */
   bombHeld: boolean;
+  /** depois de bater no ladrão, a polícia fica sem turbo de compensação até este instante */
+  policeTurboOffUntil: number;
   nextBoxId: number;
   /** s do próximo spawn de caixinha */
   nextBoxAt: number;

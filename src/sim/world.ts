@@ -54,6 +54,7 @@ export function createWorld(opts: {
     bombs: [],
     nextBombId: 1,
     bombHeld: false,
+    policeTurboOffUntil: 0,
     nextBoxId: 1,
     nextBoxAt: BALANCE.items.firstBoxAt,
     itemRng: (opts.seed ^ 0xc2b2ae35) >>> 0,
