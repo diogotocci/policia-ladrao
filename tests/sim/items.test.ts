@@ -144,6 +144,20 @@ describe('boxes', () => {
     return s;
   };
 
+  it('playtest 2026-10-04: about one box every 6 s at cruise (≥ 9 per minute), so each side sees ~5 of its colour', () => {
+    let total = 0;
+    for (let seed = 1; seed <= 5; seed++) {
+      let w = createWorld({ seed, playerRole: 'thief' });
+      const ids = new Set<number>();
+      for (let i = 0; i < 60 * 60; i++) {
+        w = run(w, 1);
+        for (const b of w.boxes) ids.add(b.id);
+      }
+      total += ids.size;
+    }
+    expect(total / 5).toBeGreaterThanOrEqual(9);
+  });
+
   it('never more than 2 boxes, never on a speed bump (±6 m)', () => {
     let w = createWorld({ seed: 5, playerRole: 'police' });
     // empurra os carros para longe das caixinhas: só observa o spawn
