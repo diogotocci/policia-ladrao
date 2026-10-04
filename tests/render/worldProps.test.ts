@@ -46,6 +46,25 @@ describe('createWorldProps', () => {
     expect(visibleNamed(scene, 'bomb-')).toBe(1);
   });
 
+  it('shows up to 6 bombs (3 in stock + the ones already on the road)', () => {
+    const { scene, props } = setup();
+    const bombs = Array.from({ length: 6 }, (_, i) => ({ id: i + 1, s: 30 + i * 10, x: 1.5, expiresAt: 99 }));
+    props.update(world({ bombs }), 0, 0);
+    expect(visibleNamed(scene, 'bomb-')).toBe(6);
+  });
+
+  it('traffic moves smoothly between simulation steps (interpolated by id)', () => {
+    const { scene, props } = setup();
+    const now = world({ traffic: [{ id: 7, s: 60, x: 1.5, speed: 20, targetX: 1.5, model: 0 }] });
+    const before = world({ traffic: [{ id: 7, s: 50, x: -1.5, speed: 20, targetX: 1.5, model: 0 }] });
+    props.update(now, 0, 0, before, 0.5);
+    const car = scene.children.find((o) => o.name.startsWith('traffic-') && o.visible)!;
+    expect(car.position.z).toBeCloseTo(-55, 5);
+    expect(car.position.x).toBeCloseTo(0, 5);
+    props.update(now, 0, 0); // sem estado anterior: posição atual
+    expect(car.position.z).toBeCloseTo(-60, 5);
+  });
+
   it('blue and red boxes differ in shape and in shell colour, not only in the core', () => {
     const { scene, props } = setup();
     props.update(world({ boxes: [{ id: 1, s: 80, x: 1.5, color: 'blue' }, { id: 2, s: 120, x: -1.5, color: 'red' }] }), 0, 0);
@@ -96,9 +115,10 @@ describe('createWorldProps', () => {
 });
 
 describe('car models', () => {
-  it('models of the same kind share geometry (cached templates)', () => {
-    const geo = (m: THREE.Object3D) => (m.getObjectByName('shell') as THREE.Mesh).geometry.uuid;
-    expect(geo(createCarModel('thief'))).toBe(geo(createCarModel('thief')));
+  it('models of the same kind share geometry (cached templates); game cars own only the parts that dent', () => {
+    const geo = (m: THREE.Object3D, part = 'shell') => (m.getObjectByName(part) as THREE.Mesh).geometry.uuid;
+    expect(geo(createCarModel('thief'), 'greenhouse')).toBe(geo(createCarModel('thief'), 'greenhouse'));
+    expect(geo(createCarModel('thief'))).not.toBe(geo(createCarModel('thief')));
     expect(geo(createTrafficModel(2))).toBe(geo(createTrafficModel(2)));
   });
 

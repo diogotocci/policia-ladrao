@@ -48,7 +48,8 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
     const x = LANES[rng.int(0, LANES.length - 1)]!;
     const tooClose =
       cars.some((o) => sameLane(o.x, x) && Math.abs(o.s - s) < T.minGap) ||
-      [police, thief].some((g) => sameLane(g.x, x) && Math.abs(g.s - s) < T.minGapToGameCar);
+      [police, thief].some((g) => sameLane(g.x, x) && Math.abs(g.s - s) < T.minGapToGameCar) ||
+      [...w.boxes, ...w.bombs].some((o) => sameLane(o.x, x) && Math.abs(o.s - s) < T.minGapToItem);
     if (tooClose) continue;
     const speed = BALANCE.movement.cruise.police * rng.range(T.speedMin, T.speedMax);
     cars.push({ id: nextId++, s, x, speed, targetX: x, model: rng.int(0, 3) });

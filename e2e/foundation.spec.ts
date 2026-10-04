@@ -40,12 +40,18 @@ test('drives on its own to police cruise speed and renders the road', async ({ p
   await page.goto('/?debug&seed=1&quality=high');
   await expect(page.locator('canvas')).toBeVisible();
   await page.waitForFunction(() => 'window' in globalThis && '__game' in window);
-  await waitSim(page, 6);
+  await waitSim(page, 4);
   const s = await snapshot(page);
   expect(s.player.role).toBe('police');
-  // cruzeiro 34 m/s; pode estar acima com o turbo de compensação (ladrão a mais de 20 m)
-  expect(s.player.speed).toBeGreaterThanOrEqual(33.5);
-  expect(s.player.speed).toBeLessThanOrEqual(34 * 1.35 + 0.5);
+  // cruzeiro 34 m/s; pode estar acima com o turbo de compensação (ladrão a mais de 20 m).
+  // Amostra 1 s e usa o máximo: um quebra-molas no meio (−25%) não pode derrubar o teste.
+  let max = 0;
+  for (let i = 0; i < 10; i++) {
+    max = Math.max(max, (await snapshot(page)).player.speed);
+    await waitSim(page, 0.1);
+  }
+  expect(max).toBeGreaterThanOrEqual(33.5);
+  expect(max).toBeLessThanOrEqual(34 * 1.35 + 0.5);
   await page.screenshot({ path: `test-results/foundation-${info.project.name}.png` });
 });
 

@@ -10,7 +10,7 @@ import { createCar } from '../sim/car';
 const TRAFFIC_SLOTS = 8;
 const MODELS = 4;
 const BOXES = 2;
-const BOMBS = 3;
+const BOMBS = 6; // até 3 no estoque + as que ainda estão na pista (duram 20 s)
 const BUMPS = 4;
 
 function stripeTexture(): THREE.DataTexture {
@@ -57,7 +57,7 @@ function bumpSignTexture(): THREE.DataTexture {
 export function createWorldProps(
   scene: THREE.Scene,
   reflections: THREE.Texture | null,
-): { update(w: WorldState, originS: number, time: number): void } {
+): { update(w: WorldState, originS: number, time: number, prev?: WorldState, alpha?: number): void } {
   const withEnv = (o: THREE.Object3D) =>
     o.traverse((c) => {
       if (!reflections || c.name === 'contact-shadow') return;
@@ -153,8 +153,10 @@ export function createWorldProps(
   });
 
   return {
-    update(w, originS, time) {
+    update(w, originS, time, prev, alpha = 1) {
       const z = (s: number) => -(s - originS);
+      const before = new Map<number, { s: number; x: number }>();
+      if (prev && alpha < 1) for (const t of prev.traffic) before.set(t.id, t);
 
       for (const list of traffic) for (const g of list) g.visible = false;
       const used = new Array(MODELS).fill(0) as number[];
@@ -162,7 +164,11 @@ export function createWorldProps(
         const m = ((t.model % MODELS) + MODELS) % MODELS;
         const g = traffic[m]![used[m]!++]!;
         g.visible = true;
-        updateCarModel(g, { ...trafficCar, s: t.s, x: t.x, steer: Math.sign(t.targetX - t.x) as -1 | 0 | 1 }, time, originS);
+        // interpolado entre o passo anterior e o atual (como os carros do jogo): sem tremer a 60+ fps
+        const b = before.get(t.id);
+        const s = b ? b.s + (t.s - b.s) * alpha : t.s;
+        const x = b ? b.x + (t.x - b.x) * alpha : t.x;
+        updateCarModel(g, { ...trafficCar, s, x, steer: Math.sign(t.targetX - t.x) as -1 | 0 | 1 }, time, originS);
       }
 
       boxes.forEach(({ g, shell, core }, i) => {
