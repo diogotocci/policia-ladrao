@@ -1,14 +1,16 @@
 // Retrovisor: câmera traseira renderizada numa textura e desenhada espelhada (como um espelho de verdade)
-// num retângulo no topo central. O passe do espelho não recalcula o mapa de sombras.
+// num retângulo pequeno no canto superior direito. O passe do espelho não recalcula o mapa de sombras.
 import * as THREE from 'three';
 import type { CarState } from '../sim/car';
 
-const TOP_OFFSET = 64; // px abaixo do topo (fica sob o relógio do HUD)
+const MARGIN_TOP = 10; // px (alinha com as barras do HUD)
+const MARGIN_RIGHT = 14;
 
+/** Pequeno, no canto superior direito: não cobre a pista (tráfego, caixinhas, quebra-molas). */
 export function rearviewRect(cssW: number, cssH: number): { x: number; y: number; w: number; h: number } {
-  const w = Math.round(cssW * 0.28);
+  const w = Math.round(cssW * 0.22);
   const h = Math.round(w / 3);
-  return { x: Math.round((cssW - w) / 2), y: Math.min(TOP_OFFSET, Math.max(0, cssH - h)), w, h };
+  return { x: cssW - MARGIN_RIGHT - w, y: Math.min(MARGIN_TOP, Math.max(0, cssH - h)), w, h };
 }
 
 export function isBehind(player: CarState, foe: CarState): boolean {
