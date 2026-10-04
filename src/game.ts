@@ -206,6 +206,7 @@ export function startGame(
         particles: particles.alive(),
         gunners: { police: gunners.police.visible, thief: gunners.thief.visible },
         muted: mixer.muted(),
+        cameraAspect: chase.camera.aspect,
       })) : undefined;
 
   const stepper = new FixedStepper((dt) => {
@@ -215,7 +216,11 @@ export function startGame(
   });
 
   let portrait = false;
+  let sizeW = -1;
+  let sizeH = -1;
   const resize = () => {
+    sizeW = container.clientWidth;
+    sizeH = container.clientHeight;
     view.resize();
     chase.camera.aspect = Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight);
     chase.camera.updateProjectionMatrix();
@@ -224,6 +229,10 @@ export function startGame(
   };
   resize();
   window.addEventListener('resize', resize);
+  // iOS (app instalado / rotação) às vezes muda o tamanho sem disparar 'resize' a tempo: imagem esticada.
+  // Por isso também conferimos o tamanho do container a cada quadro (barato) e ouvimos rotação/visualViewport.
+  window.addEventListener('orientationchange', resize);
+  window.visualViewport?.addEventListener('resize', resize);
   const onVisibility = () => {
     if (document.visibilityState === 'visible') {
       governor?.reset();
@@ -237,6 +246,7 @@ export function startGame(
   let raf = 0;
   let last = performance.now();
   const frame = (now: number) => {
+    if (container.clientWidth !== sizeW || container.clientHeight !== sizeH) resize();
     const raw = (now - last) / 1000;
     const elapsed = Math.min(0.25, raw);
     last = now;
@@ -302,6 +312,8 @@ export function startGame(
     stop() {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
+      window.removeEventListener('orientationchange', resize);
+      window.visualViewport?.removeEventListener('resize', resize);
       document.removeEventListener('visibilitychange', onVisibility);
       keyboard.dispose();
       touch.dispose();

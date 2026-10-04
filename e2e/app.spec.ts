@@ -47,3 +47,24 @@ test('no zoom: viewport locked and a quick double tap is swallowed', async ({ pa
   expect(prevented).toEqual([false, true]);
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).touchAction)).toBe('none');
 });
+
+test('the picture never stretches: a size change without a resize event (iOS standalone) is picked up', async ({ page }) => {
+  await page.goto('/?debug&seed=1&quality=low&traffic=0');
+  await page.waitForFunction(() => '__game' in window);
+  // muda só o container (sem evento de resize na janela), como o iOS faz ao abrir o app instalado / girar
+  await page.evaluate(() => {
+    const app = document.getElementById('app')!;
+    app.style.width = '600px';
+    app.style.height = '390px';
+  });
+  await page.waitForFunction(
+    () => {
+      const c = document.querySelector('canvas')!;
+      return Math.abs(c.width / c.height - 600 / 390) < 0.02;
+    },
+    null,
+    { timeout: 15_000 },
+  );
+  const aspect = await page.evaluate(() => (window as unknown as { __game: { visuals(): { cameraAspect: number } } }).__game.visuals().cameraAspect);
+  expect(aspect).toBeCloseTo(600 / 390, 2);
+});
