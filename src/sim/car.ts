@@ -1,6 +1,31 @@
 import { BALANCE, type Role } from '../config/balance';
 import type { Intents } from './intents';
 
+/** Melhorias e efeitos dos itens das caixinhas (spec §5). Tempos em segundos de partida. */
+export interface Upgrades {
+  fireInterval: number;
+  power: number;
+  plates: number;
+  bombs: number;
+  ramCharges: number;
+  nitroUntil: number;
+  heliUntil: number;
+  pierceUntil: number;
+}
+
+export function baseUpgrades(role: Role): Upgrades {
+  return {
+    fireInterval: role === 'police' ? BALANCE.combat.policeFireInterval : BALANCE.combat.thiefFireInterval,
+    power: 1,
+    plates: 0,
+    bombs: 0,
+    ramCharges: 0,
+    nitroUntil: 0,
+    heliUntil: 0,
+    pierceUntil: 0,
+  };
+}
+
 export interface CarState {
   role: Role;
   /** metros ao longo da pista */
@@ -16,6 +41,9 @@ export interface CarState {
   hasGun: boolean;
   /** segundos até poder atirar de novo */
   fireCooldown: number;
+  /** segundos restantes no ar (pulo do quebra-molas) */
+  airTime: number;
+  upgrades: Upgrades;
 }
 
 export function createCar(role: Role, laneIndex: 0 | 1 | 2 | 3, s = 0): CarState {
@@ -29,6 +57,8 @@ export function createCar(role: Role, laneIndex: 0 | 1 | 2 | 3, s = 0): CarState
     hp: BALANCE.hp,
     hasGun: false,
     fireCooldown: 0,
+    airTime: 0,
+    upgrades: baseUpgrades(role),
   };
 }
 
@@ -40,6 +70,7 @@ export function stepCar(car: CarState, intents: Intents, dt: number, opts: { spe
 
   let speed: number;
   if (intents.brake) speed = Math.max(0, car.speed - brakeDecel * dt);
+  else if (car.airTime > 0) speed = car.speed; // no ar: não acelera nem desacelera (só o freio age)
   else if (car.speed < target) speed = Math.min(target, car.speed + accel * dt);
   else speed = Math.max(target, car.speed - accel * dt); // turbo acabou: desacelera suave
 

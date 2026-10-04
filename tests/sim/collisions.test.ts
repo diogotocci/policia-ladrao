@@ -68,6 +68,17 @@ describe('car × car collisions', () => {
     expect(Math.abs(thiefOf(w).x - policeOf(w).x)).toBeGreaterThanOrEqual(BALANCE.car.halfWidth * 2 - 1e-9);
   });
 
+  it('a car pushed sideways against the edge does not take wall damage next step', () => {
+    const w0 = base();
+    const t = { ...thiefOf(w0), x: EDGE - 0.3, speed: 30 };
+    const p = { ...policeOf(w0), s: t.s, x: t.x - 1.3, speed: 30 };
+    let w = withCar(withCar(w0, 'thief', t), 'police', p);
+    w = tick(w);
+    expect(Math.abs(thiefOf(w).x)).toBeLessThan(EDGE);
+    w = tick(withCar(w, 'thief', { ...thiefOf(w), touchingEdge: Math.abs(thiefOf(w).x) >= EDGE }));
+    expect(thiefOf(w).hp).toBe(95); // só a batida com a polícia
+  });
+
   it('a new overlap within 1 s costs nothing', () => {
     let w = tick(overlapping(0, L * 0.6));
     const t = thiefOf(w);

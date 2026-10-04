@@ -37,8 +37,13 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
         const aimX = target.x;
         const len = Math.hypot(aimS - car.s, aimX - car.x) || 1;
         const d = Math.abs(target.s - car.s);
+        const heli = role === 'police' && w.time < car.upgrades.heliUntil;
+        const falloff = heli ? 1 : distanceFactor(d);
         const damage =
-          role === 'police' ? c.policeDamage * distanceFactor(d) * armorFactor(0) : c.thiefDamage * distanceFactor(d);
+          role === 'police'
+            ? c.policeDamage * car.upgrades.power * falloff * armorFactor(target.upgrades.plates)
+            : c.thiefDamage * falloff;
+        const piercing = role === 'police' && w.time < car.upgrades.pierceUntil;
         projectiles.push({
           from: role,
           s: car.s,
@@ -47,9 +52,10 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
           vx: ((aimX - car.x) / len) * c.projectileSpeed,
           travelled: 0,
           damage,
+          piercing,
         });
         events.push({ type: 'shot', from: role, s: car.s, x: car.x });
-        car = { ...car, fireCooldown: role === 'police' ? c.policeFireInterval : c.thiefFireInterval };
+        car = { ...car, fireCooldown: car.upgrades.fireInterval };
       } else {
         events.push({ type: 'noTarget', from: role });
       }
@@ -72,11 +78,17 @@ export function stepProjectiles(w: WorldState, dt: number): WorldState {
     const n = Math.max(1, Math.ceil(dist / SUBSTEP));
     let { s, x } = p;
     let hit = false;
-    for (let i = 1; i <= n && !hit; i++) {
+    let blocked = false;
+    for (let i = 1; i <= n && !hit && !blocked; i++) {
       s = p.s + (p.vs * dt * i) / n;
       x = p.x + (p.vx * dt * i) / n;
       // o alvo também se move durante o passo; aproximação: posição atual
       if (Math.abs(s - target.s) <= L2 && Math.abs(x - target.x) <= W) hit = true;
+      else if (!p.piercing && out.traffic.some((t) => Math.abs(s - t.s) <= L2 && Math.abs(x - t.x) <= W)) blocked = true;
+    }
+    if (blocked) {
+      events.push({ type: 'blocked', s, x });
+      continue;
     }
     if (hit) {
       out = withCar(out, target.role, { ...target, hp: Math.max(0, target.hp - p.damage) });

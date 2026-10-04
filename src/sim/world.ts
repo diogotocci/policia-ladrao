@@ -7,9 +7,13 @@ import { fireWeapons, stepProjectiles } from './projectiles';
 import { enforceNoOvertake, pursuitBonus } from './pursuit';
 import { createRngFromState } from './rng';
 import { levelAt } from './rules';
-import type { WorldState } from './types';
+import { stepJump } from './track';
+import { stepTraffic } from './traffic';
+import { applyItem, stepBoxes } from './items';
+import { dropBomb, stepBombs } from './bombs';
+import type { ItemId, WorldState } from './types';
 
-export type { GameEvent, MatchState, Projectile, WorldState } from './types';
+export type { Bomb, Box, GameEvent, ItemId, MatchState, Projectile, TrafficCar, WorldState } from './types';
 
 export const policeOf = (w: WorldState): CarState => (w.playerRole === 'police' ? w.player : w.opponent);
 export const thiefOf = (w: WorldState): CarState => (w.playerRole === 'thief' ? w.player : w.opponent);
@@ -23,10 +27,14 @@ export function createWorld(opts: {
   seed: number;
   playerRole: Role;
   debugHp?: { police?: number; thief?: number };
+  /** itens dados ao jogador no início (só debug/testes) */
+  debugGive?: ItemId[];
+  traffic?: boolean;
 }): WorldState {
   const police: CarState = { ...createCar('police', 1, 0), hasGun: true, hp: opts.debugHp?.police ?? BALANCE.hp };
   const thief: CarState = { ...createCar('thief', 2, 40), hp: opts.debugHp?.thief ?? BALANCE.hp };
-  const player = opts.playerRole === 'police' ? police : thief;
+  let player = opts.playerRole === 'police' ? police : thief;
+  for (const item of opts.debugGive ?? []) player = applyItem(player, item, 0);
   const opponent = opts.playerRole === 'police' ? thief : police;
   return {
     seed: opts.seed,
@@ -40,9 +48,20 @@ export function createWorld(opts: {
     events: [],
     match: { over: false },
     aiRng: (opts.seed ^ 0x9e3779b9) >>> 0,
+    traffic: [],
+    trafficOn: opts.traffic ?? true,
+    boxes: [],
+    bombs: [],
+    nextBombId: 1,
+    bombHeld: false,
+    nextBoxId: 1,
+    nextBoxAt: BALANCE.items.firstBoxAt,
+    itemRng: (opts.seed ^ 0xc2b2ae35) >>> 0,
+    nextTrafficId: 1,
+    trafficRng: (opts.seed ^ 0x85ebca6b) >>> 0,
     ai: {
-      police: { targetX: police.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1 },
-      thief: { targetX: thief.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1 },
+      police: { targetX: police.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {} },
+      thief: { targetX: thief.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {} },
     },
   };
 }
@@ -76,12 +95,21 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   };
 
   const bonus = pursuitBonus(out);
-  out = withCar(out, 'thief', stepCar(thiefOf(out), intents.thief, dt));
-  out = withCar(out, 'police', stepCar(policeOf(out), intents.police, dt, { speedBonus: bonus }));
+  const t0 = thiefOf(out);
+  const p0 = policeOf(out);
+  out = withCar(out, 'thief', stepJump(stepCar(t0, intents.thief, dt), t0.s, w.seed, dt));
+  out = withCar(out, 'police', stepJump(stepCar(p0, intents.police, dt, { speedBonus: bonus }), p0.s, w.seed, dt));
+  out = stepTraffic(out, dt);
   out = resolveCollisions(out, dt);
   out = enforceNoOvertake(out);
-  out = fireWeapons(out, intents, dt);
-  out = stepProjectiles(out, dt);
+  out = stepBoxes(out);
+  out = dropBomb(out, intents.thief);
+  out = stepBombs(out);
+  // quem zerou a vida neste passo (batida, bomba, caixinha) não atira mais
+  if (policeOf(out).hp > 0 && thiefOf(out).hp > 0) {
+    out = fireWeapons(out, intents, dt);
+    out = stepProjectiles(out, dt);
+  }
   const time = out.time + dt;
   out = { ...out, time, level: levelAt(time) };
 
