@@ -1,0 +1,185 @@
+import { describe, expect, it } from 'vitest';
+import { createMixer } from '../../src/audio/mixer';
+import { SONG, stepSeconds } from '../../src/audio/music';
+import { createNullBackend } from '../../src/audio/synth';
+import { createWorld, policeOf, thiefOf, withCar, type GameEvent, type WorldState } from '../../src/sim/world';
+
+const DT = 1 / 60;
+const world = (role: 'police' | 'thief' = 'thief'): WorldState => createWorld({ seed: 1, playerRole: role });
+const shot: GameEvent = { type: 'shot', from: 'police', s: 0, x: 0 };
+
+describe('audio mixer', () => {
+  it('engine pitch rises with speed', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    let w = world();
+    w = withCar(w, 'thief', { ...thiefOf(w), speed: 5 });
+    mx.frame(w, DT);
+    const slow = be.engine.freq;
+    w = withCar(w, 'thief', { ...thiefOf(w), speed: 34 });
+    mx.frame(w, DT);
+    expect(be.engine.freq).toBeGreaterThan(slow);
+    expect(be.engine.freq).toBeCloseTo(55 + 3 * 34, 5);
+    expect(be.engine.gain).toBeGreaterThan(0);
+  });
+
+  it('siren is silent with the police far away and gets louder as it closes in (playing thief)', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    let w = world('thief');
+    w = withCar(w, 'police', { ...policeOf(w), s: thiefOf(w).s - 200 });
+    mx.frame(w, DT);
+    expect(be.siren).toBe(0);
+    w = withCar(w, 'police', { ...policeOf(w), s: thiefOf(w).s - 60 });
+    mx.frame(w, DT);
+    const mid = be.siren;
+    w = withCar(w, 'police', { ...policeOf(w), s: thiefOf(w).s - 10 });
+    mx.frame(w, DT);
+    expect(mid).toBeGreaterThan(0);
+    expect(be.siren).toBeGreaterThan(mid);
+  });
+
+  it('playing police, the own siren is low and constant', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.frame(world('police'), DT);
+    expect(be.siren).toBeGreaterThan(0);
+    expect(be.siren).toBeLessThan(0.1);
+  });
+
+  it('each event plays its recipe', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.frame(world('thief'), DT);
+    mx.events([
+      shot,
+      { type: 'hit', target: 'thief', amount: 1, s: 0, x: 0 },
+      { type: 'crash', a: 'thief', b: 'traffic', s: 0, x: 0 },
+      { type: 'explosion', s: 0, x: 0 },
+      { type: 'pickup', role: 'thief', item: 'bomb' },
+      { type: 'pickup', role: 'thief', item: 'wrong' },
+      { type: 'pickup', role: 'police', item: 'heal' }, // não é do jogador: sem som
+      { type: 'bombDropped', s: 0, x: 0 },
+      { type: 'end', winner: 'thief' },
+    ]);
+    expect(be.played).toEqual(['shot-police', 'hit', 'crash', 'explosion', 'pickup', 'wrong', 'bomb-drop', 'win']);
+  });
+
+  it('a burst of 20 shots in the same frame plays at most 6', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.frame(world(), DT);
+    mx.events(Array.from({ length: 20 }, () => shot));
+    expect(be.played).toHaveLength(6);
+    for (let i = 0; i < 7; i++) mx.frame(world(), DT); // > 100 ms depois
+    mx.events([shot]);
+    expect(be.played).toHaveLength(7);
+  });
+
+  it('muted: master at 0 and no new sounds or notes', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.setMuted(true);
+    expect(be.master).toBe(0);
+    for (let i = 0; i < 120; i++) mx.frame(world(), DT);
+    mx.events([shot]);
+    expect(be.played).toHaveLength(0);
+    expect(be.notes).toHaveLength(0);
+    mx.setMuted(false);
+    expect(be.master).toBe(1);
+  });
+
+  it('music notes are scheduled ahead on the audio clock, evenly spaced, never in the past', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    for (let i = 0; i < 60; i++) {
+      be.advance(DT);
+      mx.frame(world(), DT);
+    }
+    expect(be.notes.length).toBeGreaterThan(5);
+    const step = stepSeconds(SONG.bpm);
+    const times = [...new Set(be.notes.map((n) => n.when))].sort((a, b) => a - b);
+    for (let i = 1; i < times.length; i++) {
+      const k = (times[i]! - times[i - 1]!) / step; // passos vazios (pausa) contam: múltiplo inteiro do passo
+      expect(k).toBeGreaterThanOrEqual(1 - 1e-6);
+      expect(Math.abs(k - Math.round(k))).toBeLessThan(1e-6);
+    }
+    for (const n of be.notes) expect(n.when).toBeGreaterThanOrEqual(0);
+  });
+
+  it('a slow frame (250 ms) keeps the beat: no overlap, no out-of-order steps', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    for (let i = 0; i < 30; i++) {
+      be.advance(DT);
+      mx.frame(world(), DT);
+    }
+    be.advance(0.25);
+    mx.frame(world(), 0.25);
+    for (let i = 0; i < 30; i++) {
+      be.advance(DT);
+      mx.frame(world(), DT);
+    }
+    const step = stepSeconds(SONG.bpm);
+    const times = [...new Set(be.notes.map((n) => n.when))].sort((a, b) => a - b);
+    for (let i = 1; i < times.length; i++) expect(times[i]! - times[i - 1]!).toBeGreaterThanOrEqual(step - 1e-6);
+  });
+
+  it('after a long stall (5 s) it skips ahead instead of bursting the missed notes', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    be.advance(DT);
+    mx.frame(world(), DT);
+    be.advance(5);
+    const before = be.notes.length;
+    mx.frame(world(), 0.25);
+    const fresh = be.notes.slice(before);
+    expect(new Set(fresh.map((n) => n.when)).size).toBeLessThanOrEqual(2);
+    for (const n of fresh) expect(n.when).toBeGreaterThanOrEqual(be.now());
+  });
+
+  it('while the audio is not running (locked/suspended) nothing piles up', () => {
+    const be = createNullBackend();
+    be.setRunning(false);
+    const mx = createMixer(be);
+    for (let i = 0; i < 300; i++) mx.frame(world(), DT);
+    mx.events([shot]);
+    expect(be.notes).toHaveLength(0);
+    expect(be.played).toHaveLength(0);
+  });
+
+  it('paused (portrait): engine and siren silent, no music scheduled', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.frame(world(), DT);
+    const n = be.notes.length;
+    be.advance(1);
+    mx.frame(world(), 0, true);
+    expect(be.engine.gain).toBe(0);
+    expect(be.siren).toBe(0);
+    expect(be.notes).toHaveLength(n);
+  });
+
+  it('"everything maxed" pickup does not play the success chime', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.frame(world('thief'), DT);
+    mx.events([{ type: 'pickup', role: 'thief', item: 'none' }]);
+    expect(be.played).toEqual(['wrong']);
+  });
+
+  it('match over: engine and siren stop, music ducks; reset() stops everything for a new match', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    const w = world();
+    mx.frame(w, DT);
+    mx.frame({ ...w, match: { over: true, winner: 'police', endTime: 1 } }, DT);
+    expect(be.engine.gain).toBe(0);
+    expect(be.siren).toBe(0);
+    expect(be.music).toBeLessThan(0.5);
+    mx.reset();
+    expect(be.engine.gain).toBe(0);
+    mx.frame(w, DT);
+    expect(be.music).toBe(1);
+  });
+});
