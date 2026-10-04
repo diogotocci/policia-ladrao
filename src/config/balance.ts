@@ -11,4 +11,21 @@ export const BALANCE = {
     lateralSpeed: 7, // m/s
   },
   sim: { dt: 1 / 60, maxStepsPerFrame: 5 },
+  hp: 100,
+  combat: {
+    policeFireInterval: 0.8, // s
+    policeDamage: 1,
+    thiefFireInterval: 1.2, // s
+    thiefDamage: 1,
+    thiefMinSpeedToFire: 8, // m/s
+    projectileSpeed: 300, // m/s
+    range: 150, // m
+    frontConeDeg: 35,
+    sideConeDeg: 90, // frontal ±35° + laterais até 90° = semiplano à frente dentro do alcance
+    falloffStart: 40, // m
+    falloffEnd: 150, // m
+  },
+  collision: { carCarThief: 5, carCarPolice: 3, scenery: 5, immunity: 1, speedLoss: 0.3, pushBack: 0.4 },
+  catchUp: { start: 60, end: 150, maxBonus: 0.35 },
+  difficulty: { levelEvery: 30, maxLevel: 10 },
 } as const;
