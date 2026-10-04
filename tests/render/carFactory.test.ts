@@ -57,10 +57,11 @@ describe('car model rendering details', () => {
     }
   });
 
-  it('every other mesh casts a shadow', () => {
+  it('body parts cast shadows; wheels and the contact shadow do not (cheaper shadow pass)', () => {
     const m = createCarModel('thief');
-    const casters = meshes(m).filter((x) => x.name !== 'contact-shadow');
+    const casters = meshes(m).filter((x) => x.name !== 'contact-shadow' && x.name !== 'wheel');
     expect(casters.every((x) => x.castShadow)).toBe(true);
+    expect(meshes(m).filter((x) => x.name === 'wheel').every((x) => !x.castShadow)).toBe(true);
   });
 
   it('stays cheap: at most 20 meshes per car', () => {

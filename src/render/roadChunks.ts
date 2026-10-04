@@ -81,7 +81,7 @@ export function createRoad(scene: THREE.Scene, seed: number): { update(cameraS: 
         lamps.setMatrixAt(li++, tmp.matrix);
       }
     }
-    lamps.castShadow = true;
+    lamps.castShadow = false; // postes finos: sombra quase invisível, custo de 7 draw calls
     group.add(lamps);
 
     const buildings = new THREE.InstancedMesh(buildingGeo, buildingMat, MAX_BUILDINGS_PER_CHUNK);
