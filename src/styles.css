@@ -24,3 +24,12 @@ body { touch-action: none; user-select: none; -webkit-user-select: none; -webkit
   pointer-events: none;
   z-index: 5;
 }
+.rearview-frame {
+  position: absolute;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: 3;
+}
+.rearview-frame[hidden] { display: none; }

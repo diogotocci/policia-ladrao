@@ -1,11 +1,13 @@
 import * as THREE from 'three';
-import type { Role } from './config/balance';
+import { BALANCE, type Role } from './config/balance';
 import { createDebug } from './debug';
 import { createKeyboardInput } from './input/keyboard';
 import { createTouchButtons } from './input/touchButtons';
 import { createChaseCamera } from './render/cameras';
 import { createCombatFx } from './render/combatFx';
 import { createOpponentMarker } from './render/opponentMarker';
+import { createRearview, isBehind, rearviewRect } from './render/rearview';
+import { createWorldProps } from './render/worldProps';
 import { createCarModel, updateCarModel } from './render/carFactory';
 import { createQualityGovernor, createRenderer, type QualityTier } from './render/renderer';
 import { createLighting } from './render/scene';
@@ -13,8 +15,8 @@ import { createRoad, renderOrigin } from './render/roadChunks';
 import type { CarState } from './sim/car';
 import { FixedStepper } from './sim/fixedStepper';
 import type { Intents } from './sim/intents';
-import { createWorld, stepWorld, type GameEvent, type WorldState } from './sim/world';
-import { createHud } from './ui/hud';
+import { createWorld, stepWorld, type GameEvent, type ItemId, type WorldState } from './sim/world';
+import { ITEM_LABEL, createHud } from './ui/hud';
 
 const lerpCar = (a: CarState, b: CarState, t: number): CarState => ({
   ...b,
@@ -33,7 +35,15 @@ const anyOf = (a: Intents, b: Intents): Intents => ({
 
 export function startGame(
   container: HTMLElement,
-  opts: { role: Role; seed: number; debug: boolean; quality?: QualityTier; debugHp?: { police?: number; thief?: number } },
+  opts: {
+    role: Role;
+    seed: number;
+    debug: boolean;
+    quality?: QualityTier;
+    debugHp?: { police?: number; thief?: number };
+    debugGive?: ItemId[];
+    traffic?: boolean;
+  },
 ): { stop(): void } {
   const view = createRenderer(container, opts.quality ?? 'high');
   const { renderer } = view;
@@ -57,9 +67,17 @@ export function startGame(
   scene.add(model, opponentModel);
   const fx = createCombatFx(scene);
   const marker = createOpponentMarker(scene, opponentRole);
+  const rearview = createRearview();
+  const props = createWorldProps(scene, lighting.reflections);
   const chase = createChaseCamera();
 
-  let world: WorldState = createWorld({ seed: opts.seed, playerRole: opts.role, debugHp: opts.debugHp });
+  let world: WorldState = createWorld({
+    seed: opts.seed,
+    playerRole: opts.role,
+    debugHp: opts.debugHp,
+    debugGive: opts.debugGive,
+    traffic: opts.traffic,
+  });
   let frameEvents: GameEvent[] = [];
   let prev = world;
 
@@ -74,16 +92,46 @@ export function startGame(
   hint.textContent = 'Gire o celular';
   hint.hidden = true;
   ui.append(hint);
+  const mirrorFrame = document.createElement('div');
+  mirrorFrame.className = 'rearview-frame';
+  mirrorFrame.hidden = true;
+  ui.append(mirrorFrame);
   const hud = createHud(ui, opts.role);
   let fireVisible = false;
+  let lastBombs = -1;
   const syncFireButton = () => {
-    if (world.player.hasGun !== fireVisible) {
-      fireVisible = world.player.hasGun;
+    const me = world.player;
+    if (me.hasGun !== fireVisible) {
+      fireVisible = me.hasGun;
       touch.setVisible('fire', fireVisible);
+    }
+    if (me.role === 'thief') {
+      touch.setLocked('fire', me.speed < BALANCE.combat.thiefMinSpeedToFire);
+      if (me.upgrades.bombs !== lastBombs) {
+        lastBombs = me.upgrades.bombs;
+        touch.setBombs(lastBombs);
+      }
+    }
+  };
+  const buzz = (ms: number) => {
+    // o navegador bloqueia (e reclama no console) vibração antes do primeiro toque/tecla do usuário
+    const activation = (navigator as Navigator & { userActivation?: { hasBeenActive: boolean } }).userActivation;
+    if (activation && !activation.hasBeenActive) return;
+    try {
+      navigator.vibrate?.(ms);
+    } catch {
+      /* sem vibração */
     }
   };
   const onEvents = (events: GameEvent[]) => {
-    for (const e of events) if (e.type === 'noTarget' && e.from === opts.role) touch.flashNoTarget();
+    for (const e of events) {
+      if (e.type === 'noTarget' && e.from === opts.role) touch.flashNoTarget();
+      else if (e.type === 'hit' && e.target === opts.role) buzz(20);
+      else if (e.type === 'pickup' && e.role === opts.role) {
+        if (e.item === 'wrong') hud.toast('−2 caixinha errada');
+        else if (e.item !== 'none') hud.toast(`+ ${ITEM_LABEL[e.item] ?? e.item}`);
+      }
+    }
   };
   const readIntents = () => anyOf(keyboard.read(), touch.read());
   const debug = opts.debug ? createDebug(ui, renderer, () => world, readIntents, () => view.quality) : undefined;
@@ -123,6 +171,7 @@ export function startGame(
     const foe = portrait ? world.opponent : lerpCar(prev.opponent, world.opponent, alpha);
     updateCarModel(opponentModel, foe, world.time, origin);
     marker.update(foe, Math.abs(foe.s - car.s), origin);
+    props.update(world, origin, world.time);
     fx.update(world, frameEvents, origin, elapsed);
     onEvents(frameEvents);
     frameEvents = [];
@@ -139,6 +188,17 @@ export function startGame(
       }
     }
     renderer.render(scene, chase.camera);
+    const showMirror = isBehind(car, foe) && !world.match.over;
+    mirrorFrame.hidden = !showMirror;
+    if (showMirror) {
+      const cssW = container.clientWidth;
+      const cssH = container.clientHeight;
+      const r = rearviewRect(cssW, cssH);
+      mirrorFrame.style.cssText = `left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px`;
+      rearview.place(car, origin);
+      marker.setVisible(false); // o marcador não aparece no espelho
+      rearview.render(renderer, scene, cssW, cssH);
+    }
     debug?.frame(elapsed);
     raf = requestAnimationFrame(frame);
   };

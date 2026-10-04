@@ -1,6 +1,7 @@
 import type { Role } from './config/balance';
 import { startGame } from './game';
 import type { QualityTier } from './render/renderer';
+import type { ItemId } from './sim/world';
 
 const params = new URLSearchParams(location.search);
 const role: Role = params.get('role') === 'thief' ? 'thief' : 'police';
@@ -18,4 +19,10 @@ const hpParam = (name: string) => {
 };
 const debugHp = debug ? { police: hpParam('policeHp'), thief: hpParam('thiefHp') } : undefined;
 
-if (app) startGame(app, { role, seed, debug, quality, debugHp });
+const ITEMS: ItemId[] = ['fireRate', 'power', 'heal', 'nitro', 'ram', 'heli', 'pierce', 'plate', 'bomb', 'gun'];
+const debugGive = debug
+  ? (params.get('give') ?? '').split(',').filter((x): x is ItemId => (ITEMS as string[]).includes(x))
+  : undefined;
+const traffic = debug && params.get('traffic') === '0' ? false : undefined;
+
+if (app) startGame(app, { role, seed, debug, quality, debugHp, debugGive, traffic });

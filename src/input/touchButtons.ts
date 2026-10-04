@@ -43,8 +43,14 @@ export function createTouchButtons(
   setVisible(name: 'fire' | 'bomb', visible: boolean): void;
   /** pisca o ATIRAR por 0,3 s quando não há alvo no cone */
   flashNoTarget(): void;
+  /** estoque de bombas: o botão só aparece com 1 ou mais */
+  setBombs(n: number): void;
+  /** botão visível mas bloqueado (ex.: arma do ladrão abaixo de 8 m/s) */
+  setLocked(name: 'fire' | 'bomb', locked: boolean): void;
 } {
   const pointers = new Map<IntentName, Set<number>>();
+  /** toques rápidos (pointerdown + pointerup entre duas leituras) contam uma vez */
+  const tapped = new Set<IntentName>();
   /** dedos que começaram num botão e ainda não saíram da tela */
   const active = new Set<number>();
   const release = (e: Event) => {
@@ -86,6 +92,7 @@ export function createTouchButtons(
         /* jsdom / navegador sem captura */
       }
       if (held.size === 0) buzz();
+      tapped.add(name);
       active.add(id);
       held.add(id);
       b.classList.add('is-down');
@@ -101,6 +108,12 @@ export function createTouchButtons(
       held.delete((e as PointerEvent).pointerId);
       if (held.size === 0) b.classList.remove('is-down');
     };
+    // cancelado pelo sistema ou dedo deslizou para fora: não vale como toque
+    // (no toque, o navegador dispara pointerleave logo depois do pointerup: aí o toque vale)
+    b.addEventListener('pointercancel', () => tapped.delete(name));
+    b.addEventListener('pointerleave', (e) => {
+      if (held.has((e as PointerEvent).pointerId)) tapped.delete(name);
+    });
     b.addEventListener('pointerdown', down);
     b.addEventListener('pointerenter', enter);
     for (const t of ['pointerup', 'pointercancel', 'pointerleave']) b.addEventListener(t, leave);
@@ -114,7 +127,8 @@ export function createTouchButtons(
   return {
     read() {
       const out: Intents = { left: false, right: false, brake: false, fire: false, bomb: false };
-      for (const [name, held] of pointers) out[name] = held.size > 0;
+      for (const [name, held] of pointers) out[name] = held.size > 0 || tapped.has(name);
+      tapped.clear();
       return out;
     },
     setVisible(name, visible) {
@@ -122,6 +136,22 @@ export function createTouchButtons(
       if (!b) return;
       b.hidden = !visible;
       if (!visible) pointers.get(name)?.clear();
+    },
+    setBombs(n) {
+      const b = buttons.get('bomb');
+      if (!b) return;
+      b.hidden = n <= 0;
+      if (n <= 0) pointers.get('bomb')?.clear();
+      let c = b.querySelector<HTMLElement>('.touch-count');
+      if (!c) {
+        c = document.createElement('span');
+        c.className = 'touch-count';
+        b.append(c);
+      }
+      c.textContent = String(n);
+    },
+    setLocked(name, locked) {
+      buttons.get(name)?.classList.toggle('locked', locked);
     },
     flashNoTarget() {
       const b = buttons.get('fire');

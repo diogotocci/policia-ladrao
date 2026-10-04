@@ -48,6 +48,24 @@ describe('keyboard input', () => {
     expect(kb.read()).toEqual({ left: false, right: false, brake: false, fire: false, bomb: false });
   });
 
+  it('Space on a focused button presses the button, not fire', () => {
+    kb = createKeyboardInput(window);
+    const b = document.createElement('button');
+    document.body.append(b);
+    b.focus();
+    b.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true }));
+    expect(kb.read().fire).toBe(false);
+    b.remove();
+  });
+
+  it('a quick tap between two reads is still seen once (latched)', () => {
+    kb = createKeyboardInput(window);
+    press('keydown', 'KeyB');
+    press('keyup', 'KeyB');
+    expect(kb.read().bomb).toBe(true);
+    expect(kb.read().bomb).toBe(false);
+  });
+
   it('ignores events after dispose', () => {
     kb = createKeyboardInput(window);
     kb.dispose();

@@ -1,7 +1,9 @@
 // IA dos dois lados. Pura dado o rng; a memória (alvo lateral, temporizadores) fica no mundo.
+// Entrega 3: desvia de tráfego, quebra-molas (com chance pelo nível) e bombas; busca caixinhas; ladrão solta bombas.
 import { BALANCE, type Role } from '../config/balance';
 import type { Rng } from './rng';
 import { NO_INTENTS, type Intents } from './intents';
+import { bumpXRange, bumpsBetween } from './track';
 import type { WorldState } from './types';
 import { policeOf, thiefOf } from './world';
 
@@ -14,11 +16,19 @@ export interface AiMemory {
   brakeUntil: number;
   /** desde quando (s) a polícia está alinhada atrás do ladrão; -1 = não está */
   linedSince: number;
+  /** quebra-molas já avaliado (s) e se a IA decidiu desviar dele */
+  bumpS: number;
+  dodgeBump: boolean;
+  /** próximo momento (s) em que o ladrão pode soltar bomba */
+  nextBombAt: number;
+  /** bombas já avaliadas pela polícia: id → vai desviar? (sorteado uma vez por bomba) */
+  bombDodge: Record<number, boolean>;
 }
 
 const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
 const LANES = BALANCE.road.laneCenters;
 const DEADZONE = 0.15;
+const W = BALANCE.car.halfWidth;
 
 /** 0 no nível 1 → 1 no nível máximo */
 const skill = (level: number) => (Math.min(level, BALANCE.difficulty.maxLevel) - 1) / (BALANCE.difficulty.maxLevel - 1);
@@ -26,7 +36,7 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 export function initialAiMemory(role: Role, w: WorldState): AiMemory {
   const me = role === 'police' ? policeOf(w) : thiefOf(w);
-  return { targetX: me.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1 };
+  return { targetX: me.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {} };
 }
 
 function steerTo(x: number, targetX: number): Pick<Intents, 'left' | 'right'> {
@@ -38,17 +48,83 @@ function steerTo(x: number, targetX: number): Pick<Intents, 'left' | 'right'> {
   return { left: dx < 0, right: dx > 0 };
 }
 
+const nearestLane = (x: number) => LANES.reduce((a, b) => (Math.abs(b - x) < Math.abs(a - x) ? b : a));
+
+/**
+ * Perigo à frente numa faixa: tráfego (35 m), bombas que a polícia decidiu evitar (60 m),
+ * caixinha da outra cor (40 m).
+ */
+function laneBlocked(w: WorldState, role: Role, s: number, laneX: number, mem?: AiMemory): boolean {
+  const inLane = (x: number) => Math.abs(x - laneX) < 2 * W;
+  if (w.traffic.some((t) => inLane(t.x) && t.s > s - 3 && t.s - s < 35)) return true;
+  if (role === 'police' && w.bombs.some((b) => mem?.bombDodge[b.id] && inLane(b.x) && b.s > s && b.s - s < 60)) return true;
+  const wrong = role === 'police' ? 'red' : 'blue';
+  if (w.boxes.some((b) => b.color === wrong && inLane(b.x) && b.s > s && b.s - s < 40)) return true;
+  return false;
+}
+
+/** Faixa do quebra-molas que a IA decidiu evitar (se houver) cobre esta faixa? */
+function bumpCovers(w: WorldState, s: number, laneX: number, mem: AiMemory): boolean {
+  if (!mem.dodgeBump || mem.bumpS < s) return false;
+  const b = bumpsBetween(w.seed, mem.bumpS - 0.5, mem.bumpS + 0.5)[0];
+  if (!b) return false;
+  const [a, z] = bumpXRange(b);
+  return laneX + W > a && laneX - W < z;
+}
+
+/** Escolhe uma faixa sem perigo, a mais próxima da desejada, sem cruzar faixas com perigo no caminho. */
+function safeLane(w: WorldState, role: Role, s: number, fromX: number, wantX: number, mem: AiMemory): number {
+  const free = (x: number) => !laneBlocked(w, role, s, x, mem) && !bumpCovers(w, s, x, mem);
+  const pathClear = (to: number) =>
+    LANES.filter((x) => x >= Math.min(fromX, to) - 1.4 && x <= Math.max(fromX, to) + 1.4).every(free);
+  const ranked = [...LANES].sort((a, b) => Math.abs(a - wantX) - Math.abs(b - wantX));
+  return ranked.find((x) => pathClear(x)) ?? ranked.find(free) ?? nearestLane(fromX);
+}
+
+/** Avalia (uma vez) o próximo quebra-molas a até 60 m: desvia com chance pelo nível. */
+function considerBump(w: WorldState, s: number, rng: Rng, mem: AiMemory, k: number): AiMemory {
+  const next = bumpsBetween(w.seed, s + 1, s + 60)[0];
+  if (!next || next.s === mem.bumpS) return mem;
+  return { ...mem, bumpS: next.s, dodgeBump: rng.next() < lerp(0.5, 0.97, k) };
+}
+
+/** A polícia avalia cada bomba uma vez ao vê-la (60 m): desvia com chance 0,4 (nível 1) → 0,92 (nível 10). */
+function considerBombs(w: WorldState, s: number, rng: Rng, mem: AiMemory, k: number): AiMemory {
+  let changed = false;
+  const next: Record<number, boolean> = {};
+  for (const b of w.bombs) {
+    if (b.id in mem.bombDodge) next[b.id] = mem.bombDodge[b.id]!;
+    else if (b.s > s && b.s - s < 60) {
+      next[b.id] = rng.next() < lerp(0.4, 0.92, k);
+      changed = true;
+    }
+  }
+  if (!changed && Object.keys(next).length === Object.keys(mem.bombDodge).length) return mem;
+  return { ...mem, bombDodge: next };
+}
+
 export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): { intents: Intents; memory: AiMemory } {
   const me = role === 'police' ? policeOf(w) : thiefOf(w);
   const foe = role === 'police' ? thiefOf(w) : policeOf(w);
   const k = skill(w.level);
-  let mem = memory;
+  let mem = considerBump(w, me.s, rng, memory, k);
+  if (role === 'police') mem = considerBombs(w, me.s, rng, mem, k);
+
+  // perigo na faixa atual (ou na de destino): reage já, sem esperar a próxima decisão
+  const myLane = nearestLane(mem.targetX);
+  const here = nearestLane(me.x);
+  const danger =
+    laneBlocked(w, role, me.s, myLane, mem) ||
+    bumpCovers(w, me.s, myLane, mem) ||
+    (here !== myLane && laneBlocked(w, role, me.s, here, mem));
 
   if (role === 'police') {
-    if (w.time >= mem.nextDecisionAt) {
+    if (danger || w.time >= mem.nextDecisionAt) {
       // reação: 0,8 s no nível 1 → 0,25 s no nível 10; mira a faixa do ladrão (encosta para bater quando perto)
       const reaction = lerp(0.8, 0.25, k) * rng.range(0.8, 1.2);
-      mem = { ...mem, targetX: Math.max(-EDGE + 0.3, Math.min(EDGE - 0.3, foe.x)), nextDecisionAt: w.time + reaction };
+      const box = w.boxes.find((b) => b.color === 'blue' && b.s > me.s + 10 && b.s - me.s < 120);
+      const want = box && Math.abs(foe.s - me.s) > 30 ? box.x : Math.max(-EDGE + 0.3, Math.min(EDGE - 0.3, foe.x));
+      mem = { ...mem, targetX: safeLane(w, role, me.s, me.x, want, mem), nextDecisionAt: w.time + reaction };
     }
     return { intents: { ...NO_INTENTS, ...steerTo(me.x, mem.targetX), fire: true }, memory: mem };
   }
@@ -61,27 +137,46 @@ export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): {
   const reaction = lerp(1.0, 0.2, k);
   const dodge = lined && w.time - linedSince >= reaction;
   mem = { ...mem, linedSince };
-  if (dodge || w.time >= mem.nextDecisionAt) {
+  if (danger || dodge || w.time >= mem.nextDecisionAt) {
     const interval = lerp(1.6, 0.6, k) * rng.range(0.7, 1.3);
-    let targetX = mem.targetX;
-    if (dodge || rng.next() < 0.25) {
+    let want = mem.targetX;
+    const box = w.boxes.find((b) => b.color === 'red' && b.s > me.s + 10 && b.s - me.s < 120);
+    const hunting = me.upgrades.bombs > 0 && behind > 0 && behind < 110;
+    if (hunting) want = foe.x; // com bomba: entra na faixa da polícia para soltar na frente dela
+    else if (box && !dodge) want = box.x;
+    else if (dodge || rng.next() < 0.25) {
       // vai para uma faixa longe da polícia (com um pouco de acaso)
       const options = LANES.filter((x) => Math.abs(x - me.x) > 1);
       const scored = options.map((x) => ({ x, score: Math.abs(x - foe.x) + rng.range(0, 2.5) }));
       scored.sort((a, b) => b.score - a.score);
-      targetX = scored[0]?.x ?? targetX;
+      want = scored[0]?.x ?? want;
     }
     let brakeUntil = mem.brakeUntil;
     // polícia colada atrás na mesma faixa: às vezes freia para provocar batida
     if (lined && behind < 12 && rng.next() < lerp(0.05, 0.25, k)) brakeUntil = w.time + 0.4;
-    mem = { ...mem, targetX, nextDecisionAt: w.time + interval, brakeUntil, linedSince: dodge ? -1 : linedSince };
+    mem = {
+      ...mem,
+      targetX: safeLane(w, role, me.s, me.x, want, mem),
+      nextDecisionAt: w.time + interval,
+      brakeUntil,
+      linedSince: dodge ? -1 : linedSince,
+    };
   }
+
+  // bomba: polícia alinhada atrás a menos de 110 m (a bomba dura 20 s)
+  let bomb = false;
+  if (me.upgrades.bombs > 0 && Math.abs(foe.x - me.x) < 1.6 && behind > 4 && behind < 110 && w.time >= mem.nextBombAt) {
+    bomb = !w.bombHeld; // borda de subida
+    if (bomb) mem = { ...mem, nextBombAt: w.time + lerp(4, 1.5, k) };
+  }
+
   return {
     intents: {
       ...NO_INTENTS,
       ...steerTo(me.x, mem.targetX),
       brake: w.time < mem.brakeUntil,
       fire: me.hasGun,
+      bomb,
     },
     memory: mem,
   };

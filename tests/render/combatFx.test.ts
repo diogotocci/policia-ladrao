@@ -35,6 +35,14 @@ describe('createCombatFx', () => {
     expect(m.instanceMatrix.count).toBe(32);
   });
 
+  it('hides tracers on the end screen', () => {
+    const scene = new THREE.Scene();
+    const fx = createCombatFx(scene);
+    const w = withProjectiles(5);
+    fx.update({ ...w, match: { over: true, winner: 'police', endTime: 1 } }, [], 0, 1 / 60);
+    expect(visibleTracers(scene)).toBe(0);
+  });
+
   it('a hit spawns sparks that are gone 0.4 s later', () => {
     const scene = new THREE.Scene();
     const fx = createCombatFx(scene);

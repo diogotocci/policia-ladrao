@@ -53,6 +53,16 @@ describe('match end', () => {
     expect(w.match.winner).toBe('thief');
   });
 
+  it('a car zeroed by a crash does not shoot in the same step', () => {
+    let w = createWorld({ seed: 3, playerRole: 'police', debugHp: { police: 3 } });
+    const t = thiefOf(w);
+    w = withCar(w, 'police', { ...policeOf(w), s: t.s - 2, x: t.x, speed: t.speed + 5 });
+    w = stepWorld(w, FIRE, DT);
+    expect(policeOf(w).hp).toBe(0);
+    expect(w.events.some((e) => e.type === 'shot')).toBe(false);
+    expect(w.projectiles).toEqual([]);
+  });
+
   it('level is 2 at 30 s', () => {
     const w = run(createWorld({ seed: 1, playerRole: 'thief' }), 30 * 60 + 1);
     expect(w.level).toBe(2);
@@ -60,6 +70,22 @@ describe('match end', () => {
 });
 
 describe('AI vs AI (player also driven by the AI)', () => {
+  it('with traffic and items the thief fights back (hurts the police in most matches) and matches last', () => {
+    let hurt = 0;
+    let total = 0;
+    for (const role of ['police', 'thief'] as Role[]) {
+      for (let seed = 1; seed <= 8; seed++) {
+        let w = createWorld({ seed, playerRole: role });
+        for (let i = 0; i < 10 * 60 * 60 && !w.match.over; i++) w = stepWorld(w, 'ai', DT);
+        expect(w.match.over, `seed ${seed} ${role}`).toBe(true);
+        if (policeOf(w).hp < 100) hurt++;
+        total += w.time;
+      }
+    }
+    expect(hurt).toBeGreaterThanOrEqual(10);
+    expect(total / 16).toBeGreaterThanOrEqual(90);
+  });
+
   for (const role of ['police', 'thief'] as Role[]) {
     it(`always ends within 10 simulated minutes — player as ${role}`, () => {
       for (let seed = 1; seed <= 5; seed++) {

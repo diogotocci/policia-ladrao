@@ -31,6 +31,38 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
     out = withCar(out, role, hit);
   }
 
+  // carros do jogo × tráfego
+  const Lh = BALANCE.car.length;
+  const Wh = BALANCE.car.halfWidth;
+  const traffic = [...out.traffic];
+  for (const role of ['police', 'thief'] as Role[]) {
+    let car = role === 'police' ? policeOf(out) : thiefOf(out);
+    for (let i = 0; i < traffic.length; i++) {
+      const t = traffic[i]!;
+      const ds = t.s - car.s;
+      const dx = t.x - car.x;
+      if (Math.abs(ds) >= Lh || Math.abs(dx) >= 2 * Wh) continue;
+      const key = `traffic:${role}`;
+      if ((immunity[key] ?? 0) <= EPS) {
+        car = slow(hurt(car, BALANCE.collision.scenery));
+        immunity[key] = BALANCE.collision.immunity;
+        events.push({ type: 'crash', a: role, b: 'traffic', s: (car.s + t.s) / 2, x: (car.x + t.x) / 2 });
+        events.push({ type: 'hit', target: role, amount: BALANCE.collision.scenery, s: car.s, x: car.x });
+        traffic[i] = { ...t, speed: t.speed * 0.9 };
+      }
+      if (Math.abs(dx) < Wh) {
+        // de frente/de trás: o carro do jogo fica atrás (ou à frente) do tráfego
+        car = { ...car, s: ds > 0 ? t.s - Lh : t.s + Lh };
+      } else {
+        const dir = Math.sign(dx) || 1;
+        const x = t.x - dir * (2 * Wh + SEPARATION_SLACK);
+        car = { ...car, x: Math.max(-(EDGE - 0.01), Math.min(EDGE - 0.01, x)) };
+      }
+    }
+    out = withCar(out, role, car);
+  }
+  out = { ...out, traffic };
+
   // polícia × ladrão
   let police = policeOf(out);
   let thief = thiefOf(out);
@@ -40,8 +72,10 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
   const dx = thief.x - police.x;
   if (Math.abs(ds) < L && Math.abs(dx) < 2 * W) {
     if ((immunity.cars ?? 0) <= EPS) {
-      const thiefDmg = BALANCE.collision.carCarThief * armorFactor(0);
-      const policeDmg = BALANCE.collision.carCarPolice;
+      const ram = police.upgrades.ramCharges > 0;
+      const thiefDmg = (ram ? BALANCE.items.police.ramThief : BALANCE.collision.carCarThief) * armorFactor(thief.upgrades.plates);
+      const policeDmg = ram ? BALANCE.items.police.ramPolice : BALANCE.collision.carCarPolice;
+      if (ram) police = { ...police, upgrades: { ...police.upgrades, ramCharges: police.upgrades.ramCharges - 1 } };
       thief = slow(hurt(thief, thiefDmg));
       police = slow(hurt(police, policeDmg));
       immunity.cars = BALANCE.collision.immunity;
@@ -63,13 +97,15 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
       let tx = thief.x + dir * push;
       let px = police.x - dir * push;
       // se um bater na borda, o outro absorve o resto
-      if (Math.abs(tx) > EDGE) {
-        px -= dir * (Math.abs(tx) - EDGE);
-        tx = Math.sign(tx) * EDGE;
+      // 1 cm antes da borda: empurrão não vira dano de parede
+      const LIM = EDGE - 0.01;
+      if (Math.abs(tx) > LIM) {
+        px -= dir * (Math.abs(tx) - LIM);
+        tx = Math.sign(tx) * LIM;
       }
-      if (Math.abs(px) > EDGE) {
-        tx += dir * (Math.abs(px) - EDGE);
-        px = Math.sign(px) * EDGE;
+      if (Math.abs(px) > LIM) {
+        tx += dir * (Math.abs(px) - LIM);
+        px = Math.sign(px) * LIM;
       }
       thief = { ...thief, x: tx };
       police = { ...police, x: px };

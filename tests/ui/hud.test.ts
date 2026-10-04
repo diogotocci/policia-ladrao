@@ -93,3 +93,38 @@ describe('createHud', () => {
     hud.dispose();
   });
 });
+
+describe('item HUD', () => {
+  const withUpgrades = (role: 'police' | 'thief', patch: object, time = 0) => {
+    const w = { ...createWorld({ seed: 1, playerRole: role }), time };
+    const car = role === 'police' ? policeOf(w) : thiefOf(w);
+    return withCar(w, role, { ...car, upgrades: { ...car.upgrades, ...patch } });
+  };
+
+  it('shows icons for the player permanent upgrades with counters', () => {
+    const hud = createHud(root, 'thief');
+    hud.update(withUpgrades('thief', { plates: 2, bombs: 1 }));
+    expect(root.querySelector('.hud-item[data-item="plate"] .hud-item-count')!.textContent).toBe('2');
+    expect(root.querySelector('.hud-item[data-item="bomb"]')).toBeNull(); // a bomba aparece no botão
+    hud.dispose();
+  });
+
+  it('timed items show a ring with the remaining time', () => {
+    const hud = createHud(root, 'police');
+    hud.update(withUpgrades('police', { nitroUntil: 3 }, 1.5));
+    const ring = root.querySelector<HTMLElement>('.hud-item[data-item="nitro"]')!;
+    expect(ring.style.getPropertyValue('--left')).toBe('0.5');
+    hud.update(withUpgrades('police', { nitroUntil: 3 }, 3.1));
+    expect(root.querySelector('.hud-item[data-item="nitro"]')).toBeNull();
+    hud.dispose();
+  });
+
+  it('a pickup toast appears and goes away after 1.2 s', async () => {
+    const hud = createHud(root, 'police');
+    hud.toast('+ Cadência');
+    expect(root.querySelector('.hud-toast')!.textContent).toBe('+ Cadência');
+    await new Promise((r) => setTimeout(r, 1300));
+    expect(root.querySelector<HTMLElement>('.hud-toast')!.hidden).toBe(true);
+    hud.dispose();
+  });
+});

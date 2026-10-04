@@ -65,7 +65,7 @@ export function createCombatFx(scene: THREE.Scene): {
   return {
     update(w, events, originS, dt) {
       // traçadores
-      const n = Math.min(TRACERS, w.projectiles.length);
+      const n = w.match.over ? 0 : Math.min(TRACERS, w.projectiles.length);
       for (let i = 0; i < n; i++) {
         const p = w.projectiles[i]!;
         tmp.position.set(p.x, TRACER_Y, -(p.s - originS));
