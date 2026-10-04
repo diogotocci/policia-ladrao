@@ -23,8 +23,9 @@ const v = (wave: Wave, freq: number, freqEnd: number, gain: number, duration: nu
 });
 
 export const RECIPES = {
-  'shot-police': [v('square', 880, 220, 0.16, 0.09), v('noise', 6000, 1500, 0.12, 0.06)],
-  'shot-thief': [v('sawtooth', 620, 160, 0.16, 0.11), v('noise', 4500, 1200, 0.12, 0.07)],
+  // polícia: estalo agudo e curto (pistola); ladrão: estrondo grave e ruidoso (escopeta) — dá para saber quem atirou
+  'shot-police': [v('square', 1600, 700, 0.14, 0.06), v('noise', 7000, 3000, 0.08, 0.04)],
+  'shot-thief': [v('noise', 1800, 250, 0.3, 0.22, 0.003), v('sine', 160, 55, 0.3, 0.2)],
   hit: [v('square', 300, 120, 0.2, 0.08), v('noise', 3000, 800, 0.15, 0.06)],
   crash: [v('noise', 2400, 300, 0.45, 0.35, 0.002), v('sawtooth', 110, 50, 0.25, 0.3)],
   explosion: [v('noise', 1400, 90, 0.6, 1.1, 0.005), v('sine', 90, 35, 0.5, 0.9)],
