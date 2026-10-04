@@ -43,3 +43,13 @@
   .hud-bar { grid-template-columns: 46px 100px 26px; padding: 4px 8px; }
   .hud { font-size: 12px; }
 }
+
+.hud-items { display: flex; gap: 6px; flex-wrap: wrap; max-width: 240px; }
+.hud-item { position: relative; display: inline-flex; align-items: center; gap: 3px; padding: 3px 7px 3px 5px; border-radius: 9px; background: var(--hud-glass); border: 1px solid var(--hud-edge); font-size: 12px; }
+.hud-item-icon { font-size: 14px; line-height: 1; }
+.hud-item-count { font-variant-numeric: tabular-nums; opacity: 0.9; }
+.hud-item--timed { border-color: transparent; background:
+  linear-gradient(var(--hud-glass), var(--hud-glass)) padding-box,
+  conic-gradient(#ffd25a calc(var(--left, 1) * 360deg), rgba(255, 255, 255, 0.12) 0) border-box; border: 2px solid transparent; }
+.hud-toast { position: absolute; top: 25%; left: 50%; transform: translateX(-50%); padding: 8px 16px; border-radius: 12px; background: rgba(10, 13, 18, 0.7); border: 1px solid var(--hud-edge); font: 800 18px/1 system-ui, sans-serif; }
+.hud-toast[hidden] { display: none; }

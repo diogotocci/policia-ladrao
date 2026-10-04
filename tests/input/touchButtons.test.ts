@@ -74,6 +74,20 @@ describe('touch buttons', () => {
     expect(tb.read()).toMatchObject({ left: false, brake: true });
   });
 
+  it('a quick tap between two reads is still seen once (latched)', () => {
+    ptr(btn('brake'), 'pointerdown', 5);
+    ptr(btn('brake'), 'pointerup', 5);
+    expect(tb.read().brake).toBe(true);
+    expect(tb.read().brake).toBe(false);
+  });
+
+  it('a tap is kept when the browser fires pointerleave right after pointerup (touch)', () => {
+    ptr(btn('bomb'), 'pointerdown', 6);
+    ptr(btn('bomb'), 'pointerup', 6);
+    ptr(btn('bomb'), 'pointerleave', 6);
+    expect(tb.read().bomb).toBe(true);
+  });
+
   it('releases on pointercancel and pointerleave', () => {
     ptr(btn('right'), 'pointerdown', 3);
     ptr(btn('right'), 'pointercancel', 3);
@@ -121,6 +135,25 @@ describe('fire button feedback', () => {
     expect(b.classList.contains('no-target')).toBe(true);
     await new Promise((res) => setTimeout(res, 350));
     expect(b.classList.contains('no-target')).toBe(false);
+    t.dispose();
+    r.remove();
+  });
+});
+
+describe('bomb and thief fire state', () => {
+  it('bomb button shows the stock and hides at 0; fire can be locked', () => {
+    const r = document.createElement('div');
+    document.body.append(r);
+    const t = createTouchButtons(r, { role: 'thief' });
+    t.setBombs(2);
+    const bomb = r.querySelector<HTMLElement>('button[data-intent="bomb"]')!;
+    expect(bomb.hidden).toBe(false);
+    expect(bomb.querySelector('.touch-count')!.textContent).toBe('2');
+    t.setBombs(0);
+    expect(bomb.hidden).toBe(true);
+    t.setVisible('fire', true);
+    t.setLocked('fire', true);
+    expect(r.querySelector('button[data-intent="fire"]')!.classList.contains('locked')).toBe(true);
     t.dispose();
     r.remove();
   });
