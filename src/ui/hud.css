@@ -3,7 +3,7 @@
   --hud-glass: rgba(10, 13, 18, 0.55);
   --hud-edge: rgba(255, 255, 255, 0.22);
   --police: #4d8bff;
-  --thief: #ffb23e;
+  --thief: #ff4b4b; /* mesma cor do carro do ladrão e do marcador */
   position: absolute;
   inset: 0;
   pointer-events: none;

@@ -16,7 +16,7 @@ const CHROME = new THREE.MeshStandardMaterial({ color: 0xdfe3e8, roughness: 0.12
 const RUBBER = new THREE.MeshStandardMaterial({ color: 0x131313, roughness: 0.92 });
 const PLASTIC = new THREE.MeshStandardMaterial({ color: 0x1a1b1e, roughness: 0.55 });
 const HEAD = new THREE.MeshStandardMaterial({ color: 0xfff6dc, emissive: 0xfff0c4, emissiveIntensity: 0.7 });
-const TAIL = new THREE.MeshStandardMaterial({ color: 0x7a0a0f, emissive: 0xff1a1a, emissiveIntensity: 1.1 });
+const TAIL = new THREE.MeshStandardMaterial({ color: 0x7a0a0f, emissive: 0xff1a1a, emissiveIntensity: 1.8 });
 
 // ---------- helpers de geometria ----------
 type P = [number, number];
@@ -126,7 +126,7 @@ function addWheels(root: THREE.Object3D, halfTrack: number, axleRear: number, ax
 
 function addLamps(body: THREE.Object3D, halfW: number, frontZ: number, rearZ: number, y: number) {
   body.add(mesh(mirrored((sd) => rb(0.44, 0.15, 0.08, 0.03, sd * (halfW - 0.34), y, frontZ)), HEAD, 'headlights'));
-  body.add(mesh(mirrored((sd) => rb(0.52, 0.2, 0.08, 0.04, sd * (halfW - 0.36), y, rearZ)), TAIL, 'taillights'));
+  body.add(mesh(mirrored((sd) => rb(0.56, 0.24, 0.08, 0.04, sd * (halfW - 0.36), y, rearZ)), TAIL, 'taillights'));
 }
 
 // ---------- viatura ----------
@@ -181,10 +181,11 @@ function buildPolice(root: THREE.Group, body: THREE.Group) {
   addWheels(root, 0.82, -1.35, 1.4, 0.26, 0.26);
 }
 
-// ---------- muscle car ----------
+// ---------- muscle car (vermelho: se destaca do asfalto escuro a distância) ----------
 function buildThief(root: THREE.Group, body: THREE.Group) {
   const W = 1.88;
-  const BLACK = paint(0x090a0c);
+  const RED = paint(0xd0151c);
+  const BLACK = paint(0x0d0e10);
   const shell = sideProfile(
     [
       [2.3, 0.6],
@@ -199,7 +200,7 @@ function buildThief(root: THREE.Group, body: THREE.Group) {
     -1.42,
     1.45,
   );
-  body.add(mesh(extrudeProfile(shell, W), BLACK, 'shell'));
+  body.add(mesh(extrudeProfile(shell, W), RED, 'shell'));
 
   const gh = new THREE.Shape();
   gh.moveTo(-1.6, 0.85);
@@ -208,9 +209,9 @@ function buildThief(root: THREE.Group, body: THREE.Group) {
   gh.lineTo(0.78, 0.85);
   gh.lineTo(-1.6, 0.85);
   body.add(mesh(extrudeProfile(gh, 1.5, 0.06), GLASS, 'greenhouse'));
-  body.add(mesh(rb(1.4, 0.06, 0.95, 0.03, 0, 1.335, 0.42), BLACK, 'roof'));
+  body.add(mesh(rb(1.4, 0.06, 0.95, 0.03, 0, 1.335, 0.42), RED, 'roof'));
 
-  const stripe = paint(0x6b7079);
+  const stripe = BLACK; // faixas de corrida pretas sobre o vermelho
   body.add(
     mesh(mergeGeometries([rb(0.46, 0.02, 1.4, 0.01, 0, 0.885, -1.45), rb(0.46, 0.02, 0.9, 0.01, 0, 1.37, 0.42)])!, stripe, 'stripe'),
   );

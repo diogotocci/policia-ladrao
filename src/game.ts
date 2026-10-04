@@ -5,6 +5,7 @@ import { createKeyboardInput } from './input/keyboard';
 import { createTouchButtons } from './input/touchButtons';
 import { createChaseCamera } from './render/cameras';
 import { createCombatFx } from './render/combatFx';
+import { createOpponentMarker } from './render/opponentMarker';
 import { createCarModel, updateCarModel } from './render/carFactory';
 import { createQualityGovernor, createRenderer, type QualityTier } from './render/renderer';
 import { createLighting } from './render/scene';
@@ -55,6 +56,7 @@ export function startGame(
   withReflections(opponentModel);
   scene.add(model, opponentModel);
   const fx = createCombatFx(scene);
+  const marker = createOpponentMarker(scene, opponentRole);
   const chase = createChaseCamera();
 
   let world: WorldState = createWorld({ seed: opts.seed, playerRole: opts.role, debugHp: opts.debugHp });
@@ -120,6 +122,7 @@ export function startGame(
     updateCarModel(model, car, world.time, origin);
     const foe = portrait ? world.opponent : lerpCar(prev.opponent, world.opponent, alpha);
     updateCarModel(opponentModel, foe, world.time, origin);
+    marker.update(foe, Math.abs(foe.s - car.s), origin);
     fx.update(world, frameEvents, origin, elapsed);
     onEvents(frameEvents);
     frameEvents = [];

@@ -36,6 +36,23 @@ describe('createCarModel', () => {
   });
 });
 
+describe('thief visibility', () => {
+  it('the muscle car shell is a saturated red (readable against dark asphalt)', () => {
+    const shell = createCarModel('thief').getObjectByName('shell') as THREE.Mesh;
+    const hsl = (shell.material as THREE.MeshStandardMaterial).color.getHSL({ h: 0, s: 0, l: 0 });
+    expect(hsl.h < 0.03 || hsl.h > 0.97).toBe(true);
+    expect(hsl.s).toBeGreaterThan(0.6);
+    expect(hsl.l).toBeGreaterThan(0.2);
+  });
+
+  it('taillights are large and bright', () => {
+    const tail = createCarModel('thief').getObjectByName('taillights') as THREE.Mesh;
+    expect((tail.material as THREE.MeshStandardMaterial).emissiveIntensity).toBeGreaterThanOrEqual(1.5);
+    const size = new THREE.Box3().setFromObject(tail).getSize(new THREE.Vector3());
+    expect(size.y).toBeGreaterThanOrEqual(0.2);
+  });
+});
+
 describe('car model rendering details', () => {
   const meshes = (m: THREE.Object3D) => {
     const out: THREE.Mesh[] = [];
