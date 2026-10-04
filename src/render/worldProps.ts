@@ -1,5 +1,6 @@
 // Objetos do mundo com pools fixos: tráfego, caixinhas, bombas, quebra-molas e placas de aviso.
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { BALANCE } from '../config/balance';
 import { bumpXRange, bumpsBetween } from '../sim/track';
 import type { WorldState } from '../sim/types';
@@ -25,6 +26,30 @@ function stripeTexture(): THREE.DataTexture {
   t.wrapS = THREE.RepeatWrapping;
   t.magFilter = THREE.NearestFilter;
   t.colorSpace = THREE.SRGBColorSpace;
+  t.needsUpdate = true;
+  return t;
+}
+
+/** Placa de aviso: losango amarelo de borda preta com o desenho de uma lombada (fora do losango é transparente). */
+function bumpSignTexture(): THREE.DataTexture {
+  const N = 64;
+  const data = new Uint8Array(N * N * 4);
+  for (let py = 0; py < N; py++)
+    for (let px = 0; px < N; px++) {
+      const x = ((px + 0.5) / N) * 2 - 1;
+      const y = ((py + 0.5) / N) * 2 - 1; // y para cima (DataTexture começa embaixo)
+      const r = Math.abs(x) + Math.abs(y);
+      let c: [number, number, number, number] = [0, 0, 0, 0];
+      if (r <= 1) {
+        const hump = y >= -0.32 && (x / 0.42) ** 2 + ((y + 0.32) / 0.26) ** 2 <= 1;
+        const base = Math.abs(y + 0.36) < 0.05 && Math.abs(x) < 0.55;
+        c = r > 0.86 || hump || base ? [20, 20, 22, 255] : [246, 196, 40, 255];
+      }
+      data.set(c, (py * N + px) * 4);
+    }
+  const t = new THREE.DataTexture(data, N, N);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.magFilter = THREE.LinearFilter;
   t.needsUpdate = true;
   return t;
 }
@@ -56,24 +81,28 @@ export function createWorldProps(
   }
   const trafficCar = createCar('police', 1); // estado temporário só para posicionar o modelo
 
-  // caixinhas: cubo de vidro com núcleo brilhante
-  const boxGeo = new THREE.BoxGeometry(1, 1, 1);
-  const coreGeo = new THREE.BoxGeometry(0.55, 0.55, 0.55);
-  const boxColors = { blue: new THREE.Color(0x3d7bff), red: new THREE.Color(0xff3b3b) };
+  // caixinhas: casca colorida e translúcida com núcleo branco brilhante.
+  // Polícia = cubo azul; ladrão = losango (octaedro) vermelho — forma e cor diferentes, dá para distinguir de longe.
+  const shapes: Record<'blue' | 'red', { shell: THREE.BufferGeometry; core: THREE.BufferGeometry }> = {
+    blue: { shell: new THREE.BoxGeometry(1.05, 1.05, 1.05), core: new THREE.BoxGeometry(0.5, 0.5, 0.5) },
+    red: { shell: new THREE.OctahedronGeometry(0.8), core: new THREE.OctahedronGeometry(0.38) },
+  };
+  const boxColors = { blue: new THREE.Color(0x2f6bff), red: new THREE.Color(0xff2a2a) };
   const boxes = Array.from({ length: BOXES }, (_, i) => {
     const g = new THREE.Group();
     g.name = `box-${i}`;
     const shell = new THREE.Mesh(
-      boxGeo,
-      new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.35, roughness: 0.1, clearcoat: 1 }),
+      shapes.blue.shell,
+      new THREE.MeshPhysicalMaterial({ color: 0x2f6bff, emissive: 0x2f6bff, emissiveIntensity: 0.45, transparent: true, opacity: 0.7, roughness: 0.15, clearcoat: 1 }),
     );
-    const core = new THREE.Mesh(coreGeo, new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1.6 }));
+    shell.name = 'shell';
+    const core = new THREE.Mesh(shapes.blue.core, new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 2 }));
     core.name = 'core';
     shell.castShadow = true;
     g.add(shell, core);
     g.visible = false;
     scene.add(g);
-    return { g, core };
+    return { g, shell, core };
   });
 
   // bombas: esfera escura, pavio e luz piscando
@@ -94,13 +123,17 @@ export function createWorldProps(
     return { g, light };
   });
 
-  // quebra-molas (2 faixas = 6 m) e placa de aviso na calçada 40 m antes
+  // quebra-molas (2 faixas = 6 m), placa grande na beira da pista 75 m antes e faixas amarelas pintadas nas 2 faixas
+  const SIGN_BEFORE = 75;
+  const PAINT_BEFORE = 22; // centro das 3 faixas pintadas (16, 22 e 28 m antes)
   const bumpGeo = new THREE.BoxGeometry(6, 0.14, 0.8);
   const bumpMat = new THREE.MeshStandardMaterial({ map: stripeTexture(), roughness: 0.7 });
   bumpMat.map!.repeat.set(3, 1);
-  const signGeo = new THREE.CylinderGeometry(0.05, 0.05, 2.2, 6).translate(0, 1.1, 0);
-  const signPlateGeo = new THREE.BoxGeometry(0.6, 0.6, 0.04).rotateZ(Math.PI / 4).translate(0, 2.2, 0);
-  const signMat = new THREE.MeshStandardMaterial({ color: 0xf2c230, roughness: 0.5 });
+  const signGeo = new THREE.CylinderGeometry(0.06, 0.06, 2.6, 6).translate(0, 1.3, 0);
+  const signPlateGeo = new THREE.PlaneGeometry(1.5, 1.5).translate(0, 3, 0);
+  const signMat = new THREE.MeshStandardMaterial({ map: bumpSignTexture(), alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.5, emissive: 0x3a2a00 });
+  const paintGeo = mergeGeometries([-6, 0, 6].map((dz) => new THREE.PlaneGeometry(6, 0.6).rotateX(-Math.PI / 2).translate(0, 0, dz)))!;
+  const paintMat = new THREE.MeshStandardMaterial({ color: 0xf2c230, roughness: 0.8, polygonOffset: true, polygonOffsetFactor: -2 });
   const poleMat = new THREE.MeshStandardMaterial({ color: 0x55585e, metalness: 0.6, roughness: 0.4 });
   const bumps = Array.from({ length: BUMPS }, (_, i) => {
     const m = new THREE.Mesh(bumpGeo, bumpMat);
@@ -111,8 +144,12 @@ export function createWorldProps(
     sign.name = `sign-${i}`;
     sign.add(new THREE.Mesh(signGeo, poleMat), new THREE.Mesh(signPlateGeo, signMat));
     sign.visible = false;
-    scene.add(m, sign);
-    return { m, sign };
+    const paint = new THREE.Mesh(paintGeo, paintMat);
+    paint.name = `bump-paint-${i}`;
+    paint.receiveShadow = true;
+    paint.visible = false;
+    scene.add(m, sign, paint);
+    return { m, sign, paint };
   });
 
   return {
@@ -128,13 +165,15 @@ export function createWorldProps(
         updateCarModel(g, { ...trafficCar, s: t.s, x: t.x, steer: Math.sign(t.targetX - t.x) as -1 | 0 | 1 }, time, originS);
       }
 
-      boxes.forEach(({ g, core }, i) => {
+      boxes.forEach(({ g, shell, core }, i) => {
         const b = w.boxes[i];
         g.visible = !!b;
         if (!b) return;
-        g.position.set(b.x, 0.9 + Math.sin(time * 3 + i) * 0.15, z(b.s));
+        g.position.set(b.x, 1 + Math.sin(time * 3 + i) * 0.15, z(b.s));
         g.rotation.y = time * 1.5;
-        const mat = core.material as THREE.MeshStandardMaterial;
+        shell.geometry = shapes[b.color].shell;
+        core.geometry = shapes[b.color].core;
+        const mat = shell.material as THREE.MeshPhysicalMaterial;
         mat.color.copy(boxColors[b.color]);
         mat.emissive.copy(boxColors[b.color]);
       });
@@ -148,15 +187,18 @@ export function createWorldProps(
       });
 
       const near = bumpsBetween(w.seed, originS - 60, originS + 260);
-      bumps.forEach(({ m, sign }, i) => {
+      bumps.forEach(({ m, sign, paint }, i) => {
         const b = near[i];
         m.visible = !!b;
         sign.visible = !!b;
+        paint.visible = !!b;
         if (!b) return;
         const [a, zMax] = bumpXRange(b);
-        m.position.set((a + zMax) / 2, 0.07, z(b.s));
-        const side = (a + zMax) / 2 < 0 ? -1 : 1;
-        sign.position.set(side * (BALANCE.road.halfWidth + 1.2), 0, z(b.s - 40));
+        const cx = (a + zMax) / 2;
+        m.position.set(cx, 0.07, z(b.s));
+        paint.position.set(cx, 0.012, z(b.s - PAINT_BEFORE));
+        const side = cx < 0 ? -1 : 1;
+        sign.position.set(side * (BALANCE.road.halfWidth + 0.5), 0, z(b.s - SIGN_BEFORE));
       });
     },
   };

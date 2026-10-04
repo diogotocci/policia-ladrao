@@ -25,10 +25,10 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 
 - Rua reta (curvas suaves na entrega 6) com **4 faixas no mesmo sentido**, calçada com meio-fio e postes dos dois lados e prédios passando. A pista é gerada em blocos e reciclada (infinita).
 - Coordenadas da simulação: `s` = metros ao longo da pista, `x` = posição lateral contínua (faixas centradas em −4,5 / −1,5 / +1,5 / +4,5 m; bordas em ±6 m).
-- **Aceleração automática** até a velocidade de cruzeiro. Valores iniciais: polícia 33 m/s; ladrão 34 m/s (o ladrão naturalmente se afasta e a compensação da polícia equilibra).
+- **Aceleração automática** até a velocidade de cruzeiro. Valores iniciais: polícia e ladrão 34 m/s (*revisado em 2026-10-04: antes 33 × 34, a polícia ficava parada a ~65 m e nunca encostava*). Com a compensação a partir de 20 m, a polícia chega rápido a ~20 m e só encosta/bate quando o ladrão erra (tráfego, quebra-molas, freio).
 - **◀ ▶** movem lateralmente (direção contínua, não troca de faixa por salto). **Freio** reduz a velocidade; soltar volta a acelerar.
 - **Tráfego**: 2–4 carros visíveis no nível 1, a 50–70% do cruzeiro, trocando de faixa ocasionalmente.
-- **Quebra-molas** (*revisado em 2026-10-03*): a cada 400 m ± 80 m, cobrindo **2 faixas vizinhas** sorteadas (as outras 2 ficam livres, dá para desviar). Quem passa por cima salta por 0,6 s e **perde 25% da velocidade**; no ar não acelera (a direção continua funcionando). Depois de aterrissar, recupera com a aceleração normal (~1 s). Vale para polícia e ladrão. No ar o carro **não pega caixinhas nem ativa bombas**. Colisões com carros continuam valendo.
+- **Quebra-molas** (*revisado em 2026-10-03*): a cada 400 m ± 80 m, cobrindo **2 faixas vizinhas** sorteadas (as outras 2 ficam livres, dá para desviar). Quem passa por cima salta por 0,6 s e **perde 25% da velocidade**; no ar não acelera (a direção continua funcionando). Depois de aterrissar, recupera com a aceleração normal (~1 s). Vale para polícia e ladrão. No ar o carro **não pega caixinhas nem ativa bombas**. Colisões com carros continuam valendo. Aviso: placa amarela grande (losango com o desenho da lombada) na beira da pista 75 m antes e 3 faixas amarelas pintadas nas 2 faixas cobertas, de 16 a 28 m antes (*revisado em 2026-10-04: a placa pequena a 40 m passava despercebida*).
 
 ## 4. Combate
 
@@ -44,11 +44,11 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 | Evento | Ladrão | Polícia |
 |---|---|---|
 | Tiro da polícia | −1 × potência × fator de distância × armadura | — |
-| Tiro do ladrão (com arma) | — | −1 × fator de distância |
+| Tiro do ladrão (com arma) | — | −1,5 × fator de distância (*teste de balanço A, 2026-10-04*) |
 | Colisão polícia × ladrão (qualquer um iniciando) | −5 × armadura (−8 com aríete) | −3 (−1 com aríete) |
 | Colisão com cenário (meio-fio/poste) ou tráfego | −5 | −5 |
 | Pegar caixinha da outra cor | −2 | −2 |
-| Passar sobre bomba (no chão) | — | −10 |
+| Passar sobre bomba (no chão) | — | −15 (*teste de balanço C, 2026-10-04*) |
 
 - Cada par (carro, fonte de colisão) tem **1 s de imunidade** após o impacto. Toda colisão reduz a velocidade em 30% e empurra o carro para longe do obstáculo.
 - **Armadura** (titânio) = 1 − 0,15 × placas (até 3 placas = 0,55). Vale para tiro da polícia e colisão com a polícia. **Não** vale para cenário, tráfego ou caixinha.
@@ -56,7 +56,7 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 ### 4.3 Distância e compensação
 - `d` = distância em `s` entre os dois carros.
 - **Fator de distância do tiro**: 1,0 até 40 m; cai linearmente até 0 em 150 m. Com Helicóptero ativo, o tiro da polícia ignora esse fator (vale 1,0 até 150 m).
-- **Turbo de compensação**: quando `d > 60 m`, a polícia ganha velocidade extra que cresce linearmente até +35% em `d = 150 m`. Desliga quando `d ≤ 60 m`.
+- **Turbo de compensação**: quando `d > 20 m`, a polícia ganha velocidade extra que cresce linearmente até +35% em `d = 150 m`. Desliga quando `d ≤ 20 m` (*revisado em 2026-10-04: antes 60 m*).
 - **A polícia nunca ultrapassa o ladrão.** Vale para a IA e para o jogador de polícia. A dianteira da viatura nunca passa da dianteira do ladrão (`s_polícia ≤ s_ladrão`). Ao encostar, a velocidade da polícia fica limitada à do ladrão:
   - **mesma faixa** (sobreposição lateral): a polícia fica **atrás**, a 1 comprimento de carro no mínimo. A batida traseira ainda acontece se ela chegar com velocidade maior;
   - **faixa diferente**: a polícia fica **ao lado** (no máximo emparelhada);
@@ -67,6 +67,7 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 ## 5. Caixinhas e itens
 
 - Aparecem a cada 300 m ± 60 m, numa faixa aleatória, nunca sobre um quebra-molas. **No máximo 2 visíveis ao mesmo tempo.**
+- Visual: **polícia = cubo azul**, **ladrão = losango vermelho**; casca colorida translúcida com núcleo branco brilhante (*revisado em 2026-10-04: só o núcleo era colorido e as duas se confundiam*).
 - Cor sorteada com 50/50 por padrão. A cor tende para o lado com menos vida (até 65/35) para ajudar quem está perdendo.
 - Pegar a da **própria** cor aplica um item sorteado do grupo. Pegar a da **outra** cor causa −2 e consome a caixinha. A IA busca as da sua cor e desvia das outras (melhor em níveis altos).
 
@@ -89,9 +90,9 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
 | Placa de titânio | +1 placa (para-choque → lateral E → lateral D; máximo 3) | permanente, visível no carro |
 | Bomba | +1 no estoque (máximo 3) | estoque |
 | Vida | +3 | instantâneo |
-| Arma traseira | 1ª: libera a arma (1 de dano a cada 1,2 s). Seguintes: intervalo −0,15 s (mínimo 0,6 s) | permanente |
+| Arma traseira | 1ª: libera a arma (1,5 de dano a cada 1,2 s). Seguintes: intervalo −0,15 s (mínimo 0,6 s) | permanente |
 
-- **Bomba**: botão 💣 (só aparece com estoque > 0) solta a bomba no chão, atrás do ladrão. Ela fica 20 s na pista. Dá −10 na polícia se ela passar por cima sem estar no ar. Tráfego passa por cima sem efeito.
+- **Bomba**: botão 💣 (só aparece com estoque > 0) solta a bomba no chão, atrás do ladrão. Ela fica 20 s na pista. Dá −15 na polícia se ela passar por cima sem estar no ar. Tráfego passa por cima sem efeito.
 
 ## 6. Controles e HUD
 
@@ -100,7 +101,7 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
 - PC: ←/→ ou A/D, ↓/S freio, Espaço atira, B bomba, Esc pausa.
 - HUD: barras de vida dos dois, cronômetro, distância colorida, ícones dos upgrades ativos/permanentes (com timer nos temporários), nível de dificuldade discreto, botão de pausa.
 - **Marcador do adversário**: seta de tamanho fixo na cor do outro lado (vermelha = ladrão, azul = polícia) flutuando sobre o carro dele, desenhada por cima de tudo e sem neblina; aparece quando ele está a mais de 15 m.
-- **Retrovisor**: segunda câmera no topo central, ativa sempre que o adversário está atrás do jogador.
+- **Retrovisor**: segunda câmera, imagem espelhada, pequena (22% da largura) no canto superior direito, ativa sempre que o adversário está atrás do jogador (*revisado em 2026-10-04: no topo central e maior, cobria tráfego, caixinhas e quebra-molas*).
 - Retrato: overlay "gire o aparelho" e pausa automática. Perder o foco da aba também pausa.
 
 ## 7. Telas
@@ -167,7 +168,7 @@ src/
 1. **Fundação**: projeto, render low-poly estilizado com qualidade automática, rua reta infinita com prédios, carro do jogador com ◀ ▶/freio/aceleração automática, controles touch e teclado.
 2. **Combate**: IA adversária, tiros com mira automática, colisões, vida, distância/turbo, fim de partida.
 3. **Mundo**: quebra-molas com pulo, tráfego, caixinhas e todos os itens, bomba, escalada de dificuldade.
-4. **Visual e áudio**: dano progressivo, giroscópio, fumaça, efeitos, retrovisor, sons e música.
+4. **Visual e áudio**: dano progressivo, giroscópio, fumaça, efeitos, sons e música; atirador visível (policial/ladrão na janela do carona apontando a arma e atirando).
 5. **Meta**: telas, ranking com iniciais, pausa, aviso de retrato, PWA e deploy na Vercel.
 6. **Curvas suaves** (pós-v1).
 

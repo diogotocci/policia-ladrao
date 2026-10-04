@@ -6,7 +6,12 @@ describe('BALANCE', () => {
     expect(BALANCE.road.laneCenters).toEqual([-4.5, -1.5, 1.5, 4.5]);
   });
 
-  it('makes the thief cruise faster than the police', () => {
-    expect(BALANCE.movement.cruise.thief).toBeGreaterThan(BALANCE.movement.cruise.police);
+  it('police and thief cruise at the same speed (police only closes in on thief mistakes)', () => {
+    expect(BALANCE.movement.cruise.thief).toBe(BALANCE.movement.cruise.police);
+  });
+
+  it('balance test A + C: thief gun 1.5 per hit, bomb 15', () => {
+    expect(BALANCE.combat.thiefDamage).toBe(1.5);
+    expect(BALANCE.items.bomb.damage).toBe(15);
   });
 });

@@ -46,6 +46,34 @@ describe('createWorldProps', () => {
     expect(visibleNamed(scene, 'bomb-')).toBe(1);
   });
 
+  it('blue and red boxes differ in shape and in shell colour, not only in the core', () => {
+    const { scene, props } = setup();
+    props.update(world({ boxes: [{ id: 1, s: 80, x: 1.5, color: 'blue' }, { id: 2, s: 120, x: -1.5, color: 'red' }] }), 0, 0);
+    const shellOf = (name: string) => (scene.getObjectByName(name)!.getObjectByName('shell') as THREE.Mesh);
+    const [blue, red] = [shellOf('box-0'), shellOf('box-1')];
+    expect(blue.geometry.type).not.toBe(red.geometry.type);
+    const hue = (m: THREE.Mesh) => (m.material as THREE.MeshStandardMaterial).color.getHSL({ h: 0, s: 0, l: 0 });
+    expect(hue(blue).s).toBeGreaterThan(0.5);
+    expect(hue(red).s).toBeGreaterThan(0.5);
+    expect(Math.abs(hue(blue).h - hue(red).h)).toBeGreaterThan(0.3);
+  });
+
+  it('warns about each bump: a big sign at least 70 m before and paint on its 2 lanes', () => {
+    const { scene, props } = setup();
+    const w = world({});
+    props.update(w, 0, 0);
+    const first = bumpsBetween(w.seed, 0, 300)[0]!;
+    const sign = scene.children.find((o) => o.name.startsWith('sign-') && o.visible)!;
+    expect(-sign.position.z).toBeLessThanOrEqual(first.s - 70);
+    const size = new THREE.Box3().setFromObject(sign).getSize(new THREE.Vector3());
+    expect(size.x).toBeGreaterThanOrEqual(1.2);
+    expect(size.y).toBeGreaterThanOrEqual(3);
+    const paint = scene.children.find((o) => o.name.startsWith('bump-paint-') && o.visible)!;
+    expect(paint).toBeDefined();
+    expect(-paint.position.z).toBeLessThan(first.s);
+    expect(-paint.position.z).toBeGreaterThan(first.s - 45);
+  });
+
   it('places speed bumps over their 2 lanes at the right s', () => {
     const { scene, props } = setup();
     const w = world({});

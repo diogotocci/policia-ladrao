@@ -4,12 +4,12 @@ import { createRearview, isBehind, rearviewRect } from '../../src/render/rearvie
 import { createCar } from '../../src/sim/car';
 
 describe('rearviewRect', () => {
-  it('is 28% of the width, 3:1, centred at the top below the HUD', () => {
+  it('is small (22% of the width, 3:1) in the top-right corner, out of the road view', () => {
     const r = rearviewRect(844, 390);
-    expect(r.w).toBeCloseTo(236, 0);
-    expect(r.h).toBeCloseTo(79, 0);
-    expect(r.x + r.w / 2).toBeCloseTo(422, 0);
-    expect(r.y).toBeGreaterThanOrEqual(64);
+    expect(r.w).toBeCloseTo(186, 0);
+    expect(r.h).toBeCloseTo(62, 0);
+    expect(r.x + r.w).toBe(844 - 14);
+    expect(r.y).toBe(10);
   });
 });
 

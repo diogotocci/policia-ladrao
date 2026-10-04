@@ -31,7 +31,7 @@ describe('bumpsBetween', () => {
 /** carro em cruzeiro andando por cima (ou não) do primeiro quebra-molas */
 function drive(xOffset: (b: ReturnType<typeof bumpsBetween>[number]) => number) {
   const bump = bumpsBetween(SEED, 0, 2000)[0]!;
-  let car: CarState = { ...createCar('police', 1, bump.s - 40), speed: 33, x: xOffset(bump) };
+  let car: CarState = { ...createCar('police', 1, bump.s - 40), speed: PC, x: xOffset(bump) };
   const trace: CarState[] = [];
   for (let i = 0; i < 240; i++) {
     const prevS = car.s;
@@ -47,13 +47,15 @@ const freeLaneX = (b: ReturnType<typeof bumpsBetween>[number]) => {
   return BALANCE.road.laneCenters[free]!;
 };
 
+const PC = BALANCE.movement.cruise.police;
+
 describe('stepJump', () => {
   it('driving over it: jumps 0.6 s and loses 25% speed at once', () => {
     const { bump, trace } = drive(coveredCentre);
     const i = trace.findIndex((c) => c.airTime > 0);
     expect(i).toBeGreaterThan(0);
     expect(trace[i - 1]!.s).toBeLessThan(bump.s);
-    expect(trace[i]!.speed).toBeCloseTo(33 * 0.75, 1);
+    expect(trace[i]!.speed).toBeCloseTo(PC * 0.75, 1);
     const air = trace.filter((c) => c.airTime > 0).length;
     expect(air).toBeGreaterThanOrEqual(35);
     expect(air).toBeLessThanOrEqual(37);
@@ -62,9 +64,9 @@ describe('stepJump', () => {
   it('does not accelerate in the air, then recovers to cruise in about 1 s after landing', () => {
     const { trace } = drive(coveredCentre);
     const air = trace.filter((c) => c.airTime > 0);
-    expect(Math.max(...air.map((c) => c.speed))).toBeCloseTo(33 * 0.75, 1);
+    expect(Math.max(...air.map((c) => c.speed))).toBeCloseTo(PC * 0.75, 1);
     const landed = trace.findIndex((c, k) => k > 0 && c.airTime === 0 && trace[k - 1]!.airTime > 0);
-    const back = trace.findIndex((c, k) => k > landed && c.speed >= 32.99);
+    const back = trace.findIndex((c, k) => k > landed && c.speed >= PC - 0.01);
     expect((back - landed) * DT).toBeGreaterThan(0.8);
     expect((back - landed) * DT).toBeLessThan(1.3);
   });
@@ -72,7 +74,7 @@ describe('stepJump', () => {
   it('a free lane passes without any effect', () => {
     const { trace } = drive(freeLaneX);
     expect(trace.every((c) => c.airTime === 0)).toBe(true);
-    expect(trace.every((c) => c.speed >= 32.99)).toBe(true);
+    expect(trace.every((c) => c.speed >= PC - 0.01)).toBe(true);
   });
 
   it('half the car over the covered lanes counts (edge)', () => {
