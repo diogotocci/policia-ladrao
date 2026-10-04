@@ -1,4 +1,5 @@
-// Tiros com mira automática: nascem mirando a posição prevista do alvo, voam a 300 m/s e podem errar.
+// Tiros com mira automática: miram a posição prevista do alvo (só no avanço, não no desvio lateral) e podem errar.
+// O da polícia voa a 150 m/s: um ladrão ziguezagueando de longe escapa.
 import { BALANCE, type Role } from '../config/balance';
 import type { CarState } from './car';
 import type { Intents } from './intents';
@@ -32,7 +33,8 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
       if (inFireCone(car, target, facing)) {
         // mira com antecipação linear
         const dist = Math.hypot(target.s - car.s, target.x - car.x);
-        const tFly = dist / c.projectileSpeed;
+        const speed = role === 'police' ? c.policeProjectileSpeed : c.projectileSpeed;
+        const tFly = dist / speed;
         const aimS = target.s + target.speed * tFly;
         const aimX = target.x;
         const len = Math.hypot(aimS - car.s, aimX - car.x) || 1;
@@ -48,8 +50,8 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
           from: role,
           s: car.s,
           x: car.x,
-          vs: ((aimS - car.s) / len) * c.projectileSpeed,
-          vx: ((aimX - car.x) / len) * c.projectileSpeed,
+          vs: ((aimS - car.s) / len) * speed,
+          vx: ((aimX - car.x) / len) * speed,
           travelled: 0,
           damage,
           piercing,
