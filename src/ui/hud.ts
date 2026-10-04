@@ -31,7 +31,7 @@ export const ITEM_LABEL: Record<string, string> = {
   power: 'Potência',
   heal: 'Vida +3',
   nitro: 'Nitro',
-  ram: 'Aríete',
+  ram: 'Quebra-mato',
   heli: 'Helicóptero',
   pierce: 'Tiro perfurante',
   plate: 'Titânio',

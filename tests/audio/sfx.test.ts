@@ -25,4 +25,15 @@ describe('sound recipes', () => {
     const tone = (r: readonly { wave: string; freq: number }[]) => Math.min(...r.filter((x) => x.wave !== 'noise').map((x) => x.freq));
     expect(tone(RECIPES.explosion)).toBeLessThan(tone(RECIPES['shot-police']));
   });
+
+  it('police and thief shots sound different (playtest): police is a high, short crack; thief a low, noisy boom', () => {
+    const tone = (r: readonly { wave: string; freq: number }[]) => Math.min(...r.filter((x) => x.wave !== 'noise').map((x) => x.freq));
+    const noise = (r: readonly { wave: string; gain: number }[]) => Math.max(0, ...r.filter((x) => x.wave === 'noise').map((x) => x.gain));
+    const police = RECIPES['shot-police'];
+    const thief = RECIPES['shot-thief'];
+    expect(tone(police)).toBeGreaterThanOrEqual(tone(thief) * 3);
+    expect(noise(thief)).toBeGreaterThan(noise(police) * 1.5);
+    expect(recipeDuration(thief)).toBeGreaterThan(recipeDuration(police) * 1.5);
+    expect(police[0]!.wave).not.toBe(thief[0]!.wave);
+  });
 });
