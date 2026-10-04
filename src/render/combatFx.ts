@@ -13,6 +13,8 @@ const TRACER_Y = 0.9; // altura dos tiros
 export function createCombatFx(scene: THREE.Scene): {
   update(w: WorldState, events: GameEvent[], originS: number, dt: number): void;
   activeSparks(): number;
+  /** algumas faíscas saindo de um carro muito danificado */
+  sparkAt(s: number, x: number): void;
   /** deslocamento de câmera do tremor atual (zero quando parado) */
   shake(): THREE.Vector3;
 } {
@@ -111,6 +113,9 @@ export function createCombatFx(scene: THREE.Scene): {
         const a = SHAKE_AMP * (shakeLeft / SHAKE_TIME);
         shakeVec.set((rand() - 0.5) * 2 * a, (rand() - 0.5) * 2 * a, 0);
       } else shakeVec.set(0, 0, 0);
+    },
+    sparkAt(s, x) {
+      burst(s, x, 4, 4);
     },
     activeSparks() {
       let n = 0;

@@ -53,6 +53,14 @@ describe('createCombatFx', () => {
     expect(fx.activeSparks()).toBe(0);
   });
 
+  it('sparkAt throws a few sparks from a badly damaged car (spec §9: ≤ 20 hp)', () => {
+    const scene = new THREE.Scene();
+    const fx = createCombatFx(scene);
+    fx.sparkAt(50, 1.5);
+    fx.update(withProjectiles(0), [], 0, 1 / 60);
+    expect(fx.activeSparks()).toBeGreaterThanOrEqual(3);
+  });
+
   it('a crash shakes the camera briefly', () => {
     const scene = new THREE.Scene();
     const fx = createCombatFx(scene);
