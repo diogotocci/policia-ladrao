@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createRng } from '../../src/sim/rng';
+import { createRng, createRngFromState } from '../../src/sim/rng';
 
 const take = (seed: number, n: number) => {
   const r = createRng(seed);
@@ -38,5 +38,15 @@ describe('createRng', () => {
       expect(v).toBeGreaterThanOrEqual(-2);
       expect(v).toBeLessThan(5);
     }
+  });
+});
+
+describe('rng state', () => {
+  it('can be saved and resumed (keeps the world snapshot plain data)', () => {
+    const a = createRng(5);
+    a.next();
+    a.next();
+    const b = createRngFromState(a.state());
+    expect([a.next(), a.next()]).toEqual([b.next(), b.next()]);
   });
 });

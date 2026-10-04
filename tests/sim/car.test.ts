@@ -20,6 +20,9 @@ describe('createCar', () => {
     expect(c.speed).toBe(0);
     expect(c.s).toBe(0);
     expect(c.role).toBe('thief');
+    expect(c.hp).toBe(100);
+    expect(c.hasGun).toBe(false);
+    expect(c.fireCooldown).toBe(0);
   });
 });
 
@@ -78,6 +81,20 @@ describe('stepCar', () => {
     const c = atCruise('police');
     const next = stepCar(c, NO_INTENTS, DT);
     expect(next.s - c.s).toBeCloseTo(33 * DT, 10);
+  });
+
+  it('speedBonus raises the cruise target (catch-up turbo)', () => {
+    let c = atCruise('police');
+    for (let i = 0; i < 600; i++) c = stepCar(c, NO_INTENTS, DT, { speedBonus: 0.35 });
+    expect(c.speed).toBeCloseTo(33 * 1.35, 2);
+  });
+
+  it('when the bonus ends, eases back down at 8 m/s² and never below cruise', () => {
+    let c = { ...atCruise('police'), speed: 33 * 1.35 };
+    c = run(c, {}, 1);
+    expect(c.speed).toBeCloseTo(33 * 1.35 - 8, 1);
+    c = run(c, {}, 5);
+    expect(c.speed).toBeCloseTo(33, 5);
   });
 
   it('does not mutate its input', () => {

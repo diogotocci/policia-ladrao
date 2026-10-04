@@ -117,6 +117,7 @@ function addWheels(root: THREE.Object3D, halfTrack: number, axleRear: number, ax
     const geo = mergeGeometries([tireGeo(w), rimGeo(w)], true)!;
     for (const side of [-1, 1]) {
       const wheel = mesh(geo, [RUBBER, CHROME], 'wheel');
+      wheel.castShadow = false; // a sombra de contato já cobre; economiza draw calls no passe de sombra
       wheel.position.set(side * halfTrack, WHEEL_RADIUS, -s);
       root.add(wheel);
     }

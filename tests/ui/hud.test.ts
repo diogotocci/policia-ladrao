@@ -1,0 +1,95 @@
+// @vitest-environment jsdom
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { createHud, distanceBand, formatTime } from '../../src/ui/hud';
+import { createWorld, policeOf, thiefOf, withCar, type WorldState } from '../../src/sim/world';
+
+let root: HTMLElement;
+beforeEach(() => {
+  root = document.createElement('div');
+  document.body.append(root);
+});
+afterEach(() => root.remove());
+
+const ended = (w: WorldState, winner: 'police' | 'thief', policeHp: number, thiefHp: number): WorldState => ({
+  ...withCar(withCar(w, 'police', { ...policeOf(w), hp: policeHp }), 'thief', { ...thiefOf(w), hp: thiefHp }),
+  time: 83.45,
+  match: { over: true, winner, endTime: 83.45 },
+});
+
+describe('formatTime', () => {
+  it('formats mm:ss.d', () => {
+    expect(formatTime(83.45)).toBe('01:23.4');
+    expect(formatTime(0)).toBe('00:00.0');
+    expect(formatTime(600.99)).toBe('10:00.9');
+  });
+});
+
+describe('distanceBand', () => {
+  it('green ≤ 40, yellow ≤ 100, red above', () => {
+    expect(distanceBand(40)).toBe('near');
+    expect(distanceBand(41)).toBe('mid');
+    expect(distanceBand(100)).toBe('mid');
+    expect(distanceBand(101)).toBe('far');
+  });
+});
+
+describe('createHud', () => {
+  it('health bars reflect hp', () => {
+    const hud = createHud(root, 'police');
+    const w = createWorld({ seed: 1, playerRole: 'police' });
+    hud.update(withCar(w, 'thief', { ...thiefOf(w), hp: 37 }));
+    const fill = root.querySelector<HTMLElement>('.hud-bar--thief .hud-bar-fill')!;
+    expect(fill.style.width).toBe('37%');
+    expect(root.querySelector('.hud-bar--thief .hud-bar-value')!.textContent).toBe('37');
+    expect(root.querySelector<HTMLElement>('.hud-bar--police .hud-bar-fill')!.style.width).toBe('100%');
+    hud.dispose();
+  });
+
+  it('shows timer, coloured distance and level', () => {
+    const hud = createHud(root, 'police');
+    const w = { ...createWorld({ seed: 1, playerRole: 'police' }), time: 83.45, level: 3 };
+    hud.update(w);
+    expect(root.querySelector('.hud-time')!.textContent).toBe('01:23.4');
+    const dist = root.querySelector('.hud-distance')!;
+    expect(dist.textContent).toBe('40 m');
+    expect(dist.getAttribute('data-band')).toBe('near');
+    expect(root.querySelector('.hud-level')!.textContent).toBe('Nv 3');
+    hud.dispose();
+  });
+
+  it('end overlay only when the match is over, with the right text per role', () => {
+    const w = createWorld({ seed: 1, playerRole: 'police' });
+    const hud = createHud(root, 'police');
+    hud.update(w);
+    expect(root.querySelector<HTMLElement>('.hud-end')!.hidden).toBe(true);
+    hud.update(ended(w, 'police', 80, 0));
+    const end = root.querySelector<HTMLElement>('.hud-end')!;
+    expect(end.hidden).toBe(false);
+    expect(end.textContent).toContain('Você venceu!');
+    expect(end.textContent).toContain('O ladrão foi detido');
+    expect(end.textContent).toContain('01:23.4');
+    hud.dispose();
+
+    const hud2 = createHud(root, 'thief');
+    hud2.update(ended(createWorld({ seed: 1, playerRole: 'thief' }), 'police', 80, 0));
+    expect(root.querySelector('.hud-end')!.textContent).toContain('Você perdeu');
+    hud2.dispose();
+
+    const hud3 = createHud(root, 'thief');
+    hud3.update(ended(createWorld({ seed: 1, playerRole: 'thief' }), 'thief', 0, 20));
+    expect(root.querySelector('.hud-end')!.textContent).toContain('Você venceu!');
+    expect(root.querySelector('.hud-end')!.textContent).toContain('A viatura foi destruída');
+    hud3.dispose();
+  });
+
+  it('"Jogar de novo" is an accessible button that calls onRestart', () => {
+    let restarted = 0;
+    const hud = createHud(root, 'police', { onRestart: () => restarted++ });
+    hud.update(ended(createWorld({ seed: 1, playerRole: 'police' }), 'police', 80, 0));
+    const btn = root.querySelector<HTMLButtonElement>('.hud-end button')!;
+    expect(btn.textContent).toBe('Jogar de novo');
+    btn.click();
+    expect(restarted).toBe(1);
+    hud.dispose();
+  });
+});

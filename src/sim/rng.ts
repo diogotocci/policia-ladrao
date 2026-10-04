@@ -6,10 +6,21 @@ export interface Rng {
   range(min: number, max: number): number;
   /** inteiro em [min, maxInclusive] */
   int(min: number, maxInclusive: number): number;
+  /** estado interno (número), para guardar no snapshot do mundo */
+  state(): number;
+}
+
+/** Retoma um RNG a partir de `rng.state()`. */
+export function createRngFromState(state: number): Rng {
+  return makeRng(state >>> 0);
 }
 
 export function createRng(seed: number): Rng {
-  let a = seed >>> 0;
+  return makeRng(seed >>> 0);
+}
+
+function makeRng(initial: number): Rng {
+  let a = initial;
   const next = (): number => {
     a = (a + 0x6d2b79f5) >>> 0;
     let t = a;
@@ -21,5 +32,6 @@ export function createRng(seed: number): Rng {
     next,
     range: (min, max) => min + (max - min) * next(),
     int: (min, maxInclusive) => min + Math.floor(next() * (maxInclusive - min + 1)),
+    state: () => a,
   };
 }

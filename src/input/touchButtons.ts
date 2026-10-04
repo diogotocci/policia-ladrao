@@ -41,6 +41,8 @@ export function createTouchButtons(
   read(): Intents;
   dispose(): void;
   setVisible(name: 'fire' | 'bomb', visible: boolean): void;
+  /** pisca o ATIRAR por 0,3 s quando não há alvo no cone */
+  flashNoTarget(): void;
 } {
   const pointers = new Map<IntentName, Set<number>>();
   /** dedos que começaram num botão e ainda não saíram da tela */
@@ -107,6 +109,7 @@ export function createTouchButtons(
     (side === 'left' ? leftPad : rightPad).append(b);
   }
   root.append(container);
+  let noTargetTimer: ReturnType<typeof setTimeout> | undefined;
 
   return {
     read() {
@@ -120,7 +123,15 @@ export function createTouchButtons(
       b.hidden = !visible;
       if (!visible) pointers.get(name)?.clear();
     },
+    flashNoTarget() {
+      const b = buttons.get('fire');
+      if (!b) return;
+      b.classList.add('no-target');
+      clearTimeout(noTargetTimer);
+      noTargetTimer = setTimeout(() => b.classList.remove('no-target'), 300);
+    },
     dispose() {
+      clearTimeout(noTargetTimer);
       document.removeEventListener('pointerup', release);
       document.removeEventListener('pointercancel', release);
       active.clear();
