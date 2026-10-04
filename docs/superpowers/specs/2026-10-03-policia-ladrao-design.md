@@ -28,7 +28,7 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 - **Aceleração automática** até a velocidade de cruzeiro. Valores iniciais: polícia 33 m/s; ladrão 34 m/s (o ladrão naturalmente se afasta e a compensação da polícia equilibra).
 - **◀ ▶** movem lateralmente (direção contínua, não troca de faixa por salto). **Freio** reduz a velocidade; soltar volta a acelerar.
 - **Tráfego**: 2–4 carros visíveis no nível 1, a 50–70% do cruzeiro, trocando de faixa ocasionalmente.
-- **Quebra-molas**: atravessa as 4 faixas, a cada 400 m ± 80 m. Ao passar, o carro salta por 0,6 s, **sem perder velocidade nem direção**. No ar o carro **não pega caixinhas nem ativa bombas**. Colisões com carros continuam valendo.
+- **Quebra-molas** (*revisado em 2026-10-03*): a cada 400 m ± 80 m, cobrindo **2 faixas vizinhas** sorteadas (as outras 2 ficam livres, dá para desviar). Quem passa por cima salta por 0,6 s e **perde 25% da velocidade**; no ar não acelera (a direção continua funcionando). Depois de aterrissar, recupera com a aceleração normal (~1 s). Vale para polícia e ladrão. No ar o carro **não pega caixinhas nem ativa bombas**. Colisões com carros continuam valendo.
 
 ## 4. Combate
 
