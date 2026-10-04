@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createWorld, stepWorld, type WorldState } from '../../src/sim/world';
+import { createWorld, policeOf, stepWorld, thiefOf, type WorldState } from '../../src/sim/world';
 import { NO_INTENTS, type Intents } from '../../src/sim/intents';
 
 const DT = 1 / 60;
@@ -10,13 +10,26 @@ const play = (w: WorldState, script: (i: number) => Partial<Intents>, steps: num
 };
 
 describe('world', () => {
-  it('spawns the player on lane 1 at s = 0 with the chosen role', () => {
-    const w = createWorld({ seed: 1, playerRole: 'thief' });
-    expect(w.player.role).toBe('thief');
-    expect(w.player.x).toBe(-1.5);
-    expect(w.player.s).toBe(0);
-    expect(w.time).toBe(0);
-    expect(w.seed).toBe(1);
+  it('spawns police on lane 1 at s = 0 and thief on lane 2 at s = 40, both with 100 hp', () => {
+    for (const playerRole of ['police', 'thief'] as const) {
+      const w = createWorld({ seed: 1, playerRole });
+      const police = policeOf(w);
+      const thief = thiefOf(w);
+      expect([police.x, police.s, police.hp]).toEqual([-1.5, 0, 100]);
+      expect([thief.x, thief.s, thief.hp]).toEqual([1.5, 40, 100]);
+      expect(w.player.role).toBe(playerRole);
+      expect(w.opponent.role).toBe(playerRole === 'police' ? 'thief' : 'police');
+      expect(w.time).toBe(0);
+      expect(w.level).toBe(1);
+      expect(w.match.over).toBe(false);
+      expect(w.projectiles).toEqual([]);
+    }
+  });
+
+  it('debugHp overrides starting hp', () => {
+    const w = createWorld({ seed: 1, playerRole: 'police', debugHp: { thief: 2 } });
+    expect(thiefOf(w).hp).toBe(2);
+    expect(policeOf(w).hp).toBe(100);
   });
 
   it('advances time by dt', () => {

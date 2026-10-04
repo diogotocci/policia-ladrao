@@ -11,28 +11,44 @@ export interface CarState {
   speed: number;
   steer: -1 | 0 | 1;
   touchingEdge: boolean;
+  hp: number;
+  /** arma: a polícia sempre tem; o ladrão ganha numa caixinha (entrega 3) */
+  hasGun: boolean;
+  /** segundos até poder atirar de novo */
+  fireCooldown: number;
 }
 
 export function createCar(role: Role, laneIndex: 0 | 1 | 2 | 3, s = 0): CarState {
-  return { role, s, x: BALANCE.road.laneCenters[laneIndex], speed: 0, steer: 0, touchingEdge: false };
+  return {
+    role,
+    s,
+    x: BALANCE.road.laneCenters[laneIndex],
+    speed: 0,
+    steer: 0,
+    touchingEdge: false,
+    hp: BALANCE.hp,
+    hasGun: false,
+    fireCooldown: 0,
+  };
 }
 
 const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
 
-export function stepCar(car: CarState, intents: Intents, dt: number): CarState {
+export function stepCar(car: CarState, intents: Intents, dt: number, opts: { speedBonus?: number } = {}): CarState {
   const { accel, brakeDecel, lateralSpeed, cruise } = BALANCE.movement;
-  const target = cruise[car.role];
+  const target = cruise[car.role] * (1 + (opts.speedBonus ?? 0));
 
-  const speed = intents.brake
-    ? Math.max(0, car.speed - brakeDecel * dt)
-    : Math.min(target, car.speed + accel * dt);
+  let speed: number;
+  if (intents.brake) speed = Math.max(0, car.speed - brakeDecel * dt);
+  else if (car.speed < target) speed = Math.min(target, car.speed + accel * dt);
+  else speed = Math.max(target, car.speed - accel * dt); // turbo acabou: desacelera suave
 
   const steer: CarState['steer'] = intents.left === intents.right ? 0 : intents.left ? -1 : 1;
   const rawX = car.x + steer * lateralSpeed * dt;
   const x = Math.min(EDGE, Math.max(-EDGE, rawX));
 
   return {
-    role: car.role,
+    ...car,
     s: car.s + speed * dt,
     x,
     speed,
