@@ -39,7 +39,10 @@ function markerTexture(): THREE.DataTexture {
   return markerTex;
 }
 
-export function createOpponentMarker(scene: THREE.Scene, opponentRole: Role): { update(foe: CarState, distance: number, originS: number): void } {
+export function createOpponentMarker(
+  scene: THREE.Scene,
+  opponentRole: Role,
+): { update(foe: CarState, distance: number, originS: number): void; setVisible(v: boolean): void } {
   const mat = new THREE.SpriteMaterial({
     map: markerTexture(),
     color: COLORS[opponentRole],
@@ -60,6 +63,9 @@ export function createOpponentMarker(scene: THREE.Scene, opponentRole: Role): { 
     update(foe, distance, originS) {
       sprite.visible = distance > SHOW_FROM;
       sprite.position.set(foe.x, HEIGHT, -(foe.s - originS));
+    },
+    setVisible(v) {
+      sprite.visible = v;
     },
   };
 }
