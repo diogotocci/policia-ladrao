@@ -99,13 +99,14 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
 - Ladrão sem arma: ATIRAR fica cinza.
 - PC: ←/→ ou A/D, ↓/S freio, Espaço atira, B bomba, Esc pausa.
 - HUD: barras de vida dos dois, cronômetro, distância colorida, ícones dos upgrades ativos/permanentes (com timer nos temporários), nível de dificuldade discreto, botão de pausa.
+- **Marcador do adversário**: seta de tamanho fixo na cor do outro lado (vermelha = ladrão, azul = polícia) flutuando sobre o carro dele, desenhada por cima de tudo e sem neblina; aparece quando ele está a mais de 15 m.
 - **Retrovisor**: segunda câmera no topo central, ativa sempre que o adversário está atrás do jogador.
 - Retrato: overlay "gire o aparelho" e pausa automática. Perder o foco da aba também pausa.
 
 ## 7. Telas
 
 1. **Título**: Jogar · Ranking · Som on/off.
-2. **Escolha**: dois cards — viatura branca e azul com giroscópio vermelho/azul piscando; muscle car preto — com 3 linhas de regras de cada lado.
+2. **Escolha**: dois cards — viatura branca e azul com giroscópio vermelho/azul piscando; muscle car vermelho — com 3 linhas de regras de cada lado.
 3. **Jogo** (contagem 3-2-1 com sirene).
 4. **Pausa**: continuar, reiniciar, sair.
 5. **Fim**: vitória/derrota, tempo, motivo. Se entrou no top 10, campo de **3 iniciais estilo arcade**.
@@ -125,7 +126,7 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
 - **Rua e prédios**: asfalto granulado com marcas de pneu, calçada em placas, faixas nítidas; fachadas com janelas emolduradas que repetem conforme o tamanho do prédio (não esticam).
 - **Carros gerados em código** (sem arquivos de terceiros), silhueta extrudada de perfil lateral com caixas de roda e cantos chanfrados, pintura com verniz:
   - polícia branca e azul com giroscópio vermelho/azul piscando (luz alternada);
-  - ladrão como muscle car preto;
+  - ladrão como muscle car **vermelho** com faixas pretas e lanternas grandes (*revisado em 2026-10-03: o preto sumia contra o asfalto*);
   - tráfego com 3–4 modelos de cores variadas.
 - **Dano visual** contínuo, em função da vida, e reversível ao curar:
   | Vida | Aparência |
