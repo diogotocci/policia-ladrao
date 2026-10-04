@@ -43,7 +43,9 @@ test('drives on its own to police cruise speed and renders the road', async ({ p
   await waitSim(page, 6);
   const s = await snapshot(page);
   expect(s.player.role).toBe('police');
-  expect(s.player.speed).toBeCloseTo(33, 0);
+  // cruzeiro 34 m/s; pode estar acima com o turbo de compensação (ladrão a mais de 20 m)
+  expect(s.player.speed).toBeGreaterThanOrEqual(33.5);
+  expect(s.player.speed).toBeLessThanOrEqual(34 * 1.35 + 0.5);
   await page.screenshot({ path: `test-results/foundation-${info.project.name}.png` });
 });
 

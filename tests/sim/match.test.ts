@@ -70,8 +70,9 @@ describe('match end', () => {
 });
 
 describe('AI vs AI (player also driven by the AI)', () => {
-  it('with traffic and items the thief fights back (hurts the police in most matches) and matches last', () => {
+  it('with traffic and items the thief fights back: hurts the police in most matches, often brings it to half hp, matches last', () => {
     let hurt = 0;
+    let close = 0;
     let total = 0;
     for (const role of ['police', 'thief'] as Role[]) {
       for (let seed = 1; seed <= 8; seed++) {
@@ -79,11 +80,13 @@ describe('AI vs AI (player also driven by the AI)', () => {
         for (let i = 0; i < 10 * 60 * 60 && !w.match.over; i++) w = stepWorld(w, 'ai', DT);
         expect(w.match.over, `seed ${seed} ${role}`).toBe(true);
         if (policeOf(w).hp < 100) hurt++;
+        if (policeOf(w).hp <= 50) close++;
         total += w.time;
       }
     }
-    expect(hurt).toBeGreaterThanOrEqual(10);
-    expect(total / 16).toBeGreaterThanOrEqual(90);
+    expect(hurt).toBeGreaterThanOrEqual(12);
+    expect(close).toBeGreaterThanOrEqual(4);
+    expect(total / 16).toBeGreaterThanOrEqual(60);
   });
 
   for (const role of ['police', 'thief'] as Role[]) {

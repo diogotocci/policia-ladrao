@@ -12,9 +12,9 @@ describe('distanceFactor', () => {
 });
 
 describe('catchUpBonus', () => {
-  it('is 0 up to 60 m, linear to 0.35 at 150 m, capped', () => {
-    expect(catchUpBonus(60)).toBe(0);
-    expect(catchUpBonus(105)).toBeCloseTo(0.175, 10);
+  it('is 0 up to 20 m, linear to 0.35 at 150 m, capped', () => {
+    expect(catchUpBonus(20)).toBe(0);
+    expect(catchUpBonus(85)).toBeCloseTo(0.175, 10);
     expect(catchUpBonus(150)).toBeCloseTo(0.35, 10);
     expect(catchUpBonus(400)).toBeCloseTo(0.35, 10);
   });

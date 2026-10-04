@@ -13,6 +13,8 @@ const run = (car: CarState, intents: Partial<Intents>, seconds: number): CarStat
 const atCruise = (role: 'police' | 'thief') => run(createCar(role, 1), {}, 10);
 const edge = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
 
+const PC = BALANCE.movement.cruise.police;
+
 describe('createCar', () => {
   it('spawns centred on the lane, stopped', () => {
     const c = createCar('thief', 2);
@@ -34,8 +36,8 @@ describe('stepCar', () => {
       c = stepCar(c, NO_INTENTS, DT);
       max = Math.max(max, c.speed);
     }
-    expect(c.speed).toBeCloseTo(33, 2);
-    expect(max).toBeLessThanOrEqual(33);
+    expect(c.speed).toBeCloseTo(PC, 2);
+    expect(max).toBeLessThanOrEqual(PC);
     expect(atCruise('thief').speed).toBeCloseTo(34, 2);
   });
 
@@ -44,7 +46,7 @@ describe('stepCar', () => {
   });
 
   it('brakes at 20 m/s² and never goes negative', () => {
-    expect(run(atCruise('police'), { brake: true }, 1).speed).toBeCloseTo(13, 1);
+    expect(run(atCruise('police'), { brake: true }, 1).speed).toBeCloseTo(PC - 20, 1);
     expect(run(atCruise('police'), { brake: true }, 5).speed).toBe(0);
   });
 
@@ -80,21 +82,21 @@ describe('stepCar', () => {
   it('advances s by speed * dt', () => {
     const c = atCruise('police');
     const next = stepCar(c, NO_INTENTS, DT);
-    expect(next.s - c.s).toBeCloseTo(33 * DT, 10);
+    expect(next.s - c.s).toBeCloseTo(PC * DT, 10);
   });
 
   it('speedBonus raises the cruise target (catch-up turbo)', () => {
     let c = atCruise('police');
     for (let i = 0; i < 600; i++) c = stepCar(c, NO_INTENTS, DT, { speedBonus: 0.35 });
-    expect(c.speed).toBeCloseTo(33 * 1.35, 2);
+    expect(c.speed).toBeCloseTo(PC * 1.35, 2);
   });
 
   it('when the bonus ends, eases back down at 8 m/s² and never below cruise', () => {
-    let c = { ...atCruise('police'), speed: 33 * 1.35 };
+    let c = { ...atCruise('police'), speed: PC * 1.35 };
     c = run(c, {}, 1);
-    expect(c.speed).toBeCloseTo(33 * 1.35 - 8, 1);
+    expect(c.speed).toBeCloseTo(PC * 1.35 - 8, 1);
     c = run(c, {}, 5);
-    expect(c.speed).toBeCloseTo(33, 5);
+    expect(c.speed).toBeCloseTo(PC, 5);
   });
 
   it('does not mutate its input', () => {

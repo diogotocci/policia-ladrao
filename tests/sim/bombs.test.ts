@@ -1,3 +1,4 @@
+import { BALANCE } from '../../src/config/balance';
 import { describe, expect, it } from 'vitest';
 import { dropBomb, stepBombs } from '../../src/sim/bombs';
 import { NO_INTENTS, type Intents } from '../../src/sim/intents';
@@ -39,15 +40,15 @@ describe('dropBomb', () => {
 describe('stepBombs', () => {
   const withBomb = (w: WorldState, s: number, x: number) => ({ ...w, bombs: [{ id: 1, s, x, expiresAt: w.time + 20 }] });
 
-  it('police driving over it takes 10 once and the bomb explodes', () => {
+  it('police driving over it takes the bomb damage once and the bomb explodes', () => {
     let w = armed();
     const p = policeOf(w);
     w = withBomb(w, p.s, p.x);
     w = stepBombs(w);
-    expect(policeOf(w).hp).toBe(90);
+    expect(policeOf(w).hp).toBe(100 - BALANCE.items.bomb.damage);
     expect(w.bombs).toEqual([]);
     expect(w.events.some((e) => e.type === 'explosion')).toBe(true);
-    expect(policeOf(stepBombs(w)).hp).toBe(90);
+    expect(policeOf(stepBombs(w)).hp).toBe(100 - BALANCE.items.bomb.damage);
   });
 
   it('an airborne police car passes unharmed and the bomb stays', () => {

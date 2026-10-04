@@ -25,7 +25,7 @@ const setup = (thief: Partial<ReturnType<typeof thiefOf>>, police: Partial<Retur
 
 describe('pursuitBonus', () => {
   it('is the catch-up bonus while police is behind, 0 when alongside', () => {
-    expect(pursuitBonus(setup({ s: 105 }, { s: 0 }))).toBeCloseTo(0.175, 10);
+    expect(pursuitBonus(setup({ s: 85 }, { s: 0 }))).toBeCloseTo(0.175, 10);
     expect(pursuitBonus(setup({ s: 50 }, { s: 50 }))).toBe(0);
   });
 });

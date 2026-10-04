@@ -1,3 +1,4 @@
+import { BALANCE } from '../../src/config/balance';
 import { describe, expect, it } from 'vitest';
 import type { Role } from '../../src/config/balance';
 import { NO_INTENTS, type Intents } from '../../src/sim/intents';
@@ -61,7 +62,7 @@ describe('fireWeapons', () => {
     let w = fireWeapons(setup({ s: 120, x: 1.5, hasGun: true, speed: 10 }), both(NO_INTENTS, FIRE), DT);
     expect(w.projectiles).toHaveLength(1);
     w = flyUntilDone(w);
-    expect(policeOf(w).hp).toBeCloseTo(99, 10);
+    expect(policeOf(w).hp).toBeCloseTo(100 - BALANCE.combat.thiefDamage, 10);
   });
 });
 
