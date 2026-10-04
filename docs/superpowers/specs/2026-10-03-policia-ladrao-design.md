@@ -57,6 +57,7 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 - `d` = distância em `s` entre os dois carros.
 - **Fator de distância do tiro**: 1,0 até 40 m; cai linearmente até 0 em 150 m. Com Helicóptero ativo, o tiro da polícia ignora esse fator (vale 1,0 até 150 m).
 - **Turbo de compensação**: quando `d > 20 m`, a polícia ganha velocidade extra que cresce linearmente até +35% em `d = 150 m`. Desliga quando `d ≤ 20 m` (*revisado em 2026-10-04: antes 60 m*).
+- **Batida polícia × ladrão** (*revisado em 2026-10-04, playtest: encostar ficou fácil demais*): só a polícia perde velocidade (−50%; o ladrão mantém a dele) e fica **4 s sem turbo de compensação**. O ladrão abre ~15–20 m e a polícia volta a encostar depois. Batida com cenário e tráfego continua −30% para quem bate.
 - **A polícia nunca ultrapassa o ladrão.** Vale para a IA e para o jogador de polícia. A dianteira da viatura nunca passa da dianteira do ladrão (`s_polícia ≤ s_ladrão`). Ao encostar, a velocidade da polícia fica limitada à do ladrão:
   - **mesma faixa** (sobreposição lateral): a polícia fica **atrás**, a 1 comprimento de carro no mínimo. A batida traseira ainda acontece se ela chegar com velocidade maior;
   - **faixa diferente**: a polícia fica **ao lado** (no máximo emparelhada);
