@@ -76,9 +76,11 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
       const thiefDmg = (ram ? BALANCE.items.police.ramThief : BALANCE.collision.carCarThief) * armorFactor(thief.upgrades.plates);
       const policeDmg = ram ? BALANCE.items.police.ramPolice : BALANCE.collision.carCarPolice;
       if (ram) police = { ...police, upgrades: { ...police.upgrades, ramCharges: police.upgrades.ramCharges - 1 } };
-      thief = slow(hurt(thief, thiefDmg));
-      police = slow(hurt(police, policeDmg));
-      immunity.cars = BALANCE.collision.immunity;
+      const C = BALANCE.collision;
+      thief = { ...hurt(thief, thiefDmg), speed: thief.speed * (1 - C.carCarThiefSpeedLoss) };
+      police = { ...hurt(police, policeDmg), speed: police.speed * (1 - C.carCarPoliceSpeedLoss) };
+      out = { ...out, policeTurboOffUntil: w.time + C.policeTurboOff };
+      immunity.cars = C.immunity;
       const s = (thief.s + police.s) / 2;
       const x = (thief.x + police.x) / 2;
       events.push({ type: 'crash', a: 'police', b: 'thief', s, x });

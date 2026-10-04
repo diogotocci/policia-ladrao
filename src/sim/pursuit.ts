@@ -9,7 +9,8 @@ export function pursuitBonus(w: WorldState): number {
   const police = policeOf(w);
   const d = thiefOf(w).s - police.s;
   const nitro = w.time < police.upgrades.nitroUntil ? BALANCE.items.police.nitroBonus : 0;
-  return (d > 0 ? catchUpBonus(d) : 0) + nitro;
+  const turbo = d > 0 && w.time >= w.policeTurboOffUntil ? catchUpBonus(d) : 0;
+  return turbo + nitro;
 }
 
 /**
