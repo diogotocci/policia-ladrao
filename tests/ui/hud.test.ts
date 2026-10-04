@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createHud, distanceBand, formatTime } from '../../src/ui/hud';
+import { ITEM_LABEL, createHud, distanceBand, formatTime, pickupToast } from '../../src/ui/hud';
 import { createWorld, policeOf, thiefOf, withCar, type WorldState } from '../../src/sim/world';
 
 let root: HTMLElement;
@@ -21,6 +21,14 @@ describe('formatTime', () => {
     expect(formatTime(83.45)).toBe('01:23.4');
     expect(formatTime(0)).toBe('00:00.0');
     expect(formatTime(600.99)).toBe('10:00.9');
+  });
+});
+
+describe('pickupToast', () => {
+  it('own item, wrong colour, and everything already maxed', () => {
+    expect(pickupToast('bomb')).toBe(`+ ${ITEM_LABEL.bomb}`);
+    expect(pickupToast('wrong')).toBe('−2 caixinha errada');
+    expect(pickupToast('none')).toBe('Itens no máximo');
   });
 });
 

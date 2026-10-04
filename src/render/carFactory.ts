@@ -323,6 +323,9 @@ function buildCivilian(root: THREE.Group, body: THREE.Group, spec: CivilianSpec)
 
 const templates = new Map<string, THREE.Group>();
 
+/** peças com geometria própria por carro do jogo (dano visual deforma os vértices) */
+const DEFORMABLE = new Set(['shell', 'taillights', 'bumpers', 'chrome']);
+
 const SHADOW_CASTERS = new Set(['shell', 'greenhouse']);
 
 function template(key: string, build: (root: THREE.Group, body: THREE.Group) => void): THREE.Group {
@@ -353,12 +356,19 @@ export function createTrafficModel(model: number): THREE.Group {
 export function createCarModel(role: Role): THREE.Group {
   const root = template(`car-${role}`, role === 'police' ? buildPolice : buildThief).clone(true);
   root.name = `car-${role}`;
-  // materiais que mudam por carro: luzes do giroscópio e placas (visibilidade é por objeto, ok)
+  // carro do jogo: materiais próprios (giroscópio, sujeira, vidro trincado, farol) e geometria própria nas peças
+  // que amassam/entortam — o outro carro e o template não mudam. O tráfego continua compartilhando tudo.
+  const clones = new Map<THREE.Material, THREE.Material>();
+  const own = (m: THREE.Material) => {
+    let c = clones.get(m);
+    if (!c) clones.set(m, (c = m.clone()));
+    return c;
+  };
   root.traverse((o) => {
-    if (o.name === 'lightbar-red' || o.name === 'lightbar-blue') {
-      const m = o as THREE.Mesh;
-      m.material = (m.material as THREE.Material).clone();
-    }
+    const m = o as THREE.Mesh;
+    if (!m.isMesh || m.name === 'contact-shadow') return;
+    m.material = Array.isArray(m.material) ? m.material.map(own) : own(m.material);
+    if (DEFORMABLE.has(m.name)) m.geometry = m.geometry.clone();
   });
   return root;
 }

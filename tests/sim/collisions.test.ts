@@ -52,13 +52,19 @@ describe('car × car collisions', () => {
     return withCar(withCar(w, 'police', p), 'thief', { ...t, speed: 30 });
   };
 
-  it('rear-end in the same lane: thief −5, police −3, both lose 30%, police ends 1 length behind', () => {
+  it('rear-end in the same lane: thief −5, police −3; only the police loses speed (50%), police ends 1 length behind', () => {
     const w = tick(overlapping(0, L * 0.6));
     expect(thiefOf(w).hp).toBe(95);
     expect(policeOf(w).hp).toBe(97);
-    expect(thiefOf(w).speed).toBeCloseTo(21, 10);
-    expect(policeOf(w).speed).toBeCloseTo(21, 10);
+    expect(thiefOf(w).speed).toBeCloseTo(30, 10);
+    expect(policeOf(w).speed).toBeCloseTo(15, 10);
     expect(thiefOf(w).s - policeOf(w).s).toBeCloseTo(L, 1);
+  });
+
+  it('after hitting the thief, the police loses the catch-up turbo for 4 s', () => {
+    const w0 = overlapping(0, L * 0.6);
+    const w = tick({ ...w0, time: 10 });
+    expect(w.policeTurboOffUntil).toBeCloseTo(14, 10);
   });
 
   it('side-swipe: same damage, pushed apart laterally until they no longer overlap', () => {

@@ -50,6 +50,22 @@ describe('traffic spawning', () => {
     }
   });
 
+  it('never spawns on top of an item box or a bomb (same lane, within 8 m)', () => {
+    const lanes = BALANCE.road.laneCenters;
+    for (let seed = 1; seed <= 100; seed++) {
+      const w0 = { ...createWorld({ seed, playerRole: 'thief' }), level: 10 };
+      const front = Math.max(policeOf(w0).s, thiefOf(w0).s);
+      const boxes = lanes.flatMap((x, i) => [130, 170, 210].map((d, j) => ({ id: i * 3 + j + 1, s: front + d, x, color: 'blue' as const })));
+      const bombs = lanes.map((x, i) => ({ id: i + 1, s: front + 150 + i * 20, x, expiresAt: 99 }));
+      const w = fill({ ...w0, boxes, bombs });
+      for (const t of w.traffic) {
+        for (const o of [...boxes, ...bombs]) {
+          if (Math.abs(o.x - t.x) < 1) expect(Math.abs(o.s - t.s), `seed ${seed}`).toBeGreaterThanOrEqual(8);
+        }
+      }
+    }
+  });
+
   it('cars left far behind are removed and replaced ahead', () => {
     let w = fill(createWorld({ seed: 3, playerRole: 'police' }));
     const ids = w.traffic.map((t) => t.id);
