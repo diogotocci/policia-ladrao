@@ -25,4 +25,6 @@ const debugGive = debug
   : undefined;
 const traffic = debug && params.get('traffic') === '0' ? false : undefined;
 
-if (app) startGame(app, { role, seed, debug, quality, debugHp, debugGive, traffic });
+const mute = params.has('mute');
+
+if (app) startGame(app, { role, seed, debug, quality, debugHp, debugGive, traffic, mute });

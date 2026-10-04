@@ -74,6 +74,13 @@ function playerItems(w: WorldState, role: Role): HudItem[] {
   return out;
 }
 
+/** Aviso curto ao pegar uma caixinha. */
+export function pickupToast(item: string): string {
+  if (item === 'wrong') return '−2 caixinha errada';
+  if (item === 'none') return 'Itens no máximo';
+  return `+ ${ITEM_LABEL[item] ?? item}`;
+}
+
 export function createHud(
   root: HTMLElement,
   playerRole: Role,
