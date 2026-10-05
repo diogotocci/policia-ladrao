@@ -91,14 +91,17 @@ describe('end', () => {
     expect(root.textContent).toContain('Você perdeu');
     const slots = () => [...root.querySelectorAll('.initials-slot')].map((x) => x.textContent);
     expect(slots()).toEqual(['A', 'A', 'A']);
-    (root.querySelector('.initials-up[data-i="0"]') as HTMLButtonElement).click(); // A → B
-    (root.querySelector('.initials-down[data-i="1"]') as HTMLButtonElement).click(); // A → Z
+    // como numa roleta de fliperama: ▼ desce para a próxima letra (A → B), ▲ volta (A → Z)
+    (root.querySelector('.initials-down[data-i="0"]') as HTMLButtonElement).click(); // A → B
+    (root.querySelector('.initials-up[data-i="1"]') as HTMLButtonElement).click(); // A → Z
     expect(slots()).toEqual(['B', 'Z', 'A']);
     const input = root.querySelector('.initials') as HTMLElement;
     // tecla ainda segurada do jogo (auto-repetição) não escreve nas iniciais
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', repeat: true, bubbles: true }));
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', repeat: true, bubbles: true }));
     expect(slots()).toEqual(['B', 'Z', 'A']);
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true })); // B → C
+    expect(slots()).toEqual(['C', 'Z', 'A']);
     for (const k of ['d', 'i', 'o']) input.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true }));
     expect(slots()).toEqual(['D', 'I', 'O']);
     const salvar = button('Salvar');
@@ -107,6 +110,18 @@ describe('end', () => {
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith('DIO');
     expect(root.querySelector('.initials')).toBeNull();
+  });
+
+  it('the reason says how it ended: escape (1:30), police destroyed, thief caught', () => {
+    renderEnd(root, { ...base, role: 'thief', result: { winner: 'thief', time: 90, reason: 'escape' }, qualifies: false, onSave: vi.fn() });
+    expect(root.textContent).toContain('Fugiu!');
+    root.innerHTML = '';
+    renderEnd(root, { ...base, role: 'police', result: { winner: 'thief', time: 90, reason: 'escape' }, qualifies: false, onSave: vi.fn() });
+    expect(root.textContent).toContain('Você perdeu');
+    expect(root.textContent).toContain('fugiu');
+    root.innerHTML = '';
+    renderEnd(root, { ...base, role: 'thief', result: { winner: 'thief', time: 70, reason: 'policeDown' }, qualifies: false, onSave: vi.fn() });
+    expect(root.textContent).toContain('A viatura foi destruída');
   });
 });
 
@@ -123,13 +138,23 @@ describe('ranking', () => {
     expect(rows[0]!.textContent).toContain('00:55.0');
     expect(rows[0]!.textContent).toContain('05/10');
     expect(rows[0]!.classList.contains('is-new')).toBe(true);
-    button('Ladrão — mais resistentes').click();
+    button('Ladrão — mais rápidos a vencer').click();
     expect(onTab).toHaveBeenCalledWith('thief');
     root.innerHTML = '';
     renderRanking(root, { board, tab: 'thief', focusTab: true, onTab, onBack: vi.fn() });
-    expect(document.activeElement).toBe(button('Ladrão — mais resistentes')); // foco fica na aba após trocar
+    expect(document.activeElement).toBe(button('Ladrão — mais rápidos a vencer')); // foco fica na aba após trocar
     root.innerHTML = '';
     renderRanking(root, { board, tab: 'thief', onTab, onBack: vi.fn() });
     expect(root.textContent).toContain('Nenhum recorde ainda');
+  });
+
+  it('thief rows show how the win came (💥 destroyed the police / 🏁 escaped) and the life left', () => {
+    let board = insert(emptyBoard(), 'thief', { initials: 'ESC', time: 90, hp: 42, how: 'escape', date: '2026-10-05' }).board;
+    board = insert(board, 'thief', { initials: 'KIL', time: 71, hp: 8, how: 'kill', date: '2026-10-05' }).board;
+    renderRanking(root, { board, tab: 'thief', onTab: vi.fn(), onBack: vi.fn() });
+    const rows = [...root.querySelectorAll('.ranking-row')].map((r) => r.textContent);
+    expect(rows[0]).toContain('💥');
+    expect(rows[1]).toContain('🏁');
+    expect(rows[1]).toContain('42');
   });
 });

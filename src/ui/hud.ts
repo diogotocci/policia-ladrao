@@ -81,6 +81,9 @@ export function pickupToast(item: string): string {
   return `+ ${ITEM_LABEL[item] ?? item}`;
 }
 
+/** últimos segundos da contagem: amarelo pulsando + bip */
+export const ALERT_LEFT = 10;
+
 export function createHud(
   root: HTMLElement,
   playerRole: Role,
@@ -112,10 +115,14 @@ export function createHud(
   let toastTimer: ReturnType<typeof setTimeout> | undefined;
 
   const center = el('div', 'hud-center');
+  // contagem regressiva até a fuga (1:30): "Fuga em" (ladrão) / "Prenda em" (polícia)
+  const timeBox = el('div', 'hud-time-box');
+  const timeLabel = el('span', 'hud-time-label', playerRole === 'thief' ? 'Fuga em' : 'Prenda em');
   const time = el('div', 'hud-time', '00:00.0');
+  timeBox.append(timeLabel, time);
   const dist = el('div', 'hud-distance', '0 m');
   const level = el('div', 'hud-level', 'Nv 1');
-  center.append(time, dist, level);
+  center.append(timeBox, dist, level);
 
   const end = el('div', 'hud-end');
   end.hidden = true;
@@ -146,7 +153,10 @@ export function createHud(
       const thief = thiefOf(w);
       setBar(policeBar, police.hp);
       setBar(thiefBar, thief.hp);
-      time.textContent = formatTime(w.match.over ? (w.match.endTime ?? w.time) : w.time);
+      const at = w.match.escapeAt ?? (w.match.over ? (w.match.endTime ?? w.time) : w.time);
+      const left = Math.max(0, w.escapeTime - at);
+      time.textContent = formatTime(left);
+      time.classList.toggle('is-alert', left <= ALERT_LEFT && !w.match.over && w.match.escapeAt === undefined);
       const d = Math.abs(thief.s - police.s);
       dist.textContent = `${Math.round(d)} m`;
       dist.dataset.band = distanceBand(d);
@@ -176,7 +186,10 @@ export function createHud(
       if (w.match.over && end.hidden && opts.showEnd !== false) {
         const won = w.match.winner === playerRole;
         endTitle.textContent = won ? 'Você venceu!' : 'Você perdeu';
-        endReason.textContent = w.match.winner === 'police' ? 'O ladrão foi detido' : 'A viatura foi destruída';
+        endReason.textContent =
+          w.match.reason === 'escape'
+            ? playerRole === 'thief' ? 'Fugiu! Sumiu no horizonte 🏁' : 'O ladrão fugiu 🏁'
+            : w.match.winner === 'police' ? 'O ladrão foi detido' : 'A viatura foi destruída';
         endTime.textContent = `Tempo: ${formatTime(w.match.endTime ?? w.time)}`;
         end.dataset.result = won ? 'win' : 'lose';
         end.hidden = false;

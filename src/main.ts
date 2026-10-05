@@ -29,6 +29,8 @@ const debugGive = debug
   : undefined;
 const traffic = debug && params.get('traffic') === '0' ? false : undefined;
 const curves = params.get('curves') === '0' ? false : undefined;
+const escapeParam = Number(params.get('escape'));
+const escapeTime = debug && params.has('escape') && Number.isFinite(escapeParam) && escapeParam > 0 ? escapeParam : undefined;
 
 const mute = params.has('mute');
 
@@ -39,8 +41,8 @@ installFullscreenOnFirstTap(document, window);
 // Parâmetros de teste/depuração (?debug, ?role, ?seed) vão direto para a partida; sem eles (ou com ?app), a app começa no título.
 const direct = !params.has('app') && (debug || params.has('role') || params.has('seed'));
 if (app) {
-  if (direct) startGame(app, { role, seed, debug, quality, debugHp, debugGive, traffic, mute, curves });
-  else startApp(app, { quality, debug, debugHp, traffic, mute, curves }); // ?app força as telas (e2e do produto)
+  if (direct) startGame(app, { role, seed, debug, quality, debugHp, debugGive, traffic, mute, curves, escapeTime });
+  else startApp(app, { quality, debug, debugHp, traffic, mute, curves, escapeTime }); // ?app força as telas (e2e do produto)
 }
 // primeira tela desenhada (2 quadros): some a splash. Em teste/depuração (?debug) sai na hora.
 requestAnimationFrame(() => requestAnimationFrame(() => hideSplash(document, { immediate: debug })));

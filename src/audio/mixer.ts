@@ -39,6 +39,7 @@ export function createMixer(initial: AudioBackend): Mixer {
   let musicGain = -1;
   let rotorAcc = 0;
   let meS = 0;
+  let lastBeep = Infinity; // segundo inteiro restante do último bip da contagem
   const lastSkid = { police: -Infinity, thief: -Infinity };
   const songs = { chase: { song: SONG, seq: createSequencer(SONG) }, menu: { song: MENU_SONG, seq: createSequencer(MENU_SONG) } };
   let current: 'menu' | 'chase' = 'chase';
@@ -85,11 +86,13 @@ export function createMixer(initial: AudioBackend): Mixer {
       const thief = w.playerRole === 'police' ? w.opponent : w.player;
       const over = w.match.over;
       const quiet = over || paused;
+      const escaping = w.match.escapeAt !== undefined; // cena da fuga: sem sirene nem hélice
 
       be.setEngine(55 + 3 * me.speed, quiet ? 0 : me.airTime > 0 ? 0.1 : 0.16);
       let siren = 0;
       if (!quiet) {
-        if (w.playerRole === 'police') siren = 0.05;
+        if (escaping) siren = 0;
+        else if (w.playerRole === 'police') siren = 0.05;
         else {
           const d = Math.abs(police.s - me.s);
           siren = d >= SIREN_RANGE ? 0 : 0.22 * (1 - d / SIREN_RANGE);
@@ -98,12 +101,21 @@ export function createMixer(initial: AudioBackend): Mixer {
       be.setSiren(siren);
       setMusic(over ? 0.3 : 1);
       // hélice: helicóptero ativo e perto (tocando de polícia, ele está sempre em cima)
-      const heliOn = !quiet && w.time < police.upgrades.heliUntil && Math.abs(police.s - me.s) < ROTOR_RANGE;
+      const heliOn = !quiet && !escaping && w.time < police.upgrades.heliUntil && Math.abs(police.s - me.s) < ROTOR_RANGE;
       if (heliOn) {
         rotorAcc += dt;
         for (; rotorAcc >= ROTOR_BEAT; rotorAcc -= ROTOR_BEAT) play('rotor');
       } else rotorAcc = ROTOR_BEAT; // a primeira batida sai logo que ele aparece
 
+      // contagem final da fuga: um bip por segundo nos últimos 10 s
+      const left = w.escapeTime - w.time;
+      if (!quiet && w.match.escapeAt === undefined && left > 0 && left <= 10) {
+        const sec = Math.ceil(left);
+        if (sec < lastBeep) {
+          if (lastBeep !== Infinity || sec === 10) play('beep'); // entrando no meio (ex.: teste) não bipa na hora
+          lastBeep = sec;
+        }
+      } else if (left > 10) lastBeep = Infinity;
       if (paused) return; // pausado: sem música do jogo (a app pode tocar a do menu)
       useSong('chase');
       if (isMuted || !be.running()) {
@@ -136,6 +148,7 @@ export function createMixer(initial: AudioBackend): Mixer {
         else if (e.type === 'crash') play('crash');
         else if (e.type === 'explosion') play('explosion');
         else if (e.type === 'bombDropped') play('bomb-drop');
+        else if (e.type === 'escape') play('escape');
         else if (e.type === 'skid') {
           if (clock - lastSkid[e.role] < SKID_GAP || Math.abs(e.s - meS) > SKID_RANGE) continue;
           lastSkid[e.role] = clock;
@@ -162,6 +175,7 @@ export function createMixer(initial: AudioBackend): Mixer {
       songs.menu.seq.reset();
       nextNoteTime = -1;
       recent = new Map();
+      lastBeep = Infinity;
       lastSkid.police = lastSkid.thief = -Infinity;
       musicGain = -1;
     },

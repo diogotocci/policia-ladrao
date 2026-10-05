@@ -41,6 +41,8 @@ export const RECIPES = {
   'bomb-hit': [v('square', 784, 784, 0.13, 0.1, 0.004, 0.12), v('square', 1046, 1046, 0.13, 0.2, 0.004, 0.22)],
   // hélice do helicóptero: uma batida grave por pá (o mixer repete)
   rotor: [v('noise', 380, 160, 0.13, 0.07, 0.004), v('sine', 70, 55, 0.12, 0.07)],
+  // fuga: nitro subindo e sumindo
+  escape: [v('sawtooth', 120, 900, 0.18, 1.4, 0.05), v('noise', 800, 6000, 0.12, 1.2, 0.1)],
   ui: [v('triangle', 1200, 900, 0.1, 0.05)], // clique de menu
   lose: [v('square', 392, 392, 0.15, 0.2), v('square', 311, 311, 0.15, 0.2, 0.004, 0.2), v('square', 196, 196, 0.15, 0.6, 0.004, 0.4)],
 } satisfies Record<string, Voice[]>;

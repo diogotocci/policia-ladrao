@@ -21,6 +21,11 @@
 .hud-bar-value { text-align: right; font-variant-numeric: tabular-nums; }
 
 .hud-center { position: absolute; top: max(10px, var(--safe-top)); left: 50%; transform: translateX(-50%); display: flex; gap: 10px; align-items: center; padding: 6px 12px; border-radius: 12px; background: var(--hud-glass); border: 1px solid var(--hud-edge); }
+.hud-time-box { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.hud-time-label { font: 600 9px/1 system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.75; }
+.hud-time.is-alert { color: #ffcf4a; animation: pl-alert 0.5s ease-in-out infinite alternate; }
+@keyframes pl-alert { from { transform: scale(1); } to { transform: scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .hud-time.is-alert { animation: none; } }
 .hud-time { font: 700 17px/1 ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
 .hud-distance { font-variant-numeric: tabular-nums; padding: 2px 7px; border-radius: 8px; }
 .hud-distance[data-band='near'] { background: rgba(46, 204, 113, 0.28); color: #b8f5cf; }
