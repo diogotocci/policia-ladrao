@@ -35,6 +35,12 @@ export const RECIPES = {
   win: [v('square', 523, 523, 0.15, 0.14), v('square', 659, 659, 0.15, 0.14, 0.004, 0.14), v('square', 784, 784, 0.15, 0.4, 0.004, 0.28)],
   beep: [v('square', 880, 880, 0.14, 0.12)], // contagem 3-2-1
   go: [v('square', 1320, 1320, 0.16, 0.35), v('square', 660, 660, 0.1, 0.35)], // largada
+  // pneu cantando na curva: chiado agudo que cai um pouco
+  skid: [v('noise', 5200, 3600, 0.16, 0.45, 0.03), v('sawtooth', 820, 700, 0.05, 0.4, 0.03)],
+  // ladrão: a bomba pegou a polícia — explosão grave + fanfarrinha curta de vitória
+  'bomb-hit': [v('square', 784, 784, 0.13, 0.1, 0.004, 0.12), v('square', 1046, 1046, 0.13, 0.2, 0.004, 0.22)],
+  // hélice do helicóptero: uma batida grave por pá (o mixer repete)
+  rotor: [v('noise', 380, 160, 0.13, 0.07, 0.004), v('sine', 70, 55, 0.12, 0.07)],
   ui: [v('triangle', 1200, 900, 0.1, 0.05)], // clique de menu
   lose: [v('square', 392, 392, 0.15, 0.2), v('square', 311, 311, 0.15, 0.2, 0.004, 0.2), v('square', 196, 196, 0.15, 0.6, 0.004, 0.4)],
 } satisfies Record<string, Voice[]>;

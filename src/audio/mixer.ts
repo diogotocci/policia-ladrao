@@ -9,6 +9,10 @@ const SIREN_RANGE = 120; // m
 const BURST_WINDOW = 0.1; // s
 const BURST_MAX = 6;
 const LOOKAHEAD = 0.1; // s
+const ROTOR_BEAT = 0.09; // s entre batidas da hélice
+const ROTOR_RANGE = 120; // m
+const SKID_GAP = 0.6; // s entre chiados do mesmo carro
+const SKID_RANGE = 80; // m
 
 export interface Mixer {
   /** paused: jogo pausado (ex.: celular em retrato) — motor e sirene calam, música não avança */
@@ -21,7 +25,7 @@ export interface Mixer {
   /** telas (título, escolha, ranking): música calma, sem motor nem sirene */
   menu(dt: number): void;
   /** som de interface: bip da contagem, largada, clique */
-  cue(name: 'beep' | 'go' | 'ui'): void;
+  cue(name: 'beep' | 'go' | 'ui' | 'bomb-hit'): void;
   song(): 'menu' | 'chase';
   reset(): void;
 }
@@ -33,6 +37,9 @@ export function createMixer(initial: AudioBackend): Mixer {
   let recent = new Map<SoundName, number[]>(); // por som: rajada do mesmo som não estoura
   let playerRole: 'police' | 'thief' = 'police';
   let musicGain = -1;
+  let rotorAcc = 0;
+  let meS = 0;
+  const lastSkid = { police: -Infinity, thief: -Infinity };
   const songs = { chase: { song: SONG, seq: createSequencer(SONG) }, menu: { song: MENU_SONG, seq: createSequencer(MENU_SONG) } };
   let current: 'menu' | 'chase' = 'chase';
   let nextNoteTime = -1; // no relógio do backend; -1 = recomeçar no próximo quadro
@@ -73,6 +80,7 @@ export function createMixer(initial: AudioBackend): Mixer {
       clock += dt;
       playerRole = w.playerRole;
       const me = w.player;
+      meS = me.s;
       const police = w.playerRole === 'police' ? w.player : w.opponent;
       const thief = w.playerRole === 'police' ? w.opponent : w.player;
       const over = w.match.over;
@@ -89,6 +97,12 @@ export function createMixer(initial: AudioBackend): Mixer {
       }
       be.setSiren(siren);
       setMusic(over ? 0.3 : 1);
+      // hélice: helicóptero ativo e perto (tocando de polícia, ele está sempre em cima)
+      const heliOn = !quiet && w.time < police.upgrades.heliUntil && Math.abs(police.s - me.s) < ROTOR_RANGE;
+      if (heliOn) {
+        rotorAcc += dt;
+        for (; rotorAcc >= ROTOR_BEAT; rotorAcc -= ROTOR_BEAT) play('rotor');
+      } else rotorAcc = ROTOR_BEAT; // a primeira batida sai logo que ele aparece
 
       if (paused) return; // pausado: sem música do jogo (a app pode tocar a do menu)
       useSong('chase');
@@ -122,6 +136,11 @@ export function createMixer(initial: AudioBackend): Mixer {
         else if (e.type === 'crash') play('crash');
         else if (e.type === 'explosion') play('explosion');
         else if (e.type === 'bombDropped') play('bomb-drop');
+        else if (e.type === 'skid') {
+          if (clock - lastSkid[e.role] < SKID_GAP || Math.abs(e.s - meS) > SKID_RANGE) continue;
+          lastSkid[e.role] = clock;
+          play('skid');
+        }
         else if (e.type === 'pickup' && e.role === playerRole) play(e.item === 'wrong' || e.item === 'none' ? 'wrong' : 'pickup');
         else if (e.type === 'end') play(e.winner === playerRole ? 'win' : 'lose');
       }
@@ -143,6 +162,7 @@ export function createMixer(initial: AudioBackend): Mixer {
       songs.menu.seq.reset();
       nextNoteTime = -1;
       recent = new Map();
+      lastSkid.police = lastSkid.thief = -Infinity;
       musicGain = -1;
     },
   };

@@ -2,9 +2,11 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { BALANCE } from '../config/balance';
+import { curvesBetween } from '../sim/curves';
 import { bumpXRange, bumpsBetween } from '../sim/track';
 import type { WorldState } from '../sim/types';
 import { createTrafficModel, updateCarModel } from './carFactory';
+import { trackPos } from './trackFrame';
 import { createCar } from '../sim/car';
 
 const TRAFFIC_SLOTS = 8;
@@ -12,6 +14,8 @@ const MODELS = 4;
 const BOXES = 2;
 const BOMBS = 6; // até 3 no estoque + as que ainda estão na pista (duram 20 s)
 const BUMPS = 4;
+const CURVE_SIGNS = 3;
+const CURVE_SIGN_BEFORE = 90; // m antes da curva fechada
 
 function stripeTexture(): THREE.DataTexture {
   const W = 32;
@@ -48,6 +52,31 @@ function bumpSignTexture(): THREE.DataTexture {
       data.set(c, (py * N + px) * 4);
     }
   const t = new THREE.DataTexture(data, N, N);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.magFilter = THREE.LinearFilter;
+  t.needsUpdate = true;
+  return t;
+}
+
+/** Placa de curva: retângulo amarelo com 3 flechas pretas (›››) apontando para a direita (espelhada para a esquerda). */
+function chevronTexture(): THREE.DataTexture {
+  const W = 96;
+  const H = 48;
+  const data = new Uint8Array(W * H * 4);
+  for (let py = 0; py < H; py++)
+    for (let px = 0; px < W; px++) {
+      const x = (px + 0.5) / W;
+      const y = (py + 0.5) / H - 0.5;
+      const border = x < 0.04 || x > 0.96 || Math.abs(y) > 0.42;
+      // cada flecha: faixa em "›" — distância horizontal até a linha x = c + 0.35·|y|·(-1)
+      let arrow = false;
+      for (const c of [0.27, 0.5, 0.73]) {
+        const d = x - (c - 0.3 * Math.abs(y));
+        if (d > -0.05 && d < 0.05 && Math.abs(y) < 0.34) arrow = true;
+      }
+      data.set(border || arrow ? [20, 20, 22, 255] : [246, 196, 40, 255], (py * W + px) * 4);
+    }
+  const t = new THREE.DataTexture(data, W, H);
   t.colorSpace = THREE.SRGBColorSpace;
   t.magFilter = THREE.LinearFilter;
   t.needsUpdate = true;
@@ -152,9 +181,27 @@ export function createWorldProps(
     return { m, sign, paint };
   });
 
+  // curvas fechadas: placa de flechas 90 m antes, por fora da curva
+  const chevronGeo = new THREE.PlaneGeometry(2.2, 1.1).translate(0, 2.4, 0);
+  const chevronMat = new THREE.MeshStandardMaterial({ map: chevronTexture(), side: THREE.DoubleSide, roughness: 0.5, emissive: 0x3a2a00 });
+  const chevronPoleGeo = mergeGeometries([-0.8, 0.8].map((dx) => new THREE.CylinderGeometry(0.05, 0.05, 1.9, 6).translate(dx, 0.95, 0)))!;
+  const curveSigns = Array.from({ length: CURVE_SIGNS }, (_, i) => {
+    const g = new THREE.Group();
+    g.name = `curve-sign-${i}`;
+    g.add(new THREE.Mesh(chevronPoleGeo, poleMat), new THREE.Mesh(chevronGeo, chevronMat));
+    g.visible = false;
+    scene.add(g);
+    return g;
+  });
+
   return {
     update(w, originS, time, prev, alpha = 1) {
-      const z = (s: number) => -(s - originS);
+      /** posiciona no mundo seguindo a curva e gira com a pista */
+      const put = (o: THREE.Object3D, s: number, x: number, y: number) => {
+        const p = trackPos(s, x, originS);
+        o.position.set(p.x, y, p.z);
+        o.rotation.y = -p.heading;
+      };
       const before = new Map<number, { s: number; x: number }>();
       if (prev && alpha < 1) for (const t of prev.traffic) before.set(t.id, t);
 
@@ -175,7 +222,7 @@ export function createWorldProps(
         const b = w.boxes[i];
         g.visible = !!b;
         if (!b) return;
-        g.position.set(b.x, 1 + Math.sin(time * 3 + i) * 0.15, z(b.s));
+        put(g, b.s, b.x, 1 + Math.sin(time * 3 + i) * 0.15);
         g.rotation.y = time * 1.5;
         shell.geometry = shapes[b.color].shell;
         core.geometry = shapes[b.color].core;
@@ -188,7 +235,7 @@ export function createWorldProps(
         const b = w.bombs[i];
         g.visible = !!b;
         if (!b) return;
-        g.position.set(b.x, 0, z(b.s));
+        put(g, b.s, b.x, 0);
         (light.material as THREE.MeshStandardMaterial).emissiveIntensity = Math.floor(time * 4) % 2 === 0 ? 3 : 0.2;
       });
 
@@ -201,10 +248,19 @@ export function createWorldProps(
         if (!b) return;
         const [a, zMax] = bumpXRange(b);
         const cx = (a + zMax) / 2;
-        m.position.set(cx, 0.07, z(b.s));
-        paint.position.set(cx, 0.012, z(b.s - PAINT_BEFORE));
+        put(m, b.s, cx, 0.07);
+        put(paint, b.s - PAINT_BEFORE, cx, 0.012);
         const side = cx < 0 ? -1 : 1;
-        sign.position.set(side * (BALANCE.road.halfWidth + 0.5), 0, z(b.s - SIGN_BEFORE));
+        put(sign, b.s - SIGN_BEFORE, side * (BALANCE.road.halfWidth + 0.5), 0);
+      });
+
+      const sharp = w.curvesOn ? curvesBetween(w.seed, originS - 60 + CURVE_SIGN_BEFORE, originS + 300 + CURVE_SIGN_BEFORE).filter((c) => c.sharp) : [];
+      curveSigns.forEach((g, i) => {
+        const c = sharp[i];
+        g.visible = !!c;
+        if (!c) return;
+        put(g, c.start - CURVE_SIGN_BEFORE, -c.dir * (BALANCE.road.halfWidth + 0.8), 0);
+        g.scale.x = c.dir; // flechas apontando para o lado da curva
       });
     },
   };
