@@ -16,9 +16,10 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 ## 2. Partida
 
 - Fluxo: Título → Escolha de lado → contagem 3-2-1 → corrida → Fim → (iniciais se top 10) → Ranking.
-- Polícia e ladrão começam com **100 de vida**. Sem limite de tempo. Vida mínima 0, máxima 100.
+- Polícia e ladrão começam com **100 de vida**. Vida mínima 0, máxima 100.
 - **Vitória**: quem chega a 0 perde. Se os dois chegarem a 0 no mesmo passo de simulação, vence o ladrão (ele "sobreviveu" até o fim).
-- **Cronômetro**: começa no fim da contagem e para quando alguém chega a 0. Precisão interna de ms, exibição `mm:ss.d`.
+- **Fuga** (*entrega 7, 2026-10-05*): se o ladrão chega vivo a **1:30**, ele vence. Cena de ~2 s: controles e combate param (sem tiros, bombas, caixinhas, batidas ou dano), o ladrão ganha nitro (até 2× o cruzeiro), a polícia freia e a neblina fecha até ele sumir no horizonte; depois a tela de fim ("Fugiu!"). O tempo registrado é exatamente 1:30. O limite fica em `BALANCE.match.escapeTime` e vai crescer com as fases (backlog). IA × IA: ladrão vence ~30–70%.
+- **Cronômetro**: começa no fim da contagem e conta **para baixo** até a fuga ("Fuga em" para o ladrão, "Prenda em" para a polícia). Nos últimos 10 s fica amarelo pulsando (sem pulsar com "reduzir movimento") com um bip por segundo. Precisão interna de ms, exibição `mm:ss.d`.
 - **Dificuldade crescente**: a cada 30 s o nível sobe 1 (máximo 10). Cada nível melhora a IA adversária (tempo de reação, precisão de desvio, agressividade de batida) e aumenta a densidade de tráfego em ~8%. Aplica-se ao adversário controlado pela IA, seja ele polícia ou ladrão.
 
 ## 3. Pista e movimento
@@ -102,7 +103,7 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
 - Landscape. À esquerda: **◀ ▶**. À direita: **FREIO** e **ATIRAR** (maior, com aro na cor do lado: azul polícia, âmbar ladrão), mais **💣** contextual para o ladrão. Botões redondos só com ícone (rótulo acessível em português), vidro escuro com aro, afundam e acendem ao tocar, área de toque maior que o desenho, dentro das safe areas, multitoque com deslizar entre ◀ e ▶. Vibração curta (10 ms) ao apertar e ao levar dano (se suportado). Respeitam "reduzir movimento".
 - **Aviso de dano** (*entrega 6*): ao levar tiro, bomba ou bater, a borda da tela pisca em vermelho por 0,25 s, mais forte quanto maior o dano (funciona no iPhone, que não vibra pela web) e vibra onde houver. Com "reduzir movimento", a borda é mais fraca.
 - **Bomba acertou** (*entrega 6*): o ladrão vê "💥 Bomba acertou! −15" grande no centro, ouve um som próprio e vibra; a explosão aparece no retrovisor.
-- **Helicóptero** (*entrega 6*): enquanto o item dura, um helicóptero low-poly da polícia voa acima e à frente da viatura (hélice girando, som de hélice, sombra no chão) e os tiros da polícia descem dele na diagonal; nos últimos 2 s pisca e depois vai embora subindo.
+- **Helicóptero** (*entrega 6*): enquanto o item dura, um helicóptero low-poly da polícia voa acima e à frente da viatura (hélice girando, som de hélice, sombra no chão) e os tiros da polícia descem dele na diagonal; quando acaba, vai embora subindo, sem piscar (*revisado na entrega 7*).
 - Ladrão sem arma: ATIRAR fica cinza.
 - PC: ←/→ ou A/D, ↓/S freio, Espaço atira, B bomba, Esc pausa.
 - HUD: barras de vida dos dois, cronômetro, distância colorida, ícones dos upgrades ativos/permanentes (com timer nos temporários), nível de dificuldade discreto, botão de pausa.
@@ -117,15 +118,16 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
 2. **Escolha**: dois cards — viatura branca e azul com giroscópio vermelho/azul piscando; muscle car vermelho — com 3 linhas de regras de cada lado.
 3. **Jogo** (contagem 3-2-1 com sirene).
 4. **Pausa**: continuar, reiniciar, sair.
-5. **Fim**: vitória/derrota, tempo, motivo. Se entrou no top 10, campo de **3 iniciais estilo arcade**.
-6. **Ranking**: abas "Polícia — mais rápidos" e "Ladrão — mais resistentes". Top 10 com iniciais, tempo e data.
+5. **Fim**: vitória/derrota, tempo, motivo ("Fugiu! Sumiu no horizonte", "A viatura foi destruída", "O ladrão foi detido"). Se entrou no top 10, campo de **3 iniciais estilo arcade**.
+6. **Ranking**: abas "Polícia — mais rápidos" e "Ladrão — mais rápidos a vencer". Top 10 com iniciais, tempo e data (ladrão: 💥 destruiu a polícia / 🏁 fugiu com ♥ vida que sobrou).
 
 ## 8. Ranking
 
 - Salvo no `localStorage` (chave versionada), dados validados ao carregar. Dados corrompidos viram ranking vazio, sem quebrar o jogo.
 - **Polícia**: só partidas que a polícia venceu, jogando de polícia; ordem crescente de tempo; top 10.
-- **Ladrão**: toda partida jogada de ladrão (vencendo ou perdendo), com o tempo vivo; ordem decrescente; top 10.
+- **Ladrão** (*revisado na entrega 7*): só vitórias (fugiu em 1:30 ou destruiu a polícia), jogando de ladrão; ordem crescente de tempo (destruir a polícia antes fica no topo); fugas empatam em 1:30 e desempatam pela vida que sobrou (mais vida na frente); top 10.
 - Empates: o registro mais antigo fica na frente.
+- Chave `pl.ranking.v2`: com a regra nova os dois rankings recomeçaram vazios.
 
 ## 9. Visual e áudio
 
@@ -178,5 +180,7 @@ src/
 4. **Visual e áudio**: dano progressivo, giroscópio, fumaça, efeitos, sons e música; atirador visível (policial/ladrão na janela do carona apontando a arma e atirando).
 5. **Meta**: telas, ranking com iniciais, pausa, aviso de retrato, PWA e deploy na Vercel.
 6. **Curvas**: curvas leves e fechadas, derrapagem, freio que importa, placas, IA que freia; junto, extras do playtest: aviso de dano, bomba acertou, helicóptero visível, sempre paisagem e splash.
+
+7. **Fuga em 1:30**: o ladrão também vence sobrevivendo; contagem regressiva; ranking do ladrão por vitória mais rápida; ajustes (helicóptero sem piscar, iniciais na ordem do fliperama).
 
 Cada entrega vira uma PR via `scratch/NN-*.ps1`.
