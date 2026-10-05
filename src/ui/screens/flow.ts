@@ -6,6 +6,10 @@ export const COUNTDOWN = 3; // s
 export interface MatchResult {
   winner: Role;
   time: number;
+  /** como acabou (Entrega 7) */
+  reason?: 'escape' | 'policeDown' | 'thiefDown';
+  /** vida do carro do jogador no fim (desempata fugas no ranking do ladrão) */
+  hp?: number;
 }
 
 export type FlowState =
