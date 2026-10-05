@@ -3,6 +3,7 @@
 import { BALANCE, type Role } from '../config/balance';
 import type { Rng } from './rng';
 import { NO_INTENTS, type Intents } from './intents';
+import { curvesBetween } from './curves';
 import { bumpXRange, bumpsBetween } from './track';
 import type { WorldState } from './types';
 import { policeOf, thiefOf } from './world';
@@ -23,6 +24,10 @@ export interface AiMemory {
   nextBombAt: number;
   /** bombas já avaliadas pela polícia: id → vai desviar? (sorteado uma vez por bomba) */
   bombDodge: Record<number, boolean>;
+  /** curva fechada já avaliada (início em s), se vai frear e quantos metros atrasada começa */
+  curveS: number;
+  curveBrake: boolean;
+  curveLate: number;
 }
 
 const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
@@ -36,7 +41,7 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 export function initialAiMemory(role: Role, w: WorldState): AiMemory {
   const me = role === 'police' ? policeOf(w) : thiefOf(w);
-  return { targetX: me.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {} };
+  return { targetX: me.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {}, curveS: -1, curveBrake: false, curveLate: 0 };
 }
 
 function steerTo(x: number, targetX: number): Pick<Intents, 'left' | 'right'> {
@@ -103,6 +108,29 @@ function considerBombs(w: WorldState, s: number, rng: Rng, mem: AiMemory, k: num
   return { ...mem, bombDodge: next };
 }
 
+const CURVE_LOOKAHEAD = 70; // m
+
+/**
+ * Freio para curva fechada: avalia cada curva uma vez (vai frear? começa atrasada quantos metros?) e
+ * freia quando a distância até a curva fica menor que a de frenagem até a velocidade segura.
+ */
+function curveBraking(w: WorldState, s: number, speed: number, rng: Rng, mem: AiMemory, k: number): { brake: boolean; memory: AiMemory } {
+  if (!w.curvesOn) return { brake: false, memory: mem };
+  const c = curvesBetween(w.seed, s, s + CURVE_LOOKAHEAD).find((x) => x.sharp && x.start + x.length * 0.75 > s);
+  if (!c) return { brake: false, memory: mem };
+  let m = mem;
+  if (m.curveS !== c.start) {
+    // nível 1: às vezes nem freia e, quando freia, começa até 40 m atrasada; nível 10: quase sempre acerta
+    m = { ...m, curveS: c.start, curveBrake: rng.next() < lerp(0.5, 0.99, k), curveLate: rng.range(0, 1) * lerp(30, 3, k) };
+  }
+  if (!m.curveBrake) return { brake: false, memory: m };
+  const vSafe = Math.sqrt(BALANCE.curves.grip * 0.95 * c.radius);
+  if (speed <= vSafe) return { brake: false, memory: m };
+  const dist = c.start + c.length * BALANCE.curves.ramp * 0.5 - s; // até onde a curva já aperta
+  const need = (speed * speed - vSafe * vSafe) / (2 * BALANCE.movement.brakeDecel);
+  return { brake: dist - m.curveLate <= need + 2 || dist < 0, memory: m };
+}
+
 export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): { intents: Intents; memory: AiMemory } {
   const me = role === 'police' ? policeOf(w) : thiefOf(w);
   const foe = role === 'police' ? thiefOf(w) : policeOf(w);
@@ -126,7 +154,8 @@ export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): {
       const want = box && Math.abs(foe.s - me.s) > 30 ? box.x : Math.max(-EDGE + 0.3, Math.min(EDGE - 0.3, foe.x));
       mem = { ...mem, targetX: safeLane(w, role, me.s, me.x, want, mem), nextDecisionAt: w.time + reaction };
     }
-    return { intents: { ...NO_INTENTS, ...steerTo(me.x, mem.targetX), fire: true }, memory: mem };
+    const cb = curveBraking(w, me.s, me.speed, rng, mem, k);
+    return { intents: { ...NO_INTENTS, ...steerTo(me.x, mem.targetX), fire: true, brake: cb.brake }, memory: cb.memory };
   }
 
   // ladrão
@@ -170,11 +199,13 @@ export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): {
     if (bomb) mem = { ...mem, nextBombAt: w.time + lerp(4, 1.5, k) };
   }
 
+  const cb = curveBraking(w, me.s, me.speed, rng, mem, k);
+  mem = cb.memory;
   return {
     intents: {
       ...NO_INTENTS,
       ...steerTo(me.x, mem.targetX),
-      brake: w.time < mem.brakeUntil,
+      brake: w.time < mem.brakeUntil || cb.brake,
       fire: me.hasGun,
       bomb,
     },

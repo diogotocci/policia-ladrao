@@ -215,3 +215,40 @@ describe('bombs vs AI (review fixes)', () => {
     expect(dropped).toBe(true);
   });
 });
+
+import { curvesBetween } from '../../src/sim/curves';
+
+describe('AI and curves (Entrega 6)', () => {
+  /** ladrão da IA chega a 34 m/s, 150 m antes de cada curva fechada; conta quantas vezes bate no meio-fio */
+  const curbRate = (level: number, n = 50) => {
+    let hits = 0;
+    let tried = 0;
+    for (let seed = 1; tried < n; seed++) {
+      for (const c of curvesBetween(seed, 0, 20000).filter((x) => x.sharp)) {
+        if (tried >= n) break;
+        tried++;
+        const w0 = createWorld({ seed, playerRole: 'police', traffic: false });
+        let w: WorldState = { ...w0, time: (level - 1) * BALANCE.difficulty.levelEvery, level };
+        w = withCar(w, 'thief', { ...thiefOf(w), s: c.start - 150, speed: 34, x: BALANCE.road.laneCenters[1 + (seed % 2)]! });
+        w = withCar(w, 'police', { ...policeOf(w), s: c.start - 400, speed: 34, hasGun: false });
+        let hit = false;
+        for (let i = 0; i < 60 * 15 && thiefOf(w).s < c.start + c.length; i++) {
+          w = stepWorld({ ...w, time: (level - 1) * BALANCE.difficulty.levelEvery + i / 60 }, 'ai', 1 / 60);
+          if (w.events.some((e) => e.type === 'crash' && e.a === 'thief' && e.b === 'scenery')) hit = true;
+        }
+        if (hit) hits++;
+      }
+    }
+    return hits / n;
+  };
+
+  it('level 10 AI brakes for sharp curves: hits the curb in ≤ 10%', () => {
+    expect(curbRate(10)).toBeLessThanOrEqual(0.1);
+  });
+
+  it('level 1 AI makes mistakes: hits the curb in 30–70%', () => {
+    const r = curbRate(1);
+    expect(r).toBeGreaterThanOrEqual(0.3);
+    expect(r).toBeLessThanOrEqual(0.7);
+  });
+});
