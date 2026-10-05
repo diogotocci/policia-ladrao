@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { BALANCE, type Role } from './config/balance';
-import { createMixer } from './audio/mixer';
-import { createNullBackend, createWebAudioBackend, type AudioBackend } from './audio/synth';
+import { createAudioSession, type AudioSession } from './audio/session';
 import { createDebug } from './debug';
 import { createKeyboardInput } from './input/keyboard';
 import { createTouchButtons } from './input/touchButtons';
@@ -22,7 +21,6 @@ import { FixedStepper } from './sim/fixedStepper';
 import type { Intents } from './sim/intents';
 import { createWorld, stepWorld, type GameEvent, type ItemId, type WorldState } from './sim/world';
 import { createHud, pickupToast } from './ui/hud';
-import { createSoundToggle, readSoundPref, writeSoundPref } from './ui/soundToggle';
 
 const lerpCar = (a: CarState, b: CarState, t: number): CarState => ({
   ...b,
@@ -39,6 +37,13 @@ const anyOf = (a: Intents, b: Intents): Intents => ({
   bomb: a.bomb || b.bomb,
 });
 
+export interface GameHandle {
+  pause(): void;
+  resume(): void;
+  isPaused(): boolean;
+  stop(): void;
+}
+
 export function startGame(
   container: HTMLElement,
   opts: {
@@ -51,8 +56,16 @@ export function startGame(
     traffic?: boolean;
     /** começa mudo (?mute), sem mexer na preferência salva */
     mute?: boolean;
+    /** sessão de áudio da app (sem ela o jogo cria a própria) */
+    audio?: AudioSession;
+    /** começa congelado (contagem 3-2-1); a app chama resume() na largada */
+    startPaused?: boolean;
+    /** a app decide o que a pausa mostra; sem isso o jogo pausa/retoma sozinho (Esc/P/⏸) */
+    onPauseRequest?: () => void;
+    /** fim de partida (a app mostra a tela de fim; sem isso o HUD mostra o cartão de fim) */
+    onEnd?: (result: { winner: Role; time: number }) => void;
   },
-): { stop(): void } {
+): GameHandle {
   const view = createRenderer(container, opts.quality ?? 'high');
   const { renderer } = view;
   renderer.info.autoReset = false;
@@ -127,45 +140,43 @@ export function startGame(
   mirrorFrame.className = 'rearview-frame';
   mirrorFrame.hidden = true;
   ui.append(mirrorFrame);
-  const hud = createHud(ui, opts.role);
+  const hud = createHud(ui, opts.role, { showEnd: !opts.onEnd });
 
-  // áudio: mixer começa num backend nulo; o WebAudio nasce no 1º gesto (regra dos navegadores)
-  const storage = (() => {
-    try {
-      return window.localStorage;
-    } catch {
-      return undefined;
-    }
-  })();
-  const mixer = createMixer(createNullBackend());
-  mixer.setMuted(opts.mute === true || readSoundPref(storage));
-  let audio: AudioBackend | undefined;
-  // Destrava no gesto: toque conta no pointerup/touchend/click (não no pointerdown), tecla no keydown.
-  // O resume() é chamado dentro do próprio handler; os ouvintes só saem quando o áudio está rodando.
-  const UNLOCK_EVENTS = ['pointerup', 'touchend', 'click', 'keydown'] as const;
-  const unlockAudio = () => {
-    if (!audio) {
-      try {
-        audio = createWebAudioBackend();
-        mixer.use(audio);
-      } catch {
-        audio = undefined;
-        for (const ev of UNLOCK_EVENTS) window.removeEventListener(ev, unlockAudio, true); // sem WebAudio: segue mudo
-        return;
-      }
-    }
-    audio.resume();
-    if (audio.running()) for (const ev of UNLOCK_EVENTS) window.removeEventListener(ev, unlockAudio, true);
+  // pausa: botão ⏸ no HUD, Esc/P, aba escondida, retrato
+  let paused = opts.startPaused === true;
+  const setPaused = (p: boolean) => {
+    paused = p;
+    pauseBtn.setAttribute('aria-pressed', String(p));
   };
-  for (const ev of UNLOCK_EVENTS) window.addEventListener(ev, unlockAudio, true);
-  const soundToggle = createSoundToggle((ui.querySelector('.hud-center') as HTMLElement | null) ?? ui, {
-    muted: mixer.muted(),
-    keyTarget: window,
-    onChange: (m) => {
-      mixer.setMuted(m);
-      if (!opts.mute) writeSoundPref(storage, m);
-    },
+  const requestPause = () => {
+    if (world.match.over || paused) return;
+    if (opts.onPauseRequest) opts.onPauseRequest();
+    else setPaused(true);
+  };
+  const onPauseKey = (e: KeyboardEvent) => {
+    if ((e.code !== 'Escape' && e.code !== 'KeyP') || e.repeat) return;
+    if (!paused) requestPause();
+    else if (!opts.onPauseRequest) setPaused(false); // sem app: a mesma tecla retoma
+  };
+  window.addEventListener('keydown', onPauseKey);
+
+  // áudio: a app passa a sessão (vive entre telas); sem ela (debug/e2e), o jogo cria e descarta a sua
+  const ownAudio = !opts.audio;
+  const audioSession = opts.audio ?? createAudioSession({ forceMute: opts.mute });
+  const mixer = audioSession.mixer;
+  const hudCenter = (ui.querySelector('.hud-center') as HTMLElement | null) ?? ui;
+  const soundToggle = audioSession.mountToggle(hudCenter);
+  const pauseBtn = document.createElement('button');
+  pauseBtn.type = 'button';
+  pauseBtn.className = 'pause-toggle';
+  pauseBtn.textContent = '⏸';
+  pauseBtn.setAttribute('aria-label', 'Pausar');
+  pauseBtn.addEventListener('click', () => {
+    pauseBtn.blur();
+    if (paused && !opts.onPauseRequest) setPaused(false); // sem app: o mesmo botão retoma
+    else requestPause();
   });
+  hudCenter.append(pauseBtn);
   let fireVisible = false;
   let lastBombs = -1;
   const syncFireButton = () => {
@@ -224,8 +235,11 @@ export function startGame(
     view.resize();
     chase.camera.aspect = Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight);
     chase.camera.updateProjectionMatrix();
+    const wasPortrait = portrait;
     portrait = window.innerHeight > window.innerWidth;
     hint.hidden = !portrait;
+    // na app, girar para retrato abre a tela de pausa (ao voltar para paisagem o jogo não recomeça sozinho)
+    if (portrait && !wasPortrait && opts.onPauseRequest) requestPause();
   };
   resize();
   window.addEventListener('resize', resize);
@@ -234,53 +248,57 @@ export function startGame(
   window.addEventListener('orientationchange', resize);
   window.visualViewport?.addEventListener('resize', resize);
   const onVisibility = () => {
-    if (document.visibilityState === 'visible') {
-      governor?.reset();
-      audio?.resume();
-      // alguns navegadores (iOS) só retomam com um novo gesto: volta a escutar até destravar
-      if (audio && !audio.running()) for (const ev of UNLOCK_EVENTS) window.addEventListener(ev, unlockAudio, true);
-    } else audio?.suspend(); // aba escondida: sem motor/sirene zumbindo em segundo plano
+    if (document.visibilityState === 'visible') governor?.reset();
+    else requestPause(); // aba escondida: pausa (o áudio a sessão suspende)
   };
   document.addEventListener('visibilitychange', onVisibility);
 
   let raf = 0;
+  let endReported = false;
   let last = performance.now();
   const frame = (now: number) => {
     if (container.clientWidth !== sizeW || container.clientHeight !== sizeH) resize();
     const raw = (now - last) / 1000;
     const elapsed = Math.min(0.25, raw);
     last = now;
-    const alpha = portrait ? 1 : stepper.advance(elapsed);
-    const car = portrait ? world.player : lerpCar(prev.player, world.player, alpha);
+    // congelado (retrato, pausa ou contagem): a simulação e os efeitos param; o quadro continua desenhado
+    const frozen = portrait || paused;
+    const dt = frozen ? 0 : elapsed;
+    const alpha = frozen ? 1 : stepper.advance(elapsed);
+    const car = frozen ? world.player : lerpCar(prev.player, world.player, alpha);
     const origin = renderOrigin(car.s);
     road.update(car.s);
     updateCarModel(model, car, world.time, origin);
-    const foe = portrait ? world.opponent : lerpCar(prev.opponent, world.opponent, alpha);
+    const foe = frozen ? world.opponent : lerpCar(prev.opponent, world.opponent, alpha);
     updateCarModel(opponentModel, foe, world.time, origin);
-    clock += elapsed;
-    applyDamage(model, portrait ? damageLook(car.hp) : damageFx(car, elapsed), world.time);
-    applyDamage(opponentModel, portrait ? damageLook(foe.hp) : damageFx(foe, elapsed), world.time);
+    clock += dt;
+    applyDamage(model, frozen ? damageLook(car.hp) : damageFx(car, dt), world.time);
+    applyDamage(opponentModel, frozen ? damageLook(foe.hp) : damageFx(foe, dt), world.time);
     updateGunner(gunners[car.role], car, foe, clock);
     updateGunner(gunners[foe.role], foe, car, clock);
     marker.update(foe, Math.abs(foe.s - car.s), origin);
-    props.update(world, origin, world.time, portrait ? undefined : prev, alpha);
-    fx.update(world, frameEvents, origin, elapsed);
+    props.update(world, origin, world.time, frozen ? undefined : prev, alpha);
+    fx.update(world, frameEvents, origin, dt);
     for (const e of frameEvents) {
       if (e.type === 'shot') flashGunner(gunners[e.from], clock);
       else if (e.type === 'explosion') particles.emitBurst(e.x, e.s, 'explosion');
       else if (e.type === 'crash') particles.emitBurst(e.x, e.s, 'crash');
     }
-    particles.update(elapsed, origin, chase.camera);
+    particles.update(dt, origin, chase.camera);
     onEvents(frameEvents);
-    mixer.frame(world, portrait ? 0 : elapsed, portrait);
+    mixer.frame(world, dt, frozen);
     mixer.events(frameEvents);
     frameEvents = [];
-    chase.update(car, elapsed, origin);
+    chase.update(car, dt, origin);
     chase.camera.position.add(fx.shake());
     syncFireButton();
     hud.update(world);
+    if (world.match.over && !endReported) {
+      endReported = true;
+      opts.onEnd?.({ winner: world.match.winner!, time: world.match.endTime ?? world.time });
+    }
     lighting.follow(car.x, -(car.s - origin));
-    if (governor && !portrait) {
+    if (governor && !frozen) {
       const tier = governor.sample(raw); // tempo real (sem o teto de 0,25 s) para ignorar travadas longas
       if (tier !== view.quality) {
         view.setQuality(tier);
@@ -309,8 +327,17 @@ export function startGame(
   raf = requestAnimationFrame(frame);
 
   return {
+    pause: () => setPaused(true),
+    resume() {
+      setPaused(false);
+      keyboard.dropTaps(); // toques feitos na contagem/pausa não disparam na largada
+      touch.dropTaps();
+      last = performance.now(); // sem salto de tempo ao voltar
+    },
+    isPaused: () => paused,
     stop() {
       cancelAnimationFrame(raf);
+      window.removeEventListener('keydown', onPauseKey);
       window.removeEventListener('resize', resize);
       window.removeEventListener('orientationchange', resize);
       window.visualViewport?.removeEventListener('resize', resize);
@@ -319,12 +346,12 @@ export function startGame(
       touch.dispose();
       hud.dispose();
       soundToggle.dispose();
-      for (const ev of UNLOCK_EVENTS) window.removeEventListener(ev, unlockAudio, true);
       mixer.reset();
-      audio?.close();
+      if (ownAudio) audioSession.dispose();
       debug?.dispose();
       ui.remove();
       renderer.dispose();
+      renderer.forceContextLoss(); // libera a GPU já (o navegador limita contextos WebGL vivos)
       renderer.domElement.remove();
     },
   };

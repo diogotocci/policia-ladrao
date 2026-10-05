@@ -69,3 +69,17 @@
   margin-left: 2px;
 }
 .sound-toggle:focus-visible { outline: 2px solid #fff; border-radius: 6px; }
+.pause-toggle {
+  pointer-events: auto;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+  min-width: 32px;
+  min-height: 28px;
+  padding: 2px 2px 2px 6px;
+  cursor: pointer;
+  border-left: 1px solid var(--hud-edge);
+}
+.pause-toggle:focus-visible { outline: 2px solid #fff; border-radius: 6px; }

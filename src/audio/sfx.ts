@@ -33,6 +33,9 @@ export const RECIPES = {
   wrong: [v('square', 220, 140, 0.16, 0.18)],
   'bomb-drop': [v('triangle', 300, 120, 0.2, 0.15), v('noise', 900, 400, 0.08, 0.1)],
   win: [v('square', 523, 523, 0.15, 0.14), v('square', 659, 659, 0.15, 0.14, 0.004, 0.14), v('square', 784, 784, 0.15, 0.4, 0.004, 0.28)],
+  beep: [v('square', 880, 880, 0.14, 0.12)], // contagem 3-2-1
+  go: [v('square', 1320, 1320, 0.16, 0.35), v('square', 660, 660, 0.1, 0.35)], // largada
+  ui: [v('triangle', 1200, 900, 0.1, 0.05)], // clique de menu
   lose: [v('square', 392, 392, 0.15, 0.2), v('square', 311, 311, 0.15, 0.2, 0.004, 0.2), v('square', 196, 196, 0.15, 0.6, 0.004, 0.4)],
 } satisfies Record<string, Voice[]>;
 

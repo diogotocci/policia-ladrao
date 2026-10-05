@@ -13,7 +13,7 @@ const KEYMAP: Record<string, IntentName> = {
   KeyB: 'bomb',
 };
 
-export function createKeyboardInput(target: Window | HTMLElement): { read(): Intents; dispose(): void } {
+export function createKeyboardInput(target: Window | HTMLElement): { read(): Intents; dropTaps(): void; dispose(): void } {
   const held = new Set<string>();
   /** toques rápidos (desce e sobe entre duas leituras) contam uma vez */
   const tapped = new Set<IntentName>();
@@ -51,6 +51,10 @@ export function createKeyboardInput(target: Window | HTMLElement): { read(): Int
       for (const name of tapped) out[name] = true;
       tapped.clear();
       return out;
+    },
+    /** esquece toques rápidos guardados (feitos na contagem/pausa); teclas ainda seguradas continuam valendo */
+    dropTaps() {
+      tapped.clear();
     },
     dispose() {
       target.removeEventListener('keydown', onDown);

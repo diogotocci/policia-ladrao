@@ -182,4 +182,33 @@ describe('audio mixer', () => {
     mx.frame(w, DT);
     expect(be.music).toBe(1);
   });
+
+  it('menu mode: calm menu music, engine and siren silent; going back to a match switches to the chase song', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    for (let i = 0; i < 60; i++) {
+      be.advance(DT);
+      mx.menu(DT);
+    }
+    expect(be.engine.gain).toBe(0);
+    expect(be.siren).toBe(0);
+    const menuNotes = be.notes.length;
+    expect(menuNotes).toBeGreaterThan(0);
+    expect(mx.song()).toBe('menu');
+    be.advance(DT);
+    mx.frame(world(), DT);
+    expect(mx.song()).toBe('chase');
+  });
+
+  it('ui sounds: beep, go and ui clicks play their recipes (respecting mute)', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.cue('beep');
+    mx.cue('go');
+    mx.cue('ui');
+    expect(be.played).toEqual(['beep', 'go', 'ui']);
+    mx.setMuted(true);
+    mx.cue('beep');
+    expect(be.played).toHaveLength(3);
+  });
 });

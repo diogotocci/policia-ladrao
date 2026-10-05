@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SONG, createSequencer, stepSeconds } from '../../src/audio/music';
+import { MENU_SONG, SONG, createSequencer, stepSeconds } from '../../src/audio/music';
 
 const run = (seconds: number, intense = false, dt = 1 / 60) => {
   const seq = createSequencer(SONG);
@@ -9,8 +9,9 @@ const run = (seconds: number, intense = false, dt = 1 / 60) => {
 };
 
 describe('chiptune sequencer', () => {
-  it('every track has exactly one entry per step', () => {
-    for (const t of [SONG.bass, SONG.lead, SONG.drums]) expect(t).toHaveLength(SONG.length);
+  it('every track has exactly one entry per step (chase and menu songs)', () => {
+    for (const song of [SONG, MENU_SONG]) for (const t of [song.bass, song.lead, song.drums]) expect(t).toHaveLength(song.length);
+    expect(MENU_SONG.bpm).toBeLessThan(SONG.bpm);
   });
 
   it('is deterministic', () => {

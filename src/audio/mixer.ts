@@ -1,7 +1,7 @@
 // Mixer puro: transforma o estado do mundo e os eventos em comandos para o backend de áudio.
 // Não sabe nada de WebAudio — os testes usam o null backend.
 import type { GameEvent, WorldState } from '../sim/types';
-import { SONG, createSequencer, stepSeconds } from './music';
+import { MENU_SONG, SONG, createSequencer, stepSeconds, type Song } from './music';
 import type { SoundName } from './sfx';
 import type { AudioBackend } from './synth';
 
@@ -18,6 +18,11 @@ export interface Mixer {
   muted(): boolean;
   /** troca o backend (ex.: null → WebAudio no primeiro gesto do usuário) */
   use(backend: AudioBackend): void;
+  /** telas (título, escolha, ranking): música calma, sem motor nem sirene */
+  menu(dt: number): void;
+  /** som de interface: bip da contagem, largada, clique */
+  cue(name: 'beep' | 'go' | 'ui'): void;
+  song(): 'menu' | 'chase';
   reset(): void;
 }
 
@@ -28,9 +33,26 @@ export function createMixer(initial: AudioBackend): Mixer {
   let recent = new Map<SoundName, number[]>(); // por som: rajada do mesmo som não estoura
   let playerRole: 'police' | 'thief' = 'police';
   let musicGain = -1;
-  const seq = createSequencer(SONG);
-  const STEP = stepSeconds(SONG.bpm);
+  const songs = { chase: { song: SONG, seq: createSequencer(SONG) }, menu: { song: MENU_SONG, seq: createSequencer(MENU_SONG) } };
+  let current: 'menu' | 'chase' = 'chase';
   let nextNoteTime = -1; // no relógio do backend; -1 = recomeçar no próximo quadro
+  const useSong = (name: 'menu' | 'chase') => {
+    if (name === current) return;
+    current = name;
+    songs[name].seq.reset();
+    nextNoteTime = -1;
+  };
+  /** agenda a música no relógio do áudio (não no do quadro): batida estável mesmo com quadros lentos */
+  const scheduleMusic = (intense: boolean) => {
+    const { song, seq } = songs[current] as { song: Song; seq: ReturnType<typeof createSequencer> };
+    const now = be.now();
+    if (nextNoteTime < now) nextNoteTime = now + 0.02; // começo ou travada longa: pula para frente, sem rajada
+    const step = stepSeconds(song.bpm);
+    while (nextNoteTime < now + LOOKAHEAD) {
+      for (const n of seq.next(intense)) be.note(n, nextNoteTime);
+      nextNoteTime += step;
+    }
+  };
 
   const play = (name: SoundName) => {
     if (isMuted || !be.running()) return;
@@ -68,19 +90,31 @@ export function createMixer(initial: AudioBackend): Mixer {
       be.setSiren(siren);
       setMusic(over ? 0.3 : 1);
 
-      // música agendada no relógio do áudio (não no do quadro): batida estável mesmo com quadros lentos
-      if (paused || isMuted || !be.running()) {
+      if (paused) return; // pausado: sem música do jogo (a app pode tocar a do menu)
+      useSong('chase');
+      if (isMuted || !be.running()) {
         nextNoteTime = -1;
         return;
       }
-      const now = be.now();
-      if (nextNoteTime < now) nextNoteTime = now + 0.02; // começo ou travada longa: pula para frente, sem rajada
-      const intense = !over && (Math.abs(thief.s - police.s) < 40 || Math.min(police.hp, thief.hp) <= 30);
-      while (nextNoteTime < now + LOOKAHEAD) {
-        for (const n of seq.next(intense)) be.note(n, nextNoteTime);
-        nextNoteTime += STEP;
-      }
+      scheduleMusic(!over && (Math.abs(thief.s - police.s) < 40 || Math.min(police.hp, thief.hp) <= 30));
     },
+    menu(dt) {
+      clock += dt;
+      be.setEngine(55, 0);
+      be.setSiren(0);
+      setMusic(0.8);
+      useSong('menu');
+      if (isMuted || !be.running()) {
+        nextNoteTime = -1;
+        return;
+      }
+      scheduleMusic(false);
+    },
+    cue(name) {
+      if (isMuted || !be.running()) return;
+      be.play(name);
+    },
+    song: () => current,
     events(events) {
       for (const e of events) {
         if (e.type === 'shot') play(e.from === 'police' ? 'shot-police' : 'shot-thief');
@@ -105,7 +139,8 @@ export function createMixer(initial: AudioBackend): Mixer {
     reset() {
       be.setEngine(0, 0);
       be.setSiren(0);
-      seq.reset();
+      songs.chase.seq.reset();
+      songs.menu.seq.reset();
       nextNoteTime = -1;
       recent = new Map();
       musicGain = -1;

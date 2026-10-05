@@ -1,6 +1,8 @@
 import type { Role } from './config/balance';
+import { startApp } from './app';
 import { startGame } from './game';
 import { installFullscreenOnFirstTap, installNoZoom } from './ui/mobileShell';
+import { registerServiceWorker } from './pwa/register';
 import type { QualityTier } from './render/renderer';
 import type { ItemId } from './sim/world';
 
@@ -28,7 +30,13 @@ const traffic = debug && params.get('traffic') === '0' ? false : undefined;
 
 const mute = params.has('mute');
 
+registerServiceWorker(window, { prod: import.meta.env.PROD, debug });
 installNoZoom(document);
 installFullscreenOnFirstTap(document, window);
 
-if (app) startGame(app, { role, seed, debug, quality, debugHp, debugGive, traffic, mute });
+// Parâmetros de teste/depuração (?debug, ?role, ?seed) vão direto para a partida; sem eles (ou com ?app), a app começa no título.
+const direct = !params.has('app') && (debug || params.has('role') || params.has('seed'));
+if (app) {
+  if (direct) startGame(app, { role, seed, debug, quality, debugHp, debugGive, traffic, mute });
+  else startApp(app, { quality, debug, debugHp, traffic, mute }); // ?app força as telas (e2e do produto)
+}

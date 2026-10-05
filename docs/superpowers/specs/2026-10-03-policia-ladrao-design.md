@@ -105,8 +105,9 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
 - **Marcador do adversário**: seta de tamanho fixo na cor do outro lado (vermelha = ladrão, azul = polícia) flutuando sobre o carro dele, desenhada por cima de tudo e sem neblina; aparece quando ele está a mais de 15 m.
 - **Retrovisor**: segunda câmera, imagem espelhada, pequena (22% da largura) no canto superior direito, ativa sempre que o adversário está atrás do jogador (*revisado em 2026-10-04: no topo central e maior, cobria tráfego, caixinhas e quebra-molas*).
 - Retrato: overlay "gire o aparelho" e pausa automática. Perder o foco da aba também pausa.
+- **Pausa** (*2026-10-04*): botão ⏸ no HUD ao lado do 🔊, teclas Esc/P, aba escondida, girar para retrato e o botão Voltar do Android abrem a tela de pausa (Continuar, Reiniciar, Sair, com o 🔊). Na pausa nada anda; toques feitos na contagem ou na pausa não disparam ao voltar.
 
-- **Webapp** (*antecipado da Entrega 5 em 2026-10-04*): manifest com ícones, abre em tela cheia e paisagem quando instalado ("Adicionar à tela de início"). No navegador, o primeiro toque pede tela cheia e trava em paisagem (Android; o iPhone só esconde as barras instalado). Sem zoom por toque duplo ou pinça. O modo offline (service worker) continua na Entrega 5.
+- **Webapp** (*antecipado da Entrega 5 em 2026-10-04*): manifest com ícones, abre em tela cheia e paisagem quando instalado ("Adicionar à tela de início"). No navegador, o primeiro toque pede tela cheia e trava em paisagem (Android; o iPhone só esconde as barras instalado). Sem zoom por toque duplo ou pinça. Offline (*Entrega 5*): service worker próprio pré-carrega a página e todos os arquivos do build na primeira visita; páginas vêm da rede primeiro (com cópia de reserva e limite de 4 s), arquivos com hash do cache; cada build tem seu cache e o antigo é apagado.
 
 ## 7. Telas
 

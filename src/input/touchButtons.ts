@@ -39,6 +39,8 @@ export function createTouchButtons(
   opts: { role?: Role } = {},
 ): {
   read(): Intents;
+  /** esquece toques rápidos guardados (feitos na contagem/pausa); dedos ainda na tela continuam valendo */
+  dropTaps(): void;
   dispose(): void;
   setVisible(name: 'fire' | 'bomb', visible: boolean): void;
   /** pisca o ATIRAR por 0,3 s quando não há alvo no cone */
@@ -130,6 +132,9 @@ export function createTouchButtons(
       for (const [name, held] of pointers) out[name] = held.size > 0 || tapped.has(name);
       tapped.clear();
       return out;
+    },
+    dropTaps() {
+      tapped.clear();
     },
     setVisible(name, visible) {
       const b = buttons.get(name);

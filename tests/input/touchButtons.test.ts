@@ -40,6 +40,17 @@ describe('touch buttons', () => {
     ptr(btn('brake'), 'pointerup', 1);
   });
 
+  it('dropTaps() forgets taps made during the countdown/pause; a finger still down keeps holding', () => {
+    ptr(btn('bomb'), 'pointerdown', 1);
+    ptr(btn('bomb'), 'pointerup', 1);
+    ptr(btn('left'), 'pointerdown', 2);
+    tb.dropTaps();
+    const r = tb.read();
+    expect(r.bomb).toBe(false);
+    expect(r.left).toBe(true);
+    ptr(btn('left'), 'pointerup', 2);
+  });
+
   it('works when vibrate is not available', () => {
     Object.defineProperty(navigator, 'vibrate', { value: undefined, configurable: true });
     ptr(btn('left'), 'pointerdown', 1);
