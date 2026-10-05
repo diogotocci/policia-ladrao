@@ -33,23 +33,33 @@ export function isStandalone(win: Window): boolean {
   );
 }
 
+const lockLandscape = (win: Window): void => {
+  try {
+    const o = win.screen?.orientation as (ScreenOrientation & { lock?: (o: string) => Promise<void> }) | undefined;
+    o?.lock?.('landscape')?.catch?.(() => {});
+  } catch {
+    /* iPhone: sem trava de rotação pela web (o jogo se desenha girado — ver styles.css) */
+  }
+};
+
 /**
  * No primeiro toque (dedo, não mouse) pede tela cheia e trava em paisagem.
- * Precisa de um gesto do usuário; falhas (iPhone não tem Fullscreen API para páginas) são ignoradas.
+ * Instalado (ou sem tela cheia), só trava a rotação (Android). Precisa de um gesto do usuário; falhas são ignoradas.
  */
 export function installFullscreenOnFirstTap(doc: Document, win: Window): () => void {
+  const fullscreen = !isStandalone(win) && doc.fullscreenEnabled;
   const onUp = (e: Event) => {
     if ((e as PointerEvent).pointerType !== 'touch') return;
     win.removeEventListener('pointerup', onUp, true);
+    if (!fullscreen) return lockLandscape(win);
     if (doc.fullscreenElement) return;
     const el = doc.documentElement as HTMLElement & { requestFullscreen?: (o?: FullscreenOptions) => Promise<void> };
     el.requestFullscreen?.({ navigationUI: 'hide' })
-      .then(() => (win.screen?.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void> })?.lock?.('landscape'))
+      .then(() => lockLandscape(win))
       .catch(() => {
         /* sem tela cheia/rotação: segue no navegador */
       });
   };
-  if (isStandalone(win) || !doc.fullscreenEnabled) return () => {};
   win.addEventListener('pointerup', onUp, true);
   return () => win.removeEventListener('pointerup', onUp, true);
 }

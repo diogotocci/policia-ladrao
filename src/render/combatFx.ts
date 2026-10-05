@@ -1,6 +1,8 @@
 // Efeitos de combate com pools fixos: traçadores dos tiros, faíscas nos acertos e tremor de câmera nas batidas.
 import * as THREE from 'three';
 import type { GameEvent, WorldState } from '../sim/types';
+import { HELI_Y } from './heli';
+import { trackPos } from './trackFrame';
 
 const TRACERS = 32;
 const SPARKS = 64;
@@ -23,6 +25,12 @@ function dotTexture(): THREE.DataTexture {
   t.magFilter = THREE.LinearFilter;
   t.needsUpdate = true;
   return t;
+}
+
+/** altura do traçador: do helicóptero (air = distância até o alvo) desce até a altura dos carros */
+export function tracerHeight(travelled: number, air?: number): number {
+  if (!air) return TRACER_Y;
+  return TRACER_Y + (HELI_Y - TRACER_Y) * Math.max(0, 1 - travelled / air);
 }
 
 export function createCombatFx(scene: THREE.Scene): {
@@ -85,9 +93,15 @@ export function createCombatFx(scene: THREE.Scene): {
       const n = w.match.over ? 0 : Math.min(TRACERS, w.projectiles.length);
       for (let i = 0; i < n; i++) {
         const p = w.projectiles[i]!;
-        tmp.position.set(p.x, TRACER_Y, -(p.s - originS));
-        dir.set(p.vx, 0, -p.vs).normalize();
-        tmp.lookAt(tmp.position.x + dir.x, tmp.position.y, tmp.position.z + dir.z);
+        // direção do traçador no mundo: de onde está para onde vai estar (segue a curva)
+        const a = trackPos(p.s, p.x, originS);
+        const b = trackPos(p.s + p.vs * 0.01, p.x + p.vx * 0.01, originS);
+        // tiro do helicóptero: desce na diagonal do alto até a altura do alvo
+        const ya = tracerHeight(p.travelled, p.air);
+        const yb = tracerHeight(p.travelled + Math.hypot(p.vs, p.vx) * 0.01, p.air);
+        tmp.position.set(a.x, ya, a.z);
+        dir.set(b.x - a.x, yb - ya, b.z - a.z).normalize();
+        tmp.lookAt(tmp.position.x + dir.x, tmp.position.y + dir.y, tmp.position.z + dir.z);
         tmp.updateMatrix();
         tracers.setMatrixAt(i, tmp.matrix);
         tracers.setColorAt(i, colors[p.from]);
@@ -116,9 +130,10 @@ export function createCombatFx(scene: THREE.Scene): {
           sparkVel[k * 3 + 1] = sparkVel[k * 3 + 1]! - 20 * dt; // gravidade
         }
         const alive = sparkLife[k]! > 0;
-        sparkPos[k * 3] = alive ? sparkWorld[k * 3 + 2]! : 0;
+        const sp = alive ? trackPos(sparkWorld[k * 3]!, sparkWorld[k * 3 + 2]!, originS) : undefined;
+        sparkPos[k * 3] = sp ? sp.x : 0;
         sparkPos[k * 3 + 1] = alive ? sparkWorld[k * 3 + 1]! : -1000;
-        sparkPos[k * 3 + 2] = alive ? -(sparkWorld[k * 3]! - originS) : 0;
+        sparkPos[k * 3 + 2] = sp ? sp.z : 0;
       }
       sparkGeo.attributes.position!.needsUpdate = true;
 

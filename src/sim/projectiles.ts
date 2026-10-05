@@ -55,6 +55,7 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
           travelled: 0,
           damage,
           piercing,
+          ...(heli ? { air: dist } : {}),
         });
         events.push({ type: 'shot', from: role, s: car.s, x: car.x });
         car = { ...car, fireCooldown: car.upgrades.fireInterval };

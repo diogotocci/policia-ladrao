@@ -8,6 +8,7 @@ import { createChaseCamera } from './render/cameras';
 import { createCombatFx } from './render/combatFx';
 import { applyDamage, damageLook } from './render/damageView';
 import { attachGunner, flashGunner, updateGunner } from './render/gunner';
+import { createHeli } from './render/heli';
 import { createParticles } from './render/particles';
 import { createOpponentMarker } from './render/opponentMarker';
 import { createRearview, isBehind, rearviewRect } from './render/rearview';
@@ -16,10 +17,12 @@ import { createCarModel, updateCarModel } from './render/carFactory';
 import { createQualityGovernor, createRenderer, type QualityTier } from './render/renderer';
 import { createLighting } from './render/scene';
 import { createRoad, renderOrigin } from './render/roadChunks';
+import { createTrackFrame, setActiveTrackFrame, trackPos } from './render/trackFrame';
 import type { CarState } from './sim/car';
 import { FixedStepper } from './sim/fixedStepper';
 import type { Intents } from './sim/intents';
 import { createWorld, stepWorld, type GameEvent, type ItemId, type WorldState } from './sim/world';
+import { feedbackForFrame } from './ui/feedback';
 import { createHud, pickupToast } from './ui/hud';
 
 const lerpCar = (a: CarState, b: CarState, t: number): CarState => ({
@@ -54,6 +57,8 @@ export function startGame(
     debugHp?: { police?: number; thief?: number };
     debugGive?: ItemId[];
     traffic?: boolean;
+    /** curvas (Entrega 6); false = rua reta (?curves=0) */
+    curves?: boolean;
     /** começa mudo (?mute), sem mexer na preferência salva */
     mute?: boolean;
     /** sessão de áudio da app (sem ela o jogo cria a própria) */
@@ -74,7 +79,10 @@ export function startGame(
   lighting.setQuality(view.quality);
   const governor = opts.quality ? undefined : createQualityGovernor(view.quality);
 
-  const road = createRoad(scene, opts.seed);
+  const curvesOn = opts.curves ?? true;
+  const trackFrame = createTrackFrame(opts.seed, curvesOn);
+  setActiveTrackFrame(trackFrame); // todo o render posiciona pela curva da pista
+  const road = createRoad(scene, opts.seed, trackFrame);
   const withReflections = (m: THREE.Object3D) =>
     m.traverse((o) => {
       if (o.name === 'contact-shadow') return;
@@ -95,7 +103,10 @@ export function startGame(
   const particles = createParticles(scene);
   particles.setQuality(view.quality);
   // emissão contínua de fumaça/faíscas dos carros danificados (acumuladores por carro)
-  const emitAcc: Record<Role, { smoke: number; spark: number }> = { police: { smoke: 0, spark: 0 }, thief: { smoke: 0, spark: 0 } };
+  const emitAcc: Record<Role, { smoke: number; spark: number; skid: number; side: number }> = {
+    police: { smoke: 0, spark: 0, skid: 0, side: 1 },
+    thief: { smoke: 0, spark: 0, skid: 0, side: 1 },
+  };
   let clock = 0; // relógio de render (clarão do cano)
   const damageFx = (c: CarState, dt: number) => {
     const look = damageLook(c.hp);
@@ -114,6 +125,7 @@ export function startGame(
   const rearview = createRearview();
   const props = createWorldProps(scene, lighting.reflections);
   const chase = createChaseCamera();
+  const heli = createHeli(scene);
 
   let world: WorldState = createWorld({
     seed: opts.seed,
@@ -121,6 +133,7 @@ export function startGame(
     debugHp: opts.debugHp,
     debugGive: opts.debugGive,
     traffic: opts.traffic,
+    curves: curvesOn,
   });
   let frameEvents: GameEvent[] = [];
   let prev = world;
@@ -131,11 +144,25 @@ export function startGame(
   container.append(ui);
   const keyboard = createKeyboardInput(window);
   const touch = createTouchButtons(ui, { role: opts.role });
+  // janela em pé num computador (no celular o jogo gira sozinho — styles.css): pede para deitar
   const hint = document.createElement('div');
   hint.className = 'rotate-hint';
-  hint.textContent = 'Gire o celular';
+  hint.textContent = 'Deixe a tela deitada';
   hint.hidden = true;
   ui.append(hint);
+  const flashEl = document.createElement('div');
+  flashEl.className = 'damage-flash';
+  ui.append(flashEl);
+  const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+  /** borda vermelha por 0,25 s (com movimento reduzido: mais fraca) */
+  const flash = (amount: number) => {
+    const a = reducedMotion ? amount * 0.5 : amount;
+    if (typeof flashEl.animate === 'function') flashEl.animate([{ opacity: a }, { opacity: 0 }], { duration: 250, easing: 'ease-out' });
+    else {
+      flashEl.style.opacity = String(a);
+      setTimeout(() => (flashEl.style.opacity = '0'), 250);
+    }
+  };
   const mirrorFrame = document.createElement('div');
   mirrorFrame.className = 'rearview-frame';
   mirrorFrame.hidden = true;
@@ -206,11 +233,13 @@ export function startGame(
   const onEvents = (events: GameEvent[]) => {
     for (const e of events) {
       if (e.type === 'noTarget' && e.from === opts.role) touch.flashNoTarget();
-      else if (e.type === 'hit' && e.target === opts.role) buzz(20);
-      else if (e.type === 'pickup' && e.role === opts.role) {
-        hud.toast(pickupToast(e.item));
-      }
+      else if (e.type === 'pickup' && e.role === opts.role) hud.toast(pickupToast(e.item));
     }
+    const f = feedbackForFrame(events, opts.role);
+    if (f.flash) flash(f.flash);
+    if (f.buzz) buzz(f.buzz);
+    if (f.toast) hud.toast(f.toast, { big: true });
+    if (f.cue) mixer.cue(f.cue);
   };
   const readIntents = () => anyOf(keyboard.read(), touch.read());
   const debug = opts.debug ? createDebug(ui, () => world, readIntents, () => view.quality, () => ({
@@ -236,7 +265,9 @@ export function startGame(
     chase.camera.aspect = Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight);
     chase.camera.updateProjectionMatrix();
     const wasPortrait = portrait;
-    portrait = window.innerHeight > window.innerWidth;
+    // com o celular em pé o jogo se desenha girado (styles.css): o container continua deitado e o jogo segue.
+    // Só um container realmente em pé (janela estreita no computador) congela e mostra o aviso.
+    portrait = container.clientHeight > container.clientWidth;
     hint.hidden = !portrait;
     // na app, girar para retrato abre a tela de pausa (ao voltar para paisagem o jogo não recomeça sozinho)
     if (portrait && !wasPortrait && opts.onPauseRequest) requestPause();
@@ -277,6 +308,15 @@ export function startGame(
     updateGunner(gunners[car.role], car, foe, clock);
     updateGunner(gunners[foe.role], foe, car, clock);
     marker.update(foe, Math.abs(foe.s - car.s), origin);
+    heli.update(car.role === 'police' ? car : foe, world.time, origin, dt);
+    // pneus cantando: fumaça branca das rodas de trás enquanto derrapa
+    for (let k = 0; k < 2 && !frozen; k++) {
+      const c = k === 0 ? car : foe;
+      if (!c.skidding) continue;
+      const acc = emitAcc[c.role];
+      acc.skid += dt * 26 * particles.emissionScale();
+      for (; acc.skid >= 1; acc.skid--) particles.emitSmoke(c.x + (acc.side = -acc.side) * 0.8, 0.25, c.s - 1.5, 'white');
+    }
     props.update(world, origin, world.time, frozen ? undefined : prev, alpha);
     fx.update(world, frameEvents, origin, dt);
     for (const e of frameEvents) {
@@ -297,7 +337,8 @@ export function startGame(
       endReported = true;
       opts.onEnd?.({ winner: world.match.winner!, time: world.match.endTime ?? world.time });
     }
-    lighting.follow(car.x, -(car.s - origin));
+    const here = trackPos(car.s, car.x, origin);
+    lighting.follow(here.x, here.z, here.heading);
     if (governor && !frozen) {
       const tier = governor.sample(raw); // tempo real (sem o teto de 0,25 s) para ignorar travadas longas
       if (tier !== view.quality) {

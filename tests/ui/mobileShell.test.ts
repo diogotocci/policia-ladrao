@@ -73,13 +73,23 @@ describe('fullscreen on the first touch (browser bars hidden)', () => {
     expect(request).not.toHaveBeenCalled();
   });
 
-  it('installed (standalone) or without fullscreen support: nothing to do', () => {
+  it('installed (standalone) or without fullscreen support: no fullscreen request, but landscape is still locked (Android)', () => {
     for (const o of [{ standalone: true }, { enabled: false }]) {
-      const { doc, win, request } = setup(o);
+      const { doc, win, request, lock } = setup(o);
       installFullscreenOnFirstTap(doc, win);
       tap(win);
       expect(request).not.toHaveBeenCalled();
+      expect(lock).toHaveBeenCalledWith('landscape');
+      tap(win);
+      expect(lock).toHaveBeenCalledTimes(1);
     }
     expect(isStandalone(setup({ standalone: true }).win)).toBe(true);
+  });
+
+  it('a phone without orientation lock (iPhone) does not throw', () => {
+    const { doc, win } = setup({ enabled: false });
+    Object.assign(win, { screen: { orientation: { lock: () => { throw new Error('nope'); } } } });
+    installFullscreenOnFirstTap(doc, win);
+    expect(() => tap(win)).not.toThrow();
   });
 });
