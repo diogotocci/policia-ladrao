@@ -101,19 +101,45 @@ test('draw calls stay under budget and stable over time (high quality, shadows o
   expect(Math.abs(a - b)).toBeLessThanOrEqual(5);
 });
 
-test('portrait shows the rotate hint and pauses the simulation', async ({ page }) => {
+test('phone held upright: the game draws itself sideways (landscape) and keeps running; buttons still work', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'giro só em tela de toque');
   await page.goto('/?debug&seed=1&quality=low');
   await page.waitForFunction(() => '__game' in window);
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(page.getByText('Gire o celular')).toBeVisible();
+  await page.waitForTimeout(300);
+  const box = await page.locator('#app').boundingBox();
+  // girado: ocupa a tela toda em pé, mas o próprio container é deitado
+  expect(box!.width).toBeCloseTo(390, 0);
+  expect(box!.height).toBeCloseTo(844, 0);
+  const inner = await page.evaluate(() => ({ w: document.getElementById('app')!.clientWidth, h: document.getElementById('app')!.clientHeight }));
+  expect(inner.w).toBeGreaterThan(inner.h);
+  const t1 = (await snapshot(page)).time;
+  await waitSim(page, 0.5);
+  expect((await snapshot(page)).time).toBeGreaterThan(t1);
+  // o botão ▶ (girado) ainda responde ao toque
+  const x0 = (await snapshot(page)).player.x;
+  const b = (await page.locator('.touch-btn[data-intent="right"]').boundingBox())!;
+  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2); // toque de verdade no ponto da tela (passa pelo giro)
+  await page.mouse.down();
+  await page.waitForTimeout(500);
+  await page.mouse.up();
+  expect((await snapshot(page)).player.x).toBeGreaterThan(x0);
+  await expect(page.getByText('Deixe a tela deitada')).toBeHidden();
+});
+
+test('desktop window narrower than tall: no rotation, the game waits with a hint', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'só no computador');
+  await page.goto('/?debug&seed=1&quality=low');
+  await page.waitForFunction(() => '__game' in window);
+  await page.setViewportSize({ width: 500, height: 800 });
+  await expect(page.getByText('Deixe a tela deitada')).toBeVisible();
   await page.waitForTimeout(300);
   const t1 = (await snapshot(page)).time;
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(800);
   expect((await snapshot(page)).time).toBe(t1);
-  await page.setViewportSize({ width: 844, height: 390 });
-  await expect(page.getByText('Gire o celular')).toBeHidden();
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await expect(page.getByText('Deixe a tela deitada')).toBeHidden();
   await waitSim(page, 0.2);
-  expect((await snapshot(page)).time).toBeGreaterThan(t1);
 });
 
 test('thief screenshot (visual check)', async ({ page }, info) => {
