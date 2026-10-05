@@ -23,12 +23,14 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 
 ## 3. Pista e movimento
 
-- Rua reta (curvas suaves na entrega 6) com **4 faixas no mesmo sentido**, calçada com meio-fio e postes dos dois lados e prédios passando. A pista é gerada em blocos e reciclada (infinita).
+- Rua com curvas (entrega 6, abaixo) e **4 faixas no mesmo sentido**, calçada com meio-fio e postes dos dois lados e prédios passando. A pista é gerada em blocos e reciclada (infinita).
 - Coordenadas da simulação: `s` = metros ao longo da pista, `x` = posição lateral contínua (faixas centradas em −4,5 / −1,5 / +1,5 / +4,5 m; bordas em ±6 m).
 - **Aceleração automática** até a velocidade de cruzeiro. Valores iniciais: polícia e ladrão 34 m/s (*revisado em 2026-10-04: antes 33 × 34, a polícia ficava parada a ~65 m e nunca encostava*). Com a compensação a partir de 20 m, a polícia chega rápido a ~20 m e só encosta/bate quando o ladrão erra (tráfego, quebra-molas, freio).
 - **◀ ▶** movem lateralmente (direção contínua, não troca de faixa por salto). **Freio** reduz a velocidade; soltar volta a acelerar.
 - **Tráfego**: 2–4 carros visíveis no nível 1, a 50–70% do cruzeiro, trocando de faixa ocasionalmente.
 - **Quebra-molas** (*revisado em 2026-10-03*): a cada 400 m ± 80 m, cobrindo **2 faixas vizinhas** sorteadas (as outras 2 ficam livres, dá para desviar). Quem passa por cima salta por 0,6 s e **perde 25% da velocidade**; no ar não acelera (a direção continua funcionando). Depois de aterrissar, recupera com a aceleração normal (~1 s). Vale para polícia e ladrão. No ar o carro **não pega caixinhas nem ativa bombas**. Colisões com carros continuam valendo. Aviso: placa amarela grande (losango com o desenho da lombada) na beira da pista 75 m antes e 3 faixas amarelas pintadas nas 2 faixas cobertas, de 16 a 28 m antes (*revisado em 2026-10-04: a placa pequena a 40 m passava despercebida*).
+
+- **Curvas** (*entrega 6, 2026-10-04*): traçado sorteado pela semente — 300 m de reta no começo, depois retas de 150–350 m e curvas de 150–300 m, para os dois lados, com entrada e saída suaves; nunca em cima de quebra-molas. **2/3 leves** (raio 350–600 m: pedem ◀ ▶) e **1/3 fechadas** (raio 130–180 m: pedem **freio**). Na curva o carro é empurrado para fora (∝ v²/r); acima da aderência (6 m/s²) **derrapa**: empurrão bem maior e a direção vale metade — no cruzeiro (34 m/s) uma curva fechada leva ao meio-fio, freando para ~25 m/s passa limpo. Aviso: placa de flechas (›››) 90 m antes de cada curva fechada, por fora da curva, apontando para o lado dela. Derrapando: pneu cantando e fumaça branca das rodas. A IA freia antes das curvas fechadas conforme o nível (nível 1 erra ~metade; nível 10 quase nunca). `?curves=0` deixa a rua reta (testes).
 
 ## 4. Combate
 
@@ -37,7 +39,6 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 - Segurar ATIRAR dispara na cadência atual. Fora do cone, o botão pisca "sem alvo" e não gasta nada.
 - **Tráfego bloqueia tiros** (vira escudo), exceto com Tiro perfurante ativo.
 - Projéteis são rápidos (300 m/s) mas não instantâneos, e podem errar se o alvo desviar.
-- **Desviar em ziguezague** (*2026-10-04*): o tiro da polícia voa a 150 m/s (o do ladrão, 300 m/s) e mira onde o ladrão vai estar à frente, não para o lado. De longe, um ladrão mudando de faixa desvia; de perto (~15 m) não dá tempo.
 - **Arma do ladrão não funciona com o carro quase parado**: abaixo de 8 m/s (~30 km/h, configurável) o botão ATIRAR do ladrão fica bloqueado. A bomba continua liberada.
 
 ### 4.2 Tabela de dano (valores iniciais em `config/balance.ts`)
@@ -46,7 +47,7 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 |---|---|---|
 | Tiro da polícia | −1 × potência × fator de distância × armadura | — |
 | Tiro do ladrão (com arma) | — | −1,5 × fator de distância (*teste de balanço A, 2026-10-04*) |
-| Colisão polícia × ladrão (qualquer um iniciando) | −5 × armadura (−8 com quebra-mato) | −3 (−1 com quebra-mato) |
+| Colisão polícia × ladrão (qualquer um iniciando) | −5 × armadura (−8 com aríete) | −3 (−1 com aríete) |
 | Colisão com cenário (meio-fio/poste) ou tráfego | −5 | −5 |
 | Pegar caixinha da outra cor | −2 | −2 |
 | Passar sobre bomba (no chão) | — | −15 (*teste de balanço C, 2026-10-04*) |
@@ -68,7 +69,7 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 
 ## 5. Caixinhas e itens
 
-- Aparecem a cada 200 m ± 40 m (*revisado em 2026-10-04: a cada 300 m vinham poucas*), numa faixa aleatória, nunca sobre um quebra-molas. **No máximo 2 visíveis ao mesmo tempo.**
+- Aparecem a cada 300 m ± 60 m, numa faixa aleatória, nunca sobre um quebra-molas. **No máximo 2 visíveis ao mesmo tempo.**
 - Visual: **polícia = cubo azul**, **ladrão = losango vermelho**; casca colorida translúcida com núcleo branco brilhante (*revisado em 2026-10-04: só o núcleo era colorido e as duas se confundiam*).
 - Cor sorteada com 50/50 por padrão. A cor tende para o lado com menos vida (até 65/35) para ajudar quem está perdendo.
 - Pegar a da **própria** cor aplica um item sorteado do grupo. Pegar a da **outra** cor causa −2 e consome a caixinha. A IA busca as da sua cor e desvia das outras (melhor em níveis altos).
@@ -80,7 +81,7 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 | Potência | dano +0,5 por tiro (de 1 até máximo 3) | permanente |
 | Vida | +3 | instantâneo |
 | Nitro | +40% de velocidade por 3 s | ativa ao pegar |
-| Para-choque quebra-mato | próximas 3 colisões com o ladrão: ladrão −8, polícia −1 | cargas |
+| Para-choque aríete | próximas 3 colisões com o ladrão: ladrão −8, polícia −1 | cargas |
 | Helicóptero | 8 s sem queda de dano por distância | ativa ao pegar |
 | Tiro perfurante | 10 s com tiros atravessando o tráfego | ativa ao pegar |
 
@@ -99,15 +100,16 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
 ## 6. Controles e HUD
 
 - Landscape. À esquerda: **◀ ▶**. À direita: **FREIO** e **ATIRAR** (maior, com aro na cor do lado: azul polícia, âmbar ladrão), mais **💣** contextual para o ladrão. Botões redondos só com ícone (rótulo acessível em português), vidro escuro com aro, afundam e acendem ao tocar, área de toque maior que o desenho, dentro das safe areas, multitoque com deslizar entre ◀ e ▶. Vibração curta (10 ms) ao apertar e ao levar dano (se suportado). Respeitam "reduzir movimento".
+- **Aviso de dano** (*entrega 6*): ao levar tiro, bomba ou bater, a borda da tela pisca em vermelho por 0,25 s, mais forte quanto maior o dano (funciona no iPhone, que não vibra pela web) e vibra onde houver. Com "reduzir movimento", a borda é mais fraca.
+- **Bomba acertou** (*entrega 6*): o ladrão vê "💥 Bomba acertou! −15" grande no centro, ouve um som próprio e vibra; a explosão aparece no retrovisor.
+- **Helicóptero** (*entrega 6*): enquanto o item dura, um helicóptero low-poly da polícia voa acima e à frente da viatura (hélice girando, som de hélice, sombra no chão) e os tiros da polícia descem dele na diagonal; nos últimos 2 s pisca e depois vai embora subindo.
 - Ladrão sem arma: ATIRAR fica cinza.
 - PC: ←/→ ou A/D, ↓/S freio, Espaço atira, B bomba, Esc pausa.
 - HUD: barras de vida dos dois, cronômetro, distância colorida, ícones dos upgrades ativos/permanentes (com timer nos temporários), nível de dificuldade discreto, botão de pausa.
 - **Marcador do adversário**: seta de tamanho fixo na cor do outro lado (vermelha = ladrão, azul = polícia) flutuando sobre o carro dele, desenhada por cima de tudo e sem neblina; aparece quando ele está a mais de 15 m.
 - **Retrovisor**: segunda câmera, imagem espelhada, pequena (22% da largura) no canto superior direito, ativa sempre que o adversário está atrás do jogador (*revisado em 2026-10-04: no topo central e maior, cobria tráfego, caixinhas e quebra-molas*).
-- Retrato: overlay "gire o aparelho" e pausa automática. Perder o foco da aba também pausa.
-- **Pausa** (*2026-10-04*): botão ⏸ no HUD ao lado do 🔊, teclas Esc/P, aba escondida, girar para retrato e o botão Voltar do Android abrem a tela de pausa (Continuar, Reiniciar, Sair, com o 🔊). Na pausa nada anda; toques feitos na contagem ou na pausa não disparam ao voltar.
-
-- **Webapp** (*antecipado da Entrega 5 em 2026-10-04*): manifest com ícones, abre em tela cheia e paisagem quando instalado ("Adicionar à tela de início"). No navegador, o primeiro toque pede tela cheia e trava em paisagem (Android; o iPhone só esconde as barras instalado). Sem zoom por toque duplo ou pinça. Offline (*Entrega 5*): service worker próprio pré-carrega a página e todos os arquivos do build na primeira visita; páginas vêm da rede primeiro (com cópia de reserva e limite de 4 s), arquivos com hash do cache; cada build tem seu cache e o antigo é apagado.
+- **Sempre em paisagem** (*revisado na entrega 6*): com o celular em pé o jogo inteiro se desenha girado 90° (o iPhone não deixa travar a rotação pela web); os botões continuam funcionando. No Android o primeiro toque também trava a tela em paisagem (inclusive instalado). Perder o foco da aba pausa.
+- **Splash** (*entrega 6*): fundo escuro, ícone com o giroflex piscando e "Polícia × Ladrão", já no primeiro desenho; some com um fade quando a primeira tela está pronta (≥ 0,7 s). iPhone instalado usa imagens de abertura; Android, o manifest.
 
 ## 7. Telas
 
@@ -142,8 +144,7 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
   | ≤ 40 | fumaça branca, para-choque pendurado, para-brisa trincado |
   | ≤ 20 | fumaça preta, faíscas, farol piscando |
 - Placas de titânio aparecem no carro do ladrão.
-- **Áudio** gerado com WebAudio (tiro da polícia é um estalo agudo e curto; o do ladrão, um estrondo grave — dá para saber quem atirou): motor (pitch pela velocidade), sirene, tiros, impactos, explosão, coleta, música chiptune. Liga/desliga no título e na pausa. Durante a partida: botão 🔊/🔇 no HUD e tecla M (*2026-10-04*); ligado por padrão, a escolha fica salva. O som começa no primeiro toque/tecla (regra dos navegadores).
-- **Atirador visível** (*2026-10-04*): boneco low-poly inclinado na janela do carona, girando para o alvo dentro do cone de tiro, com clarão no cano a cada tiro. Policial de quepe; ladrão de touca e lenço vermelho, visível só com a arma traseira.
+- **Áudio** gerado com WebAudio: motor (pitch pela velocidade), sirene, tiros, impactos, explosão, coleta, música chiptune. Liga/desliga no título e na pausa.
 
 ## 10. Arquitetura
 
@@ -176,6 +177,6 @@ src/
 3. **Mundo**: quebra-molas com pulo, tráfego, caixinhas e todos os itens, bomba, escalada de dificuldade.
 4. **Visual e áudio**: dano progressivo, giroscópio, fumaça, efeitos, sons e música; atirador visível (policial/ladrão na janela do carona apontando a arma e atirando).
 5. **Meta**: telas, ranking com iniciais, pausa, aviso de retrato, PWA e deploy na Vercel.
-6. **Curvas suaves** (pós-v1).
+6. **Curvas**: curvas leves e fechadas, derrapagem, freio que importa, placas, IA que freia; junto, extras do playtest: aviso de dano, bomba acertou, helicóptero visível, sempre paisagem e splash.
 
 Cada entrega vira uma PR via `scratch/NN-*.ps1`.
