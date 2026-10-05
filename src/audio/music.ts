@@ -56,6 +56,25 @@ export const SONG: Song = {
   drums: Array.from({ length: 64 }, (_, i) => DRUM_BAR[i % 16]!),
 };
 
+// Menu: mais calmo (110 bpm), lá menor arpejado, sem bateria pesada
+const MENU_BASS = parse(`
+A2 . . .   . . . .   E2 . . .   . . . .
+F2 . . .   . . . .   G2 . . .   . . . .
+`);
+const MENU_LEAD = parse(`
+A4 . C5 .  E5 . C5 .  B4 . E5 .  G4 . E5 .
+A4 . C5 .  F5 . C5 .  B4 . D5 .  G5 . D5 .
+`);
+const MENU_DRUM = ['k', null, null, null, 'h', null, null, null, 'k', null, null, null, 'h', null, null, null] as const;
+
+export const MENU_SONG: Song = {
+  bpm: 110,
+  length: 32,
+  bass: MENU_BASS,
+  lead: MENU_LEAD,
+  drums: Array.from({ length: 32 }, (_, i) => MENU_DRUM[i % 16]!),
+};
+
 export function createSequencer(song: Song): {
   step(dt: number, intense: boolean): Note[];
   /** exatamente um passo (at = 0) e avança — usado pelo agendador no relógio do áudio */
