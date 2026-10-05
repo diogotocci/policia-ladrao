@@ -2,6 +2,7 @@
 // Posições em coordenadas de pista (x, altura, s): ficam no lugar enquanto os carros seguem.
 import * as THREE from 'three';
 import type { QualityTier } from './renderer';
+import { trackPos } from './trackFrame';
 
 type Kind = 'white' | 'black' | 'fire' | 'dust';
 
@@ -100,7 +101,8 @@ export function createParticles(scene: THREE.Scene, max = 160): Particles {
         const t = 1 - life[i]! / total[i]!; // 0 → 1
         const grow = size[i * 2]! + (size[i * 2 + 1]! - size[i * 2]!) * t;
         const sc = grow * Math.min(1, (1 - t) * 4); // encolhe no fim (some suave)
-        tmp.position.set(pos[k]!, Math.max(0.05, pos[k + 1]!), -(pos[k + 2]! - originS));
+        const wp = trackPos(pos[k + 2]!, pos[k]!, originS);
+        tmp.position.set(wp.x, Math.max(0.05, pos[k + 1]!), wp.z);
         tmp.quaternion.copy(camera.quaternion);
         tmp.scale.setScalar(sc);
         tmp.updateMatrix();

@@ -1,6 +1,7 @@
 // Retrovisor: câmera traseira renderizada numa textura e desenhada espelhada (como um espelho de verdade)
 // num retângulo pequeno no canto superior direito. O passe do espelho não recalcula o mapa de sombras.
 import * as THREE from 'three';
+import { trackPos } from './trackFrame';
 import type { CarState } from '../sim/car';
 
 const MARGIN_TOP = 10; // px (alinha com as barras do HUD)
@@ -37,9 +38,11 @@ export function createRearview(): {
   return {
     camera,
     place(car, originS) {
-      const z = -(car.s - originS);
-      camera.position.set(car.x, 1.6, z);
-      camera.lookAt(car.x, 1.1, z + 20);
+      // no teto, olhando para trás ao longo da pista (nas curvas, para onde a rua de trás vai)
+      const p = trackPos(car.s, car.x, originS);
+      const back = trackPos(car.s - 20, car.x, originS);
+      camera.position.set(p.x, 1.6, p.z);
+      camera.lookAt(back.x, 1.1, back.z);
     },
     render(renderer, scene, cssW, cssH) {
       const r = rearviewRect(cssW, cssH);
