@@ -24,8 +24,8 @@ const startAs = async (page: Page, side: 'police' | 'thief', extra = '') => {
   await page.waitForFunction(() => '__game' in window && !document.querySelector('.screen-countdown'), null, { timeout: 60_000 });
 };
 
-test('full product flow: title → choose thief → 3-2-1 → play → end → arcade initials → ranking (kept after reload)', async ({ page }) => {
-  await page.goto('/?app&quality=low&mute&debug&traffic=0&thiefHp=1');
+test('full product flow: title → choose thief → 3-2-1 → play → escape at the time limit → arcade initials → ranking (kept after reload)', async ({ page }) => {
+  await page.goto('/?app&quality=low&mute&debug&traffic=0&escape=4'); // fuga em 4 s (só debug)
   await expect(page.locator('.screen-title')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Jogar', exact: true })).toBeFocused();
   await page.getByRole('button', { name: 'Jogar', exact: true }).click();
@@ -37,7 +37,8 @@ test('full product flow: title → choose thief → 3-2-1 → play → end → a
   await page.waitForTimeout(800);
   if (await page.locator('.screen-countdown').isVisible()) expect(await simTime(page)).toBe(t0);
   await expect(page.locator('.screen-end')).toBeVisible({ timeout: 150_000 });
-  await expect(page.locator('.screen-end')).toContainText('Você perdeu');
+  await expect(page.locator('.screen-end')).toContainText('Você venceu!');
+  await expect(page.locator('.screen-end')).toContainText('Fugiu!');
   await expect(page.locator('.initials')).toBeFocused();
   await page.keyboard.type('dio');
   await page.keyboard.press('Enter');
@@ -46,9 +47,10 @@ test('full product flow: title → choose thief → 3-2-1 → play → end → a
   const first = page.locator('.ranking-row').first();
   await expect(first).toContainText('DIO');
   await expect(first).toHaveClass(/is-new/);
+  await expect(first).toContainText('🏁');
   await page.reload();
   await page.getByRole('button', { name: 'Ranking' }).click();
-  await page.getByRole('tab', { name: 'Ladrão — mais resistentes' }).click();
+  await page.getByRole('tab', { name: 'Ladrão — mais rápidos a vencer' }).click();
   await expect(page.locator('.ranking-row').first()).toContainText('DIO');
 });
 

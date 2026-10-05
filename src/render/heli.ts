@@ -1,5 +1,5 @@
-// Helicóptero da polícia (item "Helicóptero"): aparece acima e um pouco atrás da viatura enquanto dura,
-// pisca nos últimos 2 s e vai embora subindo. Low-poly: corpo (1 mesh) + hélice (1 mesh) + sombra no chão.
+// Helicóptero da polícia (item "Helicóptero"): aparece acima e à frente da viatura enquanto dura
+// e, quando acaba, vai embora subindo (sem piscar). Low-poly: corpo (1 mesh) + hélice (1 mesh) + sombra no chão.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { BALANCE } from '../config/balance';
@@ -11,7 +11,6 @@ export const HELI_EXIT = 1.6; // s indo embora
 const ARRIVE = 0.8; // s descendo
 const BEHIND = -16; // m: um pouco à frente da viatura, para aparecer na câmera de trás
 const SIDE = 2; // m para a direita
-const BLINK = 2; // s finais piscando
 
 export interface HeliPose {
   visible: boolean;
@@ -31,8 +30,7 @@ export function heliPose(time: number, until: number, since?: number): HeliPose 
   }
   const k = Math.min(1, (time - start) / ARRIVE);
   const height = HELI_Y + 16 * (1 - k) * (1 - k);
-  const blinking = until - time < BLINK;
-  return { visible: !blinking || Math.floor(time * 8) % 2 === 0, height, behind: BEHIND };
+  return { visible: true, height, behind: BEHIND }; // sem piscar (playtest): no fim só vai embora
 }
 
 function box(w: number, h: number, d: number, x: number, y: number, z: number, hex: number): THREE.BufferGeometry {

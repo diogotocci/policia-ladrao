@@ -56,9 +56,10 @@ describe('createHud', () => {
 
   it('shows timer, coloured distance and level', () => {
     const hud = createHud(root, 'police');
-    const w = { ...createWorld({ seed: 1, playerRole: 'police' }), time: 83.45, level: 3 };
+    const w = { ...createWorld({ seed: 1, playerRole: 'police' }), time: 33.45, level: 3 };
     hud.update(w);
-    expect(root.querySelector('.hud-time')!.textContent).toBe('01:23.4');
+    // contagem regressiva até a fuga (1:30)
+    expect(root.querySelector('.hud-time')!.textContent).toBe('00:56.5');
     const dist = root.querySelector('.hud-distance')!;
     expect(dist.textContent).toBe('40 m');
     expect(dist.getAttribute('data-band')).toBe('near');
@@ -153,6 +154,32 @@ describe('item HUD', () => {
     expect(el.hidden).toBe(false);
     hud.toast('+ Placa');
     expect(el.classList.contains('is-big')).toBe(false);
+    hud.dispose();
+  });
+
+  it('escape countdown: label per side, yellow alert in the last 10 s, frozen at 00:00 during the escape', () => {
+    const hud = createHud(root, 'thief');
+    const w = createWorld({ seed: 1, playerRole: 'thief' });
+    hud.update(w);
+    expect(root.querySelector('.hud-time-label')!.textContent).toBe('Fuga em');
+    expect(root.querySelector('.hud-time')!.textContent).toBe('01:30.0');
+    expect(root.querySelector('.hud-time')!.classList.contains('is-alert')).toBe(false);
+    hud.update({ ...w, time: 81 });
+    expect(root.querySelector('.hud-time')!.classList.contains('is-alert')).toBe(true);
+    hud.update({ ...w, time: 91, match: { over: false, escapeAt: 90 } });
+    expect(root.querySelector('.hud-time')!.textContent).toBe('00:00.0');
+    hud.dispose();
+    const hud2 = createHud(root, 'police');
+    hud2.update(createWorld({ seed: 1, playerRole: 'police' }));
+    expect(root.querySelector('.hud-time-label')!.textContent).toBe('Prenda em');
+    hud2.dispose();
+  });
+
+  it('end overlay after an escape says the thief got away', () => {
+    const w = createWorld({ seed: 1, playerRole: 'thief' });
+    const hud = createHud(root, 'thief');
+    hud.update({ ...w, time: 92, match: { over: true, winner: 'thief', reason: 'escape', endTime: 90, escapeAt: 90 } });
+    expect(root.querySelector('.hud-end')!.textContent).toContain('Fugiu!');
     hud.dispose();
   });
 });

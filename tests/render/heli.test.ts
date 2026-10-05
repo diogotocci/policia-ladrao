@@ -23,12 +23,9 @@ describe('helicopter pose (visible while the power-up lasts, blinks at the end, 
     const extended = first + 5;
     expect(heliPose(first - 1, extended, first - T).height).toBeCloseTo(HELI_Y, 5);
   });
-  it('blinks in the last 2 s', () => {
+  it('no blinking (playtest): visible the whole time, then it just flies away', () => {
     const until = 20;
-    const seen = new Set<boolean>();
-    for (let t = until - 1.9; t < until; t += 0.05) seen.add(heliPose(t, until).visible);
-    expect(seen).toEqual(new Set([true, false]));
-    for (let t = until - T + 0.5; t < until - 2.1; t += 0.05) expect(heliPose(t, until).visible).toBe(true);
+    for (let t = until - T + 0.5; t < until; t += 0.05) expect(heliPose(t, until).visible).toBe(true);
   });
   it('after it ends it rises and flies ahead, then disappears', () => {
     const until = 20;

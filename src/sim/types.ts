@@ -55,12 +55,17 @@ export type GameEvent =
   | { type: 'shot'; from: Role; s: number; x: number }
   | { type: 'noTarget'; from: Role }
   | { type: 'skid'; role: Role; s: number; x: number }
-  | { type: 'end'; winner: Role };
+  | { type: 'end'; winner: Role }
+  | { type: 'escape' };
 
 export interface MatchState {
   over: boolean;
   winner?: Role;
   endTime?: number;
+  /** como acabou: fuga (1:30), polícia destruída, ladrão destruído */
+  reason?: 'escape' | 'policeDown' | 'thiefDown';
+  /** instante em que começou a cena de fuga (1:30) */
+  escapeAt?: number;
 }
 
 export interface WorldState {
@@ -84,6 +89,8 @@ export interface WorldState {
   trafficOn: boolean;
   /** curvas ligadas (Entrega 6) */
   curvesOn: boolean;
+  /** chegando vivo a este tempo o ladrão foge (BALANCE.match.escapeTime; menor só em debug) */
+  escapeTime: number;
   boxes: Box[];
   bombs: Bomb[];
   nextBombId: number;

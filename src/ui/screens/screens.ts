@@ -54,11 +54,11 @@ export function renderTitle(
 const RULES: Record<Role, { title: string; lines: string[] }> = {
   police: {
     title: 'Polícia',
-    lines: ['Prenda o ladrão no menor tempo', 'Você nunca passa o ladrão: encoste e atire', 'Caixinhas azuis: cadência, nitro, helicóptero…'],
+    lines: ['Prenda o ladrão antes de 1:30', 'Você nunca passa o ladrão: encoste e atire', 'Caixinhas azuis: cadência, nitro, helicóptero…'],
   },
   thief: {
     title: 'Ladrão',
-    lines: ['Fuja o máximo de tempo que puder', 'Quebra-molas, tráfego e bombas são aliados', 'Caixinhas vermelhas: placas, bombas, arma traseira'],
+    lines: ['Aguente 1:30 e suma no horizonte (ou destrua a viatura)', 'Quebra-molas, tráfego e bombas são aliados', 'Caixinhas vermelhas: placas, bombas, arma traseira'],
   },
 };
 
@@ -138,6 +138,11 @@ export function renderPause(
 // ---------- fim ----------
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
+function endReason(r: MatchResult, me: Role): string {
+  if (r.reason === 'escape') return me === 'thief' ? 'Fugiu! Sumiu no horizonte 🏁' : 'O ladrão fugiu 🏁';
+  return r.winner === 'police' ? 'O ladrão foi detido' : 'A viatura foi destruída';
+}
+
 export function renderEnd(
   root: HTMLElement,
   p: {
@@ -157,7 +162,7 @@ export function renderEnd(
   const card = h('div', `screen-card is-${won ? 'won' : 'lost'}`);
   card.append(
     h('h2', 'screen-heading', won ? 'Você venceu!' : 'Você perdeu'),
-    h('p', 'end-reason', p.result.winner === 'police' ? 'O ladrão foi detido' : 'A viatura foi destruída'),
+    h('p', 'end-reason', endReason(p.result, p.role)),
     h('p', 'end-time', `Tempo: ${formatTime(p.result.time)}`),
   );
   const again = btn('Jogar de novo', 'is-primary', p.onAgain);
@@ -182,12 +187,13 @@ export function renderEnd(
     };
     for (let i = 0; i < 3; i++) {
       const col = h('div', 'initials-col');
-      const up = btn('▲', 'initials-up', () => ((letters[i] = (letters[i]! + 1) % 26), render()));
+      // roleta de fliperama: ▼ desce para a próxima letra (A → B), ▲ volta (A → Z)
+      const up = btn('▲', 'initials-up', () => ((letters[i] = (letters[i]! + 25) % 26), render()));
       up.dataset.i = String(i);
-      up.setAttribute('aria-label', `Letra ${i + 1}: próxima`);
-      const down = btn('▼', 'initials-down', () => ((letters[i] = (letters[i]! + 25) % 26), render()));
+      up.setAttribute('aria-label', `Letra ${i + 1}: anterior`);
+      const down = btn('▼', 'initials-down', () => ((letters[i] = (letters[i]! + 1) % 26), render()));
       down.dataset.i = String(i);
-      down.setAttribute('aria-label', `Letra ${i + 1}: anterior`);
+      down.setAttribute('aria-label', `Letra ${i + 1}: próxima`);
       const slot = h('div', 'initials-slot');
       slotEls.push(slot);
       col.append(up, slot, down);
@@ -207,8 +213,8 @@ export function renderEnd(
       if (/^[a-zA-Z]$/.test(k)) {
         letters[cursor] = LETTERS.indexOf(k.toUpperCase());
         cursor = Math.min(2, cursor + 1);
-      } else if (k === 'ArrowUp') letters[cursor] = (letters[cursor]! + 1) % 26;
-      else if (k === 'ArrowDown') letters[cursor] = (letters[cursor]! + 25) % 26;
+      } else if (k === 'ArrowDown') letters[cursor] = (letters[cursor]! + 1) % 26;
+      else if (k === 'ArrowUp') letters[cursor] = (letters[cursor]! + 25) % 26;
       else if (k === 'ArrowLeft' || k === 'Backspace') cursor = Math.max(0, cursor - 1);
       else if (k === 'ArrowRight') cursor = Math.min(2, cursor + 1);
       else if (k === 'Enter') return void (e.preventDefault(), save());
@@ -230,7 +236,7 @@ export function renderEnd(
 }
 
 // ---------- ranking ----------
-const TAB_LABEL: Record<Role, string> = { police: 'Polícia — mais rápidos', thief: 'Ladrão — mais resistentes' };
+const TAB_LABEL: Record<Role, string> = { police: 'Polícia — mais rápidos', thief: 'Ladrão — mais rápidos a vencer' };
 
 const shortDate = (iso: string) => {
   const d = new Date(iso);
@@ -263,7 +269,14 @@ export function renderRanking(
   entries.forEach((e, i) => {
     const row = h('li', 'ranking-row');
     if (p.highlight && p.highlight.role === p.tab && p.highlight.rank === i + 1) row.classList.add('is-new');
-    row.append(h('span', 'ranking-pos', String(i + 1)), h('span', 'ranking-initials', e.initials), h('span', 'ranking-time', formatTime(e.time)), h('span', 'ranking-date', shortDate(e.date)));
+    const how = e.how === 'kill' ? '💥' : e.how === 'escape' ? `🏁 ♥${Math.round(e.hp ?? 0)}` : '';
+    const time = h('span', 'ranking-time', formatTime(e.time));
+    if (how) {
+      const tag = h('span', 'ranking-how', ` ${how}`);
+      tag.setAttribute('aria-label', e.how === 'kill' ? 'destruiu a viatura' : `fugiu, vida ${Math.round(e.hp ?? 0)}`);
+      time.append(tag);
+    }
+    row.append(h('span', 'ranking-pos', String(i + 1)), h('span', 'ranking-initials', e.initials), time, h('span', 'ranking-date', shortDate(e.date)));
     list.append(row);
   });
   const back = btn('Voltar', 'is-quiet', p.onBack);

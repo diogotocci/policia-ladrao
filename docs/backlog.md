@@ -27,3 +27,12 @@ Ideias anotadas durante o desenvolvimento. **Nada aqui está aprovado nem implem
   - conquistas (ex.: "fugir 5 min sem levar bomba");
   - sequência de dias jogando;
   - níveis de patente (recruta → delegado / batedor de carteira → chefão).
+
+## Fases (anotado em 2026-10-05)
+
+**Ideia (Diogo):** com a gamificação, o jogador vai passando de fase e fica mais difícil. A primeira regra que escala é o **tempo de fuga do ladrão** (hoje 1:30, em `BALANCE.match.escapeTime`): cada fase vencida aumenta o tempo que o ladrão precisa sobreviver. Decidir no brainstorming: o que mais escala por fase (nível inicial da IA, tráfego, curvas fechadas), se a fase é por lado e como ela conversa com o ranking.
+
+## Reforço da polícia: bloqueio de via (anotado em 2026-10-05)
+
+**Ideia (Diogo):** caixinha azul nova, **Reforço**, guardada para usar quando quiser (como a bomba do ladrão, com botão próprio). Ao usar, aparece um **bloqueio de via** à frente do ladrão: uma viatura atravessada num dos cantos da pista com um policial em pé ao lado. Se o ladrão bater: **perde muita velocidade e leva 15 de dano** (valores a balancear). Decidir: onde surge (distância à frente, qual faixa), quanto tempo fica, aviso visual para o ladrão desviar, quantos dá para guardar, e como a IA de polícia usa.
+

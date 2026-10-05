@@ -262,4 +262,36 @@ describe('audio mixer', () => {
     expect(run(near)).toBeGreaterThanOrEqual(8);
     expect(run(far)).toBe(0);
   });
+
+  it('last 10 s before the escape: one beep per second (none before, none while paused)', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    let w = { ...world('thief'), time: 75 };
+    const beeps = () => be.played.filter((n) => n === 'beep').length;
+    for (let i = 0; i < 60 * 4; i++) mx.frame((w = { ...w, time: w.time + DT }), DT);
+    expect(beeps()).toBe(0);
+    w = { ...w, time: 84.5 };
+    for (let i = 0; i < 60 * 3; i++) mx.frame((w = { ...w, time: w.time + DT }), DT);
+    expect(beeps()).toBe(3);
+    for (let i = 0; i < 60; i++) mx.frame((w = { ...w, time: w.time + DT }), DT, true);
+    expect(beeps()).toBe(3);
+  });
+
+  it('the escape plays its own whoosh', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.frame(world('thief'), DT);
+    mx.events([{ type: 'escape' }]);
+    expect(be.played).toEqual(['escape']);
+  });
+
+  it('during the escape scene: no siren and no rotor', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    const t0 = world('thief');
+    const w = withCar({ ...t0, time: 91, match: { over: false, escapeAt: 90 } }, 'police', { ...policeOf(t0), s: thiefOf(t0).s - 20, upgrades: { ...policeOf(t0).upgrades, heliUntil: 95 } });
+    for (let i = 0; i < 30; i++) mx.frame(w, DT);
+    expect(be.siren).toBe(0);
+    expect(be.played.filter((n) => n === 'rotor')).toHaveLength(0);
+  });
 });

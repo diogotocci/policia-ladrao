@@ -59,6 +59,8 @@ export function startGame(
     traffic?: boolean;
     /** curvas (Entrega 6); false = rua reta (?curves=0) */
     curves?: boolean;
+    /** tempo de fuga mais curto (só debug/e2e: ?escape=N) */
+    escapeTime?: number;
     /** começa mudo (?mute), sem mexer na preferência salva */
     mute?: boolean;
     /** sessão de áudio da app (sem ela o jogo cria a própria) */
@@ -68,7 +70,7 @@ export function startGame(
     /** a app decide o que a pausa mostra; sem isso o jogo pausa/retoma sozinho (Esc/P/⏸) */
     onPauseRequest?: () => void;
     /** fim de partida (a app mostra a tela de fim; sem isso o HUD mostra o cartão de fim) */
-    onEnd?: (result: { winner: Role; time: number }) => void;
+    onEnd?: (result: { winner: Role; time: number; reason?: 'escape' | 'policeDown' | 'thiefDown'; hp: number }) => void;
   },
 ): GameHandle {
   const view = createRenderer(container, opts.quality ?? 'high');
@@ -125,6 +127,9 @@ export function startGame(
   const rearview = createRearview();
   const props = createWorldProps(scene, lighting.reflections);
   const chase = createChaseCamera();
+  const fog = scene.fog instanceof THREE.Fog ? scene.fog : null;
+  const FOG_NEAR = fog?.near ?? 0;
+  const FOG_FAR = fog?.far ?? 0;
   const heli = createHeli(scene);
 
   let world: WorldState = createWorld({
@@ -134,6 +139,7 @@ export function startGame(
     debugGive: opts.debugGive,
     traffic: opts.traffic,
     curves: curvesOn,
+    escapeTime: opts.escapeTime,
   });
   let frameEvents: GameEvent[] = [];
   let prev = world;
@@ -308,6 +314,15 @@ export function startGame(
     updateGunner(gunners[car.role], car, foe, clock);
     updateGunner(gunners[foe.role], foe, car, clock);
     marker.update(foe, Math.abs(foe.s - car.s), origin);
+    // fuga (1:30): a neblina fecha e o ladrão some no horizonte; sem marcador
+    if (world.match.escapeAt !== undefined) {
+      marker.setVisible(false);
+      const k = Math.min(1, (world.time - world.match.escapeAt) / (BALANCE.match.escapeScene * 0.7)); // some antes da tela de fim
+      if (fog) {
+        fog.near = FOG_NEAR + (12 - FOG_NEAR) * k;
+        fog.far = FOG_FAR + (85 - FOG_FAR) * k;
+      }
+    }
     heli.update(car.role === 'police' ? car : foe, world.time, origin, dt);
     // pneus cantando: fumaça branca das rodas de trás enquanto derrapa
     for (let k = 0; k < 2 && !frozen; k++) {
@@ -335,7 +350,7 @@ export function startGame(
     hud.update(world);
     if (world.match.over && !endReported) {
       endReported = true;
-      opts.onEnd?.({ winner: world.match.winner!, time: world.match.endTime ?? world.time });
+      opts.onEnd?.({ winner: world.match.winner!, time: world.match.endTime ?? world.time, reason: world.match.reason, hp: world.player.hp });
     }
     const here = trackPos(car.s, car.x, origin);
     lighting.follow(here.x, here.z, here.heading);
