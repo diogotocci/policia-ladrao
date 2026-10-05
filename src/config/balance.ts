@@ -41,6 +41,13 @@ export const BALANCE = {
   },
   catchUp: { start: 20, end: 150, maxBonus: 0.35 },
   difficulty: { levelEvery: 30, maxLevel: 10 },
+  // Fuga (Entrega 7): chegando vivo a 1:30 o ladrão some no horizonte e vence. Cresce com as fases (backlog).
+  match: {
+    escapeTime: 90, // s
+    escapeScene: 2, // s de cena (ladrão com nitro some na neblina, polícia freia)
+    escapeBoost: 2, // × cruzeiro do ladrão na cena
+    escapeAccel: 25, // m/s² do ladrão na cena
+  },
   traffic: { baseCount: 3, perLevel: 0.08, speedMin: 0.5, speedMax: 0.7, spawnAheadMin: 120, spawnAheadMax: 240, despawnBehind: 80, laneChangePerSecond: 0.15, laneChangeSpeed: 3, minGap: 12, minGapToGameCar: 40, minGapToItem: 8 },
   items: {
     boxEvery: 200, // m (~1 a cada 6 s no cruzeiro; playtest 2026-10-04: a cada 300 m vinham poucas)
