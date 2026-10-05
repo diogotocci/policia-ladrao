@@ -85,7 +85,7 @@ export function createHud(
   root: HTMLElement,
   playerRole: Role,
   opts: { onRestart?: () => void; showEnd?: boolean } = {},
-): { update(w: WorldState): void; toast(text: string): void; dispose(): void } {
+): { update(w: WorldState): void; toast(text: string, opts?: { big?: boolean }): void; dispose(): void } {
   const hud = el('div', 'hud');
   hud.dataset.role = playerRole;
 
@@ -183,11 +183,12 @@ export function createHud(
         again.focus?.();
       }
     },
-    toast(text) {
+    toast(text, opts = {}) {
       toastEl.textContent = text;
       toastEl.hidden = false;
+      toastEl.classList.toggle('is-big', opts.big === true);
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => (toastEl.hidden = true), 1200);
+      toastTimer = setTimeout(() => (toastEl.hidden = true), opts.big ? 2000 : 1200);
     },
     dispose() {
       clearTimeout(toastTimer);

@@ -1,6 +1,7 @@
 // Marcador do adversário: seta flutuante de tamanho fixo na tela, desenhada por cima de tudo (sem neblina),
 // para achar o outro carro de longe. Some quando ele está perto (≤ 15 m).
 import * as THREE from 'three';
+import { trackPos } from './trackFrame';
 import type { Role } from '../config/balance';
 import type { CarState } from '../sim/car';
 
@@ -62,7 +63,8 @@ export function createOpponentMarker(
   return {
     update(foe, distance, originS) {
       sprite.visible = distance > SHOW_FROM;
-      sprite.position.set(foe.x, HEIGHT, -(foe.s - originS));
+      const p = trackPos(foe.s, foe.x, originS);
+      sprite.position.set(p.x, HEIGHT, p.z);
     },
     setVisible(v) {
       sprite.visible = v;

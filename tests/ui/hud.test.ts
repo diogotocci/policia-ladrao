@@ -143,4 +143,16 @@ describe('item HUD', () => {
     expect(root.querySelector<HTMLElement>('.hud-toast')!.hidden).toBe(true);
     hud.dispose();
   });
+
+  it('big toast (bomb hit) is larger and stays longer; a normal toast after it is normal again', async () => {
+    const hud = createHud(root, 'thief');
+    hud.toast('💥 Bomba acertou! −15', { big: true });
+    const el = root.querySelector<HTMLElement>('.hud-toast')!;
+    expect(el.classList.contains('is-big')).toBe(true);
+    await new Promise((r) => setTimeout(r, 1300));
+    expect(el.hidden).toBe(false);
+    hud.toast('+ Placa');
+    expect(el.classList.contains('is-big')).toBe(false);
+    hud.dispose();
+  });
 });

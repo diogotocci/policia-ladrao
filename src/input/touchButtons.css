@@ -13,8 +13,8 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding: max(14px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right))
-    max(14px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+  padding: max(14px, var(--safe-top)) max(18px, var(--safe-right))
+    max(14px, var(--safe-bottom)) max(18px, var(--safe-left));
 }
 .touch-controls[data-role='thief'] { --hud-accent: #ffb23e; }
 

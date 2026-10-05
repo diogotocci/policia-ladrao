@@ -43,6 +43,8 @@ export interface CarState {
   fireCooldown: number;
   /** segundos restantes no ar (pulo do quebra-molas) */
   airTime: number;
+  /** derrapando na curva (acima da aderência) */
+  skidding: boolean;
   upgrades: Upgrades;
 }
 
@@ -58,13 +60,27 @@ export function createCar(role: Role, laneIndex: 0 | 1 | 2 | 3, s = 0): CarState
     hasGun: false,
     fireCooldown: 0,
     airTime: 0,
+    skidding: false,
     upgrades: baseUpgrades(role),
   };
 }
 
 const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
 
-export function stepCar(car: CarState, intents: Intents, dt: number, opts: { speedBonus?: number } = {}): CarState {
+/**
+ * Deriva lateral numa curva de curvatura κ (1/m, positiva = curva à direita): empurra para fora (−sinal de κ).
+ * Até a aderência é fácil de segurar; acima dela o carro derrapa e o ◀ ▶ rende menos (spec Entrega 6).
+ */
+export function cornering(speed: number, curvature: number): { drift: number; skidding: boolean } {
+  if (curvature === 0 || speed <= 0) return { drift: 0, skidding: false };
+  const C = BALANCE.curves;
+  const a = speed * speed * Math.abs(curvature);
+  const skidding = a > C.grip;
+  const mag = C.driftGain * a + (skidding ? C.skidGain * (a - C.grip) : 0);
+  return { drift: -Math.sign(curvature) * mag, skidding };
+}
+
+export function stepCar(car: CarState, intents: Intents, dt: number, opts: { speedBonus?: number; curvature?: number } = {}): CarState {
   const { accel, brakeDecel, lateralSpeed, cruise } = BALANCE.movement;
   const target = cruise[car.role] * (1 + (opts.speedBonus ?? 0));
 
@@ -75,7 +91,9 @@ export function stepCar(car: CarState, intents: Intents, dt: number, opts: { spe
   else speed = Math.max(target, car.speed - accel * dt); // turbo acabou: desacelera suave
 
   const steer: CarState['steer'] = intents.left === intents.right ? 0 : intents.left ? -1 : 1;
-  const rawX = car.x + steer * lateralSpeed * dt;
+  const { drift, skidding } = cornering(speed, opts.curvature ?? 0);
+  const grip = skidding ? BALANCE.curves.skidSteer : 1;
+  const rawX = car.x + (steer * lateralSpeed * grip + drift) * dt;
   const x = Math.min(EDGE, Math.max(-EDGE, rawX));
 
   return {
@@ -85,5 +103,6 @@ export function stepCar(car: CarState, intents: Intents, dt: number, opts: { spe
     speed,
     steer,
     touchingEdge: Math.abs(x) >= EDGE,
+    skidding,
   };
 }

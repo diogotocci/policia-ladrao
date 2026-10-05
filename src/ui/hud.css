@@ -9,9 +9,9 @@
   pointer-events: none;
   font: 600 13px/1.1 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color: #f3f5f8;
-  padding: max(10px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) 0 max(14px, env(safe-area-inset-left));
+  padding: max(10px, var(--safe-top)) max(14px, var(--safe-right)) 0 max(14px, var(--safe-left));
 }
-.hud-bars { position: absolute; top: max(10px, env(safe-area-inset-top)); left: max(14px, env(safe-area-inset-left)); display: grid; gap: 6px; }
+.hud-bars { position: absolute; top: max(10px, var(--safe-top)); left: max(14px, var(--safe-left)); display: grid; gap: 6px; }
 .hud-bar { display: grid; grid-template-columns: 52px 140px 28px; align-items: center; gap: 8px; padding: 5px 9px; border-radius: 10px; background: var(--hud-glass); border: 1px solid var(--hud-edge); }
 .hud-bar-label { font-weight: 600; opacity: 0.85; }
 .hud-bar-track { height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
@@ -20,7 +20,7 @@
 .hud-bar--thief .hud-bar-fill { background: var(--thief); }
 .hud-bar-value { text-align: right; font-variant-numeric: tabular-nums; }
 
-.hud-center { position: absolute; top: max(10px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); display: flex; gap: 10px; align-items: center; padding: 6px 12px; border-radius: 12px; background: var(--hud-glass); border: 1px solid var(--hud-edge); }
+.hud-center { position: absolute; top: max(10px, var(--safe-top)); left: 50%; transform: translateX(-50%); display: flex; gap: 10px; align-items: center; padding: 6px 12px; border-radius: 12px; background: var(--hud-glass); border: 1px solid var(--hud-edge); }
 .hud-time { font: 700 17px/1 ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
 .hud-distance { font-variant-numeric: tabular-nums; padding: 2px 7px; border-radius: 8px; }
 .hud-distance[data-band='near'] { background: rgba(46, 204, 113, 0.28); color: #b8f5cf; }
@@ -53,6 +53,9 @@
   conic-gradient(#ffd25a calc(var(--left, 1) * 360deg), rgba(255, 255, 255, 0.12) 0) border-box; border: 2px solid transparent; }
 .hud-toast { position: absolute; top: 25%; left: 50%; transform: translateX(-50%); padding: 8px 16px; border-radius: 12px; background: rgba(10, 13, 18, 0.7); border: 1px solid var(--hud-edge); font: 800 18px/1 system-ui, sans-serif; }
 .hud-toast[hidden] { display: none; }
+.hud-toast.is-big { top: 30%; padding: 12px 24px; font-size: 30px; color: #ffcf4a; border-color: rgba(255, 140, 40, 0.8); background: rgba(40, 12, 4, 0.82); animation: pl-bang 0.35s ease-out; }
+@keyframes pl-bang { from { transform: translateX(-50%) scale(1.5); } to { transform: translateX(-50%) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .hud-toast.is-big { animation: none; } }
 
 /* botão de som, dentro da pílula central */
 .sound-toggle {

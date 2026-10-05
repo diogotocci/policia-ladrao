@@ -4,6 +4,7 @@ import { createCarModel, createTrafficModel, updateCarModel } from '../../src/re
 import { createWorldProps } from '../../src/render/worldProps';
 import { createCar } from '../../src/sim/car';
 import { bumpsBetween } from '../../src/sim/track';
+import { curvesBetween } from '../../src/sim/curves';
 import { createWorld, type TrafficCar, type WorldState } from '../../src/sim/world';
 
 const traffic = (n: number): TrafficCar[] =>
@@ -101,6 +102,24 @@ describe('createWorldProps', () => {
     const bump = scene.children.find((o) => o.name.startsWith('bump-') && o.visible)!;
     expect(bump).toBeDefined();
     expect(bump.position.z).toBeCloseTo(-first.s, 5);
+  });
+
+  it('warns about each sharp curve: chevron sign 90 m before it, on the outside, pointing to the turn', () => {
+    const { scene, props } = setup();
+    const w = world({ curvesOn: true });
+    const sharp = curvesBetween(w.seed, 0, 5000).filter((c) => c.sharp);
+    expect(sharp.length).toBeGreaterThan(0);
+    const c = sharp[0]!;
+    props.update(w, c.start - 150, 0);
+    const signs = scene.children.filter((o) => o.name.startsWith('curve-sign-') && o.visible);
+    expect(signs.length).toBeGreaterThan(0);
+    const sign = signs.find((o) => Math.abs(-o.position.z - (150 - 90)) < 1)!; // origem em start-150 (rua reta no teste)
+    expect(sign).toBeDefined();
+    expect(Math.sign(sign.position.x)).toBe(-c.dir); // por fora da curva
+    expect(Math.sign(sign.scale.x)).toBe(c.dir); // flechas para o lado da curva
+    // curvas leves não têm placa; sem curvas, nenhuma placa
+    props.update(world({ curvesOn: false }), c.start - 150, 0);
+    expect(scene.children.filter((o) => o.name.startsWith('curve-sign-') && o.visible)).toHaveLength(0);
   });
 
   it('never adds objects to the scene after creation', () => {

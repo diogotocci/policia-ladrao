@@ -11,7 +11,7 @@ import { renderChoose, renderCountdown, renderEnd, renderPause, renderRanking, r
 
 export function startApp(
   container: HTMLElement,
-  opts: { quality?: QualityTier; debug?: boolean; debugHp?: { police?: number; thief?: number }; traffic?: boolean; mute?: boolean } = {},
+  opts: { quality?: QualityTier; debug?: boolean; debugHp?: { police?: number; thief?: number }; traffic?: boolean; mute?: boolean; curves?: boolean } = {},
 ): { stop(): void } {
   const storage = (() => {
     try {
@@ -60,6 +60,7 @@ export function startApp(
       quality: opts.quality,
       debugHp: opts.debugHp,
       traffic: opts.traffic,
+      curves: opts.curves,
       audio,
       startPaused: true,
       onPauseRequest: () => dispatch({ type: 'pause' }),
@@ -180,7 +181,7 @@ export function startApp(
   const loop = (now: number) => {
     const dt = Math.min(0.1, (now - last) / 1000);
     last = now;
-    const portrait = window.innerHeight > window.innerWidth;
+    const portrait = container.clientHeight > container.clientWidth; // celular em pé: o jogo gira sozinho (styles.css)
     if (state.screen === 'countdown' && !portrait) dispatch({ type: 'tick', dt }); // em retrato a contagem espera
     // música do menu nas telas sem partida rolando (durante a partida quem toca é o jogo; na pausa, silêncio)
     if (state.screen === 'title' || state.screen === 'choose' || state.screen === 'end' || state.screen === 'ranking') audio.mixer.menu(dt);

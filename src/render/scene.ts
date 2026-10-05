@@ -6,7 +6,7 @@ import { makeSkyTexture } from './textures';
 export function createLighting(
   scene: THREE.Scene,
   renderer: THREE.WebGLRenderer,
-): { reflections: THREE.Texture; follow(x: number, z: number): void; setQuality(tier: QualityTier): void } {
+): { reflections: THREE.Texture; follow(x: number, z: number, heading?: number): void; setQuality(tier: QualityTier): void } {
   scene.background = makeSkyTexture();
   scene.fog = new THREE.Fog(0xd3dbe2, 110, 300);
 
@@ -25,33 +25,47 @@ export function createLighting(
   // Caixa de sombra em volta do carro, alinhada à luz; calculada uma vez (a direção do sol é fixa).
   const basis = new THREE.Matrix4().lookAt(SUN_DIR, new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0));
   const inv = basis.clone().invert();
-  const corners: THREE.Vector3[] = [];
   const zMid = -(SHADOW_BOX.ahead - SHADOW_BOX.behind) / 2;
   const halfLen = (SHADOW_BOX.ahead + SHADOW_BOX.behind) / 2;
-  for (const x of [-SHADOW_BOX.halfWidth, SHADOW_BOX.halfWidth])
-    for (const y of [0, SHADOW_BOX.height])
-      for (const z of [-halfLen, halfLen]) corners.push(new THREE.Vector3(x, y, z).applyMatrix4(inv));
-  const box = new THREE.Box3().setFromPoints(corners);
   const cam = sun.shadow.camera;
-  cam.left = box.min.x;
-  cam.right = box.max.x;
-  cam.bottom = box.min.y;
-  cam.top = box.max.y;
-  // a luz fica a SUN_DISTANCE do centro, olhando para ele: profundidade em volta disso
-  cam.near = Math.max(0.1, SUN_DISTANCE - box.max.z);
-  cam.far = SUN_DISTANCE - box.min.z;
-  cam.updateProjectionMatrix();
-
+  let mapSize = 0;
   let texelX = 1;
   let texelY = 1;
+  let boxHeading = Number.NaN;
+  const corner = new THREE.Vector3();
+  const box = new THREE.Box3();
+  /** caixa de sombra girada com a direção da pista (nas curvas a rua à frente muda de direção) */
+  const fitBox = (heading: number) => {
+    boxHeading = heading;
+    box.makeEmpty();
+    const c = Math.cos(heading);
+    const s = Math.sin(heading);
+    for (const x of [-SHADOW_BOX.halfWidth, SHADOW_BOX.halfWidth])
+      for (const y of [0, SHADOW_BOX.height])
+        for (const z of [-halfLen, halfLen]) box.expandByPoint(corner.set(x * c - z * s, y, x * s + z * c).applyMatrix4(inv));
+    cam.left = box.min.x;
+    cam.right = box.max.x;
+    cam.bottom = box.min.y;
+    cam.top = box.max.y;
+    // a luz fica a SUN_DISTANCE do centro, olhando para ele: profundidade em volta disso
+    cam.near = Math.max(0.1, SUN_DISTANCE - box.max.z);
+    cam.far = SUN_DISTANCE - box.min.z;
+    cam.updateProjectionMatrix();
+    if (mapSize > 0) {
+      texelX = (cam.right - cam.left) / mapSize;
+      texelY = (cam.top - cam.bottom) / mapSize;
+    }
+  };
+  fitBox(0);
   const local = new THREE.Vector3();
   const sunDir = SUN_DIR.clone().normalize();
 
   return {
     reflections,
-    follow(x, z) {
-      // centro da caixa em coordenadas da luz, arredondado ao tamanho do texel (sem tremido nas bordas)
-      local.set(x, 0, z + zMid).applyMatrix4(inv);
+    follow(x, z, heading = 0) {
+      if (Math.abs(heading - boxHeading) > 0.03) fitBox(heading); // refaz só quando a direção muda de verdade
+      // centro da caixa (à frente na direção da pista) em coordenadas da luz, arredondado ao texel
+      local.set(x - Math.sin(heading) * zMid, 0, z + Math.cos(heading) * zMid).applyMatrix4(inv);
       local.x = snapToGrid(local.x, texelX);
       local.y = snapToGrid(local.y, texelY);
       local.applyMatrix4(basis);
@@ -61,6 +75,7 @@ export function createLighting(
     setQuality(tier) {
       const size = QUALITY[tier].shadowMapSize;
       sun.castShadow = size > 0;
+      mapSize = size;
       if (size > 0) {
         texelX = (cam.right - cam.left) / size;
         texelY = (cam.top - cam.bottom) / size;

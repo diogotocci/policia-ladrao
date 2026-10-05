@@ -63,5 +63,22 @@ export const BALANCE = {
       thief: { plate: 3, bomb: 3, heal: 3, gun: 5 },
     },
   },
+  // Curvas (Entrega 6): leves pedem ◀ ▶, fechadas pedem freio
+  curves: {
+    straightStart: 300, // m
+    straightMin: 150,
+    straightMax: 350,
+    lengthMin: 150,
+    lengthMax: 300,
+    sharpChance: 1 / 3,
+    sharpRadius: [130, 180] as const,
+    gentleRadius: [350, 600] as const,
+    ramp: 0.25, // fração do comprimento em cada ponta (entrada/saída suaves)
+    bumpClearance: 20, // m de folga dos quebra-molas
+    grip: 6, // m/s² — acima disso derrapa
+    driftGain: 0.5, // deriva para fora (m/s) por m/s² de aceleração lateral
+    skidGain: 1.5, // deriva extra acima da aderência
+    skidSteer: 0.5, // fração do ◀ ▶ que sobra derrapando
+  },
   track: { bumpEvery: 400, bumpJitter: 80, bumpLanes: 2, jumpTime: 0.6, jumpHeight: 0.9, bumpSpeedLoss: 0.25, firstBumpAfter: 150 },
 } as const;

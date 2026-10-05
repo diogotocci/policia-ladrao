@@ -4,6 +4,7 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeom
 import type { Role } from '../config/balance';
 import type { CarState } from '../sim/car';
 import { jumpHeight } from '../sim/track';
+import { trackPos } from './trackFrame';
 
 const WHEEL_RADIUS = 0.36;
 const MAX_ROLL = (6 * Math.PI) / 180;
@@ -374,7 +375,9 @@ export function createCarModel(role: Role): THREE.Group {
 }
 
 export function updateCarModel(model: THREE.Group, car: CarState, timeSeconds: number, originS = 0): void {
-  model.position.set(car.x, jumpHeight(car.airTime), -(car.s - originS));
+  const p = trackPos(car.s, car.x, originS);
+  model.position.set(p.x, jumpHeight(car.airTime), p.z);
+  model.rotation.y = -p.heading; // segue a curva da pista
   const body = model.getObjectByName('body');
   if (body) {
     body.rotation.z = car.steer === 0 ? 0 : -car.steer * MAX_ROLL;

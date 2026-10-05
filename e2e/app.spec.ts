@@ -13,6 +13,19 @@ test.beforeEach(async ({ page }) => {
 });
 test.afterEach(() => expect(errors).toEqual([]));
 
+test('splash: shows right away, then fades out once the title is ready; iPhone launch images exist', async ({ page, request }) => {
+  // está no próprio HTML (aparece antes do JS); com a máquina lenta pode já ter sumido quando o goto termina
+  const html = await (await request.get('/?app')).text();
+  expect(html).toContain('id="splash"');
+  expect(html).toContain('Ladrão');
+  await page.goto('/?app');
+  await expect(page.getByRole('button', { name: 'Jogar' })).toBeVisible();
+  await expect(page.locator('#splash')).toHaveCount(0, { timeout: 4000 });
+  const imgs = await page.locator('link[rel="apple-touch-startup-image"]').evaluateAll((ls) => ls.map((l) => l.getAttribute('href')!));
+  expect(imgs.length).toBeGreaterThanOrEqual(10);
+  for (const src of imgs.slice(0, 3)) expect((await request.get(src)).ok(), src).toBe(true);
+});
+
 test('installable webapp: manifest (fullscreen, landscape) and icons are served', async ({ page, request }) => {
   await page.goto('/?debug&seed=1&quality=low&traffic=0');
   const href = await page.locator('link[rel="manifest"]').getAttribute('href');

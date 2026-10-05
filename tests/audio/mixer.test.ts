@@ -211,4 +211,55 @@ describe('audio mixer', () => {
     mx.cue('beep');
     expect(be.played).toHaveLength(3);
   });
+
+  it('tires squeal when a car starts to skid in a curve', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.frame(world('thief'), DT);
+    const me = thiefOf(world('thief')).s;
+    mx.events([{ type: 'skid', role: 'thief', s: me, x: 0 }]);
+    expect(be.played).toEqual(['skid']);
+  });
+
+  it('squeal: one at a time per car (no machine-gun when feathering the brake at the limit), and not from a car far away', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    const w = world('thief');
+    const me = thiefOf(w).s;
+    mx.frame(w, DT);
+    mx.events([{ type: 'skid', role: 'thief', s: me, x: 0 }]);
+    for (let i = 0; i < 10; i++) mx.frame(w, DT);
+    mx.events([{ type: 'skid', role: 'thief', s: me, x: 0 }]);
+    expect(be.played.filter((n) => n === 'skid')).toHaveLength(1);
+    for (let i = 0; i < 60; i++) mx.frame(w, DT);
+    mx.events([{ type: 'skid', role: 'thief', s: me, x: 0 }]);
+    mx.events([{ type: 'skid', role: 'police', s: me - 300, x: 0 }]);
+    expect(be.played.filter((n) => n === 'skid')).toHaveLength(2);
+  });
+
+  it('the thief hears its own "bomb hit" sound on top of the explosion', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.frame(world('thief'), DT);
+    mx.cue('bomb-hit');
+    expect(be.played).toEqual(['bomb-hit']);
+  });
+
+  it('helicopter rotor: steady beat while it is active (and near, playing thief), silent otherwise', () => {
+    const run = (w: WorldState) => {
+      const be = createNullBackend();
+      const mx = createMixer(be);
+      for (let i = 0; i < 60; i++) mx.frame(w, DT);
+      return be.played.filter((n) => n === 'rotor').length;
+    };
+    const w = world('police');
+    const heli = withCar(w, 'police', { ...policeOf(w), upgrades: { ...policeOf(w).upgrades, heliUntil: w.time + 5 } });
+    expect(run(w)).toBe(0);
+    expect(run(heli)).toBeGreaterThanOrEqual(8);
+    const t = world('thief');
+    const near = withCar(t, 'police', { ...policeOf(t), s: thiefOf(t).s - 30, upgrades: { ...policeOf(t).upgrades, heliUntil: t.time + 5 } });
+    const far = withCar(near, 'police', { ...policeOf(near), s: thiefOf(t).s - 300 });
+    expect(run(near)).toBeGreaterThanOrEqual(8);
+    expect(run(far)).toBe(0);
+  });
 });

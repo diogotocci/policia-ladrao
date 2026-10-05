@@ -115,3 +115,14 @@ describe('stepProjectiles', () => {
     expect(w.projectiles).toEqual([]);
   });
 });
+
+describe('helicopter shots come from the air', () => {
+  it('with the helicopter active the police shot is marked as coming from above (air = distance to the target)', () => {
+    const w0 = setup({ s: 140, x: 1.5 });
+    const heli = withCar(w0, 'police', { ...policeOf(w0), upgrades: { ...policeOf(w0).upgrades, heliUntil: w0.time + 5 } });
+    const p = fireWeapons(heli, both(FIRE, NO_INTENTS), DT).projectiles[0]!;
+    expect(p.air).toBeCloseTo(40, 0);
+    const ground = fireWeapons(w0, both(FIRE, NO_INTENTS), DT).projectiles[0]!;
+    expect(ground.air).toBeUndefined();
+  });
+});
