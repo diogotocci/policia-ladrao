@@ -7,6 +7,7 @@ import { fireWeapons, stepProjectiles } from './projectiles';
 import { enforceNoOvertake, pursuitBonus } from './pursuit';
 import { createRngFromState } from './rng';
 import { levelAt } from './rules';
+import { curvatureAt } from './curves';
 import { stepJump } from './track';
 import { stepTraffic } from './traffic';
 import { applyItem, stepBoxes } from './items';
@@ -30,6 +31,8 @@ export function createWorld(opts: {
   /** itens dados ao jogador no início (só debug/testes) */
   debugGive?: ItemId[];
   traffic?: boolean;
+  /** curvas (Entrega 6); false = rua reta (testes/debug ?curves=0) */
+  curves?: boolean;
 }): WorldState {
   const police: CarState = { ...createCar('police', 1, 0), hasGun: true, hp: opts.debugHp?.police ?? BALANCE.hp };
   const thief: CarState = { ...createCar('thief', 2, 40), hp: opts.debugHp?.thief ?? BALANCE.hp };
@@ -50,6 +53,7 @@ export function createWorld(opts: {
     aiRng: (opts.seed ^ 0x9e3779b9) >>> 0,
     traffic: [],
     trafficOn: opts.traffic ?? true,
+    curvesOn: opts.curves ?? true,
     boxes: [],
     bombs: [],
     nextBombId: 1,
@@ -61,8 +65,8 @@ export function createWorld(opts: {
     nextTrafficId: 1,
     trafficRng: (opts.seed ^ 0x85ebca6b) >>> 0,
     ai: {
-      police: { targetX: police.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {} },
-      thief: { targetX: thief.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {} },
+      police: { targetX: police.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {}, curveS: -1, curveBrake: false, curveLate: 0 },
+      thief: { targetX: thief.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {}, curveS: -1, curveBrake: false, curveLate: 0 },
     },
   };
 }
@@ -98,8 +102,16 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   const bonus = pursuitBonus(out);
   const t0 = thiefOf(out);
   const p0 = policeOf(out);
-  out = withCar(out, 'thief', stepJump(stepCar(t0, intents.thief, dt), t0.s, w.seed, dt));
-  out = withCar(out, 'police', stepJump(stepCar(p0, intents.police, dt, { speedBonus: bonus }), p0.s, w.seed, dt));
+  const kT = curvatureAt(w.seed, t0.s, w.curvesOn);
+  const kP = curvatureAt(w.seed, p0.s, w.curvesOn);
+  out = withCar(out, 'thief', stepJump(stepCar(t0, intents.thief, dt, { curvature: kT }), t0.s, w.seed, dt));
+  out = withCar(out, 'police', stepJump(stepCar(p0, intents.police, dt, { speedBonus: bonus, curvature: kP }), p0.s, w.seed, dt));
+  // começo de derrapagem: evento (som de pneu, fumaça nas rodas)
+  for (const [before, now] of [
+    [t0, thiefOf(out)],
+    [p0, policeOf(out)],
+  ] as const)
+    if (now.skidding && !before.skidding) out = { ...out, events: [...out.events, { type: 'skid', role: now.role, s: now.s, x: now.x }] };
   out = stepTraffic(out, dt);
   out = resolveCollisions(out, dt);
   out = enforceNoOvertake(out);

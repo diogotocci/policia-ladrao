@@ -15,6 +15,8 @@ export interface Projectile {
   damage: number;
   /** atravessa o tráfego (Tiro perfurante) */
   piercing?: boolean;
+  /** veio do helicóptero: distância até o alvo no disparo (o traçador desce do alto até ele) */
+  air?: number;
 }
 
 export interface TrafficCar {
@@ -52,6 +54,7 @@ export type GameEvent =
   | { type: 'explosion'; s: number; x: number }
   | { type: 'shot'; from: Role; s: number; x: number }
   | { type: 'noTarget'; from: Role }
+  | { type: 'skid'; role: Role; s: number; x: number }
   | { type: 'end'; winner: Role };
 
 export interface MatchState {
@@ -79,6 +82,8 @@ export interface WorldState {
   traffic: TrafficCar[];
   /** desligado só em testes/debug (?traffic=0) */
   trafficOn: boolean;
+  /** curvas ligadas (Entrega 6) */
+  curvesOn: boolean;
   boxes: Box[];
   bombs: Bomb[];
   nextBombId: number;
