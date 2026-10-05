@@ -91,6 +91,13 @@ describe('createHud', () => {
     hud3.dispose();
   });
 
+  it('with showEnd: false (the app has its own end screen) the HUD never shows its end card', () => {
+    const hud = createHud(root, 'police', { showEnd: false });
+    hud.update(ended(createWorld({ seed: 1, playerRole: 'police' }), 'police', 80, 0));
+    expect(root.querySelector<HTMLElement>('.hud-end')!.hidden).toBe(true);
+    hud.dispose();
+  });
+
   it('"Jogar de novo" is an accessible button that calls onRestart', () => {
     let restarted = 0;
     const hud = createHud(root, 'police', { onRestart: () => restarted++ });

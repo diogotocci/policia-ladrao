@@ -9,6 +9,18 @@ let kb: ReturnType<typeof createKeyboardInput> | undefined;
 afterEach(() => kb?.dispose());
 
 describe('keyboard input', () => {
+  it('dropTaps() forgets quick presses made while paused, but keeps keys still held', () => {
+    kb = createKeyboardInput(window);
+    press('keydown', 'KeyB');
+    press('keyup', 'KeyB');
+    press('keydown', 'ArrowLeft');
+    kb.dropTaps();
+    const r = kb.read();
+    expect(r.bomb).toBe(false);
+    expect(r.left).toBe(true);
+    press('keyup', 'ArrowLeft');
+  });
+
   it('maps arrows and WASD-style keys', () => {
     kb = createKeyboardInput(window);
     press('keydown', 'ArrowLeft');

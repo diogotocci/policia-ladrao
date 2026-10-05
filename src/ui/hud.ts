@@ -84,7 +84,7 @@ export function pickupToast(item: string): string {
 export function createHud(
   root: HTMLElement,
   playerRole: Role,
-  opts: { onRestart?: () => void } = {},
+  opts: { onRestart?: () => void; showEnd?: boolean } = {},
 ): { update(w: WorldState): void; toast(text: string): void; dispose(): void } {
   const hud = el('div', 'hud');
   hud.dataset.role = playerRole;
@@ -173,7 +173,7 @@ export function createHud(
         items.querySelector<HTMLElement>(`.hud-item[data-item="${i.id}"]`)?.style.setProperty('--left', String(i.left));
       }
 
-      if (w.match.over && end.hidden) {
+      if (w.match.over && end.hidden && opts.showEnd !== false) {
         const won = w.match.winner === playerRole;
         endTitle.textContent = won ? 'Você venceu!' : 'Você perdeu';
         endReason.textContent = w.match.winner === 'police' ? 'O ladrão foi detido' : 'A viatura foi destruída';
