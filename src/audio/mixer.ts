@@ -109,7 +109,7 @@ export function createMixer(initial: AudioBackend): Mixer {
 
       // contagem final da fuga: um bip por segundo nos últimos 10 s
       const left = w.escapeTime - w.time;
-      if (!quiet && w.match.escapeAt === undefined && left > 0 && left <= 10) {
+      if (!quiet && w.match.escapeAt === undefined && w.match.arrestAt === undefined && left > 0 && left <= 10) {
         const sec = Math.ceil(left);
         if (sec < lastBeep) {
           if (lastBeep !== Infinity || sec === 10) play('beep'); // entrando no meio (ex.: teste) não bipa na hora

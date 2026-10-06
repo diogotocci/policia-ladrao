@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RECIPES, envelopeAt, recipeDuration } from '../../src/audio/sfx';
+import { RECIPES, envelopeAt, recipeDuration, type Voice } from '../../src/audio/sfx';
 
 describe('sound recipes', () => {
   it('there is a recipe for every game sound', () => {
@@ -26,14 +26,31 @@ describe('sound recipes', () => {
     expect(tone(RECIPES.explosion)).toBeLessThan(tone(RECIPES['shot-police']));
   });
 
-  it('police and thief shots sound different (playtest): police is a high, short crack; thief a low, noisy boom', () => {
-    const tone = (r: readonly { wave: string; freq: number }[]) => Math.min(...r.filter((x) => x.wave !== 'noise').map((x) => x.freq));
-    const noise = (r: readonly { wave: string; gain: number }[]) => Math.max(0, ...r.filter((x) => x.wave === 'noise').map((x) => x.gain));
+  it('shots sound like gunshots (playtest 2026-10-05): noise-led bang with an instant attack; police crack brighter and shorter, thief boom lower and longer', () => {
+    const loud = (r: readonly Voice[]) => r.reduce((a, b) => (b.gain > a.gain ? b : a));
+    const bright = (r: readonly Voice[]) => Math.max(...r.filter((x) => x.wave === 'noise').map((x) => x.freq));
     const police = RECIPES['shot-police'];
     const thief = RECIPES['shot-thief'];
-    expect(tone(police)).toBeGreaterThanOrEqual(tone(thief) * 3);
-    expect(noise(thief)).toBeGreaterThan(noise(police) * 1.5);
-    expect(recipeDuration(thief)).toBeGreaterThan(recipeDuration(police) * 1.5);
-    expect(police[0]!.wave).not.toBe(thief[0]!.wave);
+    for (const r of [police, thief]) {
+      expect(loud(r).wave).toBe('noise');
+      expect(loud(r).attack).toBeLessThanOrEqual(0.002);
+      expect(r.some((x) => x.wave !== 'noise' && x.freq <= 250)).toBe(true); // corpo grave do estampido
+    }
+    expect(bright(police)).toBeGreaterThanOrEqual(bright(thief) * 2);
+    expect(recipeDuration(thief)).toBeGreaterThan(recipeDuration(police) * 1.3);
+  });
+
+  it('tyre screech, not a slide (playtest): high tonal squeal with two close tones beating, ~0.5 s', () => {
+    const r = RECIPES.skid;
+    const tones = r.filter((x) => x.wave !== 'noise' && x.freq >= 1000 && x.freq <= 2500);
+    expect(tones.length).toBeGreaterThanOrEqual(2);
+    const [a, b] = tones;
+    expect(Math.abs(a!.freq - b!.freq)).toBeGreaterThan(20);
+    expect(Math.abs(a!.freq - b!.freq)).toBeLessThan(120); // batimento áspero de pneu
+    const toneGain = tones.reduce((s, x) => s + x.gain, 0);
+    const noiseGain = r.filter((x) => x.wave === 'noise').reduce((s, x) => s + x.gain, 0);
+    expect(toneGain).toBeGreaterThan(noiseGain);
+    expect(recipeDuration(r)).toBeGreaterThanOrEqual(0.4);
+    expect(recipeDuration(r)).toBeLessThanOrEqual(0.8);
   });
 });

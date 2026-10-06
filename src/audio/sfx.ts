@@ -23,9 +23,18 @@ const v = (wave: Wave, freq: number, freqEnd: number, gain: number, duration: nu
 });
 
 export const RECIPES = {
-  // polícia: estalo agudo e curto (pistola); ladrão: estrondo grave e ruidoso (escopeta) — dá para saber quem atirou
-  'shot-police': [v('square', 1600, 700, 0.14, 0.06), v('noise', 7000, 3000, 0.08, 0.04)],
-  'shot-thief': [v('noise', 1800, 250, 0.3, 0.22, 0.003), v('sine', 160, 55, 0.3, 0.2)],
+  // tiros de verdade (playtest 2026-10-05): estampido de ruído com ataque instantâneo + corpo grave + cauda (eco da rua).
+  // polícia: pistola — estalo mais brilhante e curto; ladrão: escopeta — estrondo mais grave e longo
+  'shot-police': [
+    v('noise', 9000, 1400, 0.5, 0.09, 0.001), // estalo
+    v('sine', 190, 60, 0.32, 0.08, 0.001), // corpo
+    v('noise', 2400, 350, 0.16, 0.26, 0.004, 0.015), // cauda
+  ],
+  'shot-thief': [
+    v('noise', 3500, 200, 0.55, 0.42, 0.002), // estrondo
+    v('sine', 120, 42, 0.42, 0.3, 0.002), // corpo
+    v('noise', 1200, 180, 0.2, 0.5, 0.01, 0.03), // cauda
+  ],
   hit: [v('square', 300, 120, 0.2, 0.08), v('noise', 3000, 800, 0.15, 0.06)],
   crash: [v('noise', 2400, 300, 0.45, 0.35, 0.002), v('sawtooth', 110, 50, 0.25, 0.3)],
   explosion: [v('noise', 1400, 90, 0.6, 1.1, 0.005), v('sine', 90, 35, 0.5, 0.9)],
@@ -35,8 +44,14 @@ export const RECIPES = {
   win: [v('square', 523, 523, 0.15, 0.14), v('square', 659, 659, 0.15, 0.14, 0.004, 0.14), v('square', 784, 784, 0.15, 0.4, 0.004, 0.28)],
   beep: [v('square', 880, 880, 0.14, 0.12)], // contagem 3-2-1
   go: [v('square', 1320, 1320, 0.16, 0.35), v('square', 660, 660, 0.1, 0.35)], // largada
-  // pneu cantando na curva: chiado agudo que cai um pouco
-  skid: [v('noise', 5200, 3600, 0.16, 0.45, 0.03), v('sawtooth', 820, 700, 0.05, 0.4, 0.03)],
+  // pneu cantando (playtest 2026-10-05): guincho agudo e tonal — dois tons próximos batendo (aspereza da borracha)
+  // + um terceiro mais grave e um chiado de fundo; cai um pouco no fim
+  skid: [
+    v('square', 1680, 1520, 0.06, 0.55, 0.03),
+    v('square', 1745, 1570, 0.055, 0.55, 0.03, 0.01),
+    v('sawtooth', 1190, 1080, 0.035, 0.5, 0.04),
+    v('noise', 4200, 2600, 0.05, 0.5, 0.04),
+  ],
   // ladrão: a bomba pegou a polícia — explosão grave + fanfarrinha curta de vitória
   'bomb-hit': [v('square', 784, 784, 0.13, 0.1, 0.004, 0.12), v('square', 1046, 1046, 0.13, 0.2, 0.004, 0.22)],
   // hélice do helicóptero: uma batida grave por pá (o mixer repete)
