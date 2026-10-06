@@ -58,7 +58,7 @@ describe('audio mixer', () => {
       { type: 'explosion', s: 0, x: 0 },
       { type: 'pickup', role: 'thief', item: 'bomb' },
       { type: 'pickup', role: 'thief', item: 'wrong' },
-      { type: 'pickup', role: 'police', item: 'heal' }, // não é do jogador: sem som
+      { type: 'pickup', role: 'police', item: 'heal' }, // not the player's: no sound
       { type: 'bombDropped', s: 0, x: 0 },
       { type: 'end', winner: 'thief' },
     ]);
@@ -71,7 +71,7 @@ describe('audio mixer', () => {
     mx.frame(world(), DT);
     mx.events(Array.from({ length: 20 }, () => shot));
     expect(be.played).toHaveLength(6);
-    for (let i = 0; i < 7; i++) mx.frame(world(), DT); // > 100 ms depois
+    for (let i = 0; i < 7; i++) mx.frame(world(), DT); // > 100 ms later
     mx.events([shot]);
     expect(be.played).toHaveLength(7);
   });
@@ -100,7 +100,7 @@ describe('audio mixer', () => {
     const step = stepSeconds(SONG.bpm);
     const times = [...new Set(be.notes.map((n) => n.when))].sort((a, b) => a - b);
     for (let i = 1; i < times.length; i++) {
-      const k = (times[i]! - times[i - 1]!) / step; // passos vazios (pausa) contam: múltiplo inteiro do passo
+      const k = (times[i]! - times[i - 1]!) / step; // empty steps (pause) count: integer multiple of the step
       expect(k).toBeGreaterThanOrEqual(1 - 1e-6);
       expect(Math.abs(k - Math.round(k))).toBeLessThan(1e-6);
     }

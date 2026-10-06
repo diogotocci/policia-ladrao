@@ -72,7 +72,7 @@ describe('createWorldProps', () => {
     const car = scene.children.find((o) => o.name.startsWith('traffic-') && o.visible)!;
     expect(car.position.z).toBeCloseTo(-55, 5);
     expect(car.position.x).toBeCloseTo(0, 5);
-    props.update(now, 0, 0); // sem estado anterior: posição atual
+    props.update(now, 0, 0); // no previous state: current position
     expect(car.position.z).toBeCloseTo(-60, 5);
   });
 
@@ -132,11 +132,11 @@ describe('createWorldProps', () => {
     props.update(w, c.start - 150, 0);
     const signs = scene.children.filter((o) => o.name.startsWith('curve-sign-') && o.visible);
     expect(signs.length).toBeGreaterThan(0);
-    const sign = signs.find((o) => Math.abs(-o.position.z - (150 - 90)) < 1)!; // origem em start-150 (rua reta no teste)
+    const sign = signs.find((o) => Math.abs(-o.position.z - (150 - 90)) < 1)!; // origin at start-150 (straight street in the test)
     expect(sign).toBeDefined();
-    expect(Math.sign(sign.position.x)).toBe(-c.dir); // por fora da curva
-    expect(Math.sign(sign.scale.x)).toBe(c.dir); // flechas para o lado da curva
-    // curvas leves não têm placa; sem curvas, nenhuma placa
+    expect(Math.sign(sign.position.x)).toBe(-c.dir); // on the outside of the curve
+    expect(Math.sign(sign.scale.x)).toBe(c.dir); // arrows pointing toward the curve side
+    // gentle curves have no sign; without curves, no signs
     props.update(world({ curvesOn: false }), c.start - 150, 0);
     expect(scene.children.filter((o) => o.name.startsWith('curve-sign-') && o.visible)).toHaveLength(0);
   });

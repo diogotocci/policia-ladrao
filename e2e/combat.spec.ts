@@ -44,7 +44,7 @@ test('playing as thief: the police is never ahead (20 s)', async ({ page }) => {
   await page.waitForFunction(() => '__game' in window);
   const t0 = (await snapshot(page)).time;
   let last = t0;
-  // dirige em zigue-zague e freia de vez em quando
+  // drives in a zigzag and brakes now and then
   const keys = ['ArrowLeft', 'ArrowRight', 'ArrowDown'];
   let k = 0;
   while (last < t0 + 20) {

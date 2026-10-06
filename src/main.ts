@@ -36,11 +36,11 @@ registerServiceWorker(window, { prod: import.meta.env.PROD, debug });
 installNoZoom(document);
 installFullscreenOnFirstTap(document, window);
 
-// Parâmetros de teste/depuração (?debug, ?role, ?seed) vão direto para a partida; sem eles (ou com ?app), a app começa no título.
+// Test/debug parameters (?debug, ?role, ?seed) go straight to the match; without them (or with ?app), the app starts on the title screen.
 const direct = !params.has('app') && (debug || params.has('role') || params.has('seed'));
 if (app) {
   if (direct) startGame(app, { role, seed, debug, quality, debugHp, debugGive, traffic, mute, curves, escapeTime });
-  else startApp(app, { quality, debug, debugHp, traffic, mute, curves, escapeTime }); // ?app força as telas (e2e do produto)
+  else startApp(app, { quality, debug, debugHp, traffic, mute, curves, escapeTime }); // ?app forces the screens (product e2e)
 }
-// primeira tela desenhada (2 quadros): some a splash. Em teste/depuração (?debug) sai na hora.
+// first screen drawn (2 frames): the splash disappears. In test/debug (?debug) it goes away immediately.
 requestAnimationFrame(() => requestAnimationFrame(() => hideSplash(document, { immediate: debug })));

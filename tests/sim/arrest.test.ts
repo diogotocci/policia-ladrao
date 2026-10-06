@@ -6,7 +6,7 @@ import { createWorld, policeOf, stepWorld, thiefOf, withCar, type WorldState } f
 const DT = 1 / 60;
 const FIRE = { ...NO_INTENTS, fire: true, right: true };
 
-/** polícia a 20 m de um ladrão quase destruído, os dois em cruzeiro, sem tráfego */
+/** police 20 m from a nearly destroyed thief, both cruising, no traffic */
 const almost = (): WorldState => {
   const w0 = createWorld({ seed: 5, playerRole: 'police', traffic: false, curves: false });
   const w = withCar(w0, 'thief', { ...thiefOf(w0), s: 1000, x: 1.5, speed: 34, hp: 0.5 });
@@ -39,10 +39,10 @@ describe('arrest scene: when the police wins, the wrecked thief stops, the polic
     expect(thiefOf(w).speed).toBe(0);
     expect(policeOf(w).speed).toBeLessThan(1);
     const gap = thiefOf(w).s - policeOf(w).s;
-    expect(gap).toBeGreaterThan(2); // logo atrás…
+    expect(gap).toBeGreaterThan(2); // right behind…
     expect(gap).toBeLessThan(9);
-    expect(Math.abs(Math.abs(policeOf(w).x - thiefOf(w).x) - BALANCE.match.arrestSide)).toBeLessThan(0.3); // …na faixa ao lado
-    expect(minGap).toBeGreaterThan(0); // nunca passa à frente
+    expect(Math.abs(Math.abs(policeOf(w).x - thiefOf(w).x) - BALANCE.match.arrestSide)).toBeLessThan(0.3); // …in the adjacent lane
+    expect(minGap).toBeGreaterThan(0); // never passes ahead
     expect(policeOf(w).hp).toBe(hp);
   });
 

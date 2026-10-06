@@ -42,15 +42,15 @@ describe('gunner in the passenger window', () => {
     updateGunner(p.g, { ...createCar('police', 1, 0), x: 0, hasGun: true }, { s: 20, x: 6 }, 0);
     const d = aimX(p.g);
     expect(d.x).toBeGreaterThan(0.2);
-    expect(d.z).toBeLessThan(0); // à frente (−z)
+    expect(d.z).toBeLessThan(0); // ahead (−z)
     const t = setup('thief');
     updateGunner(t.g, { ...createCar('thief', 2, 100), x: 0, hasGun: true }, { s: 80, x: 0 }, 0);
-    expect(aimX(t.g).z).toBeGreaterThan(0.8); // para trás
+    expect(aimX(t.g).z).toBeGreaterThan(0.8); // backwards
   });
 
   it('out of the fire cone it goes back to rest (looking ahead)', () => {
     const p = setup('police');
-    updateGunner(p.g, { ...createCar('police', 1, 100), x: 0, hasGun: true }, { s: 20, x: 0 }, 0); // alvo atrás: fora do cone frontal
+    updateGunner(p.g, { ...createCar('police', 1, 100), x: 0, hasGun: true }, { s: 20, x: 0 }, 0); // target behind: outside the front cone
     expect(aimX(p.g).z).toBeLessThan(-0.9);
   });
 

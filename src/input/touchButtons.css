@@ -1,10 +1,10 @@
-/* Controles de toque: discos de vidro escuro com aro que acende na cor do lado escolhido. */
+/* Touch controls: dark glass discs with a rim that lights up in the chosen side's color. */
 .touch-controls {
   --hud-glass: rgba(10, 13, 18, 0.5);
   --hud-glass-down: rgba(10, 13, 18, 0.62);
   --hud-edge: rgba(255, 255, 255, 0.26);
   --hud-icon: #f3f5f8;
-  --hud-accent: #4d8bff; /* polícia */
+  --hud-accent: #4d8bff; /* police */
   --hud-brake: #ff5a52;
   --btn: 76px;
   position: absolute;
@@ -57,7 +57,7 @@
   border-radius: 50%;
   border: 2px solid var(--hud-edge);
   background: radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.12), transparent 60%), var(--hud-glass);
-  /* sem backdrop-filter: borrar o canvas WebGL a cada quadro custa GPU em Android médio */
+  /* no backdrop-filter: blurring the WebGL canvas every frame costs GPU on mid-range Android */
   color: var(--hud-icon);
   box-shadow:
     0 6px 18px rgba(0, 0, 0, 0.35),
@@ -69,7 +69,7 @@
     background-color 80ms ease-out,
     box-shadow 120ms ease-out;
 }
-/* área de toque maior que o desenho */
+/* touch area larger than the drawing */
 .touch-btn::before {
   content: '';
   position: absolute;
@@ -104,7 +104,7 @@
     0 0 0 3px color-mix(in srgb, var(--hud-brake) 35%, transparent),
     0 0 22px color-mix(in srgb, var(--hud-brake) 55%, transparent);
 }
-/* o botão de tiro é o destaque: maior, com aro na cor do lado */
+/* the fire button is the highlight: larger, with a rim in the side's color */
 .touch-btn--fire {
   --btn: 96px;
   border: 3px solid var(--hud-accent);

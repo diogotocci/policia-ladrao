@@ -1,4 +1,4 @@
-/* Telas da app: vidro escuro sobre o jogo, cabe em 844×390 (paisagem) respeitando as safe areas */
+/* App screens: dark glass over the game, fits in 844×390 (landscape) respecting the safe areas */
 .screens-root {
   position: absolute;
   inset: 0;
@@ -104,7 +104,7 @@
   outline-offset: 2px;
 }
 
-/* título */
+/* title */
 .title-logo {
   width: 96px;
   height: 96px;
@@ -139,7 +139,7 @@
   height: 26px;
 }
 
-/* escolha */
+/* choice */
 .choose-cards {
   display: flex;
   gap: 14px;
@@ -195,7 +195,7 @@
   opacity: 0.9;
 }
 
-/* contagem */
+/* countdown */
 .screen-countdown {
   pointer-events: none;
 }
@@ -230,7 +230,7 @@
   }
 }
 
-/* fim + iniciais */
+/* end + initials */
 .end-reason,
 .end-time,
 .end-saved,

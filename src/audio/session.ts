@@ -1,5 +1,5 @@
-// Sessão de áudio da app: um mixer só, destravado no 1º gesto, com a preferência de som salva.
-// Vive entre telas e partidas (o jogo recebe a sessão pronta; sem ela, cria uma própria — modo debug/e2e).
+// App audio session: a single mixer, unlocked on the 1st gesture, with the saved sound preference.
+// Lives across screens and matches (the game receives the ready session; without it, creates its own — debug/e2e mode).
 import { createSoundToggle, readSoundPref, writeSoundPref } from '../ui/soundToggle';
 import { createMixer, type Mixer } from './mixer';
 import { createNullBackend, createWebAudioBackend, type AudioBackend } from './synth';
@@ -8,7 +8,7 @@ export interface AudioSession {
   mixer: Mixer;
   setMuted(m: boolean): void;
   muted(): boolean;
-  /** botão 🔊/🔇 (todos os botões refletem o mesmo estado; a tecla M é tratada aqui, uma vez só) */
+  /** button (all buttons reflect the same state; the M key is handled here, only once) */
   mountToggle(parent: HTMLElement): { dispose(): void };
   dispose(): void;
 }
@@ -29,7 +29,7 @@ export function createAudioSession(opts: { forceMute?: boolean } = {}): AudioSes
   const toggles = new Set<{ set(m: boolean): void }>();
 
   let audio: AudioBackend | undefined;
-  // Destrava no gesto: toque conta no pointerup/touchend/click (não no pointerdown), tecla no keydown.
+  // Unlock on gesture: a touch counts on pointerup/touchend/click (not pointerdown), a key on keydown.
   const unlock = () => {
     if (!audio) {
       try {
@@ -37,7 +37,7 @@ export function createAudioSession(opts: { forceMute?: boolean } = {}): AudioSes
         mixer.use(audio);
       } catch {
         audio = undefined;
-        listen(false); // sem WebAudio: segue mudo
+        listen(false); // no WebAudio: stays silent
         return;
       }
     }
@@ -52,8 +52,8 @@ export function createAudioSession(opts: { forceMute?: boolean } = {}): AudioSes
   const onVisibility = () => {
     if (document.visibilityState === 'visible') {
       audio?.resume();
-      if (audio && !audio.running()) listen(true); // iOS: só retoma com novo gesto
-    } else audio?.suspend(); // aba escondida: nada zumbindo em segundo plano
+      if (audio && !audio.running()) listen(true); // iOS: only resumes on a new gesture
+    } else audio?.suspend(); // hidden tab: nothing buzzing in the background
   };
   document.addEventListener('visibilitychange', onVisibility);
 

@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 test.afterEach(() => expect(errors).toEqual([]));
 
 test('splash: shows right away, then fades out once the title is ready; iPhone launch images exist', async ({ page, request }) => {
-  // está no próprio HTML (aparece antes do JS); com a máquina lenta pode já ter sumido quando o goto termina
+  // is in the HTML itself (shows before the JS); on a slow machine it may already be gone when goto returns
   const html = await (await request.get('/?app')).text();
   expect(html).toContain('id="splash"');
   expect(html).toContain('Ladrão');
@@ -64,7 +64,7 @@ test('no zoom: viewport locked and a quick double tap is swallowed', async ({ pa
 test('the picture never stretches: a size change without a resize event (iOS standalone) is picked up', async ({ page }) => {
   await page.goto('/?debug&seed=1&quality=low&traffic=0');
   await page.waitForFunction(() => '__game' in window);
-  // muda só o container (sem evento de resize na janela), como o iOS faz ao abrir o app instalado / girar
+  // changes only the container (no window resize event), as iOS does when opening the installed app / rotating
   await page.evaluate(() => {
     const app = document.getElementById('app')!;
     app.style.width = '600px';

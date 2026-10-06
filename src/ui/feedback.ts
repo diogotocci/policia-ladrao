@@ -1,12 +1,12 @@
-// O que o jogador sente em cada evento: borda vermelha na tela (funciona em qualquer aparelho, inclusive iPhone,
-// que não vibra pela web), vibração onde houver, avisos e sons especiais. Puro: o jogo só executa.
+// What the player feels on each event: red screen border (works on any device, including iPhone,
+// which cannot vibrate via the web), vibration where available, warnings and special sounds. Pure: the game only executes it.
 import { BALANCE, type Role } from '../config/balance';
 import type { GameEvent } from '../sim/types';
 
 export interface Feedback {
-  /** intensidade do piscar vermelho da borda (0–1) */
+  /** intensity of the red border flash (0–1) */
   flash?: number;
-  /** vibração (ms), onde houver */
+  /** vibration (ms), where available */
   buzz?: number;
   toast?: string;
   cue?: 'bomb-hit';
@@ -21,7 +21,7 @@ export function feedbackFor(e: GameEvent, me: Role): Feedback | null {
       if (e.a !== me && e.b !== me) return null;
       return { flash: 0.6, buzz: 40 };
     case 'explosion':
-      // bomba só explode quando pega a polícia
+      // the bomb only explodes when it hits the police
       return me === 'thief'
         ? { toast: `💥 Bomba acertou! −${BALANCE.items.bomb.damage}`, cue: 'bomb-hit', buzz: 60 }
         : { flash: 1, buzz: 80 };
@@ -30,7 +30,7 @@ export function feedbackFor(e: GameEvent, me: Role): Feedback | null {
   }
 }
 
-/** junta os eventos de um quadro: o mais forte vale (bomba = explosão + acerto não vira um pisca fraco) */
+/** merges a frame's events: the strongest wins (bomb = explosion + hit does not become a weak flash) */
 export function feedbackForFrame(events: readonly GameEvent[], me: Role): Feedback {
   const out: Feedback = {};
   for (const e of events) {

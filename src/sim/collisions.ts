@@ -1,4 +1,4 @@
-// Colisões com o cenário (bordas da pista) e entre polícia e ladrão, com imunidade de 1 s por par.
+// Collisions with the scenery (road edges) and between police and thief, with 1 s immunity per pair.
 import { BALANCE, type Role } from '../config/balance';
 import type { CarState } from './car';
 import { armorFactor } from './rules';
@@ -18,7 +18,7 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
   const events: GameEvent[] = [...w.events];
   let out: WorldState = { ...w, immunity, events };
 
-  // cenário
+  // scenery
   for (const role of ['police', 'thief'] as Role[]) {
     const car = role === 'police' ? policeOf(out) : thiefOf(out);
     const key = `edge:${role}`;
@@ -31,7 +31,7 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
     out = withCar(out, role, hit);
   }
 
-  // carros do jogo × tráfego
+  // game cars × traffic
   const Lh = BALANCE.car.length;
   const Wh = BALANCE.car.halfWidth;
   const traffic = [...out.traffic];
@@ -51,7 +51,7 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
         traffic[i] = { ...t, speed: t.speed * 0.9 };
       }
       if (Math.abs(dx) < Wh) {
-        // de frente/de trás: o carro do jogo fica atrás (ou à frente) do tráfego
+        // head-on/rear: the game car ends up behind (or ahead of) the traffic
         car = { ...car, s: ds > 0 ? t.s - Lh : t.s + Lh };
       } else {
         const dir = Math.sign(dx) || 1;
@@ -63,7 +63,7 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
   }
   out = { ...out, traffic };
 
-  // polícia × ladrão
+  // police × thief
   let police = policeOf(out);
   let thief = thiefOf(out);
   const L = BALANCE.car.length;
@@ -88,18 +88,18 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
       events.push({ type: 'hit', target: 'police', amount: policeDmg, s, x });
     }
     if (Math.abs(dx) < W) {
-      // mesma faixa: a polícia fica 1 comprimento atrás
+      // same lane: the police ends up 1 car length behind
       police = { ...police, s: thief.s - L };
     } else {
-      // lado a lado: afasta lateralmente até não sobrepor
-      // separa um pouco além de 2W: com exatamente 2W o arredondamento deixa 1,7999… e a regra de
-      // não-ultrapassar (que usa < 2W) acharia que estão na mesma faixa
+      // side by side: pushes apart laterally until they no longer overlap
+      // separates slightly beyond 2W: with exactly 2W rounding leaves 1.7999… and the
+      // no-overtake rule (which uses < 2W) would think they are in the same lane
       const push = (2 * W + SEPARATION_SLACK - Math.abs(dx)) / 2;
       const dir = Math.sign(dx) || 1;
       let tx = thief.x + dir * push;
       let px = police.x - dir * push;
-      // se um bater na borda, o outro absorve o resto
-      // 1 cm antes da borda: empurrão não vira dano de parede
+      // if one hits the edge, the other absorbs the rest
+      // 1 cm before the edge: a push doesn't become wall damage
       const LIM = EDGE - 0.01;
       if (Math.abs(tx) > LIM) {
         px -= dir * (Math.abs(tx) - LIM);

@@ -10,7 +10,7 @@ const WHEEL_RADIUS = 0.36;
 const MAX_ROLL = (6 * Math.PI) / 180;
 const BLINK_PERIOD = 0.25;
 
-// ---------- materiais ----------
+// ---------- materials ----------
 const paint = (color: number) =>
   new THREE.MeshPhysicalMaterial({ color, roughness: 0.5, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1 });
 const GLASS = new THREE.MeshPhysicalMaterial({ color: 0x0a0f15, roughness: 0.15, metalness: 0.1, clearcoat: 0.6, envMapIntensity: 0.8 });
@@ -20,10 +20,10 @@ const PLASTIC = new THREE.MeshStandardMaterial({ color: 0x1a1b1e, roughness: 0.5
 const HEAD = new THREE.MeshStandardMaterial({ color: 0xfff6dc, emissive: 0xfff0c4, emissiveIntensity: 0.7 });
 const TAIL = new THREE.MeshStandardMaterial({ color: 0x7a0a0f, emissive: 0xff1a1a, emissiveIntensity: 1.8 });
 
-// ---------- helpers de geometria ----------
+// ---------- geometry helpers ----------
 type P = [number, number];
 
-/** Perfil lateral (x = comprimento, frente positiva; y = altura) com caixas de roda. */
+/** Side profile (x = length, front positive; y = height) with wheel arches. */
 function sideProfile(top: P[], rearX: number, frontX: number, axleRear: number, axleFront: number): THREE.Shape {
   const s = new THREE.Shape();
   const floor = 0.3;
@@ -39,12 +39,12 @@ function sideProfile(top: P[], rearX: number, frontX: number, axleRear: number, 
   s.absarc(axleFront, cy, arch, Math.PI, 0, true);
   s.lineTo(axleFront + arch, floor);
   s.lineTo(frontX, floor);
-  for (const [x, y] of top) s.lineTo(x, y); // da frente para trás
+  for (const [x, y] of top) s.lineTo(x, y); // front to back
   s.lineTo(rearX, floor);
   return s;
 }
 
-/** Extruda um perfil lateral na largura e orienta: frente em -z, centrado em x. */
+/** Extrudes a side profile across the width and orients it: front at -z, centered on x. */
 function extrudeProfile(shape: THREE.Shape, width: number, bevel = 0.07): THREE.BufferGeometry {
   const g = new THREE.ExtrudeGeometry(shape, {
     depth: width - bevel * 2,
@@ -54,7 +54,7 @@ function extrudeProfile(shape: THREE.Shape, width: number, bevel = 0.07): THREE.
     bevelSegments: 3,
     curveSegments: 12,
   });
-  g.rotateY(Math.PI / 2); // x do perfil → -z ; profundidade → +x
+  g.rotateY(Math.PI / 2); // profile x → -z ; depth → +x
   g.translate(-(width - bevel * 2) / 2, 0, 0);
   g.computeVertexNormals();
   return g;
@@ -72,7 +72,7 @@ const mesh = (geo: THREE.BufferGeometry, mat: THREE.Material | THREE.Material[],
 
 const mirrored = (make: (side: number) => THREE.BufferGeometry) => mergeGeometries([make(-1), make(1)])!;
 
-// ---------- sombra de contato ----------
+// ---------- contact shadow ----------
 let contactTex: THREE.DataTexture | undefined;
 function contactTexture(): THREE.DataTexture {
   if (contactTex) return contactTex;
@@ -106,7 +106,7 @@ function contactShadow(width: number, length: number): THREE.Mesh {
   return m;
 }
 
-// ---------- rodas ----------
+// ---------- wheels ----------
 const tireGeo = (w: number) => new THREE.CylinderGeometry(WHEEL_RADIUS, WHEEL_RADIUS, w, 22).rotateZ(Math.PI / 2);
 const rimGeo = (w: number) => new THREE.CylinderGeometry(WHEEL_RADIUS * 0.6, WHEEL_RADIUS * 0.6, w + 0.02, 14).rotateZ(Math.PI / 2);
 
@@ -118,7 +118,7 @@ function addWheels(root: THREE.Object3D, halfTrack: number, axleRear: number, ax
     const geo = mergeGeometries([tireGeo(w), rimGeo(w)], true)!;
     for (const side of [-1, 1]) {
       const wheel = mesh(geo, [RUBBER, CHROME], 'wheel');
-      wheel.castShadow = false; // a sombra de contato já cobre; economiza draw calls no passe de sombra
+      wheel.castShadow = false; // the contact shadow already covers it; saves draw calls in the shadow pass
       wheel.position.set(side * halfTrack, WHEEL_RADIUS, -s);
       root.add(wheel);
     }
@@ -142,7 +142,7 @@ function addLamps(body: THREE.Object3D, halfW: number, frontZ: number, rearZ: nu
   );
 }
 
-// ---------- viatura ----------
+// ---------- patrol car ----------
 function buildPolice(root: THREE.Group, body: THREE.Group) {
   const W = 1.8;
   const WHITE = paint(0xf4f5f7);
@@ -172,7 +172,7 @@ function buildPolice(root: THREE.Group, body: THREE.Group) {
   body.add(mesh(extrudeProfile(gh, 1.56, 0.06), GLASS, 'greenhouse'));
   body.add(mesh(rb(1.46, 0.07, 1.3, 0.03, 0, 1.47, 0.18), WHITE, 'roof'));
 
-  // portas azuis + faixa do capô
+  // blue doors + hood stripe
   const doors = mirrored((sd) => rb(0.04, 0.3, 2.1, 0.02, sd * (W / 2 + 0.005), 0.62, 0.1));
   const hood = rb(1.2, 0.03, 0.9, 0.015, 0, 0.965, -1.55);
   body.add(mesh(mergeGeometries([doors, hood])!, BLUE, 'police-blue'));
@@ -196,7 +196,7 @@ function buildPolice(root: THREE.Group, body: THREE.Group) {
   addWheels(root, 0.82, -1.35, 1.4, 0.26, 0.26);
 }
 
-// ---------- muscle car (vermelho: se destaca do asfalto escuro a distância) ----------
+// ---------- muscle car (red: stands out from the dark asphalt at a distance) ----------
 function buildThief(root: THREE.Group, body: THREE.Group) {
   const W = 1.88;
   const RED = paint(0xd0151c);
@@ -226,14 +226,14 @@ function buildThief(root: THREE.Group, body: THREE.Group) {
   body.add(mesh(extrudeProfile(gh, 1.5, 0.06), GLASS, 'greenhouse'));
   body.add(mesh(rb(1.4, 0.06, 0.95, 0.03, 0, 1.335, 0.42), RED, 'roof'));
 
-  const stripe = BLACK; // faixas de corrida pretas sobre o vermelho
+  const stripe = BLACK; // black racing stripes over the red
   body.add(
     mesh(mergeGeometries([rb(0.46, 0.02, 1.4, 0.01, 0, 0.885, -1.45), rb(0.46, 0.02, 0.9, 0.01, 0, 1.37, 0.42)])!, stripe, 'stripe'),
   );
   const spoiler = mergeGeometries([
     rb(1.76, 0.06, 0.3, 0.02, 0, 1.14, 2.1),
     ...[-1, 1].map((sd) => rb(0.06, 0.24, 0.08, 0.02, sd * 0.7, 1.0, 2.1)),
-    rb(0.72, 0.16, 0.62, 0.06, 0, 0.98, -1.15), // tomada de ar
+    rb(0.72, 0.16, 0.62, 0.06, 0, 0.98, -1.15), // air intake
   ])!;
   body.add(mesh(spoiler, PLASTIC, 'spoiler'));
   const chrome = mergeGeometries([
@@ -245,7 +245,7 @@ function buildThief(root: THREE.Group, body: THREE.Group) {
   addLamps(body, W / 2, -2.3, 2.3, 0.72);
   addWheels(root, 0.86, -1.42, 1.45, 0.28, 0.42);
 
-  // placas de titânio (itens): traseira e laterais, escondidas até o ladrão pegar
+  // titanium plates (items): rear and sides, hidden until the thief picks them up
   const TITANIUM = new THREE.MeshStandardMaterial({ color: 0x9aa3ad, roughness: 0.35, metalness: 0.9 });
   const plates: [string, THREE.BufferGeometry][] = [
     ['plate-front', rb(1.7, 0.42, 0.06, 0.03, 0, 0.6, 2.36)],
@@ -259,7 +259,7 @@ function buildThief(root: THREE.Group, body: THREE.Group) {
   }
 }
 
-// ---------- tráfego: 4 modelos civis ----------
+// ---------- traffic: 4 civilian models ----------
 interface CivilianSpec {
   W: number;
   color: number;
@@ -272,7 +272,7 @@ interface CivilianSpec {
 }
 
 const CIVILIANS: CivilianSpec[] = [
-  // 0: sedã prata
+  // 0: silver sedan
   {
     W: 1.78,
     color: 0xb9bec6,
@@ -294,7 +294,7 @@ const CIVILIANS: CivilianSpec[] = [
       [1.0, 0.88],
     ],
   },
-  // 1: hatch verde
+  // 1: green hatchback
   {
     W: 1.7,
     color: 0x2f7d5b,
@@ -315,7 +315,7 @@ const CIVILIANS: CivilianSpec[] = [
       [0.85, 0.92],
     ],
   },
-  // 2: van branca
+  // 2: white van
   {
     W: 1.9,
     color: 0xe9ebee,
@@ -336,7 +336,7 @@ const CIVILIANS: CivilianSpec[] = [
       [-2.38, 1.1],
     ],
   },
-  // 3: táxi amarelo
+  // 3: yellow taxi
   {
     W: 1.78,
     color: 0xf2c230,
@@ -380,18 +380,18 @@ function buildCivilian(root: THREE.Group, body: THREE.Group, spec: CivilianSpec)
   gh.lineTo(spec.gh[0]![0], spec.gh[0]![1]);
   body.add(mesh(extrudeProfile(gh, spec.W - 0.24, 0.06), GLASS, 'greenhouse'));
   if (spec.roofTop) body.add(mesh(rb(0.5, 0.18, 0.25, 0.04, 0, 1.55, -0.2), PLASTIC, 'taxi-sign'));
-  // faróis e lanternas num mesh só (cor por vértice, sem luz): 1 draw call
+  // headlights and taillights in a single mesh (vertex color, unlit): 1 draw call
   const halfW = spec.W / 2;
   const head = mirrored((sd) => rb(0.44, 0.15, 0.08, 0.03, sd * (halfW - 0.34), 0.72, -spec.frontX));
   const tail = mirrored((sd) => rb(0.56, 0.24, 0.08, 0.04, sd * (halfW - 0.36), 0.72, -spec.rearX));
   body.add(mesh(mergeGeometries([tinted(head, 0xfff0c4), tinted(tail, 0xff2a2a)])!, CIVILIAN_LAMPS, 'lamps'));
-  // rodas fixas, só pneu, num mesh só (1 draw call): o tráfego é pano de fundo, não precisa girar roda
+  // fixed wheels, tire only, in a single mesh (1 draw call): traffic is background, wheels need not spin
   const half = spec.W / 2 - 0.06;
   const tires: THREE.BufferGeometry[] = [];
   for (const z of [-spec.axles[0], -spec.axles[1]])
     for (const side of [-1, 1]) tires.push(tireGeo(0.26).translate(side * half, WHEEL_RADIUS, z));
   root.add(mesh(mergeGeometries(tires)!, RUBBER, 'wheels-static'));
-  // sem sombra projetada: a sombra de contato basta e o passe de sombra fica barato
+  // no cast shadow: the contact shadow is enough and the shadow pass stays cheap
   root.traverse((o) => {
     if ((o as THREE.Mesh).isMesh) o.castShadow = false;
   });
@@ -399,7 +399,7 @@ function buildCivilian(root: THREE.Group, body: THREE.Group, spec: CivilianSpec)
 
 const templates = new Map<string, THREE.Group>();
 
-/** peças com geometria própria por carro do jogo (dano visual deforma os vértices) */
+/** parts with their own geometry per game car (visual damage deforms the vertices) */
 const DEFORMABLE = new Set(['shell', 'taillights', 'bumpers', 'chrome']);
 
 const SHADOW_CASTERS = new Set(['shell', 'greenhouse']);
@@ -413,7 +413,7 @@ function template(key: string, build: (root: THREE.Group, body: THREE.Group) => 
     body.name = 'body';
     t.add(body);
     build(t, body);
-    // só a silhueta projeta sombra: peças pequenas mal aparecem e custam um draw call cada no passe de sombra
+    // only the silhouette casts shadow: small parts barely show and cost one draw call each in the shadow pass
     t.traverse((o) => {
       if ((o as THREE.Mesh).isMesh) o.castShadow = o.castShadow && SHADOW_CASTERS.has(o.name);
     });
@@ -423,7 +423,7 @@ function template(key: string, build: (root: THREE.Group, body: THREE.Group) => 
   return t;
 }
 
-/** Modelo de tráfego (0 sedã, 1 hatch, 2 van, 3 táxi). Geometria e materiais compartilhados. */
+/** Traffic model (0 sedan, 1 hatchback, 2 van, 3 taxi). Shared geometry and materials. */
 export function createTrafficModel(model: number): THREE.Group {
   const i = ((model % CIVILIANS.length) + CIVILIANS.length) % CIVILIANS.length;
   return template(`traffic-model-${i}`, (r, b) => buildCivilian(r, b, CIVILIANS[i]!)).clone(true);
@@ -432,8 +432,8 @@ export function createTrafficModel(model: number): THREE.Group {
 export function createCarModel(role: Role): THREE.Group {
   const root = template(`car-${role}`, role === 'police' ? buildPolice : buildThief).clone(true);
   root.name = `car-${role}`;
-  // carro do jogo: materiais próprios (giroscópio, sujeira, vidro trincado, farol) e geometria própria nas peças
-  // que amassam/entortam — o outro carro e o template não mudam. O tráfego continua compartilhando tudo.
+  // game car: own materials (gyrophare, dirt, cracked glass, headlight) and own geometry on the parts
+  // that dent/bend — the other car and the template are unchanged. Traffic keeps sharing everything.
   const clones = new Map<THREE.Material, THREE.Material>();
   const own = (m: THREE.Material) => {
     let c = clones.get(m);
@@ -452,11 +452,11 @@ export function createCarModel(role: Role): THREE.Group {
 export function updateCarModel(model: THREE.Group, car: CarState, timeSeconds: number, originS = 0): void {
   const p = trackPos(car.s, car.x, originS);
   model.position.set(p.x, jumpHeight(car.airTime), p.z);
-  model.rotation.y = -p.heading; // segue a curva da pista
+  model.rotation.y = -p.heading; // follows the road curve
   const body = model.getObjectByName('body');
   if (body) {
     body.rotation.z = car.steer === 0 ? 0 : -car.steer * MAX_ROLL;
-    // no pulo: nariz sobe na subida e desce na descida
+    // on a jump: nose rises on the way up and drops on the way down
     body.rotation.x = car.airTime > 0 ? (car.airTime / 0.6 - 0.5) * 0.12 : 0;
   }
   if (car.role === 'thief') {

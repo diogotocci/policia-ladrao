@@ -1,5 +1,5 @@
-// Dano visual dos carros do jogo (spec §9): função só da vida, contínuo e reversível ao curar.
-// Não cria meshes (nenhum draw call novo): mexe em material e vértices das peças do próprio carro.
+// Visual damage of the game cars (spec §9): a function of health only, continuous and reversible on healing.
+// Creates no meshes (no new draw calls): tweaks the material and vertices of the car's own parts.
 import * as THREE from 'three';
 
 export interface DamageLook {
@@ -30,9 +30,9 @@ export function damageLook(hp: number): DamageLook {
   };
 }
 
-// ---------- texturas ----------
+// ---------- textures ----------
 let crackTex: THREE.DataTexture | undefined;
-/** Rachaduras claras sobre preto (usada como emissiveMap: só aparece quando o emissive do vidro liga). */
+/** Light cracks on black (used as emissiveMap: only shows when the glass emissive turns on). */
 function crackTexture(): THREE.DataTexture {
   if (crackTex) return crackTex;
   const N = 128;
@@ -44,7 +44,7 @@ function crackTexture(): THREE.DataTexture {
     if (px < 0 || py < 0 || px >= N || py >= N) return;
     data.set([235, 240, 245, 255], (py * N + px) * 4);
   };
-  // estrela de rachaduras a partir de um ponto de impacto, com galhos
+  // star of cracks from an impact point, with branches
   let seed = 7;
   const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const branch = (x: number, y: number, a: number, len: number, depth: number) => {
@@ -61,13 +61,13 @@ function crackTexture(): THREE.DataTexture {
   crackTex.wrapS = crackTex.wrapT = THREE.RepeatWrapping;
   crackTex.repeat.set(0.6, 0.6);
   crackTex.magFilter = THREE.LinearFilter;
-  crackTex.minFilter = THREE.LinearMipmapLinearFilter; // sem cintilar de longe
+  crackTex.minFilter = THREE.LinearMipmapLinearFilter; // no shimmering from afar
   crackTex.generateMipmaps = true;
   crackTex.needsUpdate = true;
   return crackTex;
 }
 
-// ---------- estado por carro ----------
+// ---------- per-car state ----------
 interface PartState {
   geo: THREE.BufferGeometry;
   original: Float32Array;
@@ -89,7 +89,7 @@ interface CarDamageState {
 const DIRT = new THREE.Color(0x4a3f33);
 const DENT_DEPTH = 0.16;
 const LAMP_TILT = 0.45; // rad
-const BUMPER_DROP = 0.15; // rad (a ponta solta quase raspa no chão)
+const BUMPER_DROP = 0.15; // rad (the loose end almost scrapes the ground)
 
 function part(model: THREE.Object3D, name: string): PartState | undefined {
   const m = model.getObjectByName(name) as THREE.Mesh | undefined;
@@ -109,7 +109,7 @@ function init(model: THREE.Object3D): CarDamageState {
   shellMesh.geometry.computeBoundingBox();
   const box = shellMesh.geometry.boundingBox!;
   const center = box.getCenter(new THREE.Vector3());
-  // amassados fixos por carro: laterais, cantos e capô (determinísticos)
+  // fixed dents per car: sides, corners and hood (deterministic)
   const { min, max } = box;
   const dents = [
     { c: new THREE.Vector3(max.x, 0.65, min.z + 0.9), r: 0.55 },
@@ -139,7 +139,7 @@ function init(model: THREE.Object3D): CarDamageState {
   };
 }
 
-/** Deforma a partir da forma original. `normal` gira as normais originais (peça rígida) ou, sem ela, recalcula (amassado). */
+/** Deforms from the original shape. `normal` rotates the original normals (rigid part) or, without it, recomputes them (dent). */
 function writeBack(
   p: PartState,
   transform: (x: number, y: number, z: number, out: THREE.Vector3) => void,
@@ -186,7 +186,7 @@ const TMP = new THREE.Vector3();
 const DIR = new THREE.Vector3();
 const ORIG = new THREE.Vector3();
 
-/** rotação no plano xy em torno de (cx, cy) por um ângulo (cos c, sen s) */
+/** rotation in the xy plane around (cx, cy) by an angle (cos c, sin s) */
 const rotXY = (x: number, y: number, cx: number, cy: number, c: number, s: number, out: THREE.Vector3, z: number) =>
   out.set(cx + (x - cx) * c - (y - cy) * s, cy + (x - cx) * s + (y - cy) * c, z);
 
@@ -198,7 +198,7 @@ function deform(st: CarDamageState, dents: number, tilted: boolean, hanging: boo
         ORIG.set(x, y, z);
         out.set(x, y, z);
         for (const d of st.dents) {
-          const dist = ORIG.distanceTo(d.c); // distância na forma original: não depende da ordem dos amassados
+          const dist = ORIG.distanceTo(d.c); // distance in the original shape: does not depend on dent order
           if (dist >= d.r) continue;
           const f = (1 - dist / d.r) ** 2;
           DIR.set(x - st.center.x, (y - st.center.y) * 0.6, (z - st.center.z) * 0.4).normalize();
@@ -209,7 +209,7 @@ function deform(st: CarDamageState, dents: number, tilted: boolean, hanging: boo
   if (st.tail) {
     if (!tilted) restore(st.tail);
     else {
-      // só a lanterna esquerda (x < 0) gira em torno do próprio centro
+      // only the left lamp (x < 0) rotates around its own center
       let cx = 0;
       let cy = 0;
       let n = 0;
@@ -233,7 +233,7 @@ function deform(st: CarDamageState, dents: number, tilted: boolean, hanging: boo
   if (st.bumper) {
     if (!hanging) restore(st.bumper);
     else {
-      // para-choque traseiro (+z) pendurado: preso na ponta direita, a esquerda cai
+      // rear bumper (+z) hanging: attached at the right end, the left end drops
       const c = Math.cos(BUMPER_DROP);
       const s = Math.sin(BUMPER_DROP);
       writeBack(
@@ -245,11 +245,11 @@ function deform(st: CarDamageState, dents: number, tilted: boolean, hanging: boo
   }
 }
 
-/** Aplica o visual de dano ao modelo de um carro do jogo (criado por createCarModel). */
+/** Applies the damage visuals to a game car model (created by createCarModel). */
 export function applyDamage(model: THREE.Object3D, look: DamageLook, time: number): void {
   const st = (model.userData.damage ??= init(model)) as CarDamageState;
 
-  // vértices: só refaz quando o estado (quantizado) muda — nunca a cada quadro
+  // vertices: only rebuilt when the (quantized) state changes — never every frame
   const dents = Math.round(look.dents * 20) / 20;
   const key = `${dents}|${look.tiltedLamp}|${look.hangingBumper}`;
   if (key !== st.key) {
@@ -265,7 +265,7 @@ export function applyDamage(model: THREE.Object3D, look: DamageLook, time: numbe
   }
   st.glass?.emissive.setHex(look.crackedGlass ? 0x7c838c : 0);
   if (st.head) {
-    // pisca irregular (mau contato)
+    // irregular flicker (bad contact)
     const on = !look.blinkingHeadlight || Math.sin(time * 23) + Math.sin(time * 7.3) > -0.2;
     st.head.mat.emissiveIntensity = on ? st.head.intensity : 0;
   }

@@ -15,12 +15,12 @@ const KEYMAP: Record<string, IntentName> = {
 
 export function createKeyboardInput(target: Window | HTMLElement): { read(): Intents; dropTaps(): void; dispose(): void } {
   const held = new Set<string>();
-  /** toques rápidos (desce e sobe entre duas leituras) contam uma vez */
+  /** quick taps (down and up between two reads) count once */
   const tapped = new Set<IntentName>();
 
   const onDown = (e: Event) => {
     const code = (e as KeyboardEvent).code;
-    // Espaço/Enter num botão focado (ex.: "Jogar de novo") é do botão, não do jogo
+    // Space/Enter on a focused button (e.g. "Jogar de novo") belongs to the button, not the game
     const el = (e.target as Element | null) ?? null;
     if (code === 'Space' && el && 'closest' in el && el.closest('button')) return;
     if (code in KEYMAP) {
@@ -52,7 +52,7 @@ export function createKeyboardInput(target: Window | HTMLElement): { read(): Int
       tapped.clear();
       return out;
     },
-    /** esquece toques rápidos guardados (feitos na contagem/pausa); teclas ainda seguradas continuam valendo */
+    /** forgets stored quick taps (made during the countdown/pause); keys still held remain valid */
     dropTaps() {
       tapped.clear();
     },

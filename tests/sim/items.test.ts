@@ -167,7 +167,7 @@ describe('boxes', () => {
 
   it('never more than 2 boxes, never on a speed bump (±6 m)', () => {
     let w = createWorld({ seed: 5, playerRole: 'police' });
-    // empurra os carros para longe das caixinhas: só observa o spawn
+    // pushes the cars away from the item boxes: only observes the spawn
     w = withCar(w, 'police', { ...policeOf(w), x: -10 });
     w = withCar(w, 'thief', { ...thiefOf(w), x: -10 });
     for (let k = 0; k < 40; k++) {

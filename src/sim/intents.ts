@@ -1,4 +1,4 @@
-// O que o jogador (ou a IA) quer fazer neste passo.
+// What the player (or the AI) wants to do this step.
 export interface Intents {
   left: boolean;
   right: boolean;

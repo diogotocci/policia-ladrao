@@ -1,25 +1,25 @@
-// Helicóptero da polícia (item "Helicóptero"): aparece acima e à frente da viatura enquanto dura
-// e, quando acaba, vai embora subindo (sem piscar). Low-poly: corpo (1 mesh) + hélice (1 mesh) + sombra no chão.
+// Police helicopter ("Helicóptero" item): appears above and ahead of the patrol car while it lasts
+// and, when it ends, leaves by climbing away (no blinking). Low-poly: body (1 mesh) + rotor (1 mesh) + ground shadow.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { BALANCE } from '../config/balance';
 import type { CarState } from '../sim/car';
 import { trackPos } from './trackFrame';
 
-export const HELI_Y = 5.5; // m acima da pista
-export const HELI_EXIT = 1.6; // s indo embora
-const ARRIVE = 0.8; // s descendo
-const BEHIND = -16; // m: um pouco à frente da viatura, para aparecer na câmera de trás
-const SIDE = 2; // m para a direita
+export const HELI_Y = 5.5; // m above the road
+export const HELI_EXIT = 1.6; // s leaving
+const ARRIVE = 0.8; // s descending
+const BEHIND = -16; // m: slightly ahead of the patrol car, to show up in the rear camera
+const SIDE = 2; // m to the right
 
 export interface HeliPose {
   visible: boolean;
   height: number;
-  /** metros atrás da viatura (negativo = à frente) */
+  /** meters behind the patrol car (negative = ahead) */
   behind: number;
 }
 
-/** since: quando ele chegou (pegar outro helicóptero com ele no ar só estende o tempo, não repete a chegada) */
+/** since: when it arrived (picking up another helicopter while it is airborne only extends the time, it does not replay the arrival) */
 export function heliPose(time: number, until: number, since?: number): HeliPose {
   const start = Math.min(until - BALANCE.items.police.heliTime, since ?? Infinity);
   const off: HeliPose = { visible: false, height: HELI_Y, behind: BEHIND };
@@ -30,7 +30,7 @@ export function heliPose(time: number, until: number, since?: number): HeliPose 
   }
   const k = Math.min(1, (time - start) / ARRIVE);
   const height = HELI_Y + 16 * (1 - k) * (1 - k);
-  return { visible: true, height, behind: BEHIND }; // sem piscar (playtest): no fim só vai embora
+  return { visible: true, height, behind: BEHIND }; // no blinking (playtest): at the end it just leaves
 }
 
 function box(w: number, h: number, d: number, x: number, y: number, z: number, hex: number): THREE.BufferGeometry {
@@ -53,14 +53,14 @@ export function createHeli(scene: THREE.Scene): {
   const GLASS = 0x2a3a4a;
   const DARK = 0x1a1b1e;
   const bodyGeo = mergeGeometries([
-    box(1.5, 1.3, 2.6, 0, 0, 0, BLUE), // cabine
-    box(1.3, 0.8, 1.0, 0, 0.1, -1.6, GLASS), // vidro da frente (−z)
-    box(1.52, 0.25, 2.62, 0, -0.35, 0, WHITE), // faixa
-    box(0.35, 0.35, 3.2, 0, 0.2, 2.9, BLUE), // cauda
-    box(0.12, 0.9, 0.5, 0, 0.6, 4.4, BLUE), // deriva
-    box(0.1, 0.1, 2.6, -0.6, -0.95, 0, DARK), // esquis
+    box(1.5, 1.3, 2.6, 0, 0, 0, BLUE), // cabin
+    box(1.3, 0.8, 1.0, 0, 0.1, -1.6, GLASS), // front glass (−z)
+    box(1.52, 0.25, 2.62, 0, -0.35, 0, WHITE), // stripe
+    box(0.35, 0.35, 3.2, 0, 0.2, 2.9, BLUE), // tail
+    box(0.12, 0.9, 0.5, 0, 0.6, 4.4, BLUE), // fin
+    box(0.1, 0.1, 2.6, -0.6, -0.95, 0, DARK), // skids
     box(0.1, 0.1, 2.6, 0.6, -0.95, 0, DARK),
-    box(0.25, 0.35, 0.25, 0, 0.8, 0, DARK), // mastro da hélice
+    box(0.25, 0.35, 0.25, 0, 0.8, 0, DARK), // rotor mast
   ])!;
   bodyGeo.computeVertexNormals();
   const body = new THREE.Mesh(bodyGeo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.6, metalness: 0.2 }));
@@ -76,7 +76,7 @@ export function createHeli(scene: THREE.Scene): {
   group.scale.setScalar(1.5);
   group.add(body, rotor);
   group.visible = false;
-  // sombra: um círculo escuro no chão (a do sol ficaria fora da caixa de sombra)
+  // shadow: a dark circle on the ground (the sun's would fall outside the shadow box)
   const shadow = new THREE.Mesh(
     new THREE.CircleGeometry(2.2, 20).rotateX(-Math.PI / 2),
     new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.28, depthWrite: false }),
@@ -91,7 +91,7 @@ export function createHeli(scene: THREE.Scene): {
     group,
     update(police, time, originS, dt) {
       const until = police.upgrades.heliUntil;
-      // novo helicóptero (o anterior já tinha ido embora): chegada nova; com ele no ar, só estende o tempo
+      // new helicopter (the previous one had already left): new arrival; with it airborne, only extends the time
       if (until !== lastUntil) {
         if (time > lastUntil + HELI_EXIT) since = until - BALANCE.items.police.heliTime;
         lastUntil = until;
@@ -102,7 +102,7 @@ export function createHeli(scene: THREE.Scene): {
       if (!pose.visible) return;
       const p = trackPos(police.s - pose.behind, police.x + SIDE, originS);
       group.position.set(p.x, pose.height, p.z);
-      group.rotation.set(0.12, -p.heading, Math.sin(time * 1.7) * 0.05); // nariz um pouco para baixo, balançando
+      group.rotation.set(0.12, -p.heading, Math.sin(time * 1.7) * 0.05); // nose slightly down, swaying
       rotor.rotation.y += dt * 38;
       shadow.position.set(p.x, 0.04, p.z);
       const fade = Math.max(0, 1 - (pose.height - HELI_Y) / 20);

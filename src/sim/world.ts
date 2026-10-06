@@ -19,7 +19,7 @@ export type { Bomb, Box, GameEvent, ItemId, MatchState, Projectile, TrafficCar, 
 export const policeOf = (w: WorldState): CarState => (w.playerRole === 'police' ? w.player : w.opponent);
 export const thiefOf = (w: WorldState): CarState => (w.playerRole === 'thief' ? w.player : w.opponent);
 
-/** Devolve o mundo com o carro do papel `role` substituído. */
+/** Returns the world with the car of role `role` replaced. */
 export function withCar(w: WorldState, role: Role, car: CarState): WorldState {
   return w.playerRole === role ? { ...w, player: car } : { ...w, opponent: car };
 }
@@ -28,12 +28,12 @@ export function createWorld(opts: {
   seed: number;
   playerRole: Role;
   debugHp?: { police?: number; thief?: number };
-  /** itens dados ao jogador no início (só debug/testes) */
+  /** items given to the player at the start (debug/tests only) */
   debugGive?: ItemId[];
   traffic?: boolean;
-  /** curvas (Entrega 6); false = rua reta (testes/debug ?curves=0) */
+  /** curves (Delivery 6); false = straight road (tests/debug ?curves=0) */
   curves?: boolean;
-  /** tempo de fuga (s); padrão BALANCE.match.escapeTime — menor só em debug/e2e (?escape=N) */
+  /** escape time (s); default BALANCE.match.escapeTime — lower only in debug/e2e (?escape=N) */
   escapeTime?: number;
 }): WorldState {
   const police: CarState = { ...createCar('police', 1, 0), hasGun: true, hp: opts.debugHp?.police ?? BALANCE.hp };
@@ -101,11 +101,11 @@ export function createWorld(opts: {
 }
 
 /**
- * Um passo de simulação. `playerIntents = 'ai'` faz a IA dirigir também o carro do jogador (testes IA × IA).
- * Ordem: IA → movimento (turbo na polícia) → colisões → não-ultrapassar → tiros → projéteis → tempo/nível → fim.
+ * One simulation step. `playerIntents = 'ai'` makes the AI drive the player's car too (AI × AI tests).
+ * Order: AI → movement (police turbo) → collisions → no-overtake → shots → projectiles → time/level → end.
  */
 export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: number): WorldState {
-  // partida encerrada: nada muda; só limpa os eventos do último passo para não serem repetidos
+  // match over: nothing changes; only clears the last step's events so they are not repeated
   if (w.match.over) return w.events.length ? { ...w, events: [] } : w;
   if (w.match.escapeAt !== undefined) return stepEscape(w, dt);
   if (w.match.arrestAt !== undefined) return stepArrest(w, dt);
@@ -130,7 +130,7 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
     thief: w.playerRole === 'thief' ? mine : opp.intents,
   };
 
-  // investida da IA da polícia (nunca para a polícia jogada por uma pessoa)
+  // police AI ram (never for a police car played by a human)
   const policeAi = playerIntents === 'ai' || w.playerRole !== 'police';
   const ram = policeAi && out.time < out.ai.police.ramUntil && out.time >= out.policeTurboOffUntil ? BALANCE.ai.ramBoost : 0;
   const bonus = pursuitBonus(out) + ram;
@@ -140,7 +140,7 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   const kP = curvatureAt(w.seed, p0.s, w.curvesOn);
   out = withCar(out, 'thief', stepJump(stepCar(t0, intents.thief, dt, { curvature: kT }), t0.s, w.seed, dt));
   out = withCar(out, 'police', stepJump(stepCar(p0, intents.police, dt, { speedBonus: bonus, curvature: kP }), p0.s, w.seed, dt));
-  // começo de derrapagem: evento (som de pneu, fumaça nas rodas)
+  // skid start: event (tire sound, smoke from the wheels)
   for (const [before, now] of [
     [t0, thiefOf(out)],
     [p0, policeOf(out)],
@@ -152,7 +152,7 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   out = stepBoxes(out);
   out = dropBomb(out, intents.thief);
   out = stepBombs(out);
-  // quem zerou a vida neste passo (batida, bomba, caixinha) não atira mais
+  // whoever reached zero life this step (crash, bomb, item box) no longer shoots
   if (policeOf(out).hp > 0 && thiefOf(out).hp > 0) {
     out = fireWeapons(out, intents, dt);
     out = stepProjectiles(out, dt);
@@ -163,10 +163,10 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   const policeDead = policeOf(out).hp <= 0;
   const thiefDead = thiefOf(out).hp <= 0;
   if (thiefDead && !policeDead) {
-    // a polícia venceu: cena da prisão (o ladrão para destruído, a viatura encosta atrás) antes do fim
+    // police won: arrest scene (the thief stops destroyed, the patrol car pulls up behind) before the end
     out = { ...out, projectiles: [], bombs: [], match: { over: false, arrestAt: time }, events: [...out.events, { type: 'arrest' }] };
   } else if (policeDead && !thiefDead) {
-    // polícia destruída: ela para (arrebentada) e o ladrão vai embora — mesma cena da fuga, com o motivo da vitória
+    // police destroyed: it stops (wrecked) and the thief drives away — same scene as the escape, with the win reason
     out = {
       ...out,
       projectiles: [],
@@ -175,15 +175,15 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
       events: [...out.events, { type: 'escape' }],
     };
   } else if (policeDead || thiefDead) {
-    // os dois no mesmo passo → ladrão
+    // both in the same step → thief
     out = {
       ...out,
       match: { over: true, winner: 'thief', reason: 'policeDown', endTime: time },
       events: [...out.events, { type: 'end', winner: 'thief' }],
     };
   } else if (time >= w.escapeTime - 1e-9) {
-    // 1:30 com os dois vivos: começa a cena da fuga (tiros no ar somem)
-    // instante exato do limite (não o do passo, que pode sair 89,9999…): fugas empatam no ranking
+    // 1:30 with both alive: the escape scene starts (shots in the air vanish)
+    // exact instant of the limit (not the step's, which may come out as 89.9999…): escapes tie in the ranking
     out = {
       ...out,
       projectiles: [],
@@ -195,7 +195,7 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   return out;
 }
 
-/** Cena da prisão: sem controles nem combate; o ladrão freia até parar e a polícia para logo atrás dele. */
+/** Arrest scene: no controls or combat; the thief brakes to a stop and the police stops right behind him. */
 function stepArrest(w: WorldState, dt: number): WorldState {
   const M = BALANCE.match;
   const t = thiefOf(w);
@@ -203,7 +203,7 @@ function stepArrest(w: WorldState, dt: number): WorldState {
   const land = (c: CarState) => Math.max(0, c.airTime - dt);
   const tSpeed = Math.max(0, t.speed - M.thiefStopDecel * dt);
   const ts = t.s + tSpeed * dt;
-  // polícia: velocidade para chegar ao ponto de parada atrás do ladrão (sem passar), freando forte se precisar
+  // police: speed to reach the stopping point behind the thief (without passing), braking hard if needed
   const stopAt = ts - M.arrestGap;
   const room = Math.max(0, stopAt - p.s);
   const want = Math.min(BALANCE.movement.cruise.police * 1.2, Math.sqrt(2 * BALANCE.movement.brakeDecel * room));
@@ -212,7 +212,7 @@ function stepArrest(w: WorldState, dt: number): WorldState {
       ? Math.min(want, p.speed + BALANCE.movement.accel * 2 * dt)
       : Math.max(want, p.speed - BALANCE.movement.brakeDecel * 1.5 * dt);
   const ps = Math.min(p.s + pSpeed * dt, stopAt);
-  // e para na faixa ao lado (do lado do meio da rua), para a câmera de trás ver o ladrão arrebentado
+  // and stops in the lane beside (on the middle-of-the-road side), so the rear camera can see the wrecked thief
   const side = t.x > 0 ? -M.arrestSide : M.arrestSide;
   const dx = t.x + side - p.x;
   const px = p.x + Math.sign(dx) * Math.min(Math.abs(dx), 3 * dt);
@@ -240,14 +240,14 @@ function stepArrest(w: WorldState, dt: number): WorldState {
   return out;
 }
 
-/** Cena da fuga: sem controles nem combate; o ladrão acelera e some, a polícia freia. Depois, fim. */
+/** Escape scene: no controls or combat; the thief accelerates and vanishes, the police brakes. Then, the end. */
 function stepEscape(w: WorldState, dt: number): WorldState {
   const M = BALANCE.match;
   const t = thiefOf(w);
   const p = policeOf(w);
   const vMax = BALANCE.movement.cruise.thief * M.escapeBoost;
   let tSpeed = Math.max(t.speed, Math.min(vMax, t.speed + M.escapeAccel * dt));
-  // desvia do tráfego: vai para a faixa mais livre à frente; se ainda assim tiver um carro colado, segue atrás dele
+  // dodges traffic: goes to the clearest lane ahead; if a car is still right in front, follows behind it
   const L = BALANCE.car.length;
   const lanes = BALANCE.road.laneCenters;
   const freeAhead = (x: number) => {
@@ -264,7 +264,7 @@ function stepEscape(w: WorldState, dt: number): WorldState {
     lanes.reduce((a, x) => (Math.abs(x - t.x) < Math.abs(a - t.x) ? x : a)),
   );
   let tx = t.x + Math.sign(lane - t.x) * Math.min(Math.abs(lane - t.x), BALANCE.movement.lateralSpeed * dt);
-  // não fecha um carro que está do lado
+  // doesn't cut off a car alongside
   if (w.traffic.some((c) => Math.abs(c.s - t.s) < L + 0.5 && Math.abs(c.x - tx) < 2 * BALANCE.car.halfWidth)) tx = t.x;
   let block: (typeof w.traffic)[number] | undefined;
   for (const c of w.traffic)
@@ -272,7 +272,7 @@ function stepEscape(w: WorldState, dt: number): WorldState {
   if (block) tSpeed = Math.min(tSpeed, block.speed);
   const pSpeed = Math.max(0, p.speed - BALANCE.movement.brakeDecel * dt);
   let out: WorldState = { ...w, events: [] };
-  // quem estava no ar (quebra-mola) termina o pulo normalmente
+  // whoever was airborne (speed bump) finishes the jump normally
   const land = (c: CarState) => Math.max(0, c.airTime - dt);
   out = withCar(out, 'thief', {
     ...t,

@@ -1,5 +1,5 @@
-// App completa (spec §7): telas + partidas + ranking. O fluxo é a máquina pura de screens/flow.ts;
-// aqui só se liga cada estado ao que aparece na tela (e ao jogo).
+// Full app (spec §7): screens + matches + ranking. The flow is the pure state machine in screens/flow.ts;
+// here we only wire each state to what appears on screen (and to the game).
 import type { Role } from './config/balance';
 import { createAudioSession } from './audio/session';
 import { startGame, type GameHandle } from './game';
@@ -46,11 +46,11 @@ export function startApp(
     view?.dispose();
     view = undefined;
     countdown = undefined;
-    clearTimeout(goTimer); // o "VAI!" não fica por cima da próxima tela
+    clearTimeout(goTimer); // the "VAI!" must not linger over the next screen
     goView?.dispose();
     goView = undefined;
   };
-  /** ação vinda de um botão: clique de interface + ação */
+  /** action from a button: UI click + action */
   const press = (a: FlowAction) => {
     audio.mixer.cue('ui');
     dispatch(a);
@@ -75,7 +75,7 @@ export function startApp(
       onPauseRequest: () => dispatch({ type: 'pause' }),
       onEnd: (r) => dispatch({ type: 'ended', result: r, qualifies: qualifies(board, role, r.time, r.winner === role, r.hp) }),
     });
-    container.append(layer); // telas sempre por cima do canvas e do HUD do jogo
+    container.append(layer); // screens always above the canvas and the game HUD
   };
 
   let tabSwitch = false;
@@ -84,7 +84,7 @@ export function startApp(
   }
   const show = (s: FlowState) => {
     clearView();
-    if (s.screen !== 'title' && !(history.state as { pl?: boolean } | null)?.pl) trap(); // Voltar volta para a app
+    if (s.screen !== 'title' && !(history.state as { pl?: boolean } | null)?.pl) trap(); // Back returns to the app
     switch (s.screen) {
       case 'title':
         stopGame();
@@ -102,7 +102,7 @@ export function startApp(
         break;
       }
       case 'countdown':
-        highlight = undefined; // destaque do recorde é só da partida que acabou
+        highlight = undefined; // the record highlight applies only to the match that just ended
         newGame(s.role);
         countdown = renderCountdown(layer);
         countdown.set(s.left);
@@ -121,7 +121,7 @@ export function startApp(
         });
         break;
       case 'end':
-        game?.pause(); // a partida acabou: para de simular e de gastar bateria atrás da tela
+        game?.pause(); // match is over: stop simulating and draining battery behind the screen
         view = renderEnd(layer, {
           role: s.role,
           result: s.result,
@@ -139,7 +139,7 @@ export function startApp(
             board = r.board;
             if (storage) saveBoard(storage, board);
             if (r.rank > 0) highlight = { role: s.role, rank: r.rank };
-            state = reduce(state, { type: 'saved' }); // sem redesenhar: a tela já mostra "Recorde salvo!"
+            state = reduce(state, { type: 'saved' }); // no redraw: the screen already shows "Recorde salvo!"
           },
           onAgain: () => press({ type: 'restart' }),
           onRanking: () => press({ type: 'openRanking' }),
@@ -165,7 +165,7 @@ export function startApp(
     const next = reduce(state, a);
     if (next === prev) return;
     state = next;
-    // contagem → jogo: some a contagem com um "VAI!" e o jogo começa
+    // countdown -> game: the countdown disappears with a "VAI!" and the game starts
     if (prev.screen === 'countdown' && next.screen === 'playing') {
       countdown?.go();
       audio.mixer.cue('go');
@@ -190,38 +190,38 @@ export function startApp(
       game?.resume();
       return;
     }
-    // ranking ↔ ranking (troca de aba) e o restante: redesenha a tela
+    // ranking <-> ranking (tab switch) and everything else: redraw the screen
     show(next);
   }
 
-  // relógio da app: contagem e música do menu (durante a partida quem toca é o jogo)
+  // app clock: countdown and menu music (during a match the game plays the music)
   let raf = 0;
   let last = performance.now();
   const loop = (now: number) => {
     const dt = Math.min(0.1, (now - last) / 1000);
     last = now;
-    const portrait = container.clientHeight > container.clientWidth; // celular em pé: o jogo gira sozinho (styles.css)
-    if (state.screen === 'countdown' && !portrait) dispatch({ type: 'tick', dt }); // em retrato a contagem espera
-    // música do menu nas telas sem partida rolando (durante a partida quem toca é o jogo; na pausa, silêncio)
+    const portrait = container.clientHeight > container.clientWidth; // phone held upright: the game rotates by itself (styles.css)
+    if (state.screen === 'countdown' && !portrait) dispatch({ type: 'tick', dt }); // in portrait the countdown waits
+    // menu music on screens with no match running (during a match the game plays; silence while paused)
     if (state.screen === 'title' || state.screen === 'choose' || state.screen === 'end' || state.screen === 'ranking') audio.mixer.menu(dt);
     raf = requestAnimationFrame(loop);
   };
   raf = requestAnimationFrame(loop);
 
-  // Esc/P na pausa retoma (no jogo, quem pede a pausa é o próprio jogo)
+  // Esc/P while paused resumes (in-game, the game itself requests the pause)
   const onKey = (e: KeyboardEvent) => {
     if (state.screen === 'paused' && (e.code === 'Escape' || e.code === 'KeyP') && !e.repeat) {
-      e.stopImmediatePropagation(); // a mesma tecla não pode, logo em seguida, pedir a pausa de novo ao jogo
+      e.stopImmediatePropagation(); // the same key must not immediately ask the game to pause again
       press({ type: 'resume' });
     }
   };
-  window.addEventListener('keydown', onKey, true); // captura: roda antes do atalho de pausa do jogo
-  // botão Voltar do Android / histórico: durante a partida abre a pausa em vez de sair
+  window.addEventListener('keydown', onKey, true); // capture: runs before the game's pause shortcut
+  // Android Back button / history: during a match opens the pause instead of leaving
   const onPop = () => {
     if (state.screen === 'playing') dispatch({ type: 'pause' });
     else if (state.screen === 'paused') dispatch({ type: 'resume' });
     else if (state.screen !== 'title') dispatch({ type: 'back' });
-    else return; // no título, Voltar sai normalmente
+    else return; // on the title screen, Back exits normally
     const now = state as FlowState;
     if (now.screen !== 'title' && !(history.state as { pl?: boolean } | null)?.pl) trap();
   };

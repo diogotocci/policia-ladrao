@@ -16,7 +16,7 @@ describe('screen flow', () => {
     s = reduce(s, { type: 'openRanking' });
     expect(s).toMatchObject({ screen: 'ranking', tab: 'thief', from: 'end' });
     s = reduce(s, { type: 'back' });
-    expect(s.screen).toBe('end'); // Voltar volta para a tela de fim (de lá: jogar de novo / título)
+    expect(s.screen).toBe('end'); // Back returns to the end screen (from there: play again / title)
     expect(reduce(s, { type: 'quit' }).screen).toBe('title');
   });
 
@@ -28,10 +28,10 @@ describe('screen flow', () => {
     let s = reduce(end, { type: 'openRanking' });
     s = reduce(s, { type: 'tab', tab: 'police' });
     s = reduce(s, { type: 'back' });
-    expect(s).toEqual(end); // as iniciais continuam esperando
+    expect(s).toEqual(end); // the initials are still pending
     const saved = reduce(end, { type: 'saved' });
     expect(saved).toMatchObject({ screen: 'end', saved: true });
-    expect(reduce(reduce(saved, { type: 'openRanking' }), { type: 'back' })).toEqual(saved); // já salvo: não pede de novo
+    expect(reduce(reduce(saved, { type: 'openRanking' }), { type: 'back' })).toEqual(saved); // already saved: does not ask again
   });
 
   it('the countdown goes 3 → 0 in 3 s and cannot be paused', () => {

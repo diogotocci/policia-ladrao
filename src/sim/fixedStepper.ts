@@ -1,8 +1,8 @@
 import { BALANCE } from '../config/balance';
 
 /**
- * Converte tempo real (variável) em passos fixos de simulação.
- * Limita os passos por frame: ao voltar de uma aba em segundo plano, o atraso é descartado.
+ * Converts real (variable) time into fixed simulation steps.
+ * Limits steps per frame: when returning from a background tab, the lag is discarded.
  */
 export class FixedStepper {
   private acc = 0;
@@ -13,7 +13,7 @@ export class FixedStepper {
     private readonly maxSteps: number = BALANCE.sim.maxStepsPerFrame,
   ) {}
 
-  /** Executa 0..maxSteps passos e devolve alpha em [0, 1) para interpolação. */
+  /** Runs 0..maxSteps steps and returns alpha in [0, 1) for interpolation. */
   advance(elapsedSeconds: number): number {
     this.acc += Math.max(0, elapsedSeconds);
     let steps = 0;

@@ -3,11 +3,11 @@ import { BALANCE } from '../config/balance';
 import { createRng } from '../sim/rng';
 import { smoothTexture } from './renderer';
 
-/** pixels por metro na textura do chão */
+/** pixels per meter in the ground texture */
 export const GROUND_PPM = 16;
-/** meia-largura do chão (pista + meio-fio + calçada), em metros */
+/** half-width of the ground (road + curb + sidewalk), in meters */
 export const GROUND_HALF_WIDTH = 11;
-/** metros cobertos por uma repetição da textura de fachada (largura, altura) */
+/** meters covered by one repeat of the facade texture (width, height) */
 export const FACADE_TILE_METERS = { width: 8, height: 48 } as const;
 
 const canvas = (w: number, h: number) => {
@@ -15,11 +15,11 @@ const canvas = (w: number, h: number) => {
   c.width = w;
   c.height = h;
   const ctx = c.getContext('2d');
-  if (!ctx) throw new Error('canvas 2d indisponível');
+  if (!ctx) throw new Error('2D canvas unavailable');
   return { c, ctx };
 };
 
-/** Corte transversal da rua para um bloco: calçada em placas, meio-fio, asfalto, marcas de pneu e faixas. */
+/** Street cross-section for a chunk: paved sidewalk, curb, asphalt, tire marks and lane stripes. */
 export function makeGroundTexture(chunkLength: number): THREE.CanvasTexture {
   const ppm = GROUND_PPM;
   const w = GROUND_HALF_WIDTH * 2 * ppm;
@@ -85,7 +85,7 @@ export function makeGroundTexture(chunkLength: number): THREE.CanvasTexture {
   return smoothTexture(new THREE.CanvasTexture(c));
 }
 
-/** Fachada com janelas emolduradas, peitoris e reflexo; repete conforme o tamanho do prédio. */
+/** Facade with framed windows, sills and reflection; repeats according to building size. */
 export function makeFacadeTexture(): THREE.CanvasTexture {
   const { c, ctx } = canvas(256, 512);
   const rng = createRng(77);
@@ -125,7 +125,7 @@ export function makeFacadeTexture(): THREE.CanvasTexture {
   return t;
 }
 
-/** Céu em degradê vertical (fundo da cena). */
+/** Sky in a vertical gradient (scene background). */
 export function makeSkyTexture(): THREE.CanvasTexture {
   const { c, ctx } = canvas(2, 256);
   const g = ctx.createLinearGradient(0, 0, 0, 256);

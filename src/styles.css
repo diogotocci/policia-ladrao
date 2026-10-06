@@ -20,17 +20,17 @@ body {
   position: fixed;
   inset: 0;
 }
-/* margens seguras (notch, barra do iPhone) nas bordas do jogo; giradas junto quando o jogo se desenha deitado */
+/* safe margins (notch, iPhone bar) at the game edges; rotated along when the game is drawn sideways */
 :root {
   --safe-top: env(safe-area-inset-top);
   --safe-right: env(safe-area-inset-right);
   --safe-bottom: env(safe-area-inset-bottom);
   --safe-left: env(safe-area-inset-left);
 }
-/* Sempre em paisagem: com o celular em pé (iPhone não trava a rotação pela web), o jogo inteiro se desenha
+/* Always landscape: with the phone upright (iPhone does not lock rotation via the web), the whole game is drawn
    girado 90° — o topo do jogo fica à esquerda. Os toques seguem funcionando (o navegador desfaz o giro). */
 @media (orientation: portrait) and (pointer: coarse) {
-  /* girado −90°: o topo do jogo é a esquerda da tela, a direita do jogo é o topo da tela (notch) */
+  /* rotated -90°: the top of the game is the left of the screen, the right of the game is the top of the screen (notch) */
   :root {
     --safe-top: env(safe-area-inset-left);
     --safe-right: env(safe-area-inset-top);
@@ -65,7 +65,7 @@ body {
 .rotate-hint[hidden] {
   display: none;
 }
-/* aviso de dano: a borda da tela pisca em vermelho (funciona em qualquer celular, inclusive iPhone) */
+/* damage warning: the screen border flashes red (works on any phone, including iPhone) */
 .damage-flash {
   position: absolute;
   inset: 0;

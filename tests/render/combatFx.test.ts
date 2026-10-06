@@ -8,7 +8,7 @@ const withProjectiles = (n: number): WorldState => ({
   ...createWorld({ seed: 1, playerRole: 'police' }),
   projectiles: Array.from({ length: n }, (_, i) => proj(i)),
 });
-/** traçadores são um InstancedMesh só (1 draw call): conta as instâncias ativas */
+/** tracers are a single InstancedMesh (1 draw call): counts the active instances */
 const visibleTracers = (scene: THREE.Scene) => {
   const m = scene.getObjectByName('tracers') as THREE.InstancedMesh;
   return m.visible ? m.count : 0;

@@ -1,11 +1,11 @@
 import { createRng } from '../sim/rng';
 
 export interface BuildingSpec {
-  /** centro lateral (m) */
+  /** lateral center (m) */
   x: number;
-  /** centro ao longo do bloco, 0..chunkLength (m) */
+  /** center along the chunk, 0..chunkLength (m) */
   s: number;
-  width: number; // ao longo da rua
+  width: number; // along the street
   depth: number;
   height: number;
   color: number;
@@ -14,7 +14,7 @@ export interface BuildingSpec {
 const PALETTE = [0xb9a48a, 0x9aa3ad, 0xc98f6b, 0x8e9a7d, 0xd6c7a1, 0x7f8794, 0xa86f5c, 0xc2b8d0];
 const SETBACK = 10.6;
 
-/** Prédios de um bloco, determinísticos por (seed, chunkIndex). */
+/** Buildings of a chunk, deterministic per (seed, chunkIndex). */
 export function buildingsForChunk(seed: number, chunkIndex: number, chunkLength: number): BuildingSpec[] {
   const rng = createRng((seed * 2654435761 + chunkIndex * 40503) >>> 0);
   const out: BuildingSpec[] = [];

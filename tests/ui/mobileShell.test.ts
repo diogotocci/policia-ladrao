@@ -10,7 +10,7 @@ describe('installNoZoom (double tap / pinch never zooms)', () => {
     const dispose = installNoZoom(document, () => now);
     const first = touchEnd();
     document.body.dispatchEvent(first);
-    expect(first.defaultPrevented).toBe(false); // um toque normal passa
+    expect(first.defaultPrevented).toBe(false); // a normal tap passes through
     now += 200;
     const second = touchEnd();
     document.body.dispatchEvent(second);
@@ -112,7 +112,7 @@ describe('onTap (HUD buttons react on touch-down: a tap right after steering is 
     expect(n).toBe(1);
     b.dispatchEvent(new MouseEvent('click', { detail: 1, bubbles: true }));
     expect(n).toBe(1);
-    b.dispatchEvent(new MouseEvent('click', { detail: 0, bubbles: true })); // Enter/Espaço
+    b.dispatchEvent(new MouseEvent('click', { detail: 0, bubbles: true })); // Enter/Space
     expect(n).toBe(2);
     off();
     b.dispatchEvent(new Event('pointerdown', { bubbles: true, cancelable: true }));

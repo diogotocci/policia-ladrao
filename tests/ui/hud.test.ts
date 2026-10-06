@@ -29,7 +29,7 @@ describe('pickupToast', () => {
     expect(pickupToast('bomb')).toBe(`+ ${ITEM_LABEL.bomb}`);
     expect(pickupToast('wrong')).toBe('−2 caixinha errada');
     expect(pickupToast('none')).toBe('Itens no máximo');
-    expect(pickupToast('ram')).toBe('+ Quebra-mato'); // playtest 2026-10-04: 'aríete' é pouco usado
+    expect(pickupToast('ram')).toBe('+ Quebra-mato'); // playtest 2026-10-04: 'aríete' is rarely used
   });
 });
 
@@ -49,7 +49,7 @@ describe('createHud', () => {
     hud.update(withCar(w, 'thief', { ...thiefOf(w), hp: 37 }));
     const fill = root.querySelector<HTMLElement>('.hud-bar--thief .hud-bar-fill')!;
     expect(fill.style.width).toBe('37%');
-    // sem número (playtest): só a barra; o valor fica para leitores de tela
+    // no number (playtest): bar only; the value is left for screen readers
     expect(root.querySelector('.hud-bar-value')).toBeNull();
     expect(root.querySelector('.hud-bar--thief')!.textContent).not.toContain('37');
     expect(root.querySelector('.hud-bar--thief .hud-bar-track')!.getAttribute('aria-valuenow')).toBe('37');
@@ -61,7 +61,7 @@ describe('createHud', () => {
     const hud = createHud(root, 'police');
     const w = { ...createWorld({ seed: 1, playerRole: 'police' }), time: 33.45, level: 3 };
     hud.update(w);
-    // contagem regressiva até a fuga (1:30)
+    // countdown to the escape (1:30)
     expect(root.querySelector('.hud-time')!.textContent).toBe('00:56.5');
     const dist = root.querySelector('.hud-distance')!;
     expect(dist.textContent).toBe('40 m');
@@ -125,7 +125,7 @@ describe('item HUD', () => {
     const hud = createHud(root, 'thief');
     hud.update(withUpgrades('thief', { plates: 2, bombs: 1 }));
     expect(root.querySelector('.hud-item[data-item="plate"] .hud-item-count')!.textContent).toBe('2');
-    expect(root.querySelector('.hud-item[data-item="bomb"]')).toBeNull(); // a bomba aparece no botão
+    expect(root.querySelector('.hud-item[data-item="bomb"]')).toBeNull(); // the bomb shows on the button
     hud.dispose();
   });
 

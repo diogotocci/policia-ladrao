@@ -45,7 +45,7 @@ describe('choose', () => {
     expect(onChoose).toHaveBeenCalledWith('thief');
     button('Voltar').click();
     expect(onBack).toHaveBeenCalled();
-    expect(root.querySelector('[data-preview="police"]')).not.toBeNull(); // slot do carro 3D
+    expect(root.querySelector('[data-preview="police"]')).not.toBeNull(); // 3D car slot
   });
 });
 
@@ -104,12 +104,12 @@ describe('end', () => {
     expect(root.textContent).toContain('Você perdeu');
     const slots = () => [...root.querySelectorAll('.initials-slot')].map((x) => x.textContent);
     expect(slots()).toEqual(['A', 'A', 'A']);
-    // como numa roleta de fliperama: ▼ desce para a próxima letra (A → B), ▲ volta (A → Z)
+    // like an arcade dial: ▼ goes down to the next letter (A → B), ▲ goes back (A → Z)
     (root.querySelector('.initials-down[data-i="0"]') as HTMLButtonElement).click(); // A → B
     (root.querySelector('.initials-up[data-i="1"]') as HTMLButtonElement).click(); // A → Z
     expect(slots()).toEqual(['B', 'Z', 'A']);
     const input = root.querySelector('.initials') as HTMLElement;
-    // tecla ainda segurada do jogo (auto-repetição) não escreve nas iniciais
+    // key still held from the game (auto-repeat) does not write into the initials
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', repeat: true, bubbles: true }));
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', repeat: true, bubbles: true }));
     expect(slots()).toEqual(['B', 'Z', 'A']);
@@ -119,7 +119,7 @@ describe('end', () => {
     expect(slots()).toEqual(['D', 'I', 'O']);
     const salvar = button('Salvar');
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-    salvar.click(); // já salvo: não salva de novo
+    salvar.click(); // already saved: does not save again
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith('DIO');
     expect(root.querySelector('.initials')).toBeNull();
@@ -173,7 +173,7 @@ describe('ranking', () => {
     expect(onTab).toHaveBeenCalledWith('thief');
     root.innerHTML = '';
     renderRanking(root, { board, tab: 'thief', focusTab: true, onTab, onBack: vi.fn() });
-    expect(document.activeElement).toBe(button('Ladrão — mais rápidos a vencer')); // foco fica na aba após trocar
+    expect(document.activeElement).toBe(button('Ladrão — mais rápidos a vencer')); // focus stays on the tab after switching
     root.innerHTML = '';
     renderRanking(root, { board, tab: 'thief', onTab, onBack: vi.fn() });
     expect(root.textContent).toContain('Nenhum recorde ainda');
@@ -209,7 +209,7 @@ describe('focus stays inside the open screen (keyboard)', () => {
     v.dispose();
     outside.focus();
     tab();
-    expect(document.activeElement).toBe(outside); // fechada: não prende mais
+    expect(document.activeElement).toBe(outside); // closed: no longer traps
     outside.remove();
   });
 });

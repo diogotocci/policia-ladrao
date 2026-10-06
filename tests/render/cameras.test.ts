@@ -6,7 +6,7 @@ describe('createChaseCamera', () => {
   it('sits 6 m behind and 2.6 m above the car, relative to the render origin', () => {
     const chase = createChaseCamera();
     const car = { ...createCar('police', 1), s: 1020 };
-    chase.update(car, 10, 1000); // dt grande = já estabilizada
+    chase.update(car, 10, 1000); // large dt = already settled
     const carZ = -(1020 - 1000);
     expect(chase.camera.position.z).toBeCloseTo(carZ + 6, 5);
     expect(chase.camera.position.y).toBeCloseTo(2.6, 5);

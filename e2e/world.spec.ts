@@ -40,7 +40,7 @@ test('rear-view mirror: shown when playing thief, hidden when playing police', a
 });
 
 test('driving over a speed bump: short jump, ~25% slower, then back to cruise', async ({ page }) => {
-  // semente cujo 1º quebra-molas cobre a faixa onde a polícia nasce (índice 1)
+  // seed whose 1st speed bump covers the lane where the police spawn (index 1)
   let seed = 1;
   while (!bumpsBetween(seed, 0, 700)[0]!.lanes.includes(1)) seed++;
   await page.goto(`/?debug&seed=${seed}&quality=low&traffic=0`);

@@ -17,7 +17,7 @@ const broken = {
   },
 } as unknown as Storage;
 const e = (initials: string, time: number, date = '2026-10-04') => ({ initials, time, date });
-/** vitória do ladrão: fuga (1:30) ou destruiu a polícia, com a vida que sobrou */
+/** thief win: escape (1:30) or destroyed the police, with the life left */
 const t = (initials: string, time: number, hp: number, how: 'escape' | 'kill' = 'escape') => ({
   initials,
   time,
@@ -38,12 +38,12 @@ describe('who qualifies', () => {
   it('a full board only takes a better result', () => {
     let b: Board = emptyBoard();
     for (let i = 0; i < 10; i++) b = insert(b, 'police', e('AAA', 60 + i)).board;
-    expect(qualifies(b, 'police', 70, true)).toBe(false); // pior que o 10º (69)
+    expect(qualifies(b, 'police', 70, true)).toBe(false); // worse than 10th (69)
     expect(qualifies(b, 'police', 68.5, true)).toBe(true);
     for (let i = 0; i < 10; i++) b = insert(b, 'thief', t('BBB', 90, 50 + i)).board;
-    expect(qualifies(b, 'thief', 90, true, 49)).toBe(false); // mesma fuga com menos vida
+    expect(qualifies(b, 'thief', 90, true, 49)).toBe(false); // same escape with less life
     expect(qualifies(b, 'thief', 90, true, 51)).toBe(true);
-    expect(qualifies(b, 'thief', 85, true, 5)).toBe(true); // destruiu a polícia antes de 1:30
+    expect(qualifies(b, 'thief', 85, true, 5)).toBe(true); // destroyed the police before 1:30
   });
 });
 

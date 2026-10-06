@@ -1,22 +1,22 @@
-// Marcador do adversário: seta flutuante de tamanho fixo na tela, desenhada por cima de tudo (sem neblina),
-// para achar o outro carro de longe. Some quando ele está perto (≤ 15 m).
+// Opponent marker: floating arrow of fixed on-screen size, drawn on top of everything (no fog),
+// to find the other car from afar. Hidden when it is close (≤ 15 m).
 import * as THREE from 'three';
 import { trackPos } from './trackFrame';
 import type { Role } from '../config/balance';
 import type { CarState } from '../sim/car';
 
 const SHOW_FROM = 15; // m
-const HEIGHT = 2.6; // m acima do chão
+const HEIGHT = 2.6; // m above the ground
 const COLORS: Record<Role, number> = { thief: 0xff3b3b, police: 0x4d8bff };
 
 let markerTex: THREE.DataTexture | undefined;
-/** seta para baixo (branca, com contorno escuro), gerada em código */
+/** downward arrow (white, with dark outline), generated in code */
 function markerTexture(): THREE.DataTexture {
   if (markerTex) return markerTex;
   const N = 64;
   const data = new Uint8Array(N * N * 4);
   const inside = (x: number, y: number, grow: number) => {
-    // triângulo apontando para baixo: topo em y=0.15, ponta em y=0.85 (coords 0..1, y para baixo)
+    // triangle pointing down: top at y=0.15, tip at y=0.85 (coords 0..1, y down)
     const top = 0.15 - grow;
     const tip = 0.85 + grow;
     if (y < top || y > tip) return false;
@@ -26,7 +26,7 @@ function markerTexture(): THREE.DataTexture {
   for (let j = 0; j < N; j++) {
     for (let i = 0; i < N; i++) {
       const x = (i + 0.5) / N;
-      const y = 1 - (j + 0.5) / N; // DataTexture tem origem embaixo
+      const y = 1 - (j + 0.5) / N; // DataTexture origin is at the bottom
       const core = inside(x, y, 0);
       const edge = !core && inside(x, y, 0.06);
       const v = core ? 255 : 20;

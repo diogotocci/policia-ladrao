@@ -1,5 +1,5 @@
-// Carros girando nos cards da tela de escolha. Um renderer só (canvas próprio) desenhando os dois carros
-// em metades separadas com scissor; liberado ao sair da tela.
+// Cars spinning on the cards of the selection screen. A single renderer (own canvas) drawing both cars
+// in separate halves with scissor; released when leaving the screen.
 import * as THREE from 'three';
 import type { Role } from '../config/balance';
 import { createCar } from '../sim/car';
@@ -11,7 +11,7 @@ export function createCarPreview(slots: Record<Role, HTMLElement>): { dispose():
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   } catch {
-    return { dispose() {} }; // sem WebGL: os cards ficam só com texto
+    return { dispose() {} }; // no WebGL: the cards show text only
   }
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));

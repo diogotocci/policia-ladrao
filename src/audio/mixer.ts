@@ -1,5 +1,5 @@
-// Mixer puro: transforma o estado do mundo e os eventos em comandos para o backend de áudio.
-// Não sabe nada de WebAudio — os testes usam o null backend.
+// Pure mixer: turns world state and events into commands for the audio backend.
+// It knows nothing about WebAudio — tests use the null backend.
 import type { GameEvent, WorldState } from '../sim/types';
 import { MENU_SONG, SONG, createSequencer, stepSeconds, type Song } from './music';
 import type { SoundName } from './sfx';
@@ -9,22 +9,22 @@ const SIREN_RANGE = 120; // m
 const BURST_WINDOW = 0.1; // s
 const BURST_MAX = 6;
 const LOOKAHEAD = 0.1; // s
-const ROTOR_BEAT = 0.09; // s entre batidas da hélice
+const ROTOR_BEAT = 0.09; // s between rotor beats
 const ROTOR_RANGE = 120; // m
-const SKID_GAP = 0.6; // s entre chiados do mesmo carro
+const SKID_GAP = 0.6; // s between skids of the same car
 const SKID_RANGE = 80; // m
 
 export interface Mixer {
-  /** paused: jogo pausado (ex.: celular em retrato) — motor e sirene calam, música não avança */
+  /** paused: game paused (e.g. phone in portrait) — engine and siren go silent, music does not advance */
   frame(w: WorldState, dt: number, paused?: boolean): void;
   events(events: readonly GameEvent[]): void;
   setMuted(muted: boolean): void;
   muted(): boolean;
-  /** troca o backend (ex.: null → WebAudio no primeiro gesto do usuário) */
+  /** swaps the backend (e.g. null -> WebAudio on the user's first gesture) */
   use(backend: AudioBackend): void;
-  /** telas (título, escolha, ranking): música calma, sem motor nem sirene */
+  /** screens (title, choice, ranking): calm music, no engine or siren */
   menu(dt: number): void;
-  /** som de interface: bip da contagem, largada, clique */
+  /** UI sound: countdown beep, start, click */
   cue(name: 'beep' | 'go' | 'ui' | 'bomb-hit'): void;
   song(): 'menu' | 'chase';
   reset(): void;
@@ -34,27 +34,27 @@ export function createMixer(initial: AudioBackend): Mixer {
   let be = initial;
   let isMuted = false;
   let clock = 0;
-  let recent = new Map<SoundName, number[]>(); // por som: rajada do mesmo som não estoura
+  let recent = new Map<SoundName, number[]>(); // per sound: a burst of the same sound does not blow up
   let playerRole: 'police' | 'thief' = 'police';
   let musicGain = -1;
   let rotorAcc = 0;
   let meS = 0;
-  let lastBeep = Infinity; // segundo inteiro restante do último bip da contagem
+  let lastBeep = Infinity; // whole seconds remaining at the last countdown beep
   const lastSkid = { police: -Infinity, thief: -Infinity };
   const songs = { chase: { song: SONG, seq: createSequencer(SONG) }, menu: { song: MENU_SONG, seq: createSequencer(MENU_SONG) } };
   let current: 'menu' | 'chase' = 'chase';
-  let nextNoteTime = -1; // no relógio do backend; -1 = recomeçar no próximo quadro
+  let nextNoteTime = -1; // on the backend clock; -1 = restart on the next frame
   const useSong = (name: 'menu' | 'chase') => {
     if (name === current) return;
     current = name;
     songs[name].seq.reset();
     nextNoteTime = -1;
   };
-  /** agenda a música no relógio do áudio (não no do quadro): batida estável mesmo com quadros lentos */
+  /** schedules music on the audio clock (not the frame clock): steady beat even with slow frames */
   const scheduleMusic = (intense: boolean) => {
     const { song, seq } = songs[current] as { song: Song; seq: ReturnType<typeof createSequencer> };
     const now = be.now();
-    if (nextNoteTime < now) nextNoteTime = now + 0.02; // começo ou travada longa: pula para frente, sem rajada
+    if (nextNoteTime < now) nextNoteTime = now + 0.02; // start or long stall: skip forward, no burst
     const step = stepSeconds(song.bpm);
     while (nextNoteTime < now + LOOKAHEAD) {
       for (const n of seq.next(intense)) be.note(n, nextNoteTime);
@@ -86,7 +86,7 @@ export function createMixer(initial: AudioBackend): Mixer {
       const thief = w.playerRole === 'police' ? w.opponent : w.player;
       const over = w.match.over;
       const quiet = over || paused;
-      const escaping = w.match.escapeAt !== undefined; // cena da fuga: sem sirene nem hélice
+      const escaping = w.match.escapeAt !== undefined; // escape scene: no siren or rotor
 
       be.setEngine(55 + 3 * me.speed, quiet ? 0 : me.airTime > 0 ? 0.1 : 0.16);
       let siren = 0;
@@ -100,23 +100,23 @@ export function createMixer(initial: AudioBackend): Mixer {
       }
       be.setSiren(siren);
       setMusic(over ? 0.3 : 1);
-      // hélice: helicóptero ativo e perto (tocando de polícia, ele está sempre em cima)
+      // rotor: helicopter active and nearby (when playing as police, it is always overhead)
       const heliOn = !quiet && !escaping && w.time < police.upgrades.heliUntil && Math.abs(police.s - me.s) < ROTOR_RANGE;
       if (heliOn) {
         rotorAcc += dt;
         for (; rotorAcc >= ROTOR_BEAT; rotorAcc -= ROTOR_BEAT) play('rotor');
-      } else rotorAcc = ROTOR_BEAT; // a primeira batida sai logo que ele aparece
+      } else rotorAcc = ROTOR_BEAT; // the first beat plays as soon as it appears
 
-      // contagem final da fuga: um bip por segundo nos últimos 10 s
+      // final escape countdown: one beep per second in the last 10 s
       const left = w.escapeTime - w.time;
       if (!quiet && w.match.escapeAt === undefined && w.match.arrestAt === undefined && left > 0 && left <= 10) {
         const sec = Math.ceil(left);
         if (sec < lastBeep) {
-          if (lastBeep !== Infinity || sec === 10) play('beep'); // entrando no meio (ex.: teste) não bipa na hora
+          if (lastBeep !== Infinity || sec === 10) play('beep'); // joining midway (e.g. a test) does not beep right away
           lastBeep = sec;
         }
       } else if (left > 10) lastBeep = Infinity;
-      if (paused) return; // pausado: sem música do jogo (a app pode tocar a do menu)
+      if (paused) return; // paused: no game music (the app may play the menu music)
       useSong('chase');
       if (isMuted || !be.running()) {
         nextNoteTime = -1;

@@ -8,7 +8,7 @@ const L = BALANCE.car.length;
 const DT = 1 / 60;
 
 const base = () => createWorld({ seed: 1, playerRole: 'police' });
-/** aplica resolveCollisions n vezes, avançando as imunidades por dt */
+/** applies resolveCollisions n times, advancing the immunities by dt */
 const tick = (w: WorldState, n = 1) => {
   let s = w;
   for (let i = 0; i < n; i++) s = resolveCollisions(s, DT);
@@ -82,7 +82,7 @@ describe('car × car collisions', () => {
     w = tick(w);
     expect(Math.abs(thiefOf(w).x)).toBeLessThan(EDGE);
     w = tick(withCar(w, 'thief', { ...thiefOf(w), touchingEdge: Math.abs(thiefOf(w).x) >= EDGE }));
-    expect(thiefOf(w).hp).toBe(95); // só a batida com a polícia
+    expect(thiefOf(w).hp).toBe(95); // only the hit from the police
   });
 
   it('a new overlap within 1 s costs nothing', () => {

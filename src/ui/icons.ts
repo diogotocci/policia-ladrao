@@ -1,5 +1,5 @@
-// Ícones do HUD desenhados em SVG (emoji muda de celular para celular e fica pequeno/borrado).
-// Usam currentColor: a cor vem do botão.
+// HUD icons drawn in SVG (emoji vary from phone to phone and look small/blurry).
+// They use currentColor: the color comes from the button.
 const svg = (body: string) =>
   `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${body}</svg>`;
 

@@ -49,7 +49,7 @@ describe('track frame (world position along the curves)', () => {
     const b = createTrackFrame(9, true).toWorld(20000.5, 1.5, 20000);
     expect(Math.abs(a.x - b.x)).toBeLessThan(1e-3);
     expect(Math.abs(a.z - b.z)).toBeLessThan(1e-3);
-    expect(Math.hypot(a.x, a.z)).toBeLessThan(3); // relativo à origem: números pequenos
+    expect(Math.hypot(a.x, a.z)).toBeLessThan(3); // relative to the origin: small numbers
   });
 
   it('behind the start line (s < 0) the road continues straight — camera and mirror sit behind the car', () => {

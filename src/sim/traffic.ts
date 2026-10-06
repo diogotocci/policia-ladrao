@@ -1,4 +1,4 @@
-// Tráfego: poucos carros lentos (50–70% do cruzeiro) que trocam de faixa às vezes, reciclados à frente.
+// Traffic: a few slow cars (50–70% of cruise) that sometimes change lanes, recycled ahead.
 import { BALANCE } from '../config/balance';
 import { createRngFromState } from './rng';
 import type { TrafficCar, WorldState } from './types';
@@ -6,7 +6,7 @@ import { policeOf, thiefOf } from './world';
 
 const LANES = BALANCE.road.laneCenters;
 
-/** Quantos carros de tráfego manter no nível: 3 no 1, +8% por nível. */
+/** How many traffic cars to keep at the level: 3 at level 1, +8% per level. */
 export function trafficTarget(level: number): number {
   const t = BALANCE.traffic;
   return Math.round(t.baseCount * (1 + t.perLevel * (level - 1)));
@@ -22,8 +22,8 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
   const back = Math.min(police.s, thief.s);
   const front = Math.max(police.s, thief.s);
 
-  // move e troca de faixa — da frente para trás: cada carro já conhece a nova posição de quem vai à frente.
-  // Nunca atravessa outro (segue o da frente na mesma faixa) e só troca de faixa com espaço livre.
+  // move and change lanes — front to back: each car already knows the new position of the one ahead.
+  // Never passes through another (follows the one ahead in the same lane) and only changes lanes with free space.
   const L = BALANCE.car.length;
   const overlapsLane = (o: TrafficCar, x: number) => sameLane(o.x, x) || sameLane(o.targetX, x);
   const order = [...w.traffic].sort((a, b) => b.s - a.s || a.id - b.id);
@@ -41,7 +41,7 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
     }
     const dx = targetX - t.x;
     let x = t.x + Math.sign(dx) * Math.min(Math.abs(dx), T.laneChangeSpeed * dt);
-    // não fecha ninguém que esteja do lado (outro carro, polícia ou ladrão)
+    // doesn't cut off anyone alongside (another car, police or thief)
     const L0 = BALANCE.car.length + 0.5;
     if (
       dx !== 0 &&
@@ -50,7 +50,7 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
       ).some((o) => Math.abs(o.s - t.s) < L0 && Math.abs(o.x - x) < 2 * BALANCE.car.halfWidth && Math.abs(o.x - t.x) >= Math.abs(o.x - x))
     )
       x = t.x;
-    // quem vai à frente na mesma faixa (já movido neste passo) — inclusive polícia e ladrão parados/freando (cenas do fim)
+    // the one ahead in the same lane (already moved this step) — including stopped/braking police and thief (end scenes)
     let leader: { s: number; speed: number } | undefined;
     for (const o of moved) if ((overlapsLane(o, x) || overlapsLane(o, targetX)) && o.s >= t.s && (!leader || o.s < leader.s)) leader = o;
     for (const g of [police, thief])
@@ -58,18 +58,18 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
     let s = t.s + t.speed * dt;
     if (leader) {
       const gap = leader.s - t.s;
-      if (gap < T.minGap) s = Math.min(s, t.s + Math.min(t.speed, leader.speed) * dt); // segue no ritmo do da frente
-      s = Math.min(s, leader.s - (L + 1)); // nunca encosta
-      s = Math.max(t.s - 0.0, s); // não anda para trás
+      if (gap < T.minGap) s = Math.min(s, t.s + Math.min(t.speed, leader.speed) * dt); // keeps pace with the one ahead
+      s = Math.min(s, leader.s - (L + 1)); // never touches
+      s = Math.max(t.s - 0.0, s); // doesn't move backward
     }
     moved.push({ ...t, s, x, targetX });
   }
   let cars: TrafficCar[] = moved.sort((a, b) => a.id - b.id);
 
-  // recicla quem ficou para trás (ou longe demais à frente)
+  // recycle those left behind (or too far ahead)
   cars = cars.filter((t) => t.s > back - T.despawnBehind && t.s < front + T.spawnAheadMax + 200);
 
-  // completa até a densidade do nível
+  // fill up to the level's density
   let nextId = w.nextTrafficId;
   const target = w.trafficOn ? trafficTarget(w.level) : 0;
   let attempts = 0;

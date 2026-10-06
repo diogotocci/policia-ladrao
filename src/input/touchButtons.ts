@@ -10,13 +10,13 @@ const svg = (body: string) =>
 const ICONS: Record<IntentName, string> = {
   left: svg('<path d="M29 12 17 24l12 12"/>'),
   right: svg('<path d="M19 12l12 12-12 12"/>'),
-  // símbolo de freio do painel: disco com pinças dos lados
+  // dashboard brake symbol: disc with calipers on the sides
   brake: svg('<circle cx="24" cy="24" r="10"/><path d="M11 12a17 17 0 0 0 0 24M37 12a17 17 0 0 1 0 24"/>'),
-  // mira
+  // crosshair
   fire: svg(
     '<circle cx="24" cy="24" r="12"/><circle cx="24" cy="24" r="2.5" fill="currentColor" stroke="none"/><path d="M24 4v8M24 36v8M4 24h8M36 24h8"/>',
   ),
-  // bomba com pavio
+  // bomb with fuse
   bomb: svg(
     '<circle cx="20" cy="29" r="11" fill="currentColor" stroke="none"/><path d="M27 21l4-4"/><path d="M33 15c1-3 4-4 6-2" stroke-width="3"/><path d="M39 7v3M43 11h-3M42 8l-2 2" stroke-width="2.5"/>',
   ),
@@ -34,7 +34,7 @@ const buzz = () => {
   try {
     navigator.vibrate?.(10);
   } catch {
-    /* sem vibração */
+    /* no vibration */
   }
 };
 
@@ -43,21 +43,21 @@ export function createTouchButtons(
   opts: { role?: Role } = {},
 ): {
   read(): Intents;
-  /** esquece toques rápidos guardados (feitos na contagem/pausa); dedos ainda na tela continuam valendo */
+  /** forgets stored quick taps (made during the countdown/pause); fingers still on the screen remain valid */
   dropTaps(): void;
   dispose(): void;
   setVisible(name: 'fire' | 'bomb', visible: boolean): void;
-  /** pisca o ATIRAR por 0,3 s quando não há alvo no cone */
+  /** flashes ATIRAR for 0.3 s when there is no target in the cone */
   flashNoTarget(): void;
-  /** estoque de bombas: o botão só aparece com 1 ou mais */
+  /** bomb stock: the button only shows with 1 or more */
   setBombs(n: number): void;
-  /** botão visível mas bloqueado (ex.: arma do ladrão abaixo de 8 m/s) */
+  /** button visible but locked (e.g. thief's weapon below 8 m/s) */
   setLocked(name: 'fire' | 'bomb', locked: boolean): void;
 } {
   const pointers = new Map<IntentName, Set<number>>();
-  /** toques rápidos (pointerdown + pointerup entre duas leituras) contam uma vez */
+  /** quick taps (pointerdown + pointerup between two reads) count once */
   const tapped = new Set<IntentName>();
-  /** dedos que começaram num botão e ainda não saíram da tela */
+  /** fingers that started on a button and have not left the screen yet */
   const active = new Set<number>();
   const release = (e: Event) => {
     const id = (e as PointerEvent).pointerId;
@@ -90,12 +90,12 @@ export function createTouchButtons(
     pointers.set(name, held);
     const down = (e: Event) => {
       const id = (e as PointerEvent).pointerId;
-      // Sem captura implícita: o dedo pode deslizar para outro botão (◀ → ▶).
-      // a captura implícita vai para o alvo do toque (pode ser o <svg> do ícone): solta de quem tiver
+      // No implicit capture: the finger may slide to another button (◀ → ▶).
+      // implicit capture goes to the touch target (may be the icon's <svg>): release it from whoever has it
       try {
         for (const el of [e.target as Element | null, b]) if (el?.hasPointerCapture?.(id)) el.releasePointerCapture(id);
       } catch {
-        /* jsdom / navegador sem captura */
+        /* jsdom / browser without capture */
       }
       if (held.size === 0) buzz();
       tapped.add(name);
@@ -114,8 +114,8 @@ export function createTouchButtons(
       held.delete((e as PointerEvent).pointerId);
       if (held.size === 0) b.classList.remove('is-down');
     };
-    // cancelado pelo sistema ou dedo deslizou para fora: não vale como toque
-    // (no toque, o navegador dispara pointerleave logo depois do pointerup: aí o toque vale)
+    // cancelled by the system or finger slid out: does not count as a tap
+    // (on touch, the browser fires pointerleave right after pointerup: then the tap counts)
     b.addEventListener('pointercancel', () => tapped.delete(name));
     b.addEventListener('pointerleave', (e) => {
       if (held.has((e as PointerEvent).pointerId)) tapped.delete(name);

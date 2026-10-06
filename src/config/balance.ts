@@ -1,11 +1,11 @@
-// Todos os números de jogo. Spec: docs/superpowers/specs/2026-10-03-policia-ladrao-design.md
+// All game numbers. Spec: docs/superpowers/specs/2026-10-03-policia-ladrao-design.md
 export type Role = 'police' | 'thief';
 
 export const BALANCE = {
   road: { laneCenters: [-4.5, -1.5, 1.5, 4.5], halfWidth: 6 },
   car: { halfWidth: 0.9, length: 4.4 },
   movement: {
-    cruise: { police: 34, thief: 34 }, // m/s — iguais: a polícia só encosta quando o ladrão erra
+    cruise: { police: 34, thief: 34 }, // m/s — equal: the police only catches up when the thief makes a mistake
     accel: 8, // m/s²
     brakeDecel: 20, // m/s²
     lateralSpeed: 7, // m/s
@@ -16,14 +16,14 @@ export const BALANCE = {
     policeFireInterval: 0.8, // s
     policeDamage: 1,
     thiefFireInterval: 1.2, // s
-    thiefDamage: 1.5, // teste de balanço A
+    thiefDamage: 1.5, // balance test A
     thiefMinSpeedToFire: 8, // m/s
-    projectileSpeed: 300, // m/s (tiro do ladrão)
-    // tiro da polícia mais lento: ziguezague do ladrão desvia de longe (playtest 2026-10-04); de perto não dá tempo
+    projectileSpeed: 300, // m/s (thief's shot)
+    // slower police shot: the thief's zigzag dodges it from afar (playtest 2026-10-04); up close there is no time
     policeProjectileSpeed: 150, // m/s
     range: 150, // m
     frontConeDeg: 35,
-    sideConeDeg: 90, // frontal ±35° + laterais até 90° = semiplano à frente dentro do alcance
+    sideConeDeg: 90, // front ±35° + sides up to 90° = half-plane ahead within range
     falloffStart: 40, // m
     falloffEnd: 150, // m
   },
@@ -32,33 +32,33 @@ export const BALANCE = {
     carCarPolice: 3,
     scenery: 5,
     immunity: 1,
-    speedLoss: 0.3, // cenário e tráfego
+    speedLoss: 0.3, // scenery and traffic
     pushBack: 0.4,
-    // polícia × ladrão: só a polícia perde velocidade e fica sem turbo de compensação por um tempo (o ladrão escapa)
+    // police × thief: only the police loses speed and loses its catch-up turbo for a while (the thief gets away)
     carCarPoliceSpeedLoss: 0.5,
     carCarThiefSpeedLoss: 0,
     policeTurboOff: 4, // s
   },
   catchUp: { start: 20, end: 150, maxBonus: 0.35 },
   difficulty: { levelEvery: 30, maxLevel: 10 },
-  // IA da polícia investe contra o ladrão (pressão para quem joga de ladrão); depois da batida vale a penalidade de sempre
+  // police AI rams the thief (pressure on whoever plays the thief); after the crash the usual penalty applies
   ai: {
-    ramRange: 35, // m: só investe com o ladrão até aqui à frente
+    ramRange: 35, // m: only rams with the thief up to this far ahead
     ramMinGap: 5, // m
-    ramChance: [0.01, 0.06] as const, // por decisão alinhada, do nível 1 ao 10
-    ramBoost: 0.3, // +30% do cruzeiro durante a investida
-    ramTime: 2, // s no máximo
+    ramChance: [0.01, 0.06] as const, // per aligned decision, from level 1 to 10
+    ramBoost: 0.3, // +30% of cruise during the ram
+    ramTime: 2, // s at most
   },
-  // Fuga (Entrega 7): chegando vivo a 1:30 o ladrão some no horizonte e vence. Cresce com as fases (backlog).
+  // Escape (Delivery 7): reaching 1:30 alive, the thief vanishes over the horizon and wins. Grows with the phases (backlog).
   match: {
     escapeTime: 90, // s
-    escapeScene: 2, // s de cena (ladrão com nitro some na neblina, polícia freia)
-    escapeBoost: 2, // × cruzeiro do ladrão na cena
-    escapeAccel: 25, // m/s² do ladrão na cena
-    // Prisão (playtest 2026-10-05): o ladrão destruído para, arrebentado e soltando fumaça preta; a polícia encosta atrás; aí acaba
+    escapeScene: 2, // s of scene (thief with nitro vanishes into the fog, police brakes)
+    escapeBoost: 2, // × the thief's cruise in the scene
+    escapeAccel: 25, // m/s² of the thief in the scene
+    // Arrest (playtest 2026-10-05): the destroyed thief stops, wrecked and emitting black smoke; the police pulls up behind; then it ends
     arrestScene: 3, // s
-    arrestGap: 4.5, // m: a viatura para logo atrás do ladrão, na faixa ao lado (a câmera vê o carro dele)
-    arrestSide: 3, // m de lado
+    arrestGap: 4.5, // m: the patrol car stops right behind the thief, in the lane beside (the camera sees his car)
+    arrestSide: 3, // m to the side
     thiefStopDecel: 18, // m/s²
   },
   traffic: {
@@ -76,13 +76,13 @@ export const BALANCE = {
     minGapToItem: 8,
   },
   items: {
-    boxEvery: 200, // m (~1 a cada 6 s no cruzeiro; playtest 2026-10-04: a cada 300 m vinham poucas)
+    boxEvery: 200, // m (~1 every 6 s at cruise; playtest 2026-10-04: at every 300 m too few came)
     boxJitter: 40,
     firstBoxAt: 200,
     maxVisible: 2,
     spawnAhead: 250,
     wrongBoxDamage: 2,
-    colorTilt: 0.15, // até 65/35
+    colorTilt: 0.15, // up to 65/35
     colorTiltAtHpDiff: 50,
     police: {
       fireRateStep: 0.1,
@@ -97,10 +97,10 @@ export const BALANCE = {
       ramPolice: 1,
       heliTime: 8,
       pierceTime: 10,
-      heliFireInterval: 0.7, // s: o helicóptero atira sozinho, além do policial (dano cheio, sem perda pela distância)
+      heliFireInterval: 0.7, // s: the helicopter shoots on its own, besides the officer (full damage, no loss over distance)
     },
     bomb: {
-      damage: 15, // teste de balanço C
+      damage: 15, // balance test C
       lifetime: 20,
       dropBehind: 3,
       radiusS: 1.4,
@@ -112,7 +112,7 @@ export const BALANCE = {
       thief: { plate: 3, bomb: 3, heal: 3, gun: 5 },
     },
   },
-  // Curvas (Entrega 6): leves pedem ◀ ▶, fechadas pedem freio
+  // Curves (Delivery 6): gentle ones call for ◀ ▶, sharp ones call for braking
   curves: {
     straightStart: 300, // m
     straightMin: 150,
@@ -122,12 +122,12 @@ export const BALANCE = {
     sharpChance: 1 / 3,
     sharpRadius: [130, 180] as const,
     gentleRadius: [350, 600] as const,
-    ramp: 0.25, // fração do comprimento em cada ponta (entrada/saída suaves)
-    bumpClearance: 20, // m de folga dos quebra-molas
-    grip: 6, // m/s² — acima disso derrapa
-    driftGain: 0.5, // deriva para fora (m/s) por m/s² de aceleração lateral
-    skidGain: 1.5, // deriva extra acima da aderência
-    skidSteer: 0.5, // fração do ◀ ▶ que sobra derrapando
+    ramp: 0.25, // fraction of the length at each end (smooth entry/exit)
+    bumpClearance: 20, // m of clearance from speed bumps
+    grip: 6, // m/s² — above this it skids
+    driftGain: 0.5, // outward drift (m/s) per m/s² of lateral acceleration
+    skidGain: 1.5, // extra drift above grip
+    skidSteer: 0.5, // fraction of ◀ ▶ left while skidding
   },
   track: { bumpEvery: 400, bumpJitter: 80, bumpLanes: 2, jumpTime: 0.6, jumpHeight: 0.9, bumpSpeedLoss: 0.25, firstBumpAfter: 150 },
 } as const;
