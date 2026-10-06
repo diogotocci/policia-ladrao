@@ -116,13 +116,35 @@ describe('stepProjectiles', () => {
   });
 });
 
-describe('helicopter shots come from the air', () => {
-  it('with the helicopter active the police shot is marked as coming from above (air = distance to the target)', () => {
-    const w0 = setup({ s: 140, x: 1.5 });
-    const heli = withCar(w0, 'police', { ...policeOf(w0), upgrades: { ...policeOf(w0).upgrades, heliUntil: w0.time + 5 } });
-    const p = fireWeapons(heli, both(FIRE, NO_INTENTS), DT).projectiles[0]!;
-    expect(p.air).toBeCloseTo(40, 0);
-    const ground = fireWeapons(w0, both(FIRE, NO_INTENTS), DT).projectiles[0]!;
-    expect(ground.air).toBeUndefined();
+describe('helicopter = extra gun (playtest 2026-10-06: the officer keeps shooting too)', () => {
+  const withHeli = (w: WorldState) => withCar(w, 'police', { ...policeOf(w), upgrades: { ...policeOf(w).upgrades, heliUntil: w.time + 5 } });
+
+  it('with the helicopter, holding fire gives two shots: the officer from the car and the helicopter from above', () => {
+    const w = fireWeapons(withHeli(setup({ s: 140, x: 1.5 })), both(FIRE, NO_INTENTS), DT);
+    const air = w.projectiles.filter((p) => p.air !== undefined);
+    const ground = w.projectiles.filter((p) => p.air === undefined);
+    expect(ground).toHaveLength(1);
+    expect(air).toHaveLength(1);
+    expect(air[0]!.air).toBeCloseTo(40, 0);
+    expect(w.events.filter((e) => e.type === 'shot')).toHaveLength(2);
+  });
+
+  it('the helicopter fires on its own (no button) at its own pace, only while it lasts', () => {
+    let w = withHeli(setup({ s: 140, x: 1.5 }));
+    for (let i = 0; i < 240; i++) w = fireWeapons({ ...w, events: [] }, both(NO_INTENTS, NO_INTENTS), DT);
+    const n = w.projectiles.filter((p) => p.air !== undefined).length;
+    expect(n).toBe(Math.ceil(4 / BALANCE.items.police.heliFireInterval));
+    expect(w.projectiles.some((p) => p.air === undefined)).toBe(false); // o policial só atira com o botão
+    let after: WorldState = { ...setup({ s: 140, x: 1.5 }), projectiles: [] };
+    for (let i = 0; i < 120; i++) after = fireWeapons({ ...after, events: [] }, both(NO_INTENTS, NO_INTENTS), DT);
+    expect(after.projectiles).toHaveLength(0);
+  });
+
+  it('helicopter shots hit hard from anywhere in range (no distance falloff); the officer keeps the normal falloff', () => {
+    const w = fireWeapons(withHeli(setup({ s: 195, x: 1.5 })), both(FIRE, NO_INTENTS), DT);
+    const air = w.projectiles.find((p) => p.air !== undefined)!;
+    const ground = w.projectiles.find((p) => p.air === undefined)!;
+    expect(air.damage).toBeCloseTo(BALANCE.combat.policeDamage, 6);
+    expect(ground.damage).toBeLessThan(air.damage);
   });
 });

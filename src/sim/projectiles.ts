@@ -39,8 +39,7 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
         const aimX = target.x;
         const len = Math.hypot(aimS - car.s, aimX - car.x) || 1;
         const d = Math.abs(target.s - car.s);
-        const heli = role === 'police' && w.time < car.upgrades.heliUntil;
-        const falloff = heli ? 1 : distanceFactor(d);
+        const falloff = distanceFactor(d);
         const damage =
           role === 'police'
             ? c.policeDamage * car.upgrades.power * falloff * armorFactor(target.upgrades.plates)
@@ -55,7 +54,6 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
           travelled: 0,
           damage,
           piercing,
-          ...(heli ? { air: dist } : {}),
         });
         events.push({ type: 'shot', from: role, s: car.s, x: car.x });
         car = { ...car, fireCooldown: car.upgrades.fireInterval };
@@ -65,6 +63,34 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
     }
     out = withCar(out, role, car);
   }
+
+  // helicóptero: arma extra da polícia, atira sozinho do alto (dano cheio em todo o alcance, sem cone)
+  let police = carOf(out, 'police');
+  if (w.time < police.upgrades.heliUntil) {
+    police = { ...police, heliCooldown: Math.max(0, police.heliCooldown - dt) };
+    const target = carOf(out, 'thief');
+    const ahead = target.s - police.s;
+    if (police.heliCooldown <= 0 && ahead > 0 && ahead < c.range) {
+      const dist = Math.hypot(ahead, target.x - police.x);
+      const speed = c.policeProjectileSpeed;
+      const aimS = target.s + target.speed * (dist / speed);
+      const len = Math.hypot(aimS - police.s, target.x - police.x) || 1;
+      projectiles.push({
+        from: 'police',
+        s: police.s,
+        x: police.x,
+        vs: ((aimS - police.s) / len) * speed,
+        vx: ((target.x - police.x) / len) * speed,
+        travelled: 0,
+        damage: c.policeDamage * police.upgrades.power * armorFactor(target.upgrades.plates),
+        piercing: w.time < police.upgrades.pierceUntil,
+        air: dist,
+      });
+      events.push({ type: 'shot', from: 'police', s: police.s, x: police.x, air: true });
+      police = { ...police, heliCooldown: BALANCE.items.police.heliFireInterval };
+    }
+    out = withCar(out, 'police', police);
+  } else if (police.heliCooldown !== 0) out = withCar(out, 'police', { ...police, heliCooldown: 0 });
   return { ...out, projectiles, events };
 }
 

@@ -100,8 +100,8 @@ describe('effects in combat', () => {
     expect(shoot(duel({}, { upgrades: { ...thief().upgrades, plates: 3 } }))).toBeCloseTo(0.55, 10);
   });
 
-  it('helicopter ignores the distance falloff while active', () => {
-    expect(shoot(duel({ upgrades: { ...police().upgrades, heliUntil: 5 } }, {}, 95, 1))).toBeCloseTo(1, 10);
+  it('helicopter adds its own full-damage shot (no distance falloff) to the officer’s, while active', () => {
+    expect(shoot(duel({ upgrades: { ...police().upgrades, heliUntil: 5 } }, {}, 95, 1))).toBeCloseTo(0.5 + 1, 10);
     expect(shoot(duel({ upgrades: { ...police().upgrades, heliUntil: 5 } }, {}, 95, 6))).toBeCloseTo(0.5, 10);
   });
 
