@@ -12,15 +12,14 @@
   padding: max(10px, var(--safe-top)) max(14px, var(--safe-right)) 0 max(14px, var(--safe-left));
 }
 .hud-bars { position: absolute; top: max(10px, var(--safe-top)); left: max(14px, var(--safe-left)); display: grid; gap: 6px; }
-.hud-bar { display: grid; grid-template-columns: 52px 140px 28px; align-items: center; gap: 8px; padding: 5px 9px; border-radius: 10px; background: var(--hud-glass); border: 1px solid var(--hud-edge); }
+.hud-bar { display: grid; grid-template-columns: 50px clamp(64px, 13vw, 130px); align-items: center; gap: 8px; padding: 5px 9px; border-radius: 10px; background: var(--hud-glass); border: 1px solid var(--hud-edge); }
 .hud-bar-label { font-weight: 600; opacity: 0.85; }
 .hud-bar-track { height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
 .hud-bar-fill { height: 100%; width: 100%; border-radius: 4px; transition: width 160ms ease-out; }
 .hud-bar--police .hud-bar-fill { background: var(--police); }
 .hud-bar--thief .hud-bar-fill { background: var(--thief); }
-.hud-bar-value { text-align: right; font-variant-numeric: tabular-nums; }
 
-.hud-center { position: absolute; top: max(10px, var(--safe-top)); left: 50%; transform: translateX(-50%); display: flex; gap: 10px; align-items: center; padding: 6px 12px; border-radius: 12px; background: var(--hud-glass); border: 1px solid var(--hud-edge); }
+.hud-center { position: absolute; top: max(10px, var(--safe-top)); left: 50%; transform: translateX(-50%); display: flex; gap: 8px; align-items: center; padding: 5px 8px 5px 12px; border-radius: 12px; background: var(--hud-glass); border: 1px solid var(--hud-edge); }
 .hud-time-box { display: flex; flex-direction: column; align-items: center; gap: 1px; }
 .hud-time-label { font: 600 9px/1 system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.75; }
 .hud-time.is-alert { color: #ffcf4a; animation: pl-alert 0.5s ease-in-out infinite alternate; }
@@ -45,9 +44,35 @@
 .hud[data-role='thief'] .hud-end-again { border-color: var(--thief); background: rgba(255, 178, 62, 0.18); }
 
 @media (max-height: 380px) {
-  .hud-bar { grid-template-columns: 46px 100px 26px; padding: 4px 8px; }
+  .hud-bar { grid-template-columns: 46px clamp(56px, 11vw, 100px); padding: 4px 8px; }
   .hud { font-size: 12px; }
 }
+/* tela estreita (iPhone SE e afins): pílula central mais compacta para não encostar nas barras */
+@media (max-width: 720px) {
+  .hud-center { gap: 6px; padding: 4px 6px 4px 10px; }
+  .hud-time { font-size: 15px; }
+  .hud-level { font-size: 11px; }
+}
+
+/* últimos 10 s da fuga: número grande no meio da tela */
+.hud-final {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font: 900 min(26vh, 110px)/1 system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  color: #ffcf4a;
+  opacity: 0.92;
+  -webkit-text-stroke: 3px rgba(40, 20, 0, 0.75);
+  paint-order: stroke fill;
+  text-shadow: 0 5px 0 rgba(0, 0, 0, 0.35), 0 0 30px rgba(255, 160, 40, 0.55);
+  pointer-events: none;
+}
+.hud-final[hidden] { display: none; }
+.hud-final.pop { animation: pl-final 0.9s ease-out; }
+@keyframes pl-final { from { transform: translate(-50%, -50%) scale(1.5); opacity: 1; } to { transform: translate(-50%, -50%) scale(1); opacity: 0.8; } }
+@media (prefers-reduced-motion: reduce) { .hud-final.pop { animation: none; } }
 
 .hud-items { display: flex; gap: 6px; flex-wrap: wrap; max-width: 240px; }
 .hud-item { position: relative; display: inline-flex; align-items: center; gap: 3px; padding: 3px 7px 3px 5px; border-radius: 9px; background: var(--hud-glass); border: 1px solid var(--hud-edge); font-size: 12px; }
@@ -62,32 +87,26 @@
 @keyframes pl-bang { from { transform: translateX(-50%) scale(1.5); } to { transform: translateX(-50%) scale(1); } }
 @media (prefers-reduced-motion: reduce) { .hud-toast.is-big { animation: none; } }
 
-/* botão de som, dentro da pílula central */
-.sound-toggle {
-  pointer-events: auto;
-  border: 0;
-  background: transparent;
-  font-size: 16px;
-  line-height: 1;
-  min-width: 32px;
-  min-height: 28px;
-  padding: 2px 2px 2px 6px;
-  cursor: pointer;
-  border-left: 1px solid var(--hud-edge);
-  margin-left: 2px;
-}
-.sound-toggle:focus-visible { outline: 2px solid #fff; border-radius: 6px; }
+/* botões de som e pausa, dentro da pílula central: ícones desenhados (SVG), área de toque de 36 px */
+.sound-toggle,
 .pause-toggle {
   pointer-events: auto;
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 32px;
+  padding: 0;
   border: 0;
-  background: transparent;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.08);
   color: #fff;
-  font-size: 16px;
-  line-height: 1;
-  min-width: 32px;
-  min-height: 28px;
-  padding: 2px 2px 2px 6px;
   cursor: pointer;
-  border-left: 1px solid var(--hud-edge);
+  touch-action: manipulation;
 }
-.pause-toggle:focus-visible { outline: 2px solid #fff; border-radius: 6px; }
+.sound-toggle svg,
+.pause-toggle svg { width: 20px; height: 20px; display: block; }
+.sound-toggle[aria-pressed='true'] { color: #ff8d8d; }
+.sound-toggle:active,
+.pause-toggle:active { background: rgba(255, 255, 255, 0.2); }
+.sound-toggle:focus-visible,
+.pause-toggle:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }

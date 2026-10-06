@@ -47,6 +47,11 @@ export const BALANCE = {
     escapeScene: 2, // s de cena (ladrão com nitro some na neblina, polícia freia)
     escapeBoost: 2, // × cruzeiro do ladrão na cena
     escapeAccel: 25, // m/s² do ladrão na cena
+    // Prisão (playtest 2026-10-05): o ladrão destruído para, arrebentado e soltando fumaça preta; a polícia encosta atrás; aí acaba
+    arrestScene: 3, // s
+    arrestGap: 4.5, // m: a viatura para logo atrás do ladrão, na faixa ao lado (a câmera vê o carro dele)
+    arrestSide: 3, // m de lado
+    thiefStopDecel: 18, // m/s²
   },
   traffic: { baseCount: 3, perLevel: 0.08, speedMin: 0.5, speedMax: 0.7, spawnAheadMin: 120, spawnAheadMax: 240, despawnBehind: 80, laneChangePerSecond: 0.15, laneChangeSpeed: 3, minGap: 12, minGapToGameCar: 40, minGapToItem: 8 },
   items: {

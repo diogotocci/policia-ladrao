@@ -60,7 +60,8 @@
 .title-name { margin: 0; font: 900 40px/1 system-ui, sans-serif; letter-spacing: 0.01em; text-shadow: 0 3px 0 rgba(0, 0, 0, 0.4); }
 .title-name span { color: #ffcf4a; }
 .title-sound { position: absolute; top: max(12px, var(--safe-top)); right: max(16px, var(--safe-right)); }
-.title-sound .sound-toggle { font-size: 22px; border: 0; }
+.title-sound .sound-toggle { width: 44px; height: 44px; border-radius: 12px; }
+.title-sound .sound-toggle svg { width: 26px; height: 26px; }
 
 /* escolha */
 .choose-cards { display: flex; gap: 14px; justify-content: center; width: 100%; max-width: 760px; }

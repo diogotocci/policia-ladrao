@@ -22,18 +22,36 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
   const back = Math.min(police.s, thief.s);
   const front = Math.max(police.s, thief.s);
 
-  // move e troca de faixa
-  let cars: TrafficCar[] = w.traffic.map((t) => {
+  // move e troca de faixa — da frente para trás: cada carro já conhece a nova posição de quem vai à frente.
+  // Nunca atravessa outro (segue o da frente na mesma faixa) e só troca de faixa com espaço livre.
+  const L = BALANCE.car.length;
+  const overlapsLane = (o: TrafficCar, x: number) => sameLane(o.x, x) || sameLane(o.targetX, x);
+  const order = [...w.traffic].sort((a, b) => b.s - a.s || a.id - b.id);
+  const moved: TrafficCar[] = [];
+  for (const t of order) {
     let targetX = t.targetX;
     if (Math.abs(t.x - targetX) < 0.01 && rng.next() < T.laneChangePerSecond * dt) {
       const lane = LANES.indexOf(targetX as (typeof LANES)[number]);
       const options = [lane - 1, lane + 1].filter((l) => l >= 0 && l < LANES.length);
-      targetX = LANES[options[rng.int(0, options.length - 1)]!]!;
+      const pick = LANES[options[rng.int(0, options.length - 1)]!]!;
+      const free = ![...moved, ...order].some((o) => o.id !== t.id && overlapsLane(o, pick) && Math.abs(o.s - t.s) < T.minGap);
+      if (free) targetX = pick;
     }
     const dx = targetX - t.x;
-    const step = Math.sign(dx) * Math.min(Math.abs(dx), T.laneChangeSpeed * dt);
-    return { ...t, s: t.s + t.speed * dt, x: t.x + step, targetX };
-  });
+    const x = t.x + Math.sign(dx) * Math.min(Math.abs(dx), T.laneChangeSpeed * dt);
+    // quem vai à frente na mesma faixa (já movido neste passo)
+    let leader: TrafficCar | undefined;
+    for (const o of moved) if ((overlapsLane(o, x) || overlapsLane(o, targetX)) && o.s >= t.s && (!leader || o.s < leader.s)) leader = o;
+    let s = t.s + t.speed * dt;
+    if (leader) {
+      const gap = leader.s - t.s;
+      if (gap < T.minGap) s = Math.min(s, t.s + Math.min(t.speed, leader.speed) * dt); // segue no ritmo do da frente
+      s = Math.min(s, leader.s - (L + 1)); // nunca encosta
+      s = Math.max(t.s - 0.0, s); // não anda para trás
+    }
+    moved.push({ ...t, s, x, targetX });
+  }
+  let cars: TrafficCar[] = moved.sort((a, b) => a.id - b.id);
 
   // recicla quem ficou para trás (ou longe demais à frente)
   cars = cars.filter((t) => t.s > back - T.despawnBehind && t.s < front + T.spawnAheadMax + 200);

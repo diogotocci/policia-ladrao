@@ -23,6 +23,7 @@ import { FixedStepper } from './sim/fixedStepper';
 import type { Intents } from './sim/intents';
 import { createWorld, stepWorld, type GameEvent, type ItemId, type WorldState } from './sim/world';
 import { feedbackForFrame } from './ui/feedback';
+import { ICONS } from './ui/icons';
 import { createHud, pickupToast } from './ui/hud';
 
 const lerpCar = (a: CarState, b: CarState, t: number): CarState => ({
@@ -105,9 +106,9 @@ export function startGame(
   const particles = createParticles(scene);
   particles.setQuality(view.quality);
   // emissão contínua de fumaça/faíscas dos carros danificados (acumuladores por carro)
-  const emitAcc: Record<Role, { smoke: number; spark: number; skid: number; side: number }> = {
-    police: { smoke: 0, spark: 0, skid: 0, side: 1 },
-    thief: { smoke: 0, spark: 0, skid: 0, side: 1 },
+  const emitAcc: Record<Role, { smoke: number; spark: number; skid: number; side: number; wreck: number }> = {
+    police: { smoke: 0, spark: 0, skid: 0, side: 1, wreck: 0 },
+    thief: { smoke: 0, spark: 0, skid: 0, side: 1, wreck: 0 },
   };
   let clock = 0; // relógio de render (clarão do cano)
   const damageFx = (c: CarState, dt: number) => {
@@ -173,7 +174,14 @@ export function startGame(
   mirrorFrame.className = 'rearview-frame';
   mirrorFrame.hidden = true;
   ui.append(mirrorFrame);
-  const hud = createHud(ui, opts.role, { showEnd: !opts.onEnd });
+  // sem a app (debug/e2e): "Jogar de novo" recomeça aqui mesmo, sem recarregar a página (nada de rede no meio)
+  const hud = createHud(ui, opts.role, {
+    showEnd: !opts.onEnd,
+    onRestart: () => {
+      handle.stop();
+      startGame(container, opts);
+    },
+  });
 
   // pausa: botão ⏸ no HUD, Esc/P, aba escondida, retrato
   let paused = opts.startPaused === true;
@@ -202,7 +210,7 @@ export function startGame(
   const pauseBtn = document.createElement('button');
   pauseBtn.type = 'button';
   pauseBtn.className = 'pause-toggle';
-  pauseBtn.textContent = '⏸';
+  pauseBtn.innerHTML = ICONS.pause;
   pauseBtn.setAttribute('aria-label', 'Pausar');
   pauseBtn.addEventListener('click', () => {
     pauseBtn.blur();
@@ -324,6 +332,13 @@ export function startGame(
       }
     }
     heli.update(car.role === 'police' ? car : foe, world.time, origin, dt);
+    // prisão: o ladrão arrebentado solta fumaça preta grossa e faíscas enquanto a viatura encosta
+    if (world.match.arrestAt !== undefined && !frozen) {
+      const th = car.role === 'thief' ? car : foe;
+      const acc = emitAcc.thief;
+      acc.wreck += dt * 28 * particles.emissionScale();
+      for (; acc.wreck >= 1; acc.wreck--) particles.emitSmoke(th.x + (acc.side = -acc.side) * 0.5, 1.1, th.s + 1.6, 'black');
+    }
     // pneus cantando: fumaça branca das rodas de trás enquanto derrapa
     for (let k = 0; k < 2 && !frozen; k++) {
       const c = k === 0 ? car : foe;
@@ -382,7 +397,7 @@ export function startGame(
   };
   raf = requestAnimationFrame(frame);
 
-  return {
+  const handle: GameHandle = {
     pause: () => setPaused(true),
     resume() {
       setPaused(false);
@@ -411,4 +426,5 @@ export function startGame(
       renderer.domElement.remove();
     },
   };
+  return handle;
 }

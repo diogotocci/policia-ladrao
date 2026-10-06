@@ -63,6 +63,9 @@ describe('escape: the thief also wins by surviving 1:30', () => {
     w = { ...w, time: E - DT / 2 };
     w = withCar(w, 'thief', { ...thiefOf(w), hp: 0 });
     w = stepWorld(w, NO_INTENTS, DT);
+    expect(w.match.arrestAt).toBeDefined(); // cena da prisão, não a da fuga
+    expect(w.match.escapeAt).toBeUndefined();
+    for (let i = 0; i < 60 * 5 && !w.match.over; i++) w = stepWorld(w, NO_INTENTS, DT);
     expect(w.match).toMatchObject({ over: true, winner: 'police', reason: 'thiefDown' });
     expect(w.match.escapeAt).toBeUndefined();
   });

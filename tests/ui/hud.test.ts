@@ -49,7 +49,10 @@ describe('createHud', () => {
     hud.update(withCar(w, 'thief', { ...thiefOf(w), hp: 37 }));
     const fill = root.querySelector<HTMLElement>('.hud-bar--thief .hud-bar-fill')!;
     expect(fill.style.width).toBe('37%');
-    expect(root.querySelector('.hud-bar--thief .hud-bar-value')!.textContent).toBe('37');
+    // sem número (playtest): só a barra; o valor fica para leitores de tela
+    expect(root.querySelector('.hud-bar-value')).toBeNull();
+    expect(root.querySelector('.hud-bar--thief')!.textContent).not.toContain('37');
+    expect(root.querySelector('.hud-bar--thief .hud-bar-track')!.getAttribute('aria-valuenow')).toBe('37');
     expect(root.querySelector<HTMLElement>('.hud-bar--police .hud-bar-fill')!.style.width).toBe('100%');
     hud.dispose();
   });
@@ -182,4 +185,37 @@ describe('item HUD', () => {
     expect(root.querySelector('.hud-end')!.textContent).toContain('Fugiu!');
     hud.dispose();
   });
+
+  it('last 10 s: a big number in the middle of the screen (10 … 1), hidden otherwise', () => {
+    const hud = createHud(root, 'thief');
+    const w = createWorld({ seed: 1, playerRole: 'thief' });
+    const big = () => root.querySelector<HTMLElement>('.hud-final')!;
+    hud.update({ ...w, time: 70 });
+    expect(big().hidden).toBe(true);
+    hud.update({ ...w, time: 80.2 });
+    expect(big().hidden).toBe(false);
+    expect(big().textContent).toBe('10');
+    hud.update({ ...w, time: 89.5 });
+    expect(big().textContent).toBe('1');
+    hud.update({ ...w, time: 90.5, match: { over: false, escapeAt: 90 } });
+    expect(big().hidden).toBe(true);
+    hud.dispose();
+  });
+
+  it('the thief titanium plate shows a shield (the police bull bar too — each player only sees its own side)', () => {
+    const hud = createHud(root, 'thief');
+    hud.update(createWorld({ seed: 1, playerRole: 'thief', debugGive: ['plate'] }));
+    expect(root.querySelector('.hud-item[data-item="plate"] .hud-item-icon')!.textContent).toBe('🛡️');
+    hud.dispose();
+  });
+
+  it('arrest scene: countdown frozen, no big final number', () => {
+    const hud = createHud(root, 'police');
+    const w = createWorld({ seed: 1, playerRole: 'police' });
+    hud.update({ ...w, time: 83, match: { over: false, arrestAt: 82 } });
+    expect(root.querySelector('.hud-time')!.textContent).toBe('00:08.0');
+    expect(root.querySelector<HTMLElement>('.hud-final')!.hidden).toBe(true);
+    hud.dispose();
+  });
+
 });

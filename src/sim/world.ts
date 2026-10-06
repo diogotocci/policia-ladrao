@@ -82,6 +82,7 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   // partida encerrada: nada muda; só limpa os eventos do último passo para não serem repetidos
   if (w.match.over) return w.events.length ? { ...w, events: [] } : w;
   if (w.match.escapeAt !== undefined) return stepEscape(w, dt);
+  if (w.match.arrestAt !== undefined) return stepArrest(w, dt);
   const opponentRole: Role = w.playerRole === 'police' ? 'thief' : 'police';
   let out: WorldState = { ...w, events: [] };
 
@@ -132,15 +133,47 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
 
   const policeDead = policeOf(out).hp <= 0;
   const thiefDead = thiefOf(out).hp <= 0;
-  if (policeDead || thiefDead) {
-    const winner: Role = thiefDead && !policeDead ? 'police' : 'thief'; // empate → ladrão
-    const reason = winner === 'police' ? 'thiefDown' : 'policeDown';
-    out = { ...out, match: { over: true, winner, reason, endTime: time }, events: [...out.events, { type: 'end', winner }] };
+  if (thiefDead && !policeDead) {
+    // a polícia venceu: cena da prisão (o ladrão para destruído, a viatura encosta atrás) antes do fim
+    out = { ...out, projectiles: [], bombs: [], match: { over: false, arrestAt: time }, events: [...out.events, { type: 'arrest' }] };
+  } else if (policeDead || thiefDead) {
+    // polícia destruída (ou os dois no mesmo passo → ladrão)
+    out = { ...out, match: { over: true, winner: 'thief', reason: 'policeDown', endTime: time }, events: [...out.events, { type: 'end', winner: 'thief' }] };
   } else if (time >= w.escapeTime - 1e-9) {
     // 1:30 com os dois vivos: começa a cena da fuga (tiros no ar somem)
     // instante exato do limite (não o do passo, que pode sair 89,9999…): fugas empatam no ranking
     out = { ...out, projectiles: [], bombs: [], match: { over: false, escapeAt: w.escapeTime }, events: [...out.events, { type: 'escape' }] };
   }
+  return out;
+}
+
+/** Cena da prisão: sem controles nem combate; o ladrão freia até parar e a polícia para logo atrás dele. */
+function stepArrest(w: WorldState, dt: number): WorldState {
+  const M = BALANCE.match;
+  const t = thiefOf(w);
+  const p = policeOf(w);
+  const land = (c: CarState) => Math.max(0, c.airTime - dt);
+  const tSpeed = Math.max(0, t.speed - M.thiefStopDecel * dt);
+  const ts = t.s + tSpeed * dt;
+  // polícia: velocidade para chegar ao ponto de parada atrás do ladrão (sem passar), freando forte se precisar
+  const stopAt = ts - M.arrestGap;
+  const room = Math.max(0, stopAt - p.s);
+  const want = Math.min(BALANCE.movement.cruise.police * 1.2, Math.sqrt(2 * BALANCE.movement.brakeDecel * room));
+  const pSpeed = want > p.speed ? Math.min(want, p.speed + BALANCE.movement.accel * 2 * dt) : Math.max(want, p.speed - BALANCE.movement.brakeDecel * 1.5 * dt);
+  const ps = Math.min(p.s + pSpeed * dt, stopAt);
+  // e para na faixa ao lado (do lado do meio da rua), para a câmera de trás ver o ladrão arrebentado
+  const side = t.x > 0 ? -M.arrestSide : M.arrestSide;
+  const dx = t.x + side - p.x;
+  const px = p.x + Math.sign(dx) * Math.min(Math.abs(dx), 3 * dt);
+  let out: WorldState = { ...w, events: [] };
+  out = withCar(out, 'thief', { ...t, speed: tSpeed, s: ts, steer: 0, skidding: false, airTime: land(t) });
+  out = withCar(out, 'police', { ...p, speed: ps > p.s ? pSpeed : 0, s: Math.max(p.s, ps), x: px, steer: 0, skidding: false, airTime: land(p) });
+  out = stepTraffic(out, dt);
+  const time = w.time + dt;
+  out = { ...out, time };
+  const arrestAt = w.match.arrestAt!;
+  if (time >= arrestAt + M.arrestScene - 1e-9)
+    out = { ...out, match: { over: true, winner: 'police', reason: 'thiefDown', endTime: arrestAt, arrestAt }, events: [{ type: 'end', winner: 'police' }] };
   return out;
 }
 

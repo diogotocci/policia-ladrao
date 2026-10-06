@@ -39,7 +39,7 @@ export const ITEM_LABEL: Record<string, string> = {
   gun: 'Arma traseira',
 };
 const ITEM_ICON: Record<string, string> = {
-  fireRate: '⚡', power: '💥', ram: '🛡️', nitro: '🔥', heli: '🚁', pierce: '🎯', plate: '▣', gun: '🔫',
+  fireRate: '⚡', power: '💥', ram: '🛡️', nitro: '🔥', heli: '🚁', pierce: '🎯', plate: '🛡️', gun: '🔫', // escudo nos dois (cada um só vê o seu lado)
 };
 
 interface HudItem {
@@ -96,19 +96,29 @@ export function createHud(
   const bar = (role: Role, label: string) => {
     const b = el('div', `hud-bar hud-bar--${role}`);
     const name = el('span', 'hud-bar-label', label);
+    // só a barra (sem número — playtest); o valor fica para leitores de tela
     const track = el('div', 'hud-bar-track');
+    track.setAttribute('role', 'meter');
+    track.setAttribute('aria-label', `Vida — ${label}`);
+    track.setAttribute('aria-valuemin', '0');
+    track.setAttribute('aria-valuemax', '100');
+    track.setAttribute('aria-valuenow', '100');
     const fill = el('div', 'hud-bar-fill');
     track.append(fill);
-    const value = el('span', 'hud-bar-value', '100');
-    b.append(name, track, value);
+    b.append(name, track);
     bars.append(b);
-    return { fill, value };
+    return { fill, track };
   };
   const policeBar = bar('police', 'Polícia');
   const thiefBar = bar('thief', 'Ladrão');
   const items = el('div', 'hud-items');
   bars.append(items);
   let itemsSig = '';
+  // últimos 10 s: número grande no meio da tela
+  const finalEl = el('div', 'hud-final');
+  finalEl.hidden = true;
+  finalEl.setAttribute('aria-hidden', 'true'); // o cronômetro do topo já anuncia o tempo
+  let finalShown = '';
   const toastEl = el('div', 'hud-toast');
   toastEl.hidden = true;
   toastEl.setAttribute('role', 'status');
@@ -138,13 +148,13 @@ export function createHud(
   endCard.append(endTitle, endReason, endTime, again);
   end.append(endCard);
 
-  hud.append(bars, center, toastEl, end);
+  hud.append(bars, center, finalEl, toastEl, end);
   root.append(hud);
 
-  const setBar = (b: { fill: HTMLElement; value: HTMLElement }, hp: number) => {
+  const setBar = (b: { fill: HTMLElement; track: HTMLElement }, hp: number) => {
     const v = Math.max(0, Math.round(hp));
     b.fill.style.width = `${v}%`;
-    b.value.textContent = String(v);
+    b.track.setAttribute('aria-valuenow', String(v));
   };
 
   return {
@@ -153,10 +163,22 @@ export function createHud(
       const thief = thiefOf(w);
       setBar(policeBar, police.hp);
       setBar(thiefBar, thief.hp);
-      const at = w.match.escapeAt ?? (w.match.over ? (w.match.endTime ?? w.time) : w.time);
+      const at = w.match.escapeAt ?? w.match.arrestAt ?? (w.match.over ? (w.match.endTime ?? w.time) : w.time);
       const left = Math.max(0, w.escapeTime - at);
       time.textContent = formatTime(left);
-      time.classList.toggle('is-alert', left <= ALERT_LEFT && !w.match.over && w.match.escapeAt === undefined);
+      const scene = w.match.escapeAt !== undefined || w.match.arrestAt !== undefined;
+      const alert = left > 0 && left <= ALERT_LEFT && !w.match.over && !scene;
+      time.classList.toggle('is-alert', alert);
+      const n = alert ? String(Math.ceil(left)) : '';
+      if (n !== finalShown) {
+        finalShown = n;
+        finalEl.hidden = !alert;
+        finalEl.textContent = n;
+        // reinicia a animação de "pulo" a cada segundo
+        finalEl.classList.remove('pop');
+        void finalEl.offsetWidth;
+        if (alert) finalEl.classList.add('pop');
+      }
       const d = Math.abs(thief.s - police.s);
       dist.textContent = `${Math.round(d)} m`;
       dist.dataset.band = distanceBand(d);
