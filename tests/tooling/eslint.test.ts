@@ -15,9 +15,11 @@ describe('local/max-file-lines', () => {
   });
 });
 
-describe('architecture boundary', () => {
+// Loading the full ESLint config takes a few seconds on Windows: one shared instance and a generous timeout.
+describe('architecture boundary', { timeout: 60_000 }, () => {
+  let eslint: ESLint | undefined;
   const lint = async (code: string, filePath: string) => {
-    const eslint = new ESLint({ cwd: process.cwd() });
+    eslint ??= new ESLint({ cwd: process.cwd() });
     const [result] = await eslint.lintText(code, { filePath });
     return result!.messages.filter((m) => m.severity === 2).map((m) => m.ruleId);
   };
