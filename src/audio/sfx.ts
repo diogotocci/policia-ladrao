@@ -1,6 +1,7 @@
 // Receitas dos efeitos sonoros: dados puros (forma de onda, frequência, envelope), testáveis sem WebAudio.
 
-export type Wave = 'square' | 'sawtooth' | 'triangle' | 'sine' | 'noise';
+/** squeal: ruído passando por um filtro passa-faixa estreito (guincho de pneu) */
+export type Wave = 'square' | 'sawtooth' | 'triangle' | 'sine' | 'noise' | 'squeal';
 
 export interface Voice {
   wave: Wave;
@@ -10,6 +11,8 @@ export interface Voice {
   attack: number; // s
   duration: number; // s (do início ao silêncio)
   delay: number; // s até começar
+  /** squeal: estreiteza do filtro (Q) */
+  q?: number;
 }
 
 const v = (wave: Wave, freq: number, freqEnd: number, gain: number, duration: number, attack = 0.004, delay = 0): Voice => ({
@@ -44,13 +47,12 @@ export const RECIPES = {
   win: [v('square', 523, 523, 0.15, 0.14), v('square', 659, 659, 0.15, 0.14, 0.004, 0.14), v('square', 784, 784, 0.15, 0.4, 0.004, 0.28)],
   beep: [v('square', 880, 880, 0.14, 0.12)], // contagem 3-2-1
   go: [v('square', 1320, 1320, 0.16, 0.35), v('square', 660, 660, 0.1, 0.35)], // largada
-  // pneu cantando (playtest 2026-10-05): guincho agudo e tonal — dois tons próximos batendo (aspereza da borracha)
-  // + um terceiro mais grave e um chiado de fundo; cai um pouco no fim
+  // pneu cantando (playtest 2026-10-06): ruído em faixas estreitas (guincho de borracha), três faixas desencontradas
+  // que sobem e descem um pouco — nada de tons puros (soavam como buzina de trem)
   skid: [
-    v('square', 1680, 1520, 0.06, 0.55, 0.03),
-    v('square', 1745, 1570, 0.055, 0.55, 0.03, 0.01),
-    v('sawtooth', 1190, 1080, 0.035, 0.5, 0.04),
-    v('noise', 4200, 2600, 0.05, 0.5, 0.04),
+    { ...v('squeal', 1900, 1650, 0.5, 0.5, 0.03), q: 14 },
+    { ...v('squeal', 2450, 2250, 0.32, 0.38, 0.02, 0.06), q: 18 },
+    { ...v('squeal', 1500, 1700, 0.25, 0.42, 0.04, 0.12), q: 10 },
   ],
   // ladrão: a bomba pegou a polícia — explosão grave + fanfarrinha curta de vitória
   'bomb-hit': [v('square', 784, 784, 0.13, 0.1, 0.004, 0.12), v('square', 1046, 1046, 0.13, 0.2, 0.004, 0.22)],

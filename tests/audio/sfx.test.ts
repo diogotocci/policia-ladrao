@@ -40,17 +40,18 @@ describe('sound recipes', () => {
     expect(recipeDuration(thief)).toBeGreaterThan(recipeDuration(police) * 1.3);
   });
 
-  it('tyre screech, not a slide (playtest): high tonal squeal with two close tones beating, ~0.5 s', () => {
+  it('tyre squeal (playtest 2026-10-06: the two beating tones sounded like a train horn): narrow-band noise around 1.4–3 kHz, no oscillator tones', () => {
     const r = RECIPES.skid;
-    const tones = r.filter((x) => x.wave !== 'noise' && x.freq >= 1000 && x.freq <= 2500);
-    expect(tones.length).toBeGreaterThanOrEqual(2);
-    const [a, b] = tones;
-    expect(Math.abs(a!.freq - b!.freq)).toBeGreaterThan(20);
-    expect(Math.abs(a!.freq - b!.freq)).toBeLessThan(120); // batimento áspero de pneu
-    const toneGain = tones.reduce((s, x) => s + x.gain, 0);
-    const noiseGain = r.filter((x) => x.wave === 'noise').reduce((s, x) => s + x.gain, 0);
-    expect(toneGain).toBeGreaterThan(noiseGain);
+    expect(r.every((x) => x.wave === 'squeal')).toBe(true);
+    expect(r.length).toBeGreaterThanOrEqual(2); // faixas sobrepostas e desencontradas: chiado irregular de borracha
+    for (const x of r) {
+      expect(x.freq).toBeGreaterThanOrEqual(1400);
+      expect(x.freq).toBeLessThanOrEqual(3000);
+      expect(x.q ?? 0).toBeGreaterThanOrEqual(6); // faixa estreita: guincho, não chiado de vento
+    }
+    expect(new Set(r.map((x) => x.delay)).size).toBeGreaterThan(1);
     expect(recipeDuration(r)).toBeGreaterThanOrEqual(0.4);
     expect(recipeDuration(r)).toBeLessThanOrEqual(0.8);
   });
+
 });
