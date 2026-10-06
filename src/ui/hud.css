@@ -25,6 +25,8 @@
 .hud-time.is-alert { color: #ffcf4a; animation: pl-alert 0.5s ease-in-out infinite alternate; }
 @keyframes pl-alert { from { transform: scale(1); } to { transform: scale(1.12); } }
 @media (prefers-reduced-motion: reduce) { .hud-time.is-alert { animation: none; } }
+.hud.is-paused .hud-time.is-alert,
+.hud.is-paused .hud-final { animation-play-state: paused; }
 .hud-time { font: 700 17px/1 ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
 .hud-distance { font-variant-numeric: tabular-nums; padding: 2px 7px; border-radius: 8px; }
 .hud-distance[data-band='near'] { background: rgba(46, 204, 113, 0.28); color: #b8f5cf; }

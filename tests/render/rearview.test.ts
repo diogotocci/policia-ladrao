@@ -62,4 +62,35 @@ describe('rear-view mirror image', () => {
     expect(seen[0]).toBe(false);
     expect(fake.shadowMap.autoUpdate).toBe(true);
   });
+
+  it('lighter on weak phones (playtest): shorter view and, on low quality, the scene is redrawn every other frame at 1× pixels', () => {
+    const rv = createRearview();
+    const scenes: THREE.Scene[] = [];
+    const sizes: number[] = [];
+    const fake = {
+      shadowMap: { autoUpdate: true },
+      getPixelRatio: () => 3,
+      setRenderTarget: (t: THREE.WebGLRenderTarget | null) => t && sizes.push(t.width),
+      render: (s: THREE.Scene) => scenes.push(s),
+      setScissorTest: () => {},
+      setScissor: () => {},
+      setViewport: () => {},
+    };
+    const world = new THREE.Scene();
+    const draw = () => rv.render(fake as unknown as THREE.WebGLRenderer, world, 844, 390);
+    rv.place(createCar('thief', 2, 100), 0);
+    rv.setQuality('high');
+    const farHigh = rv.camera.far;
+    draw();
+    draw();
+    expect(scenes.filter((s) => s === world)).toHaveLength(2);
+    rv.setQuality('low');
+    expect(rv.camera.far).toBeLessThan(farHigh);
+    scenes.length = 0;
+    sizes.length = 0;
+    for (let i = 0; i < 4; i++) draw();
+    expect(scenes.filter((s) => s === world)).toHaveLength(2); // cena só a cada 2 quadros
+    expect(scenes.filter((s) => s !== world)).toHaveLength(4); // o espelho (textura) aparece todo quadro
+    expect(Math.max(...sizes)).toBe(Math.round(844 * 0.22)); // 1× pixel, não 3×
+  });
 });

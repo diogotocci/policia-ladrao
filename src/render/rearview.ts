@@ -3,6 +3,14 @@
 import * as THREE from 'three';
 import { trackPos } from './trackFrame';
 import type { CarState } from '../sim/car';
+import type { QualityTier } from './renderer';
+
+/** por qualidade: alcance da visão de trás, a cada quantos quadros redesenha a cena e teto de densidade de pixels */
+const TIER: Record<QualityTier, { far: number; every: number; maxPr: number }> = {
+  high: { far: 140, every: 1, maxPr: 3 },
+  medium: { far: 110, every: 1, maxPr: 1.5 },
+  low: { far: 80, every: 2, maxPr: 1 },
+};
 
 const MARGIN_TOP = 10; // px (alinha com as barras do HUD)
 const MARGIN_RIGHT = 14;
@@ -23,7 +31,11 @@ export function createRearview(): {
   place(car: CarState, originS: number): void;
   render(renderer: THREE.WebGLRenderer, scene: THREE.Scene, cssW: number, cssH: number): void;
   mirrorTexture(): THREE.Texture;
+  /** celular fraco: espelho mais leve */
+  setQuality(tier: QualityTier): void;
 } {
+  let tier = TIER.high;
+  let frame = 0;
   const camera = new THREE.PerspectiveCamera(50, 3, 0.5, 140);
   const target = new THREE.WebGLRenderTarget(1, 1, { depthBuffer: true });
   target.texture.colorSpace = THREE.SRGBColorSpace;
@@ -46,19 +58,23 @@ export function createRearview(): {
     },
     render(renderer, scene, cssW, cssH) {
       const r = rearviewRect(cssW, cssH);
-      const pr = renderer.getPixelRatio();
+      const pr = Math.min(renderer.getPixelRatio(), tier.maxPr);
       const tw = Math.max(1, Math.round(r.w * pr));
       const th = Math.max(1, Math.round(r.h * pr));
-      if (target.width !== tw || target.height !== th) target.setSize(tw, th);
       camera.aspect = r.w / r.h;
       camera.updateProjectionMatrix();
 
-      const autoShadow = renderer.shadowMap.autoUpdate;
-      renderer.shadowMap.autoUpdate = false; // reaproveita as sombras do passe principal
-      renderer.setRenderTarget(target);
-      renderer.render(scene, camera);
-      renderer.setRenderTarget(null);
-      renderer.shadowMap.autoUpdate = autoShadow;
+      const resized = target.width !== tw || target.height !== th;
+      if (resized) target.setSize(tw, th);
+      // em low a cena de trás é redesenhada a cada 2 quadros (a textura do quadro anterior continua no espelho)
+      if (resized || frame++ % tier.every === 0) {
+        const autoShadow = renderer.shadowMap.autoUpdate;
+        renderer.shadowMap.autoUpdate = false; // reaproveita as sombras do passe principal
+        renderer.setRenderTarget(target);
+        renderer.render(scene, camera);
+        renderer.setRenderTarget(null);
+        renderer.shadowMap.autoUpdate = autoShadow;
+      }
 
       const glY = cssH - r.y - r.h; // viewport do WebGL começa embaixo
       renderer.setScissorTest(true);
@@ -70,6 +86,11 @@ export function createRearview(): {
     },
     mirrorTexture() {
       return target.texture;
+    },
+    setQuality(q) {
+      tier = TIER[q];
+      camera.far = tier.far;
+      camera.updateProjectionMatrix();
     },
   };
 }

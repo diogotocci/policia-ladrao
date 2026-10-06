@@ -94,6 +94,7 @@ export function startApp(
         break;
       }
       case 'countdown':
+        highlight = undefined; // destaque do recorde é só da partida que acabou
         newGame(s.role);
         countdown = renderCountdown(layer);
         countdown.set(s.left);
@@ -117,6 +118,7 @@ export function startApp(
           role: s.role,
           result: s.result,
           qualifies: s.qualifies,
+          saved: s.saved,
           onSave: (initials) => {
             const thief = s.role === 'thief'
               ? { hp: Math.max(0, Math.min(100, s.result.hp ?? 0)), how: s.result.reason === 'escape' ? ('escape' as const) : ('kill' as const) }
@@ -125,6 +127,7 @@ export function startApp(
             board = r.board;
             if (storage) saveBoard(storage, board);
             if (r.rank > 0) highlight = { role: s.role, rank: r.rank };
+            state = reduce(state, { type: 'saved' }); // sem redesenhar: a tela já mostra "Recorde salvo!"
           },
           onAgain: () => press({ type: 'restart' }),
           onRanking: () => press({ type: 'openRanking' }),

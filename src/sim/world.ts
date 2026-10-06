@@ -68,8 +68,8 @@ export function createWorld(opts: {
     nextTrafficId: 1,
     trafficRng: (opts.seed ^ 0x85ebca6b) >>> 0,
     ai: {
-      police: { targetX: police.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {}, curveS: -1, curveBrake: false, curveLate: 0 },
-      thief: { targetX: thief.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {}, curveS: -1, curveBrake: false, curveLate: 0 },
+      police: { ramUntil: 0, targetX: police.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {}, curveS: -1, curveBrake: false, curveLate: 0 },
+      thief: { ramUntil: 0, targetX: thief.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {}, curveS: -1, curveBrake: false, curveLate: 0 },
     },
   };
 }
@@ -104,7 +104,10 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
     thief: w.playerRole === 'thief' ? mine : opp.intents,
   };
 
-  const bonus = pursuitBonus(out);
+  // investida da IA da polícia (nunca para a polícia jogada por uma pessoa)
+  const policeAi = playerIntents === 'ai' || w.playerRole !== 'police';
+  const ram = policeAi && out.time < out.ai.police.ramUntil && out.time >= out.policeTurboOffUntil ? BALANCE.ai.ramBoost : 0;
+  const bonus = pursuitBonus(out) + ram;
   const t0 = thiefOf(out);
   const p0 = policeOf(out);
   const kT = curvatureAt(w.seed, t0.s, w.curvesOn);
@@ -183,12 +186,31 @@ function stepEscape(w: WorldState, dt: number): WorldState {
   const t = thiefOf(w);
   const p = policeOf(w);
   const vMax = BALANCE.movement.cruise.thief * M.escapeBoost;
-  const tSpeed = Math.max(t.speed, Math.min(vMax, t.speed + M.escapeAccel * dt));
+  let tSpeed = Math.max(t.speed, Math.min(vMax, t.speed + M.escapeAccel * dt));
+  // desvia do tráfego: vai para a faixa mais livre à frente; se ainda assim tiver um carro colado, segue atrás dele
+  const L = BALANCE.car.length;
+  const lanes = BALANCE.road.laneCenters;
+  const freeAhead = (x: number) => {
+    let d = 120;
+    for (const c of w.traffic) if (Math.abs(c.x - x) < 2 * BALANCE.car.halfWidth + 0.4 && c.s > t.s - L) d = Math.min(d, c.s - t.s);
+    return d;
+  };
+  const lane = lanes.reduce((best, x) => {
+    const db = freeAhead(best) - Math.abs(best - t.x) * 2;
+    const dx = freeAhead(x) - Math.abs(x - t.x) * 2;
+    return dx > db + 1 ? x : best;
+  }, lanes.reduce((a, x) => (Math.abs(x - t.x) < Math.abs(a - t.x) ? x : a)));
+  let tx = t.x + Math.sign(lane - t.x) * Math.min(Math.abs(lane - t.x), BALANCE.movement.lateralSpeed * dt);
+  // não fecha um carro que está do lado
+  if (w.traffic.some((c) => Math.abs(c.s - t.s) < L + 0.5 && Math.abs(c.x - tx) < 2 * BALANCE.car.halfWidth)) tx = t.x;
+  let block: (typeof w.traffic)[number] | undefined;
+  for (const c of w.traffic) if (Math.abs(c.x - tx) < 2 * BALANCE.car.halfWidth && c.s > t.s && c.s - t.s < L + 3 && (!block || c.s < block.s)) block = c;
+  if (block) tSpeed = Math.min(tSpeed, block.speed);
   const pSpeed = Math.max(0, p.speed - BALANCE.movement.brakeDecel * dt);
   let out: WorldState = { ...w, events: [] };
   // quem estava no ar (quebra-mola) termina o pulo normalmente
   const land = (c: CarState) => Math.max(0, c.airTime - dt);
-  out = withCar(out, 'thief', { ...t, speed: tSpeed, s: t.s + tSpeed * dt, steer: 0, skidding: false, airTime: land(t) });
+  out = withCar(out, 'thief', { ...t, speed: tSpeed, s: t.s + tSpeed * dt, x: tx, steer: (Math.sign(tx - t.x) as -1 | 0 | 1), skidding: false, airTime: land(t) });
   out = withCar(out, 'police', { ...p, speed: pSpeed, s: p.s + pSpeed * dt, steer: 0, skidding: false, airTime: land(p) });
   out = stepTraffic(out, dt);
   const time = w.time + dt;

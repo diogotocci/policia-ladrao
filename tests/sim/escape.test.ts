@@ -99,3 +99,35 @@ describe('escape: the thief also wins by surviving 1:30', () => {
     expect(thief / n).toBeLessThanOrEqual(0.7);
   }, 120000);
 });
+
+describe('end scenes with traffic (playtest: the thief drove through cars)', () => {
+  const overlaps = (w: WorldState) =>
+    [policeOf(w), thiefOf(w)].some((g) => w.traffic.some((c) => Math.abs(c.x - g.x) < 2 * BALANCE.car.halfWidth && Math.abs(c.s - g.s) < BALANCE.car.length));
+  it('escape: the thief weaves around traffic, never through it; traffic never drives into the braking police (30 seeds)', () => {
+    let bad = 0;
+    for (let seed = 1; seed <= 30; seed++) {
+      let w = createWorld({ seed, playerRole: 'thief', escapeTime: 20 });
+      w = { ...w, level: 10 };
+      for (let i = 0; i < 60 * 25 && !w.match.over; i++) {
+        const scene = w.match.escapeAt !== undefined;
+        w = stepWorld(w, 'ai', DT);
+        if (scene && overlaps(w)) bad++;
+      }
+    }
+    expect(bad).toBe(0);
+  }, 60000);
+
+  it('arrest: traffic coming from behind stops instead of driving through the stopped cars (30 seeds)', () => {
+    let bad = 0;
+    for (let seed = 1; seed <= 30; seed++) {
+      let w = createWorld({ seed, playerRole: 'police', debugHp: { thief: 3 } });
+      w = { ...w, level: 10 };
+      for (let i = 0; i < 60 * 90 && !w.match.over; i++) {
+        const scene = w.match.arrestAt !== undefined;
+        w = stepWorld(w, 'ai', DT);
+        if (scene && overlaps(w)) bad++;
+      }
+    }
+    expect(bad).toBe(0);
+  }, 60000);
+});

@@ -24,6 +24,8 @@ export interface AiMemory {
   nextBombAt: number;
   /** bombas já avaliadas pela polícia: id → vai desviar? (sorteado uma vez por bomba) */
   bombDodge: Record<number, boolean>;
+  /** polícia investindo contra o ladrão até este instante (s); 0 = não */
+  ramUntil: number;
   /** curva fechada já avaliada (início em s), se vai frear e quantos metros atrasada começa */
   curveS: number;
   curveBrake: boolean;
@@ -41,7 +43,7 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 export function initialAiMemory(role: Role, w: WorldState): AiMemory {
   const me = role === 'police' ? policeOf(w) : thiefOf(w);
-  return { targetX: me.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {}, curveS: -1, curveBrake: false, curveLate: 0 };
+  return { targetX: me.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {}, curveS: -1, curveBrake: false, curveLate: 0, ramUntil: 0 };
 }
 
 function steerTo(x: number, targetX: number): Pick<Intents, 'left' | 'right'> {
@@ -153,6 +155,25 @@ export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): {
       const box = w.boxes.find((b) => b.color === 'blue' && b.s > me.s + 10 && b.s - me.s < 120);
       const want = box && Math.abs(foe.s - me.s) > 30 ? box.x : Math.max(-EDGE + 0.3, Math.min(EDGE - 0.3, foe.x));
       mem = { ...mem, targetX: safeLane(w, role, me.s, me.x, want, mem), nextDecisionAt: w.time + reaction };
+      // investida: perto, quase alinhado e com o turbo liberado → acelera para bater
+      const gap = foe.s - me.s;
+      const A = BALANCE.ai;
+      if (
+        w.time >= mem.ramUntil &&
+        w.time >= w.policeTurboOffUntil &&
+        gap > A.ramMinGap &&
+        gap < A.ramRange &&
+        Math.abs(foe.x - me.x) < 3.2 &&
+        !danger &&
+        rng.next() < lerp(A.ramChance[0], A.ramChance[1], k)
+      )
+        mem = { ...mem, ramUntil: w.time + A.ramTime };
+    }
+    if (w.time < mem.ramUntil) {
+      // investindo: mira a faixa do ladrão o tempo todo; para se bateu (penalidade) ou se ele abriu demais
+      // perigo na frente (tráfego, bomba, quebra-molas) manda mais que a investida
+      if (danger || w.time < w.policeTurboOffUntil || foe.s - me.s > BALANCE.ai.ramRange + 10) mem = { ...mem, ramUntil: 0 };
+      else mem = { ...mem, targetX: Math.max(-EDGE + 0.3, Math.min(EDGE - 0.3, foe.x)) };
     }
     const cb = curveBraking(w, me.s, me.speed, rng, mem, k);
     return { intents: { ...NO_INTENTS, ...steerTo(me.x, mem.targetX), fire: true, brake: cb.brake }, memory: cb.memory };
