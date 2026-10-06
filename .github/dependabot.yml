@@ -1,0 +1,31 @@
+# Dependabot: security updates only.
+# Vulnerability fixes are opened as PRs by "Dependabot security updates" (enabled in the repository settings).
+# Routine version-update PRs are disabled with open-pull-requests-limit: 0; the schedule below only applies to them.
+version: 2
+updates:
+  - package-ecosystem: npm # pnpm-lock.yaml is detected automatically
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+    labels:
+      - dependencies
+      - security
+    commit-message:
+      prefix: fix(deps)
+      prefix-development: chore(deps)
+    groups:
+      security-fixes:
+        applies-to: security-updates
+        patterns:
+          - '*'
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+    labels:
+      - dependencies
+      - security
+    commit-message:
+      prefix: ci(deps)

@@ -107,7 +107,11 @@ Prettier owns formatting (`.prettierrc.json`); ESLint owns correctness and archi
 - **minor** (`y`): new player-facing behavior (`feat`): a new mechanic, item, screen, setting or rule change. Resets the patch to 0.
 - **patch** (`z`): everything else (`fix`, `perf`, `refactor`, `style`, `test`, `docs`, `chore`, `ci`, `build`).
 
-The PR title or body states the new version.
+The PR title or body states the new version. Dependabot security PRs are the exception: they do not bump the version; the next regular PR includes them in its bump.
+
+## Dependencies and security updates
+
+Dependabot opens a PR when a dependency has a known vulnerability (security updates only; routine version bumps are disabled in `.github/dependabot.yml`). The CI workflow (`.github/workflows/ci.yml`: typecheck, lint, unit tests, build) checks those PRs like any other. Review the changelog of the fixed package before merging.
 
 ## Completion quality
 
