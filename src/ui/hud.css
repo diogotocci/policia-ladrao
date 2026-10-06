@@ -58,22 +58,23 @@
 
 /* últimos 10 s da fuga: número grande no meio da tela */
 .hud-final {
+  /* logo abaixo da pílula central, sem tapar a pista (playtest 2026-10-06: grande demais no meio da tela) */
   position: absolute;
-  top: 38%;
+  top: calc(max(10px, var(--safe-top)) + 46px);
   left: 50%;
-  transform: translate(-50%, -50%);
-  font: 900 min(26vh, 110px)/1 system-ui, sans-serif;
+  transform: translateX(-50%);
+  font: 900 min(12vh, 46px)/1 system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
   color: #ffcf4a;
-  opacity: 0.92;
-  -webkit-text-stroke: 3px rgba(40, 20, 0, 0.75);
+  opacity: 0.95;
+  -webkit-text-stroke: 2px rgba(40, 20, 0, 0.75);
   paint-order: stroke fill;
-  text-shadow: 0 5px 0 rgba(0, 0, 0, 0.35), 0 0 30px rgba(255, 160, 40, 0.55);
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.35), 0 0 18px rgba(255, 160, 40, 0.5);
   pointer-events: none;
 }
 .hud-final[hidden] { display: none; }
 .hud-final.pop { animation: pl-final 0.9s ease-out; }
-@keyframes pl-final { from { transform: translate(-50%, -50%) scale(1.5); opacity: 1; } to { transform: translate(-50%, -50%) scale(1); opacity: 0.8; } }
+@keyframes pl-final { from { transform: translateX(-50%) scale(1.35); opacity: 1; } to { transform: translateX(-50%) scale(1); opacity: 0.85; } }
 @media (prefers-reduced-motion: reduce) { .hud-final.pop { animation: none; } }
 
 .hud-items { display: flex; gap: 6px; flex-wrap: wrap; max-width: 240px; }
@@ -85,13 +86,14 @@
   conic-gradient(#ffd25a calc(var(--left, 1) * 360deg), rgba(255, 255, 255, 0.12) 0) border-box; border: 2px solid transparent; }
 .hud-toast { position: absolute; top: 25%; left: 50%; transform: translateX(-50%); padding: 8px 16px; border-radius: 12px; background: rgba(10, 13, 18, 0.7); border: 1px solid var(--hud-edge); font: 800 18px/1 system-ui, sans-serif; }
 .hud-toast[hidden] { display: none; }
-.hud-toast.is-big { top: 30%; padding: 12px 24px; font-size: 30px; color: #ffcf4a; border-color: rgba(255, 140, 40, 0.8); background: rgba(40, 12, 4, 0.82); animation: pl-bang 0.35s ease-out; }
+.hud-toast.is-big { top: calc(max(10px, var(--safe-top)) + 92px); padding: 7px 14px; font-size: 18px; color: #ffcf4a; border-color: rgba(255, 140, 40, 0.8); background: rgba(40, 12, 4, 0.82); animation: pl-bang 0.35s ease-out; } /* pequeno, logo abaixo da pílula: não tapa a pista */
 @keyframes pl-bang { from { transform: translateX(-50%) scale(1.5); } to { transform: translateX(-50%) scale(1); } }
 @media (prefers-reduced-motion: reduce) { .hud-toast.is-big { animation: none; } }
 
-/* botões de som e pausa, dentro da pílula central: ícones desenhados (SVG), área de toque de 36 px */
+/* botões de som e pausa, dentro da pílula central: ícones desenhados (SVG); a área de toque passa da borda (44 px) */
 .sound-toggle,
 .pause-toggle {
+  position: relative;
   pointer-events: auto;
   display: inline-grid;
   place-items: center;
@@ -107,6 +109,10 @@
 }
 .sound-toggle svg,
 .pause-toggle svg { width: 20px; height: 20px; display: block; }
+.sound-toggle::after,
+.pause-toggle::after { content: ''; position: absolute; inset: -8px -4px; }
+.pause-toggle { width: 42px; height: 36px; background: rgba(255, 255, 255, 0.14); }
+.pause-toggle svg { width: 22px; height: 22px; }
 .sound-toggle[aria-pressed='true'] { color: #ff8d8d; }
 .sound-toggle:active,
 .pause-toggle:active { background: rgba(255, 255, 255, 0.2); }

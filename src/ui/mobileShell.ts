@@ -63,3 +63,24 @@ export function installFullscreenOnFirstTap(doc: Document, win: Window): () => v
   win.addEventListener('pointerup', onUp, true);
   return () => win.removeEventListener('pointerup', onUp, true);
 }
+
+/**
+ * Botão do HUD que reage no toque (pointerdown), não no click: durante a partida o dedo vive tocando nas setas,
+ * e o bloqueio de zoom por toque duplo engolia o click de um toque logo em seguida (pausa "difícil de apertar").
+ * Pelo teclado (Enter/Espaço → click com detail 0) continua funcionando.
+ */
+export function onTap(el: HTMLElement, fn: () => void): () => void {
+  const down = (e: Event) => {
+    e.preventDefault();
+    fn();
+  };
+  const click = (e: Event) => {
+    if ((e as MouseEvent).detail === 0) fn();
+  };
+  el.addEventListener('pointerdown', down);
+  el.addEventListener('click', click);
+  return () => {
+    el.removeEventListener('pointerdown', down);
+    el.removeEventListener('click', click);
+  };
+}

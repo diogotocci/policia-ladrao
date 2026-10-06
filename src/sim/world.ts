@@ -139,8 +139,11 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   if (thiefDead && !policeDead) {
     // a polícia venceu: cena da prisão (o ladrão para destruído, a viatura encosta atrás) antes do fim
     out = { ...out, projectiles: [], bombs: [], match: { over: false, arrestAt: time }, events: [...out.events, { type: 'arrest' }] };
+  } else if (policeDead && !thiefDead) {
+    // polícia destruída: ela para (arrebentada) e o ladrão vai embora — mesma cena da fuga, com o motivo da vitória
+    out = { ...out, projectiles: [], bombs: [], match: { over: false, escapeAt: time, reason: 'policeDown' }, events: [...out.events, { type: 'escape' }] };
   } else if (policeDead || thiefDead) {
-    // polícia destruída (ou os dois no mesmo passo → ladrão)
+    // os dois no mesmo passo → ladrão
     out = { ...out, match: { over: true, winner: 'thief', reason: 'policeDown', endTime: time }, events: [...out.events, { type: 'end', winner: 'thief' }] };
   } else if (time >= w.escapeTime - 1e-9) {
     // 1:30 com os dois vivos: começa a cena da fuga (tiros no ar somem)
@@ -217,6 +220,6 @@ function stepEscape(w: WorldState, dt: number): WorldState {
   out = { ...out, time };
   const escapeAt = w.match.escapeAt!;
   if (time >= escapeAt + M.escapeScene - 1e-9)
-    out = { ...out, match: { over: true, winner: 'thief', reason: 'escape', endTime: escapeAt, escapeAt }, events: [{ type: 'end', winner: 'thief' }] };
+    out = { ...out, match: { over: true, winner: 'thief', reason: w.match.reason ?? 'escape', endTime: escapeAt, escapeAt }, events: [{ type: 'end', winner: 'thief' }] };
   return out;
 }

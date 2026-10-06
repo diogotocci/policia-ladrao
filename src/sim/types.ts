@@ -52,7 +52,7 @@ export type GameEvent =
   | { type: 'pickup'; role: Role; item: ItemId | 'wrong' | 'none' }
   | { type: 'bombDropped'; s: number; x: number }
   | { type: 'explosion'; s: number; x: number }
-  | { type: 'shot'; from: Role; s: number; x: number }
+  | { type: 'shot'; from: Role; s: number; x: number; /** do helicóptero */ air?: true }
   | { type: 'noTarget'; from: Role }
   | { type: 'skid'; role: Role; s: number; x: number }
   | { type: 'end'; winner: Role }

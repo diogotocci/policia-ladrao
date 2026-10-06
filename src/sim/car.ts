@@ -41,6 +41,8 @@ export interface CarState {
   hasGun: boolean;
   /** segundos até poder atirar de novo */
   fireCooldown: number;
+  /** recarga da arma do helicóptero (polícia) */
+  heliCooldown: number;
   /** segundos restantes no ar (pulo do quebra-molas) */
   airTime: number;
   /** derrapando na curva (acima da aderência) */
@@ -59,6 +61,7 @@ export function createCar(role: Role, laneIndex: 0 | 1 | 2 | 3, s = 0): CarState
     hp: BALANCE.hp,
     hasGun: false,
     fireCooldown: 0,
+    heliCooldown: 0,
     airTime: 0,
     skidding: false,
     upgrades: baseUpgrades(role),

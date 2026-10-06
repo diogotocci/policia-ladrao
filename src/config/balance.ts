@@ -47,7 +47,7 @@ export const BALANCE = {
     ramMinGap: 5, // m
     ramChance: [0.01, 0.06] as const, // por decisão alinhada, do nível 1 ao 10
     ramBoost: 0.3, // +30% do cruzeiro durante a investida
-    ramTime: 2.5, // s no máximo
+    ramTime: 2, // s no máximo
   },
   // Fuga (Entrega 7): chegando vivo a 1:30 o ladrão some no horizonte e vence. Cresce com as fases (backlog).
   match: {
@@ -74,6 +74,7 @@ export const BALANCE = {
     police: {
       fireRateStep: 0.1, fireIntervalMin: 0.3, powerStep: 0.5, powerMax: 3, heal: 3,
       nitroBonus: 0.4, nitroTime: 3, ramCharges: 3, ramThief: 8, ramPolice: 1, heliTime: 8, pierceTime: 10,
+      heliFireInterval: 0.7, // s: o helicóptero atira sozinho, além do policial (dano cheio, sem perda pela distância)
     },
     bomb: { damage: 15, // teste de balanço C
       lifetime: 20, dropBehind: 3, radiusS: 1.4, radiusX: 1.2 },

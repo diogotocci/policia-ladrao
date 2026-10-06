@@ -149,12 +149,13 @@ export function createWebAudioBackend(): AudioBackend {
     g.gain.linearRampToValueAtTime(v.gain * gainScale, start + v.attack);
     g.gain.linearRampToValueAtTime(0, start + dur);
     let src: AudioScheduledSourceNode;
-    if (v.wave === 'noise') {
+    if (v.wave === 'noise' || v.wave === 'squeal') {
       const b = ctx.createBufferSource();
       b.buffer = noise;
       b.loop = true;
       const f = ctx.createBiquadFilter();
-      f.type = 'lowpass';
+      f.type = v.wave === 'squeal' ? 'bandpass' : 'lowpass';
+      if (v.wave === 'squeal') f.Q.setValueAtTime(v.q ?? 12, start);
       f.frequency.setValueAtTime(v.freq, start);
       f.frequency.exponentialRampToValueAtTime(Math.max(40, v.freqEnd), start + dur);
       b.connect(f).connect(g);

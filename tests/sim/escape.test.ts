@@ -131,3 +131,34 @@ describe('end scenes with traffic (playtest: the thief drove through cars)', () 
     expect(bad).toBe(0);
   }, 60000);
 });
+
+describe('police destroyed (playtest 2026-10-06): the police stops, the thief drives away, then the end', () => {
+  const doomed = (): WorldState => {
+    const w0 = createWorld({ seed: 4, playerRole: 'police', traffic: false, curves: false });
+    const w = withCar(w0, 'thief', { ...thiefOf(w0), s: 1000, x: 1.5, speed: 34 });
+    return withCar({ ...w, time: 40 }, 'police', { ...policeOf(w), s: 990, x: 1.5, speed: 34, hp: 0.4 });
+  };
+  const kill = (w: WorldState) => withCar(w, 'police', { ...policeOf(w), hp: 0 });
+
+  it('police at 0: not over yet — the police brakes to a stop and the thief speeds away; no shots or damage', () => {
+    let w = stepWorld(kill(doomed()), NO_INTENTS, DT);
+    expect(w.match.over).toBe(false);
+    expect(w.match.escapeAt).toBeCloseTo(40, 1);
+    const hp = thiefOf(w).hp;
+    while (!w.match.over) {
+      w = stepWorld(w, { ...NO_INTENTS, fire: true }, DT);
+      expect(w.events.some((e) => e.type === 'shot' || e.type === 'hit')).toBe(false);
+    }
+    expect(policeOf(w).speed).toBeLessThan(1);
+    expect(thiefOf(w).s - policeOf(w).s).toBeGreaterThan(60);
+    expect(thiefOf(w).hp).toBe(hp);
+  });
+
+  it('then the thief wins by destroying the police; the time is when the police was destroyed', () => {
+    let w = stepWorld(kill(doomed()), NO_INTENTS, DT);
+    const at = w.match.escapeAt!;
+    while (!w.match.over) w = stepWorld(w, NO_INTENTS, DT);
+    expect(w.match).toMatchObject({ over: true, winner: 'thief', reason: 'policeDown', endTime: at });
+    expect(w.events).toContainEqual({ type: 'end', winner: 'thief' });
+  });
+});

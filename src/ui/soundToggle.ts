@@ -1,5 +1,6 @@
 // Botão de som (alto-falante desenhado em SVG) e tecla M. A escolha fica salva; storage indisponível não quebra nada.
 import { ICONS } from './icons';
+import { onTap } from './mobileShell';
 
 const KEY = 'pl.sound';
 
@@ -38,7 +39,7 @@ export function createSoundToggle(
     render();
     opts.onChange(muted);
   };
-  btn.addEventListener('click', () => {
+  onTap(btn, () => {
     toggle();
     btn.blur(); // sem foco no botão: Espaço continua atirando no PC
   });
