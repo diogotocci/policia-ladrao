@@ -56,7 +56,8 @@ export type GameEvent =
   | { type: 'noTarget'; from: Role }
   | { type: 'skid'; role: Role; s: number; x: number }
   | { type: 'end'; winner: Role }
-  | { type: 'escape' };
+  | { type: 'escape' }
+  | { type: 'arrest' };
 
 export interface MatchState {
   over: boolean;
@@ -66,6 +67,8 @@ export interface MatchState {
   reason?: 'escape' | 'policeDown' | 'thiefDown';
   /** instante em que começou a cena de fuga (1:30) */
   escapeAt?: number;
+  /** instante em que o ladrão foi destruído (cena da prisão) */
+  arrestAt?: number;
 }
 
 export interface WorldState {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Role } from '../../src/config/balance';
+import { BALANCE, type Role } from '../../src/config/balance';
 import { NO_INTENTS } from '../../src/sim/intents';
 import { createWorld, policeOf, stepWorld, thiefOf, withCar, type WorldState } from '../../src/sim/world';
 
@@ -22,7 +22,10 @@ describe('match end', () => {
     }
     expect(w.match.over).toBe(true);
     expect(w.match.winner).toBe('police');
-    expect(w.match.endTime).toBeCloseTo(w.time, 10);
+    // o fim vem depois da cena da prisão; o tempo que conta é o do instante em que zerou
+    expect(w.match.arrestAt).toBeDefined();
+    expect(w.match.endTime).toBe(w.match.arrestAt);
+    expect(w.time).toBeGreaterThanOrEqual(w.match.arrestAt! + BALANCE.match.arrestScene - 1e-6);
     expect(w.events).toContainEqual({ type: 'end', winner: 'police' });
   });
 
