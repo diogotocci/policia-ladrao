@@ -65,7 +65,7 @@ const mount = (root: HTMLElement, el: HTMLElement, focus?: HTMLElement): Disposa
 // ---------- title ----------
 export function renderTitle(
   root: HTMLElement,
-  p: { onPlay(): void; onRanking(): void; mountToggle(parent: HTMLElement): Disposable },
+  p: { onPlay(): void; onRanking(): void; mountToggle(parent: HTMLElement): Disposable; version?: string },
 ): Disposable {
   const s = h('section', 'screen screen-title');
   s.setAttribute('aria-label', 'Polícia × Ladrão');
@@ -81,6 +81,7 @@ export function renderTitle(
   const sound = h('div', 'title-sound');
   const toggle = p.mountToggle(sound);
   s.append(logo, name, row, sound);
+  if (p.version) s.append(h('p', 'title-version', `v${p.version}`));
   const m = mount(root, s, play);
   return { dispose: () => (toggle.dispose(), m.dispose()) };
 }

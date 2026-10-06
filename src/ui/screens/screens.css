@@ -124,6 +124,18 @@
 .title-name span {
   color: #ffcf4a;
 }
+.title-version {
+  position: absolute;
+  bottom: max(8px, var(--safe-bottom));
+  left: 0;
+  right: 0;
+  margin: 0;
+  font:
+    600 11px/1 ui-monospace,
+    monospace;
+  letter-spacing: 0.04em;
+  opacity: 0.5;
+}
 .title-sound {
   position: absolute;
   top: max(12px, var(--safe-top));

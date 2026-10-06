@@ -9,6 +9,10 @@ import { emptyBoard, insert, loadBoard, qualifies, saveBoard, type Board } from 
 import { initialState, reduce, type FlowAction, type FlowState } from './ui/screens/flow';
 import { renderChoose, renderCountdown, renderEnd, renderPause, renderRanking, renderTitle } from './ui/screens/screens';
 
+declare const __APP_VERSION__: string | undefined;
+/** injected by Vite (package.json version); absent when the module runs outside a Vite build (unit tests) */
+const APP_VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : undefined;
+
 export function startApp(
   container: HTMLElement,
   opts: {
@@ -93,6 +97,7 @@ export function startApp(
           onPlay: () => press({ type: 'play' }),
           onRanking: () => press({ type: 'openRanking' }),
           mountToggle: (p) => audio.mountToggle(p),
+          version: APP_VERSION,
         });
         break;
       case 'choose': {

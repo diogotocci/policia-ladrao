@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 
 const errors: string[] = [];
@@ -24,6 +25,12 @@ test('splash: shows right away, then fades out once the title is ready; iPhone l
   const imgs = await page.locator('link[rel="apple-touch-startup-image"]').evaluateAll((ls) => ls.map((l) => l.getAttribute('href')!));
   expect(imgs.length).toBeGreaterThanOrEqual(10);
   for (const src of imgs.slice(0, 3)) expect((await request.get(src)).ok(), src).toBe(true);
+});
+
+test('title screen footer shows the app version from package.json', async ({ page }) => {
+  const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { version: string };
+  await page.goto('/?app');
+  await expect(page.locator('.title-version')).toHaveText(`v${version}`);
 });
 
 test('installable webapp: manifest (fullscreen, landscape) and icons are served', async ({ page, request }) => {

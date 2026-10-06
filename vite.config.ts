@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, type Plugin } from 'vite';
 import { injectPrecache, precacheList } from './src/pwa/strategy';
@@ -16,7 +17,13 @@ const swPrecache = (): Plugin => ({
 export default defineConfig({
   plugins: [swPrecache()],
   // build version: service worker cache name (a new build clears the old cache)
-  define: { __BUILD_ID__: JSON.stringify(Date.now().toString(36)) },
+  // app version shown on the title screen (package.json)
+  define: {
+    __BUILD_ID__: JSON.stringify(Date.now().toString(36)),
+    __APP_VERSION__: JSON.stringify(
+      (JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { version: string }).version,
+    ),
+  },
   build: {
     target: 'es2022',
     rollupOptions: {

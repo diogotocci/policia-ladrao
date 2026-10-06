@@ -14,6 +14,11 @@ const button = (label: string) =>
   [...root.querySelectorAll('button')].find((b) => b.textContent?.includes(label) || b.getAttribute('aria-label') === label)!;
 
 describe('title', () => {
+  it('shows the app version in the footer', () => {
+    renderTitle(root, { onPlay: vi.fn(), onRanking: vi.fn(), mountToggle: () => ({ dispose() {} }), version: '0.8.0' });
+    expect(root.querySelector('.title-version')!.textContent).toBe('v0.8.0');
+  });
+
   it('Jogar and Ranking buttons, focus on Jogar, sound toggle slot', () => {
     const onPlay = vi.fn();
     const onRanking = vi.fn();
