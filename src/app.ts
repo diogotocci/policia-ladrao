@@ -11,7 +11,15 @@ import { renderChoose, renderCountdown, renderEnd, renderPause, renderRanking, r
 
 export function startApp(
   container: HTMLElement,
-  opts: { quality?: QualityTier; debug?: boolean; debugHp?: { police?: number; thief?: number }; traffic?: boolean; mute?: boolean; curves?: boolean; escapeTime?: number } = {},
+  opts: {
+    quality?: QualityTier;
+    debug?: boolean;
+    debugHp?: { police?: number; thief?: number };
+    traffic?: boolean;
+    mute?: boolean;
+    curves?: boolean;
+    escapeTime?: number;
+  } = {},
 ): { stop(): void } {
   const storage = (() => {
     try {
@@ -120,9 +128,13 @@ export function startApp(
           qualifies: s.qualifies,
           saved: s.saved,
           onSave: (initials) => {
-            const thief = s.role === 'thief'
-              ? { hp: Math.max(0, Math.min(100, s.result.hp ?? 0)), how: s.result.reason === 'escape' ? ('escape' as const) : ('kill' as const) }
-              : {};
+            const thief =
+              s.role === 'thief'
+                ? {
+                    hp: Math.max(0, Math.min(100, s.result.hp ?? 0)),
+                    how: s.result.reason === 'escape' ? ('escape' as const) : ('kill' as const),
+                  }
+                : {};
             const r = insert(board, s.role, { initials, time: s.result.time, date: new Date().toISOString(), ...thief });
             board = r.board;
             if (storage) saveBoard(storage, board);

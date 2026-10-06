@@ -44,7 +44,10 @@ function box(w: number, h: number, d: number, x: number, y: number, z: number, h
   return g;
 }
 
-export function createHeli(scene: THREE.Scene): { update(police: CarState, time: number, originS: number, dt: number): void; group: THREE.Group } {
+export function createHeli(scene: THREE.Scene): {
+  update(police: CarState, time: number, originS: number, dt: number): void;
+  group: THREE.Group;
+} {
   const BLUE = 0x1d2f5c;
   const WHITE = 0xe8ecf2;
   const GLASS = 0x2a3a4a;

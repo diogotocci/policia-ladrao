@@ -17,8 +17,15 @@ const mat = (m: THREE.Object3D, name: string) => (m.getObjectByName(name) as THR
 describe('damageLook (spec §9 table)', () => {
   it('a healthy car looks new', () => {
     expect(damageLook(100)).toEqual({
-      dirt: 0, dents: 0, tiltedLamp: false, whiteSmoke: false, hangingBumper: false,
-      crackedGlass: false, blackSmoke: false, sparks: false, blinkingHeadlight: false,
+      dirt: 0,
+      dents: 0,
+      tiltedLamp: false,
+      whiteSmoke: false,
+      hangingBumper: false,
+      crackedGlass: false,
+      blackSmoke: false,
+      sparks: false,
+      blinkingHeadlight: false,
     });
   });
 

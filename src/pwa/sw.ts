@@ -67,7 +67,13 @@ sw.addEventListener('fetch', (e) => {
   // rede lenta: depois de 4 s usa a cópia guardada (se houver) em vez de deixar a tela em branco
   const network = fetch(req);
   const slow = new Promise<Response>((resolve, reject) =>
-    setTimeout(() => caches.match(req.mode === 'navigate' ? '/' : req, { ignoreVary: true }).then((hit) => (hit ? resolve(hit) : reject(new Error('sem cópia')))), 4000),
+    setTimeout(
+      () =>
+        caches
+          .match(req.mode === 'navigate' ? '/' : req, { ignoreVary: true })
+          .then((hit) => (hit ? resolve(hit) : reject(new Error('sem cópia')))),
+      4000,
+    ),
   );
   e.respondWith(
     Promise.race([network, slow.catch(() => network)])

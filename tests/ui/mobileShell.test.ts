@@ -88,7 +88,15 @@ describe('fullscreen on the first touch (browser bars hidden)', () => {
 
   it('a phone without orientation lock (iPhone) does not throw', () => {
     const { doc, win } = setup({ enabled: false });
-    Object.assign(win, { screen: { orientation: { lock: () => { throw new Error('nope'); } } } });
+    Object.assign(win, {
+      screen: {
+        orientation: {
+          lock: () => {
+            throw new Error('nope');
+          },
+        },
+      },
+    });
     installFullscreenOnFirstTap(doc, win);
     expect(() => tap(win)).not.toThrow();
   });

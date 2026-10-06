@@ -122,10 +122,21 @@ export function createWorldProps(
     g.name = `box-${i}`;
     const shell = new THREE.Mesh(
       shapes.blue.shell,
-      new THREE.MeshPhysicalMaterial({ color: 0x2f6bff, emissive: 0x2f6bff, emissiveIntensity: 0.45, transparent: true, opacity: 0.7, roughness: 0.15, clearcoat: 1 }),
+      new THREE.MeshPhysicalMaterial({
+        color: 0x2f6bff,
+        emissive: 0x2f6bff,
+        emissiveIntensity: 0.45,
+        transparent: true,
+        opacity: 0.7,
+        roughness: 0.15,
+        clearcoat: 1,
+      }),
     );
     shell.name = 'shell';
-    const core = new THREE.Mesh(shapes.blue.core, new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 2 }));
+    const core = new THREE.Mesh(
+      shapes.blue.core,
+      new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 2 }),
+    );
     core.name = 'core';
     shell.castShadow = true;
     g.add(shell, core);
@@ -138,12 +149,18 @@ export function createWorldProps(
   const bombs = Array.from({ length: BOMBS }, (_, i) => {
     const g = new THREE.Group();
     g.name = `bomb-${i}`;
-    const ball = new THREE.Mesh(new THREE.SphereGeometry(0.38, 16, 12), new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.4, metalness: 0.4 }));
+    const ball = new THREE.Mesh(
+      new THREE.SphereGeometry(0.38, 16, 12),
+      new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.4, metalness: 0.4 }),
+    );
     ball.position.y = 0.38;
     ball.castShadow = true;
     const fuse = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.25, 6), new THREE.MeshStandardMaterial({ color: 0x8b6b3d }));
     fuse.position.y = 0.85;
-    const light = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), new THREE.MeshStandardMaterial({ color: 0xff3020, emissive: 0xff3020, emissiveIntensity: 2 }));
+    const light = new THREE.Mesh(
+      new THREE.SphereGeometry(0.07, 8, 6),
+      new THREE.MeshStandardMaterial({ color: 0xff3020, emissive: 0xff3020, emissiveIntensity: 2 }),
+    );
     light.name = 'light';
     light.position.y = 0.98;
     g.add(ball, fuse, light);
@@ -160,7 +177,13 @@ export function createWorldProps(
   bumpMat.map!.repeat.set(3, 1);
   const signGeo = new THREE.CylinderGeometry(0.06, 0.06, 2.6, 6).translate(0, 1.3, 0);
   const signPlateGeo = new THREE.PlaneGeometry(1.5, 1.5).translate(0, 3, 0);
-  const signMat = new THREE.MeshStandardMaterial({ map: bumpSignTexture(), alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.5, emissive: 0x3a2a00 });
+  const signMat = new THREE.MeshStandardMaterial({
+    map: bumpSignTexture(),
+    alphaTest: 0.5,
+    side: THREE.DoubleSide,
+    roughness: 0.5,
+    emissive: 0x3a2a00,
+  });
   const paintGeo = mergeGeometries([-6, 0, 6].map((dz) => new THREE.PlaneGeometry(6, 0.6).rotateX(-Math.PI / 2).translate(0, 0, dz)))!;
   const paintMat = new THREE.MeshStandardMaterial({ color: 0xf2c230, roughness: 0.8, polygonOffset: true, polygonOffsetFactor: -2 });
   const poleMat = new THREE.MeshStandardMaterial({ color: 0x55585e, metalness: 0.6, roughness: 0.4 });
@@ -254,7 +277,9 @@ export function createWorldProps(
         put(sign, b.s - SIGN_BEFORE, side * (BALANCE.road.halfWidth + 0.5), 0);
       });
 
-      const sharp = w.curvesOn ? curvesBetween(w.seed, originS - 60 + CURVE_SIGN_BEFORE, originS + 300 + CURVE_SIGN_BEFORE).filter((c) => c.sharp) : [];
+      const sharp = w.curvesOn
+        ? curvesBetween(w.seed, originS - 60 + CURVE_SIGN_BEFORE, originS + 300 + CURVE_SIGN_BEFORE).filter((c) => c.sharp)
+        : [];
       curveSigns.forEach((g, i) => {
         const c = sharp[i];
         g.visible = !!c;

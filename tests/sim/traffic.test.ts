@@ -55,7 +55,9 @@ describe('traffic spawning', () => {
     for (let seed = 1; seed <= 100; seed++) {
       const w0 = { ...createWorld({ seed, playerRole: 'thief' }), level: 10 };
       const front = Math.max(policeOf(w0).s, thiefOf(w0).s);
-      const boxes = lanes.flatMap((x, i) => [130, 170, 210].map((d, j) => ({ id: i * 3 + j + 1, s: front + d, x, color: 'blue' as const })));
+      const boxes = lanes.flatMap((x, i) =>
+        [130, 170, 210].map((d, j) => ({ id: i * 3 + j + 1, s: front + d, x, color: 'blue' as const })),
+      );
       const bombs = lanes.map((x, i) => ({ id: i + 1, s: front + 150 + i * 20, x, expiresAt: 99 }));
       const w = fill({ ...w0, boxes, bombs });
       for (const t of w.traffic) {

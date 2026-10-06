@@ -61,7 +61,20 @@ export const BALANCE = {
     arrestSide: 3, // m de lado
     thiefStopDecel: 18, // m/s²
   },
-  traffic: { baseCount: 3, perLevel: 0.08, speedMin: 0.5, speedMax: 0.7, spawnAheadMin: 120, spawnAheadMax: 240, despawnBehind: 80, laneChangePerSecond: 0.15, laneChangeSpeed: 3, minGap: 12, minGapToGameCar: 40, minGapToItem: 8 },
+  traffic: {
+    baseCount: 3,
+    perLevel: 0.08,
+    speedMin: 0.5,
+    speedMax: 0.7,
+    spawnAheadMin: 120,
+    spawnAheadMax: 240,
+    despawnBehind: 80,
+    laneChangePerSecond: 0.15,
+    laneChangeSpeed: 3,
+    minGap: 12,
+    minGapToGameCar: 40,
+    minGapToItem: 8,
+  },
   items: {
     boxEvery: 200, // m (~1 a cada 6 s no cruzeiro; playtest 2026-10-04: a cada 300 m vinham poucas)
     boxJitter: 40,
@@ -72,12 +85,27 @@ export const BALANCE = {
     colorTilt: 0.15, // até 65/35
     colorTiltAtHpDiff: 50,
     police: {
-      fireRateStep: 0.1, fireIntervalMin: 0.3, powerStep: 0.5, powerMax: 3, heal: 3,
-      nitroBonus: 0.4, nitroTime: 3, ramCharges: 3, ramThief: 8, ramPolice: 1, heliTime: 8, pierceTime: 10,
+      fireRateStep: 0.1,
+      fireIntervalMin: 0.3,
+      powerStep: 0.5,
+      powerMax: 3,
+      heal: 3,
+      nitroBonus: 0.4,
+      nitroTime: 3,
+      ramCharges: 3,
+      ramThief: 8,
+      ramPolice: 1,
+      heliTime: 8,
+      pierceTime: 10,
       heliFireInterval: 0.7, // s: o helicóptero atira sozinho, além do policial (dano cheio, sem perda pela distância)
     },
-    bomb: { damage: 15, // teste de balanço C
-      lifetime: 20, dropBehind: 3, radiusS: 1.4, radiusX: 1.2 },
+    bomb: {
+      damage: 15, // teste de balanço C
+      lifetime: 20,
+      dropBehind: 3,
+      radiusS: 1.4,
+      radiusX: 1.2,
+    },
     thief: { platesMax: 3, bombsMax: 3, heal: 3, gunStep: 0.15, gunIntervalMin: 0.6 },
     weights: {
       police: { fireRate: 2, power: 2, heal: 3, nitro: 2, ram: 2, heli: 1, pierce: 2 },

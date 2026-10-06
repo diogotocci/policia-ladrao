@@ -46,7 +46,7 @@ function crackTexture(): THREE.DataTexture {
   };
   // estrela de rachaduras a partir de um ponto de impacto, com galhos
   let seed = 7;
-  const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const branch = (x: number, y: number, a: number, len: number, depth: number) => {
     for (let k = 0; k < len; k++) {
       a += (rand() - 0.5) * 0.35;

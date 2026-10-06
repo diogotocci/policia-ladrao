@@ -3,17 +3,17 @@ import { expect, test, type Page } from '@playwright/test';
 type Snap = { time: number; player: { hp: number }; opponent: { hp: number }; events: { type: string }[] };
 type Visuals = { particles: number; gunners: { police: boolean; thief: boolean }; muted: boolean };
 type Game = { snapshot(): Snap; drawCalls(): number; mirrorDrawCalls(): number; visuals(): Visuals };
-const game = (page: Page) => page.evaluate(() => {
-  const g = (window as unknown as { __game: Game }).__game;
-  return { snap: g.snapshot(), draws: g.drawCalls(), mirror: g.mirrorDrawCalls(), visuals: g.visuals() };
-});
+const game = (page: Page) =>
+  page.evaluate(() => {
+    const g = (window as unknown as { __game: Game }).__game;
+    return { snap: g.snapshot(), draws: g.drawCalls(), mirror: g.mirrorDrawCalls(), visuals: g.visuals() };
+  });
 const waitSim = async (page: Page, seconds: number) => {
   const t0 = (await game(page)).snap.time;
-  await page.waitForFunction(
-    (target) => (window as unknown as { __game: Game }).__game.snapshot().time >= target,
-    t0 + seconds,
-    { timeout: 150_000, polling: 50 },
-  );
+  await page.waitForFunction((target) => (window as unknown as { __game: Game }).__game.snapshot().time >= target, t0 + seconds, {
+    timeout: 150_000,
+    polling: 50,
+  });
 };
 
 const errors: string[] = [];

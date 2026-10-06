@@ -8,7 +8,14 @@ import { curvesBetween } from '../../src/sim/curves';
 import { createWorld, type TrafficCar, type WorldState } from '../../src/sim/world';
 
 const traffic = (n: number): TrafficCar[] =>
-  Array.from({ length: n }, (_, i) => ({ id: i + 1, s: 60 + i * 15, x: [-4.5, -1.5, 1.5, 4.5][i % 4]!, speed: 20, targetX: 0, model: i % 4 }));
+  Array.from({ length: n }, (_, i) => ({
+    id: i + 1,
+    s: 60 + i * 15,
+    x: [-4.5, -1.5, 1.5, 4.5][i % 4]!,
+    speed: 20,
+    targetX: 0,
+    model: i % 4,
+  }));
 const visibleNamed = (scene: THREE.Scene, prefix: string) => {
   let n = 0;
   scene.traverse((o) => o.name.startsWith(prefix) && o.visible && o.parent === scene && n++);
@@ -37,7 +44,10 @@ describe('createWorldProps', () => {
     const { scene, props } = setup();
     props.update(
       world({
-        boxes: [{ id: 1, s: 80, x: 1.5, color: 'red' }, { id: 2, s: 120, x: -1.5, color: 'blue' }],
+        boxes: [
+          { id: 1, s: 80, x: 1.5, color: 'red' },
+          { id: 2, s: 120, x: -1.5, color: 'blue' },
+        ],
         bombs: [{ id: 1, s: 30, x: 1.5, expiresAt: 99 }],
       }),
       0,
@@ -68,8 +78,17 @@ describe('createWorldProps', () => {
 
   it('blue and red boxes differ in shape and in shell colour, not only in the core', () => {
     const { scene, props } = setup();
-    props.update(world({ boxes: [{ id: 1, s: 80, x: 1.5, color: 'blue' }, { id: 2, s: 120, x: -1.5, color: 'red' }] }), 0, 0);
-    const shellOf = (name: string) => (scene.getObjectByName(name)!.getObjectByName('shell') as THREE.Mesh);
+    props.update(
+      world({
+        boxes: [
+          { id: 1, s: 80, x: 1.5, color: 'blue' },
+          { id: 2, s: 120, x: -1.5, color: 'red' },
+        ],
+      }),
+      0,
+      0,
+    );
+    const shellOf = (name: string) => scene.getObjectByName(name)!.getObjectByName('shell') as THREE.Mesh;
     const [blue, red] = [shellOf('box-0'), shellOf('box-1')];
     expect(blue.geometry.type).not.toBe(red.geometry.type);
     const hue = (m: THREE.Mesh) => (m.material as THREE.MeshStandardMaterial).color.getHSL({ h: 0, s: 0, l: 0 });
@@ -156,7 +175,8 @@ describe('car models', () => {
     const b = createCarModel('police');
     updateCarModel(a, createCar('police', 1), 0);
     updateCarModel(b, createCar('police', 1), 0.25);
-    const red = (m: THREE.Object3D) => ((m.getObjectByName('lightbar-red') as THREE.Mesh).material as THREE.MeshStandardMaterial).emissiveIntensity;
+    const red = (m: THREE.Object3D) =>
+      ((m.getObjectByName('lightbar-red') as THREE.Mesh).material as THREE.MeshStandardMaterial).emissiveIntensity;
     expect(red(a)).not.toBe(red(b));
   });
 

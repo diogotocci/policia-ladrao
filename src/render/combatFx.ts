@@ -61,7 +61,15 @@ export function createCombatFx(scene: THREE.Scene): {
   sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkPos, 3));
   const sparks = new THREE.Points(
     sparkGeo,
-    new THREE.PointsMaterial({ color: 0xffc860, size: 0.1, map: dotTexture(), alphaTest: 0.5, toneMapped: false, transparent: true, depthWrite: false }),
+    new THREE.PointsMaterial({
+      color: 0xffc860,
+      size: 0.1,
+      map: dotTexture(),
+      alphaTest: 0.5,
+      toneMapped: false,
+      transparent: true,
+      depthWrite: false,
+    }),
   );
   sparks.name = 'sparks';
   sparks.frustumCulled = false;

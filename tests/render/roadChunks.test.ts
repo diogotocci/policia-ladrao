@@ -100,7 +100,12 @@ describe('curved road chunks (Entrega 6)', () => {
     const verts = worldVerts(scene, k);
     // linhas da grade: 2 vértices (bordas); o meio de cada linha é o centro da pista
     const mids = [];
-    for (let i = 0; i + 1 < verts.length; i += 2) mids.push(verts[i]!.clone().add(verts[i + 1]!).multiplyScalar(0.5));
+    for (let i = 0; i + 1 < verts.length; i += 2)
+      mids.push(
+        verts[i]!.clone()
+          .add(verts[i + 1]!)
+          .multiplyScalar(0.5),
+      );
     const closest = Math.min(...mids.map((v) => Math.hypot(v.x - target.x, v.z - target.z)));
     expect(closest).toBeLessThan(1.5); // centro de uma linha da grade a no máximo ~um segmento
   });

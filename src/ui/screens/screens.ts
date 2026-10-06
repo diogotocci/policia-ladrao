@@ -21,7 +21,8 @@ const btn = (label: string, cls: string, onClick: () => void) => {
   b.addEventListener('click', onClick);
   return b;
 };
-const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE =
+  'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 /** Tab/Shift+Tab ficam dentro da tela aberta (não escapam para os botões do jogo atrás dela). */
 export function trapFocus(el: HTMLElement): () => void {
@@ -88,15 +89,26 @@ export function renderTitle(
 const RULES: Record<Role, { title: string; lines: string[] }> = {
   police: {
     title: 'Polícia',
-    lines: ['Prenda o ladrão antes de 1:30', 'Você nunca passa o ladrão: encoste e atire', 'Caixinhas azuis: cadência, nitro, helicóptero…'],
+    lines: [
+      'Prenda o ladrão antes de 1:30',
+      'Você nunca passa o ladrão: encoste e atire',
+      'Caixinhas azuis: cadência, nitro, helicóptero…',
+    ],
   },
   thief: {
     title: 'Ladrão',
-    lines: ['Aguente 1:30 e suma no horizonte (ou destrua a viatura)', 'Quebra-molas, tráfego e bombas são aliados', 'Caixinhas vermelhas: placas, bombas, arma traseira'],
+    lines: [
+      'Aguente 1:30 e suma no horizonte (ou destrua a viatura)',
+      'Quebra-molas, tráfego e bombas são aliados',
+      'Caixinhas vermelhas: placas, bombas, arma traseira',
+    ],
   },
 };
 
-export function renderChoose(root: HTMLElement, p: { onChoose(role: Role): void; onBack(): void }): Disposable & { previews: Record<Role, HTMLElement> } {
+export function renderChoose(
+  root: HTMLElement,
+  p: { onChoose(role: Role): void; onBack(): void },
+): Disposable & { previews: Record<Role, HTMLElement> } {
   const s = h('section', 'screen screen-choose');
   s.append(h('h2', 'screen-heading', 'Escolha seu lado'));
   const cards = h('div', 'choose-cards');
@@ -313,7 +325,12 @@ export function renderRanking(
       tag.setAttribute('aria-label', e.how === 'kill' ? 'destruiu a viatura' : `fugiu, vida ${Math.round(e.hp ?? 0)}`);
       time.append(tag);
     }
-    row.append(h('span', 'ranking-pos', String(i + 1)), h('span', 'ranking-initials', e.initials), time, h('span', 'ranking-date', shortDate(e.date)));
+    row.append(
+      h('span', 'ranking-pos', String(i + 1)),
+      h('span', 'ranking-initials', e.initials),
+      time,
+      h('span', 'ranking-date', shortDate(e.date)),
+    );
     list.append(row);
   });
   const back = btn('Voltar', 'is-quiet', p.onBack);

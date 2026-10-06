@@ -43,12 +43,18 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
     let x = t.x + Math.sign(dx) * Math.min(Math.abs(dx), T.laneChangeSpeed * dt);
     // não fecha ninguém que esteja do lado (outro carro, polícia ou ladrão)
     const L0 = BALANCE.car.length + 0.5;
-    if (dx !== 0 && ([...moved, ...order.filter((o) => o.id !== t.id && !moved.some((m) => m.id === o.id)), police, thief] as { s: number; x: number }[]).some((o) => Math.abs(o.s - t.s) < L0 && Math.abs(o.x - x) < 2 * BALANCE.car.halfWidth && Math.abs(o.x - t.x) >= Math.abs(o.x - x)))
+    if (
+      dx !== 0 &&
+      (
+        [...moved, ...order.filter((o) => o.id !== t.id && !moved.some((m) => m.id === o.id)), police, thief] as { s: number; x: number }[]
+      ).some((o) => Math.abs(o.s - t.s) < L0 && Math.abs(o.x - x) < 2 * BALANCE.car.halfWidth && Math.abs(o.x - t.x) >= Math.abs(o.x - x))
+    )
       x = t.x;
     // quem vai à frente na mesma faixa (já movido neste passo) — inclusive polícia e ladrão parados/freando (cenas do fim)
     let leader: { s: number; speed: number } | undefined;
     for (const o of moved) if ((overlapsLane(o, x) || overlapsLane(o, targetX)) && o.s >= t.s && (!leader || o.s < leader.s)) leader = o;
-    for (const g of [police, thief]) if ((sameLane(g.x, x) || sameLane(g.x, targetX)) && g.s >= t.s && (!leader || g.s < leader.s)) leader = g;
+    for (const g of [police, thief])
+      if ((sameLane(g.x, x) || sameLane(g.x, targetX)) && g.s >= t.s && (!leader || g.s < leader.s)) leader = g;
     let s = t.s + t.speed * dt;
     if (leader) {
       const gap = leader.s - t.s;

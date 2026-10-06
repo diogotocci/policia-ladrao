@@ -21,7 +21,10 @@ describe('screen flow', () => {
   });
 
   it('ranking opened from the end screen goes back to the same end screen, record still pending if not saved', () => {
-    const end = reduce({ screen: 'playing', role: 'thief' }, { type: 'ended', result: { winner: 'thief', time: 90, reason: 'escape', hp: 40 }, qualifies: true });
+    const end = reduce(
+      { screen: 'playing', role: 'thief' },
+      { type: 'ended', result: { winner: 'thief', time: 90, reason: 'escape', hp: 40 }, qualifies: true },
+    );
     let s = reduce(end, { type: 'openRanking' });
     s = reduce(s, { type: 'tab', tab: 'police' });
     s = reduce(s, { type: 'back' });
@@ -67,7 +70,13 @@ describe('screen flow', () => {
 
   it('invalid actions are ignored (same object back)', () => {
     const t = initialState();
-    for (const a of [{ type: 'pause' }, { type: 'resume' }, { type: 'restart' }, { type: 'tick', dt: 1 }, { type: 'ended', result: { winner: 'police', time: 1 } }] as const)
+    for (const a of [
+      { type: 'pause' },
+      { type: 'resume' },
+      { type: 'restart' },
+      { type: 'tick', dt: 1 },
+      { type: 'ended', result: { winner: 'police', time: 1 } },
+    ] as const)
       expect(reduce(t, a)).toBe(t);
     const playing: FlowState = { screen: 'playing', role: 'police' };
     expect(reduce(playing, { type: 'play' })).toBe(playing);

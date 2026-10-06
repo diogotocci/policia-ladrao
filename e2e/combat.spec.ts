@@ -3,8 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 type Car = { s: number; x: number; speed: number; hp: number; role: string };
 type Snap = { time: number; playerRole: string; player: Car; opponent: Car; match: { over: boolean; winner?: string } };
 
-const snapshot = (page: Page) =>
-  page.evaluate(() => (window as unknown as { __game: { snapshot(): Snap } }).__game.snapshot());
+const snapshot = (page: Page) => page.evaluate(() => (window as unknown as { __game: { snapshot(): Snap } }).__game.snapshot());
 const police = (s: Snap) => (s.playerRole === 'police' ? s.player : s.opponent);
 const thief = (s: Snap) => (s.playerRole === 'thief' ? s.player : s.opponent);
 
@@ -86,7 +85,9 @@ test('winning shows the end screen and "Jogar de novo" restarts', async ({ page 
   await page.keyboard.up('Space');
   await expect(page.getByText('O ladrão foi detido')).toBeVisible();
   await page.getByRole('button', { name: 'Jogar de novo' }).click();
-  await page.waitForFunction(() => '__game' in window && (window as unknown as { __game: { snapshot(): { time: number } } }).__game.snapshot().time < 2);
+  await page.waitForFunction(
+    () => '__game' in window && (window as unknown as { __game: { snapshot(): { time: number } } }).__game.snapshot().time < 2,
+  );
   await expect(page.getByText('Você venceu!')).toBeHidden();
 });
 

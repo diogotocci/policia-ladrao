@@ -78,6 +78,8 @@ test('the picture never stretches: a size change without a resize event (iOS sta
     null,
     { timeout: 15_000 },
   );
-  const aspect = await page.evaluate(() => (window as unknown as { __game: { visuals(): { cameraAspect: number } } }).__game.visuals().cameraAspect);
+  const aspect = await page.evaluate(
+    () => (window as unknown as { __game: { visuals(): { cameraAspect: number } } }).__game.visuals().cameraAspect,
+  );
   expect(aspect).toBeCloseTo(600 / 390, 2);
 });

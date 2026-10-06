@@ -32,7 +32,11 @@ interface Slot {
 
 const SEGMENT = 2; // m: o chão de cada bloco é dobrado pela pista em segmentos de 2 m
 
-export function createRoad(scene: THREE.Scene, seed: number, frame: TrackFrame = createTrackFrame(seed, false)): { update(cameraS: number): void } {
+export function createRoad(
+  scene: THREE.Scene,
+  seed: number,
+  frame: TrackFrame = createTrackFrame(seed, false),
+): { update(cameraS: number): void } {
   const { first, last } = visibleChunkRange(0);
   const poolSize = last - first + 1;
 
@@ -66,7 +70,6 @@ export function createRoad(scene: THREE.Scene, seed: number, frame: TrackFrame =
   const head = new THREE.BoxGeometry(0.5, 0.2, 0.35).translate(1.2, 4.9, 0);
   const lampGeo = mergeGeometries([pole, arm, head])!;
   const lampMat = new THREE.MeshStandardMaterial({ color: 0x3d4046, roughness: 0.5, metalness: 0.6 });
-
 
   const tmp = new THREE.Object3D();
   const color = new THREE.Color();

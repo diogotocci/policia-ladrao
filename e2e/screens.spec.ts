@@ -24,7 +24,9 @@ const startAs = async (page: Page, side: 'police' | 'thief', extra = '') => {
   await page.waitForFunction(() => '__game' in window && !document.querySelector('.screen-countdown'), null, { timeout: 60_000 });
 };
 
-test('full product flow: title → choose thief → 3-2-1 → play → escape at the time limit → arcade initials → ranking (kept after reload)', async ({ page }) => {
+test('full product flow: title → choose thief → 3-2-1 → play → escape at the time limit → arcade initials → ranking (kept after reload)', async ({
+  page,
+}) => {
   await page.goto('/?app&quality=low&mute&debug&traffic=0&escape=4'); // fuga em 4 s (só debug)
   await expect(page.locator('.screen-title')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Jogar', exact: true })).toBeFocused();

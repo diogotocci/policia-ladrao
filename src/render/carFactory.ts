@@ -60,8 +60,7 @@ function extrudeProfile(shape: THREE.Shape, width: number, bevel = 0.07): THREE.
   return g;
 }
 
-const rb = (w: number, h: number, l: number, r: number, x = 0, y = 0, z = 0) =>
-  new RoundedBoxGeometry(w, h, l, 2, r).translate(x, y, z);
+const rb = (w: number, h: number, l: number, r: number, x = 0, y = 0, z = 0) => new RoundedBoxGeometry(w, h, l, 2, r).translate(x, y, z);
 
 const mesh = (geo: THREE.BufferGeometry, mat: THREE.Material | THREE.Material[], name = '') => {
   const m = new THREE.Mesh(geo, mat);
@@ -127,8 +126,20 @@ function addWheels(root: THREE.Object3D, halfTrack: number, axleRear: number, ax
 }
 
 function addLamps(body: THREE.Object3D, halfW: number, frontZ: number, rearZ: number, y: number) {
-  body.add(mesh(mirrored((sd) => rb(0.44, 0.15, 0.08, 0.03, sd * (halfW - 0.34), y, frontZ)), HEAD, 'headlights'));
-  body.add(mesh(mirrored((sd) => rb(0.56, 0.24, 0.08, 0.04, sd * (halfW - 0.36), y, rearZ)), TAIL, 'taillights'));
+  body.add(
+    mesh(
+      mirrored((sd) => rb(0.44, 0.15, 0.08, 0.03, sd * (halfW - 0.34), y, frontZ)),
+      HEAD,
+      'headlights',
+    ),
+  );
+  body.add(
+    mesh(
+      mirrored((sd) => rb(0.56, 0.24, 0.08, 0.04, sd * (halfW - 0.36), y, rearZ)),
+      TAIL,
+      'taillights',
+    ),
+  );
 }
 
 // ---------- viatura ----------
@@ -165,7 +176,9 @@ function buildPolice(root: THREE.Group, body: THREE.Group) {
   const doors = mirrored((sd) => rb(0.04, 0.3, 2.1, 0.02, sd * (W / 2 + 0.005), 0.62, 0.1));
   const hood = rb(1.2, 0.03, 0.9, 0.015, 0, 0.965, -1.55);
   body.add(mesh(mergeGeometries([doors, hood])!, BLUE, 'police-blue'));
-  body.add(mesh(mergeGeometries([rb(1.86, 0.22, 0.26, 0.07, 0, 0.42, -2.15), rb(1.86, 0.22, 0.26, 0.07, 0, 0.42, 2.15)])!, PLASTIC, 'bumpers'));
+  body.add(
+    mesh(mergeGeometries([rb(1.86, 0.22, 0.26, 0.07, 0, 0.42, -2.15), rb(1.86, 0.22, 0.26, 0.07, 0, 0.42, 2.15)])!, PLASTIC, 'bumpers'),
+  );
   addLamps(body, W / 2, -2.2, 2.2, 0.78);
 
   const bar = new THREE.Group();
@@ -261,27 +274,89 @@ interface CivilianSpec {
 const CIVILIANS: CivilianSpec[] = [
   // 0: sedã prata
   {
-    W: 1.78, color: 0xb9bec6, rearX: -2.2, frontX: 2.2, axles: [-1.35, 1.4],
-    shellTop: [[2.22, 0.6], [2.1, 0.84], [1.0, 0.92], [-1.2, 0.94], [-2.12, 0.9], [-2.24, 0.58]],
-    gh: [[-1.25, 0.88], [-0.8, 1.4], [0.4, 1.42], [1.0, 0.88]],
+    W: 1.78,
+    color: 0xb9bec6,
+    rearX: -2.2,
+    frontX: 2.2,
+    axles: [-1.35, 1.4],
+    shellTop: [
+      [2.22, 0.6],
+      [2.1, 0.84],
+      [1.0, 0.92],
+      [-1.2, 0.94],
+      [-2.12, 0.9],
+      [-2.24, 0.58],
+    ],
+    gh: [
+      [-1.25, 0.88],
+      [-0.8, 1.4],
+      [0.4, 1.42],
+      [1.0, 0.88],
+    ],
   },
   // 1: hatch verde
   {
-    W: 1.7, color: 0x2f7d5b, rearX: -1.85, frontX: 1.95, axles: [-1.15, 1.2],
-    shellTop: [[1.98, 0.6], [1.85, 0.84], [0.8, 0.94], [-1.75, 0.98], [-1.88, 0.6]],
-    gh: [[-1.8, 0.92], [-1.65, 1.45], [0.25, 1.47], [0.85, 0.92]],
+    W: 1.7,
+    color: 0x2f7d5b,
+    rearX: -1.85,
+    frontX: 1.95,
+    axles: [-1.15, 1.2],
+    shellTop: [
+      [1.98, 0.6],
+      [1.85, 0.84],
+      [0.8, 0.94],
+      [-1.75, 0.98],
+      [-1.88, 0.6],
+    ],
+    gh: [
+      [-1.8, 0.92],
+      [-1.65, 1.45],
+      [0.25, 1.47],
+      [0.85, 0.92],
+    ],
   },
   // 2: van branca
   {
-    W: 1.9, color: 0xe9ebee, rearX: -2.4, frontX: 2.3, axles: [-1.5, 1.55],
-    shellTop: [[2.32, 0.65], [2.2, 1.0], [1.6, 1.15], [-2.35, 1.2], [-2.42, 0.62]],
-    gh: [[1.55, 1.1], [1.0, 1.85], [-2.3, 1.9], [-2.38, 1.1]],
+    W: 1.9,
+    color: 0xe9ebee,
+    rearX: -2.4,
+    frontX: 2.3,
+    axles: [-1.5, 1.55],
+    shellTop: [
+      [2.32, 0.65],
+      [2.2, 1.0],
+      [1.6, 1.15],
+      [-2.35, 1.2],
+      [-2.42, 0.62],
+    ],
+    gh: [
+      [1.55, 1.1],
+      [1.0, 1.85],
+      [-2.3, 1.9],
+      [-2.38, 1.1],
+    ],
   },
   // 3: táxi amarelo
   {
-    W: 1.78, color: 0xf2c230, rearX: -2.2, frontX: 2.2, axles: [-1.35, 1.4],
-    shellTop: [[2.22, 0.6], [2.1, 0.84], [1.0, 0.92], [-1.2, 0.94], [-2.12, 0.9], [-2.24, 0.58]],
-    gh: [[-1.25, 0.88], [-0.8, 1.4], [0.4, 1.42], [1.0, 0.88]],
+    W: 1.78,
+    color: 0xf2c230,
+    rearX: -2.2,
+    frontX: 2.2,
+    axles: [-1.35, 1.4],
+    shellTop: [
+      [2.22, 0.6],
+      [2.1, 0.84],
+      [1.0, 0.92],
+      [-1.2, 0.94],
+      [-2.12, 0.9],
+      [-2.24, 0.58],
+    ],
+    gh: [
+      [-1.25, 0.88],
+      [-0.8, 1.4],
+      [0.4, 1.42],
+      [1.0, 0.88],
+    ],
     roofTop: true,
   },
 ];

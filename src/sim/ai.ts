@@ -43,7 +43,20 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 export function initialAiMemory(role: Role, w: WorldState): AiMemory {
   const me = role === 'police' ? policeOf(w) : thiefOf(w);
-  return { targetX: me.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {}, curveS: -1, curveBrake: false, curveLate: 0, ramUntil: 0 };
+  return {
+    targetX: me.x,
+    nextDecisionAt: 0,
+    brakeUntil: 0,
+    linedSince: -1,
+    bumpS: -1,
+    dodgeBump: false,
+    nextBombAt: 0,
+    bombDodge: {},
+    curveS: -1,
+    curveBrake: false,
+    curveLate: 0,
+    ramUntil: 0,
+  };
 }
 
 function steerTo(x: number, targetX: number): Pick<Intents, 'left' | 'right'> {
@@ -82,8 +95,7 @@ function bumpCovers(w: WorldState, s: number, laneX: number, mem: AiMemory): boo
 /** Escolhe uma faixa sem perigo, a mais próxima da desejada, sem cruzar faixas com perigo no caminho. */
 function safeLane(w: WorldState, role: Role, s: number, fromX: number, wantX: number, mem: AiMemory): number {
   const free = (x: number) => !laneBlocked(w, role, s, x, mem) && !bumpCovers(w, s, x, mem);
-  const pathClear = (to: number) =>
-    LANES.filter((x) => x >= Math.min(fromX, to) - 1.4 && x <= Math.max(fromX, to) + 1.4).every(free);
+  const pathClear = (to: number) => LANES.filter((x) => x >= Math.min(fromX, to) - 1.4 && x <= Math.max(fromX, to) + 1.4).every(free);
   const ranked = [...LANES].sort((a, b) => Math.abs(a - wantX) - Math.abs(b - wantX));
   return ranked.find((x) => pathClear(x)) ?? ranked.find(free) ?? nearestLane(fromX);
 }
@@ -192,7 +204,8 @@ export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): {
     let want = mem.targetX;
     const box = w.boxes.find((b) => b.color === 'red' && b.s > me.s + 10 && b.s - me.s < 120);
     const hunting = me.upgrades.bombs > 0 && behind > 0 && behind < 110;
-    if (hunting) want = foe.x; // com bomba: entra na faixa da polícia para soltar na frente dela
+    if (hunting)
+      want = foe.x; // com bomba: entra na faixa da polícia para soltar na frente dela
     else if (box && !dodge) want = box.x;
     else if (dodge || rng.next() < 0.25) {
       // vai para uma faixa longe da polícia (com um pouco de acaso)

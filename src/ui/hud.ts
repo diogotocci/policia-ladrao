@@ -39,7 +39,14 @@ export const ITEM_LABEL: Record<string, string> = {
   gun: 'Arma traseira',
 };
 const ITEM_ICON: Record<string, string> = {
-  fireRate: '⚡', power: '💥', ram: '🛡️', nitro: '🔥', heli: '🚁', pierce: '🎯', plate: '🛡️', gun: '🔫', // escudo nos dois (cada um só vê o seu lado)
+  fireRate: '⚡',
+  power: '💥',
+  ram: '🛡️',
+  nitro: '🔥',
+  heli: '🚁',
+  pierce: '🎯',
+  plate: '🛡️',
+  gun: '🔫', // escudo nos dois (cada um só vê o seu lado)
 };
 
 interface HudItem {
@@ -210,8 +217,12 @@ export function createHud(
         endTitle.textContent = won ? 'Você venceu!' : 'Você perdeu';
         endReason.textContent =
           w.match.reason === 'escape'
-            ? playerRole === 'thief' ? 'Fugiu! Sumiu no horizonte 🏁' : 'O ladrão fugiu 🏁'
-            : w.match.winner === 'police' ? 'O ladrão foi detido' : 'A viatura foi destruída';
+            ? playerRole === 'thief'
+              ? 'Fugiu! Sumiu no horizonte 🏁'
+              : 'O ladrão fugiu 🏁'
+            : w.match.winner === 'police'
+              ? 'O ladrão foi detido'
+              : 'A viatura foi destruída';
         endTime.textContent = `Tempo: ${formatTime(w.match.endTime ?? w.time)}`;
         end.dataset.result = won ? 'win' : 'lose';
         end.hidden = false;

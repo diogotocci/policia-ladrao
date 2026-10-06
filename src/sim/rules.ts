@@ -21,11 +21,7 @@ export function armorFactor(plates: number): number {
 }
 
 /** O alvo está no cone de tiro (frontal ou traseiro, incluindo as laterais) e no alcance? */
-export function inFireCone(
-  shooter: { s: number; x: number },
-  target: { s: number; x: number },
-  facing: 'front' | 'rear',
-): boolean {
+export function inFireCone(shooter: { s: number; x: number }, target: { s: number; x: number }, facing: 'front' | 'rear'): boolean {
   const ds = (target.s - shooter.s) * (facing === 'front' ? 1 : -1);
   const dx = target.x - shooter.x;
   if (Math.hypot(ds, dx) > BALANCE.combat.range) return false;

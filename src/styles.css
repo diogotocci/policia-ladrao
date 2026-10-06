@@ -1,6 +1,25 @@
-html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; touch-action: none; overscroll-behavior: none; }
-body { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; font-family: system-ui, sans-serif; color: #fff; }
-#app { position: fixed; inset: 0; }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+body {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  font-family: system-ui, sans-serif;
+  color: #fff;
+}
+#app {
+  position: fixed;
+  inset: 0;
+}
 /* margens seguras (notch, barra do iPhone) nas bordas do jogo; giradas junto quando o jogo se desenha deitado */
 :root {
   --safe-top: env(safe-area-inset-top);
@@ -37,11 +56,15 @@ body { touch-action: none; user-select: none; -webkit-user-select: none; -webkit
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.85);
-  font: 700 22px/1.3 system-ui, sans-serif;
+  font:
+    700 22px/1.3 system-ui,
+    sans-serif;
   text-align: center;
   z-index: 10;
 }
-.rotate-hint[hidden] { display: none; }
+.rotate-hint[hidden] {
+  display: none;
+}
 /* aviso de dano: a borda da tela pisca em vermelho (funciona em qualquer celular, inclusive iPhone) */
 .damage-flash {
   position: absolute;
@@ -56,7 +79,9 @@ body { touch-action: none; user-select: none; -webkit-user-select: none; -webkit
   bottom: max(6px, var(--safe-bottom));
   left: 50%;
   transform: translateX(-50%);
-  font: 12px/1.2 ui-monospace, monospace;
+  font:
+    12px/1.2 ui-monospace,
+    monospace;
   background: rgba(0, 0, 0, 0.5);
   padding: 4px 6px;
   pointer-events: none;
@@ -66,8 +91,12 @@ body { touch-action: none; user-select: none; -webkit-user-select: none; -webkit
   position: absolute;
   border-radius: 10px;
   border: 2px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.4);
   pointer-events: none;
   z-index: 3;
 }
-.rearview-frame[hidden] { display: none; }
+.rearview-frame[hidden] {
+  display: none;
+}

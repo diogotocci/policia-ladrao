@@ -89,7 +89,8 @@ export function stepCar(car: CarState, intents: Intents, dt: number, opts: { spe
 
   let speed: number;
   if (intents.brake) speed = Math.max(0, car.speed - brakeDecel * dt);
-  else if (car.airTime > 0) speed = car.speed; // no ar: não acelera nem desacelera (só o freio age)
+  else if (car.airTime > 0)
+    speed = car.speed; // no ar: não acelera nem desacelera (só o freio age)
   else if (car.speed < target) speed = Math.min(target, car.speed + accel * dt);
   else speed = Math.max(target, car.speed - accel * dt); // turbo acabou: desacelera suave
 

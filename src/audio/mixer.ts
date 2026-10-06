@@ -153,8 +153,7 @@ export function createMixer(initial: AudioBackend): Mixer {
           if (clock - lastSkid[e.role] < SKID_GAP || Math.abs(e.s - meS) > SKID_RANGE) continue;
           lastSkid[e.role] = clock;
           play('skid');
-        }
-        else if (e.type === 'pickup' && e.role === playerRole) play(e.item === 'wrong' || e.item === 'none' ? 'wrong' : 'pickup');
+        } else if (e.type === 'pickup' && e.role === playerRole) play(e.item === 'wrong' || e.item === 'none' ? 'wrong' : 'pickup');
         else if (e.type === 'end') play(e.winner === playerRole ? 'win' : 'lose');
       }
     },

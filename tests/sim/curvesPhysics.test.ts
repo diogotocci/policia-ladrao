@@ -64,7 +64,7 @@ describe('cornering', () => {
 
   it('skidding: steering is worth only half', () => {
     const grip = BALANCE.curves.grip;
-    const v = Math.sqrt(((grip + 2) * 120)); // acima da aderência
+    const v = Math.sqrt((grip + 2) * 120); // acima da aderência
     const base = { ...atSpeed(v, 1), x: 0 };
     const none = stepCar(base, NO_INTENTS, DT, { curvature: 1 / 120 });
     const steer = stepCar(base, { ...NO_INTENTS, right: true }, DT, { curvature: 1 / 120 });

@@ -48,7 +48,8 @@ export function createCarPreview(slots: Record<Role, HTMLElement>): { dispose():
       const w = Math.max(1, slot.clientWidth);
       const hgt = Math.max(1, slot.clientHeight);
       const pr = renderer.getPixelRatio();
-      if (renderer.domElement.width !== Math.round(w * pr) || renderer.domElement.height !== Math.round(hgt * pr)) renderer.setSize(w, hgt, false);
+      if (renderer.domElement.width !== Math.round(w * pr) || renderer.domElement.height !== Math.round(hgt * pr))
+        renderer.setSize(w, hgt, false);
       const c = canvases[role];
       if (c.width !== renderer.domElement.width || c.height !== renderer.domElement.height) {
         c.width = renderer.domElement.width;

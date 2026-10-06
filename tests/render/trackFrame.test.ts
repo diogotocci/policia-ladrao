@@ -5,7 +5,11 @@ import { curvatureAt, curvesBetween } from '../../src/sim/curves';
 describe('track frame (world position along the curves)', () => {
   it('without curves it is the old straight mapping (x = x, z = −(s − origin))', () => {
     const f = createTrackFrame(4, false);
-    for (const [s, x, o] of [[0, 0, 0], [123.4, 2.5, 100], [5000, -4.5, 4990]] as const) {
+    for (const [s, x, o] of [
+      [0, 0, 0],
+      [123.4, 2.5, 100],
+      [5000, -4.5, 4990],
+    ] as const) {
       const p = f.toWorld(s, x, o);
       expect(p.x).toBeCloseTo(x, 9);
       expect(p.z).toBeCloseTo(-(s - o), 9);

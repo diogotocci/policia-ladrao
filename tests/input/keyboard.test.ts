@@ -2,8 +2,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { createKeyboardInput } from '../../src/input/keyboard';
 
-const press = (type: 'keydown' | 'keyup', code: string) =>
-  window.dispatchEvent(new KeyboardEvent(type, { code }));
+const press = (type: 'keydown' | 'keyup', code: string) => window.dispatchEvent(new KeyboardEvent(type, { code }));
 
 let kb: ReturnType<typeof createKeyboardInput> | undefined;
 afterEach(() => kb?.dispose());

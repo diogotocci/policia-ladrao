@@ -218,7 +218,8 @@ export function startGame(
   // no toque (não no click): logo depois de soltar uma seta o click podia ser engolido (pausa difícil de apertar)
   onTap(pauseBtn, () => {
     pauseBtn.blur();
-    if (paused && !opts.onPauseRequest) setPaused(false); // sem app: o mesmo botão retoma
+    if (paused && !opts.onPauseRequest)
+      setPaused(false); // sem app: o mesmo botão retoma
     else requestPause();
   });
   hudCenter.append(pauseBtn);
@@ -260,12 +261,20 @@ export function startGame(
     if (f.cue) mixer.cue(f.cue);
   };
   const readIntents = () => anyOf(keyboard.read(), touch.read());
-  const debug = opts.debug ? createDebug(ui, () => world, readIntents, () => view.quality, () => ({
-        particles: particles.alive(),
-        gunners: { police: gunners.police.visible, thief: gunners.thief.visible },
-        muted: mixer.muted(),
-        cameraAspect: chase.camera.aspect,
-      })) : undefined;
+  const debug = opts.debug
+    ? createDebug(
+        ui,
+        () => world,
+        readIntents,
+        () => view.quality,
+        () => ({
+          particles: particles.alive(),
+          gunners: { police: gunners.police.visible, thief: gunners.thief.visible },
+          muted: mixer.muted(),
+          cameraAspect: chase.camera.aspect,
+        }),
+      )
+    : undefined;
 
   const stepper = new FixedStepper((dt) => {
     prev = world;
@@ -338,7 +347,11 @@ export function startGame(
     heli.update(car.role === 'police' ? car : foe, world.time, origin, dt);
     // fim com um carro destruído (prisão: o ladrão; polícia destruída: a viatura) — fumaça preta grossa enquanto a cena roda
     const wreckRole: Role | undefined =
-      world.match.arrestAt !== undefined ? 'thief' : world.match.escapeAt !== undefined && world.match.reason === 'policeDown' ? 'police' : undefined;
+      world.match.arrestAt !== undefined
+        ? 'thief'
+        : world.match.escapeAt !== undefined && world.match.reason === 'policeDown'
+          ? 'police'
+          : undefined;
     if (wreckRole && !frozen) {
       const wc = car.role === wreckRole ? car : foe;
       const acc = emitAcc[wreckRole];
@@ -371,7 +384,12 @@ export function startGame(
     hud.update(world);
     if (world.match.over && !endReported) {
       endReported = true;
-      opts.onEnd?.({ winner: world.match.winner!, time: world.match.endTime ?? world.time, reason: world.match.reason, hp: world.player.hp });
+      opts.onEnd?.({
+        winner: world.match.winner!,
+        time: world.match.endTime ?? world.time,
+        reason: world.match.reason,
+        hp: world.player.hp,
+      });
     }
     const here = trackPos(car.s, car.x, origin);
     lighting.follow(here.x, here.z, here.heading);

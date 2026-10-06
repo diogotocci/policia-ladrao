@@ -141,7 +141,15 @@ export function createWebAudioBackend(): AudioBackend {
   siren.start();
   lfo.start();
 
-  const voice = (v: Voice, t0: number, gainScale: number, bus: AudioNode, freqOverride?: number, durOverride?: number, wave?: OscillatorType | 'pulse') => {
+  const voice = (
+    v: Voice,
+    t0: number,
+    gainScale: number,
+    bus: AudioNode,
+    freqOverride?: number,
+    durOverride?: number,
+    wave?: OscillatorType | 'pulse',
+  ) => {
     const start = t0 + v.delay;
     const dur = durOverride ?? v.duration;
     const g = ctx.createGain();
@@ -219,7 +227,15 @@ export function createWebAudioBackend(): AudioBackend {
       if (!live()) return;
       if (n.voice === 'kick' || n.voice === 'snare' || n.voice === 'hat') voice(DRUM[n.voice], when, 1, musicBus);
       else {
-        const base: Voice = { wave: 'square', freq: 0, freqEnd: 0, gain: n.voice === 'bass' ? 0.32 : 0.2, attack: 0.005, duration: n.dur, delay: 0 };
+        const base: Voice = {
+          wave: 'square',
+          freq: 0,
+          freqEnd: 0,
+          gain: n.voice === 'bass' ? 0.32 : 0.2,
+          attack: 0.005,
+          duration: n.dur,
+          delay: 0,
+        };
         voice(base, when, 1, musicBus, midiHz(n.midi), n.dur, n.voice === 'lead' ? 'pulse' : 'square');
       }
     },

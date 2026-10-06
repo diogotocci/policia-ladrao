@@ -32,7 +32,8 @@ describe('arrest scene: when the police wins, the wrecked thief stops, the polic
       w = stepWorld(w, FIRE, DT);
       expect(w.events.some((e) => e.type === 'shot' || e.type === 'hit' || e.type === 'crash')).toBe(false);
       minGap = Math.min(minGap, thiefOf(w).s - policeOf(w).s);
-      const touching = Math.abs(thiefOf(w).x - policeOf(w).x) < 2 * BALANCE.car.halfWidth && thiefOf(w).s - policeOf(w).s < BALANCE.car.length;
+      const touching =
+        Math.abs(thiefOf(w).x - policeOf(w).x) < 2 * BALANCE.car.halfWidth && thiefOf(w).s - policeOf(w).s < BALANCE.car.length;
       expect(touching).toBe(false);
     }
     expect(thiefOf(w).speed).toBe(0);

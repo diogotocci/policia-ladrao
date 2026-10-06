@@ -13,9 +13,13 @@ const ICONS: Record<IntentName, string> = {
   // símbolo de freio do painel: disco com pinças dos lados
   brake: svg('<circle cx="24" cy="24" r="10"/><path d="M11 12a17 17 0 0 0 0 24M37 12a17 17 0 0 1 0 24"/>'),
   // mira
-  fire: svg('<circle cx="24" cy="24" r="12"/><circle cx="24" cy="24" r="2.5" fill="currentColor" stroke="none"/><path d="M24 4v8M24 36v8M4 24h8M36 24h8"/>'),
+  fire: svg(
+    '<circle cx="24" cy="24" r="12"/><circle cx="24" cy="24" r="2.5" fill="currentColor" stroke="none"/><path d="M24 4v8M24 36v8M4 24h8M36 24h8"/>',
+  ),
   // bomba com pavio
-  bomb: svg('<circle cx="20" cy="29" r="11" fill="currentColor" stroke="none"/><path d="M27 21l4-4"/><path d="M33 15c1-3 4-4 6-2" stroke-width="3"/><path d="M39 7v3M43 11h-3M42 8l-2 2" stroke-width="2.5"/>'),
+  bomb: svg(
+    '<circle cx="20" cy="29" r="11" fill="currentColor" stroke="none"/><path d="M27 21l4-4"/><path d="M33 15c1-3 4-4 6-2" stroke-width="3"/><path d="M39 7v3M43 11h-3M42 8l-2 2" stroke-width="2.5"/>',
+  ),
 };
 
 const BUTTONS: { name: IntentName; label: string; side: 'left' | 'right' }[] = [

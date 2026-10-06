@@ -39,7 +39,14 @@ export interface Particles {
 
 export function createParticles(scene: THREE.Scene, max = 160): Particles {
   const geo = new THREE.PlaneGeometry(1, 1);
-  const mat = new THREE.MeshBasicMaterial({ map: puffTexture(), transparent: true, opacity: 0.6, depthWrite: false, fog: true, side: THREE.DoubleSide });
+  const mat = new THREE.MeshBasicMaterial({
+    map: puffTexture(),
+    transparent: true,
+    opacity: 0.6,
+    depthWrite: false,
+    fog: true,
+    side: THREE.DoubleSide,
+  });
   const mesh = new THREE.InstancedMesh(geo, mat, max);
   mesh.name = 'particles';
   mesh.frustumCulled = false;
@@ -55,7 +62,7 @@ export function createParticles(scene: THREE.Scene, max = 160): Particles {
   const kind: Kind[] = new Array(max).fill('white');
   let next = 0;
   let seed = 3;
-  const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   let half = false;
 
   const spawn = (k: Kind, x: number, y: number, s: number, v: [number, number, number], lifeS: number, s0: number, s1: number) => {
@@ -73,7 +80,16 @@ export function createParticles(scene: THREE.Scene, max = 160): Particles {
   const tmp = new THREE.Object3D();
   return {
     emitSmoke(x, y, s, color) {
-      spawn(color, x + (rand() - 0.5) * 0.3, y, s, [(rand() - 0.5) * 0.6, 1.1 + rand() * 0.6, (rand() - 0.5) * 0.6], 1.0, 0.3, color === 'black' ? 1.3 : 1.0);
+      spawn(
+        color,
+        x + (rand() - 0.5) * 0.3,
+        y,
+        s,
+        [(rand() - 0.5) * 0.6, 1.1 + rand() * 0.6, (rand() - 0.5) * 0.6],
+        1.0,
+        0.3,
+        color === 'black' ? 1.3 : 1.0,
+      );
     },
     emitBurst(x, s, k) {
       const n = Math.round((k === 'explosion' ? 18 : 6) / (half ? 2 : 1));

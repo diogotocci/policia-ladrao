@@ -11,11 +11,13 @@ const both = (police: Intents, thief: Intents): Record<Role, Intents> => ({ poli
 
 const setup = (thief: Partial<ReturnType<typeof thiefOf>>, police: Partial<ReturnType<typeof policeOf>> = {}) => {
   const w = createWorld({ seed: 1, playerRole: 'police' });
-  return withCar(
-    withCar(w, 'thief', { ...thiefOf(w), speed: 30, ...thief }),
-    'police',
-    { ...policeOf(w), s: 100, x: 1.5, speed: 30, ...police },
-  );
+  return withCar(withCar(w, 'thief', { ...thiefOf(w), speed: 30, ...thief }), 'police', {
+    ...policeOf(w),
+    s: 100,
+    x: 1.5,
+    speed: 30,
+    ...police,
+  });
 };
 
 const flyUntilDone = (w: WorldState) => {
@@ -117,7 +119,8 @@ describe('stepProjectiles', () => {
 });
 
 describe('helicopter = extra gun (playtest 2026-10-06: the officer keeps shooting too)', () => {
-  const withHeli = (w: WorldState) => withCar(w, 'police', { ...policeOf(w), upgrades: { ...policeOf(w).upgrades, heliUntil: w.time + 5 } });
+  const withHeli = (w: WorldState) =>
+    withCar(w, 'police', { ...policeOf(w), upgrades: { ...policeOf(w).upgrades, heliUntil: w.time + 5 } });
 
   it('with the helicopter, holding fire gives two shots: the officer from the car and the helicopter from above', () => {
     const w = fireWeapons(withHeli(setup({ s: 140, x: 1.5 })), both(FIRE, NO_INTENTS), DT);

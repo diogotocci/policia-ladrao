@@ -257,7 +257,11 @@ describe('audio mixer', () => {
     expect(run(w)).toBe(0);
     expect(run(heli)).toBeGreaterThanOrEqual(8);
     const t = world('thief');
-    const near = withCar(t, 'police', { ...policeOf(t), s: thiefOf(t).s - 30, upgrades: { ...policeOf(t).upgrades, heliUntil: t.time + 5 } });
+    const near = withCar(t, 'police', {
+      ...policeOf(t),
+      s: thiefOf(t).s - 30,
+      upgrades: { ...policeOf(t).upgrades, heliUntil: t.time + 5 },
+    });
     const far = withCar(near, 'police', { ...policeOf(near), s: thiefOf(t).s - 300 });
     expect(run(near)).toBeGreaterThanOrEqual(8);
     expect(run(far)).toBe(0);
@@ -289,7 +293,11 @@ describe('audio mixer', () => {
     const be = createNullBackend();
     const mx = createMixer(be);
     const t0 = world('thief');
-    const w = withCar({ ...t0, time: 91, match: { over: false, escapeAt: 90 } }, 'police', { ...policeOf(t0), s: thiefOf(t0).s - 20, upgrades: { ...policeOf(t0).upgrades, heliUntil: 95 } });
+    const w = withCar({ ...t0, time: 91, match: { over: false, escapeAt: 90 } }, 'police', {
+      ...policeOf(t0),
+      s: thiefOf(t0).s - 20,
+      upgrades: { ...policeOf(t0).upgrades, heliUntil: 95 },
+    });
     for (let i = 0; i < 30; i++) mx.frame(w, DT);
     expect(be.siren).toBe(0);
     expect(be.played.filter((n) => n === 'rotor')).toHaveLength(0);

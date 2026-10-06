@@ -83,11 +83,13 @@ describe('rollItem', () => {
 describe('effects in combat', () => {
   const duel = (pol: Partial<CarState>, thf: Partial<CarState>, d = 20, time = 0): WorldState => {
     const w = { ...createWorld({ seed: 1, playerRole: 'police' }), time };
-    return withCar(
-      withCar(w, 'police', { ...policeOf(w), s: 100, x: 1.5, speed: 0, ...pol }),
-      'thief',
-      { ...thiefOf(w), s: 100 + d, x: 1.5, speed: 0, ...thf },
-    );
+    return withCar(withCar(w, 'police', { ...policeOf(w), s: 100, x: 1.5, speed: 0, ...pol }), 'thief', {
+      ...thiefOf(w),
+      s: 100 + d,
+      x: 1.5,
+      speed: 0,
+      ...thf,
+    });
   };
   const shoot = (w: WorldState) => {
     let s = fireWeapons(w, { police: { ...NO_INTENTS, fire: true }, thief: NO_INTENTS }, DT);
@@ -119,7 +121,12 @@ describe('effects in combat', () => {
       w = resolveCollisions(w, DT);
       hits.push([before[0] - policeOf(w).hp, before[1] - thiefOf(w).hp]);
     }
-    expect(hits).toEqual([[1, 8], [1, 8], [1, 8], [3, 5]]);
+    expect(hits).toEqual([
+      [1, 8],
+      [1, 8],
+      [1, 8],
+      [3, 5],
+    ]);
     const plated = resolveCollisions(duel({}, { upgrades: { ...thief().upgrades, plates: 3 } }, 2), DT);
     expect(100 - thiefOf(plated).hp).toBeCloseTo(5 * 0.55, 10);
   });

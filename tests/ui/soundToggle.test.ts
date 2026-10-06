@@ -14,7 +14,14 @@ const memory = () => {
   const m = new Map<string, string>();
   return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v) } as unknown as Storage;
 };
-const broken = { getItem: () => { throw new Error('blocked'); }, setItem: () => { throw new Error('blocked'); } } as unknown as Storage;
+const broken = {
+  getItem: () => {
+    throw new Error('blocked');
+  },
+  setItem: () => {
+    throw new Error('blocked');
+  },
+} as unknown as Storage;
 
 describe('sound preference', () => {
   it('defaults to sound on, persists, and survives a storage that throws', () => {

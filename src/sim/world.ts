@@ -68,8 +68,34 @@ export function createWorld(opts: {
     nextTrafficId: 1,
     trafficRng: (opts.seed ^ 0x85ebca6b) >>> 0,
     ai: {
-      police: { ramUntil: 0, targetX: police.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {}, curveS: -1, curveBrake: false, curveLate: 0 },
-      thief: { ramUntil: 0, targetX: thief.x, nextDecisionAt: 0, brakeUntil: 0, linedSince: -1, bumpS: -1, dodgeBump: false, nextBombAt: 0, bombDodge: {}, curveS: -1, curveBrake: false, curveLate: 0 },
+      police: {
+        ramUntil: 0,
+        targetX: police.x,
+        nextDecisionAt: 0,
+        brakeUntil: 0,
+        linedSince: -1,
+        bumpS: -1,
+        dodgeBump: false,
+        nextBombAt: 0,
+        bombDodge: {},
+        curveS: -1,
+        curveBrake: false,
+        curveLate: 0,
+      },
+      thief: {
+        ramUntil: 0,
+        targetX: thief.x,
+        nextDecisionAt: 0,
+        brakeUntil: 0,
+        linedSince: -1,
+        bumpS: -1,
+        dodgeBump: false,
+        nextBombAt: 0,
+        bombDodge: {},
+        curveS: -1,
+        curveBrake: false,
+        curveLate: 0,
+      },
     },
   };
 }
@@ -141,14 +167,30 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
     out = { ...out, projectiles: [], bombs: [], match: { over: false, arrestAt: time }, events: [...out.events, { type: 'arrest' }] };
   } else if (policeDead && !thiefDead) {
     // polícia destruída: ela para (arrebentada) e o ladrão vai embora — mesma cena da fuga, com o motivo da vitória
-    out = { ...out, projectiles: [], bombs: [], match: { over: false, escapeAt: time, reason: 'policeDown' }, events: [...out.events, { type: 'escape' }] };
+    out = {
+      ...out,
+      projectiles: [],
+      bombs: [],
+      match: { over: false, escapeAt: time, reason: 'policeDown' },
+      events: [...out.events, { type: 'escape' }],
+    };
   } else if (policeDead || thiefDead) {
     // os dois no mesmo passo → ladrão
-    out = { ...out, match: { over: true, winner: 'thief', reason: 'policeDown', endTime: time }, events: [...out.events, { type: 'end', winner: 'thief' }] };
+    out = {
+      ...out,
+      match: { over: true, winner: 'thief', reason: 'policeDown', endTime: time },
+      events: [...out.events, { type: 'end', winner: 'thief' }],
+    };
   } else if (time >= w.escapeTime - 1e-9) {
     // 1:30 com os dois vivos: começa a cena da fuga (tiros no ar somem)
     // instante exato do limite (não o do passo, que pode sair 89,9999…): fugas empatam no ranking
-    out = { ...out, projectiles: [], bombs: [], match: { over: false, escapeAt: w.escapeTime }, events: [...out.events, { type: 'escape' }] };
+    out = {
+      ...out,
+      projectiles: [],
+      bombs: [],
+      match: { over: false, escapeAt: w.escapeTime },
+      events: [...out.events, { type: 'escape' }],
+    };
   }
   return out;
 }
@@ -165,7 +207,10 @@ function stepArrest(w: WorldState, dt: number): WorldState {
   const stopAt = ts - M.arrestGap;
   const room = Math.max(0, stopAt - p.s);
   const want = Math.min(BALANCE.movement.cruise.police * 1.2, Math.sqrt(2 * BALANCE.movement.brakeDecel * room));
-  const pSpeed = want > p.speed ? Math.min(want, p.speed + BALANCE.movement.accel * 2 * dt) : Math.max(want, p.speed - BALANCE.movement.brakeDecel * 1.5 * dt);
+  const pSpeed =
+    want > p.speed
+      ? Math.min(want, p.speed + BALANCE.movement.accel * 2 * dt)
+      : Math.max(want, p.speed - BALANCE.movement.brakeDecel * 1.5 * dt);
   const ps = Math.min(p.s + pSpeed * dt, stopAt);
   // e para na faixa ao lado (do lado do meio da rua), para a câmera de trás ver o ladrão arrebentado
   const side = t.x > 0 ? -M.arrestSide : M.arrestSide;
@@ -173,13 +218,25 @@ function stepArrest(w: WorldState, dt: number): WorldState {
   const px = p.x + Math.sign(dx) * Math.min(Math.abs(dx), 3 * dt);
   let out: WorldState = { ...w, events: [] };
   out = withCar(out, 'thief', { ...t, speed: tSpeed, s: ts, steer: 0, skidding: false, airTime: land(t) });
-  out = withCar(out, 'police', { ...p, speed: ps > p.s ? pSpeed : 0, s: Math.max(p.s, ps), x: px, steer: 0, skidding: false, airTime: land(p) });
+  out = withCar(out, 'police', {
+    ...p,
+    speed: ps > p.s ? pSpeed : 0,
+    s: Math.max(p.s, ps),
+    x: px,
+    steer: 0,
+    skidding: false,
+    airTime: land(p),
+  });
   out = stepTraffic(out, dt);
   const time = w.time + dt;
   out = { ...out, time };
   const arrestAt = w.match.arrestAt!;
   if (time >= arrestAt + M.arrestScene - 1e-9)
-    out = { ...out, match: { over: true, winner: 'police', reason: 'thiefDown', endTime: arrestAt, arrestAt }, events: [{ type: 'end', winner: 'police' }] };
+    out = {
+      ...out,
+      match: { over: true, winner: 'police', reason: 'thiefDown', endTime: arrestAt, arrestAt },
+      events: [{ type: 'end', winner: 'police' }],
+    };
   return out;
 }
 
@@ -198,28 +255,44 @@ function stepEscape(w: WorldState, dt: number): WorldState {
     for (const c of w.traffic) if (Math.abs(c.x - x) < 2 * BALANCE.car.halfWidth + 0.4 && c.s > t.s - L) d = Math.min(d, c.s - t.s);
     return d;
   };
-  const lane = lanes.reduce((best, x) => {
-    const db = freeAhead(best) - Math.abs(best - t.x) * 2;
-    const dx = freeAhead(x) - Math.abs(x - t.x) * 2;
-    return dx > db + 1 ? x : best;
-  }, lanes.reduce((a, x) => (Math.abs(x - t.x) < Math.abs(a - t.x) ? x : a)));
+  const lane = lanes.reduce(
+    (best, x) => {
+      const db = freeAhead(best) - Math.abs(best - t.x) * 2;
+      const dx = freeAhead(x) - Math.abs(x - t.x) * 2;
+      return dx > db + 1 ? x : best;
+    },
+    lanes.reduce((a, x) => (Math.abs(x - t.x) < Math.abs(a - t.x) ? x : a)),
+  );
   let tx = t.x + Math.sign(lane - t.x) * Math.min(Math.abs(lane - t.x), BALANCE.movement.lateralSpeed * dt);
   // não fecha um carro que está do lado
   if (w.traffic.some((c) => Math.abs(c.s - t.s) < L + 0.5 && Math.abs(c.x - tx) < 2 * BALANCE.car.halfWidth)) tx = t.x;
   let block: (typeof w.traffic)[number] | undefined;
-  for (const c of w.traffic) if (Math.abs(c.x - tx) < 2 * BALANCE.car.halfWidth && c.s > t.s && c.s - t.s < L + 3 && (!block || c.s < block.s)) block = c;
+  for (const c of w.traffic)
+    if (Math.abs(c.x - tx) < 2 * BALANCE.car.halfWidth && c.s > t.s && c.s - t.s < L + 3 && (!block || c.s < block.s)) block = c;
   if (block) tSpeed = Math.min(tSpeed, block.speed);
   const pSpeed = Math.max(0, p.speed - BALANCE.movement.brakeDecel * dt);
   let out: WorldState = { ...w, events: [] };
   // quem estava no ar (quebra-mola) termina o pulo normalmente
   const land = (c: CarState) => Math.max(0, c.airTime - dt);
-  out = withCar(out, 'thief', { ...t, speed: tSpeed, s: t.s + tSpeed * dt, x: tx, steer: (Math.sign(tx - t.x) as -1 | 0 | 1), skidding: false, airTime: land(t) });
+  out = withCar(out, 'thief', {
+    ...t,
+    speed: tSpeed,
+    s: t.s + tSpeed * dt,
+    x: tx,
+    steer: Math.sign(tx - t.x) as -1 | 0 | 1,
+    skidding: false,
+    airTime: land(t),
+  });
   out = withCar(out, 'police', { ...p, speed: pSpeed, s: p.s + pSpeed * dt, steer: 0, skidding: false, airTime: land(p) });
   out = stepTraffic(out, dt);
   const time = w.time + dt;
   out = { ...out, time };
   const escapeAt = w.match.escapeAt!;
   if (time >= escapeAt + M.escapeScene - 1e-9)
-    out = { ...out, match: { over: true, winner: 'thief', reason: w.match.reason ?? 'escape', endTime: escapeAt, escapeAt }, events: [{ type: 'end', winner: 'thief' }] };
+    out = {
+      ...out,
+      match: { over: true, winner: 'thief', reason: w.match.reason ?? 'escape', endTime: escapeAt, escapeAt },
+      events: [{ type: 'end', winner: 'thief' }],
+    };
   return out;
 }

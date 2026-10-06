@@ -102,7 +102,9 @@ describe('escape: the thief also wins by surviving 1:30', () => {
 
 describe('end scenes with traffic (playtest: the thief drove through cars)', () => {
   const overlaps = (w: WorldState) =>
-    [policeOf(w), thiefOf(w)].some((g) => w.traffic.some((c) => Math.abs(c.x - g.x) < 2 * BALANCE.car.halfWidth && Math.abs(c.s - g.s) < BALANCE.car.length));
+    [policeOf(w), thiefOf(w)].some((g) =>
+      w.traffic.some((c) => Math.abs(c.x - g.x) < 2 * BALANCE.car.halfWidth && Math.abs(c.s - g.s) < BALANCE.car.length),
+    );
   it('escape: the thief weaves around traffic, never through it; traffic never drives into the braking police (30 seeds)', () => {
     let bad = 0;
     for (let seed = 1; seed <= 30; seed++) {

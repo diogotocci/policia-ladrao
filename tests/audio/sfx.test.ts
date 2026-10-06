@@ -3,7 +3,25 @@ import { RECIPES, envelopeAt, recipeDuration, type Voice } from '../../src/audio
 
 describe('sound recipes', () => {
   it('there is a recipe for every game sound', () => {
-    for (const k of ['shot-police', 'shot-thief', 'hit', 'crash', 'explosion', 'pickup', 'wrong', 'bomb-drop', 'win', 'lose', 'beep', 'go', 'ui', 'skid', 'bomb-hit', 'rotor', 'escape'])
+    for (const k of [
+      'shot-police',
+      'shot-thief',
+      'hit',
+      'crash',
+      'explosion',
+      'pickup',
+      'wrong',
+      'bomb-drop',
+      'win',
+      'lose',
+      'beep',
+      'go',
+      'ui',
+      'skid',
+      'bomb-hit',
+      'rotor',
+      'escape',
+    ])
       expect(RECIPES[k as keyof typeof RECIPES], k).toBeDefined();
   });
 
@@ -53,5 +71,4 @@ describe('sound recipes', () => {
     expect(recipeDuration(r)).toBeGreaterThanOrEqual(0.4);
     expect(recipeDuration(r)).toBeLessThanOrEqual(0.8);
   });
-
 });

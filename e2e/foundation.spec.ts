@@ -2,10 +2,8 @@ import { expect, test, type Page } from '@playwright/test';
 
 type Snapshot = { time: number; player: { s: number; x: number; speed: number; role: string } };
 
-const snapshot = (page: Page) =>
-  page.evaluate(() => (window as unknown as { __game: { snapshot(): Snapshot } }).__game.snapshot());
-const drawCalls = (page: Page) =>
-  page.evaluate(() => (window as unknown as { __game: { drawCalls(): number } }).__game.drawCalls());
+const snapshot = (page: Page) => page.evaluate(() => (window as unknown as { __game: { snapshot(): Snapshot } }).__game.snapshot());
+const drawCalls = (page: Page) => page.evaluate(() => (window as unknown as { __game: { drawCalls(): number } }).__game.drawCalls());
 
 /** Espera passar N segundos de SIMULAÇÃO (não de relógio): robusto em máquinas lentas / GPU por software. */
 const waitSim = async (page: Page, seconds: number) => {
@@ -111,7 +109,10 @@ test('phone held upright: the game draws itself sideways (landscape) and keeps r
   // girado: ocupa a tela toda em pé, mas o próprio container é deitado
   expect(box!.width).toBeCloseTo(390, 0);
   expect(box!.height).toBeCloseTo(844, 0);
-  const inner = await page.evaluate(() => ({ w: document.getElementById('app')!.clientWidth, h: document.getElementById('app')!.clientHeight }));
+  const inner = await page.evaluate(() => ({
+    w: document.getElementById('app')!.clientWidth,
+    h: document.getElementById('app')!.clientHeight,
+  }));
   expect(inner.w).toBeGreaterThan(inner.h);
   const t1 = (await snapshot(page)).time;
   await waitSim(page, 0.5);
@@ -167,13 +168,18 @@ test('real multi-touch: two fingers, slide between arrows, lift (mobile)', async
   const cdp = await page.context().newCDPSession(page);
   const touch = (type: string, pts: { x: number; y: number; id: number }[]) =>
     cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts } as never);
-  const intents = () =>
-    page.evaluate(() => (window as unknown as { __game: { intents(): Record<string, boolean> } }).__game.intents());
+  const intents = () => page.evaluate(() => (window as unknown as { __game: { intents(): Record<string, boolean> } }).__game.intents());
 
-  await touch('touchStart', [{ ...L, id: 1 }, { ...B, id: 2 }]);
+  await touch('touchStart', [
+    { ...L, id: 1 },
+    { ...B, id: 2 },
+  ]);
   await expect.poll(intents).toMatchObject({ left: true, right: false, brake: true });
 
-  await touch('touchMove', [{ ...R, id: 1 }, { ...B, id: 2 }]);
+  await touch('touchMove', [
+    { ...R, id: 1 },
+    { ...B, id: 2 },
+  ]);
   await expect.poll(intents).toMatchObject({ left: false, right: true, brake: true });
 
   // CDP (Chromium): touchEnd lista os pontos que saíram — só o dedo 1 levanta

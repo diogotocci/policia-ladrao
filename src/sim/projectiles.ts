@@ -41,9 +41,7 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
         const d = Math.abs(target.s - car.s);
         const falloff = distanceFactor(d);
         const damage =
-          role === 'police'
-            ? c.policeDamage * car.upgrades.power * falloff * armorFactor(target.upgrades.plates)
-            : c.thiefDamage * falloff;
+          role === 'police' ? c.policeDamage * car.upgrades.power * falloff * armorFactor(target.upgrades.plates) : c.thiefDamage * falloff;
         const piercing = role === 'police' && w.time < car.upgrades.pierceUntil;
         projectiles.push({
           from: role,

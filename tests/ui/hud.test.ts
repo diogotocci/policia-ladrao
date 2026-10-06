@@ -218,7 +218,6 @@ describe('item HUD', () => {
     hud.dispose();
   });
 
-
   it('paused: the last-10-s alert stops pulsing (class on the HUD root)', () => {
     const hud = createHud(root, 'thief');
     hud.setPaused(true);
