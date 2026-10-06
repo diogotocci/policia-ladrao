@@ -93,3 +93,21 @@ describe('fullscreen on the first touch (browser bars hidden)', () => {
     expect(() => tap(win)).not.toThrow();
   });
 });
+
+import { onTap } from '../../src/ui/mobileShell';
+describe('onTap (HUD buttons react on touch-down: a tap right after steering is not swallowed by the no-zoom guard)', () => {
+  it('fires on pointerdown, ignores the click that follows, still works from the keyboard (click with detail 0)', () => {
+    const b = document.createElement('button');
+    let n = 0;
+    const off = onTap(b, () => n++);
+    b.dispatchEvent(new Event('pointerdown', { bubbles: true, cancelable: true }));
+    expect(n).toBe(1);
+    b.dispatchEvent(new MouseEvent('click', { detail: 1, bubbles: true }));
+    expect(n).toBe(1);
+    b.dispatchEvent(new MouseEvent('click', { detail: 0, bubbles: true })); // Enter/Espaço
+    expect(n).toBe(2);
+    off();
+    b.dispatchEvent(new Event('pointerdown', { bubbles: true, cancelable: true }));
+    expect(n).toBe(2);
+  });
+});
