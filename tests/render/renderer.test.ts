@@ -33,7 +33,7 @@ describe('createQualityGovernor', () => {
     for (let t = 0; t < seconds; t += 1 / fps) tier = g.sample(1 / fps);
     return tier;
   };
-  /** frames irregulares (média = fps), como um aparelho realmente sem fôlego */
+  /** irregular frames (average = fps), like a device that is really struggling */
   const feedJitter = (g: ReturnType<typeof createQualityGovernor>, fps: number, seconds: number) => {
     let tier = g.tier;
     let t = 0;
@@ -60,7 +60,7 @@ describe('createQualityGovernor', () => {
     const g = createQualityGovernor('high');
     feedJitter(g, 20, 5.2); // → medium
     expect(g.tier).toBe('medium');
-    expect(feedJitter(g, 20, 3.5)).toBe('medium'); // 1 s de carência + janela ainda incompleta
+    expect(feedJitter(g, 20, 3.5)).toBe('medium'); // 1 s grace period + window still incomplete
     expect(feedJitter(g, 20, 1)).toBe('low');
   });
 

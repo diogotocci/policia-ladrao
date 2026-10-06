@@ -1,4 +1,4 @@
-// Service worker: o jogo abre sem internet depois da primeira visita. Gerado como /sw.js no build.
+// Service worker: the game opens without internet after the first visit. Emitted as /sw.js in the build.
 import { PRECACHE_TOKEN, cacheName, staleCaches, strategyFor } from './strategy';
 
 declare const __BUILD_ID__: string;
@@ -19,11 +19,11 @@ const sw = self as unknown as {
 };
 
 const CACHE = cacheName(__BUILD_ID__);
-// lista preenchida no build (plugin no vite.config): página, ícones e todos os JS/CSS — o 1º acesso já deixa tudo offline
+// list filled in at build time (plugin in vite.config): page, icons and all JS/CSS — the first visit already makes everything offline
 const PRECACHE = PRECACHE_TOKEN.split(',');
 
 sw.addEventListener('install', (e) => {
-  // pré-carrega tudo de uma vez (se algo falhar, a instalação falha e tenta de novo na próxima visita)
+  // precaches everything at once (if anything fails, the install fails and retries on the next visit)
   e.waitUntil(
     caches
       .open(CACHE)
@@ -52,7 +52,7 @@ sw.addEventListener('fetch', (e) => {
         (hit) =>
           hit ??
           fetch(req).then((res) => {
-            // clona já: depois que a página lê o corpo, não dá mais para clonar
+            // clone now: once the page reads the body, it can no longer be cloned
             if (res.ok) {
               const copy = res.clone();
               void caches.open(CACHE).then((c) => c.put(req, copy));
@@ -63,11 +63,17 @@ sw.addEventListener('fetch', (e) => {
     );
     return;
   }
-  // rede primeiro; sem rede, a cópia guardada (para navegação, a página principal)
-  // rede lenta: depois de 4 s usa a cópia guardada (se houver) em vez de deixar a tela em branco
+  // network first; without network, the stored copy (for navigation, the main page)
+  // slow network: after 4 s uses the stored copy (if any) instead of leaving a blank screen
   const network = fetch(req);
   const slow = new Promise<Response>((resolve, reject) =>
-    setTimeout(() => caches.match(req.mode === 'navigate' ? '/' : req, { ignoreVary: true }).then((hit) => (hit ? resolve(hit) : reject(new Error('sem cópia')))), 4000),
+    setTimeout(
+      () =>
+        caches
+          .match(req.mode === 'navigate' ? '/' : req, { ignoreVary: true })
+          .then((hit) => (hit ? resolve(hit) : reject(new Error('no cached copy')))),
+      4000,
+    ),
   );
   e.respondWith(
     Promise.race([network, slow.catch(() => network)])

@@ -1,9 +1,9 @@
-// Centro da pista no mundo: integra a curvatura da sim (direção θ(s) = ∫κ ds) e converte (s, x) em posição.
-// Convenção do render: θ = 0 aponta para −z (a rua reta antiga); κ > 0 vira para +x (direita).
-// Posições sempre relativas à origem móvel (originS), em números pequenos — sem tremer longe do início.
+// Track center in the world: integrates the sim's curvature (heading θ(s) = ∫κ ds) and converts (s, x) to a position.
+// Render convention: θ = 0 points to −z (the old straight road); κ > 0 turns toward +x (right).
+// Positions are always relative to the moving origin (originS), in small numbers — no jitter far from the start.
 import { curvatureAt } from '../sim/curves';
 
-const STEP = 1; // m entre amostras
+const STEP = 1; // m between samples
 
 export interface TrackFrame {
   toWorld(s: number, x: number, originS: number): { x: number; z: number; heading: number };
@@ -11,7 +11,7 @@ export interface TrackFrame {
 }
 
 export function createTrackFrame(seed: number, curvesOn: boolean): TrackFrame {
-  // amostras a cada 1 m: direção e posição absoluta do centro
+  // samples every 1 m: heading and absolute position of the center
   const th: number[] = [0];
   const px: number[] = [0];
   const pz: number[] = [0];
@@ -26,7 +26,7 @@ export function createTrackFrame(seed: number, curvesOn: boolean): TrackFrame {
     }
   };
   const center = (s: number) => {
-    if (s < 0) return { x: 0, z: -s, heading: 0 }; // antes da largada a rua é reta (câmera e retrovisor atrás do carro)
+    if (s < 0) return { x: 0, z: -s, heading: 0 }; // before the start the road is straight (camera and rearview behind the car)
     const sc = s;
     const i = Math.floor(sc / STEP);
     extend(i);
@@ -38,7 +38,7 @@ export function createTrackFrame(seed: number, curvesOn: boolean): TrackFrame {
   };
 
   if (!curvesOn) {
-    // reta: igual ao mapeamento antigo, sem custo
+    // straight: same as the old mapping, at no cost
     return { toWorld: (s, x, o) => ({ x, z: -(s - o), heading: 0 }), headingAt: () => 0 };
   }
   let lastO = NaN;
@@ -47,7 +47,7 @@ export function createTrackFrame(seed: number, curvesOn: boolean): TrackFrame {
     toWorld(s, x, originS) {
       const c = center(s);
       if (originS !== lastO) {
-        lastO = originS; // a origem muda a cada 50 m: centenas de chamadas por quadro reaproveitam
+        lastO = originS; // the origin changes every 50 m: hundreds of calls per frame reuse it
         o = center(originS);
       }
       return { x: c.x - o.x + Math.cos(c.heading) * x, z: c.z - o.z + Math.sin(c.heading) * x, heading: c.heading };
@@ -56,12 +56,12 @@ export function createTrackFrame(seed: number, curvesOn: boolean): TrackFrame {
   };
 }
 
-// Frame ativo da partida (um jogo por vez): os módulos de render posicionam tudo por aqui.
+// Active frame of the match (one game at a time): the render modules position everything through it.
 let active: TrackFrame = createTrackFrame(0, false);
 export function setActiveTrackFrame(frame: TrackFrame): void {
   active = frame;
 }
-/** posição no mundo de (s, x) com a origem móvel; heading = direção da pista ali (0 = −z) */
+/** world position of (s, x) with the moving origin; heading = road direction there (0 = −z) */
 export function trackPos(s: number, x: number, originS: number): { x: number; z: number; heading: number } {
   return active.toWorld(s, x, originS);
 }

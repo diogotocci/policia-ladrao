@@ -1,35 +1,58 @@
-// Hook SessionStart: injeta a skill using-superpowers + o índice de skills do projeto no contexto.
-// Saída em stdout vira contexto adicional da sessão (Claude Code).
-import { readFileSync, readdirSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+// SessionStart hook (Claude Code): injects the always-on rules, the project skill index and the using-superpowers skill.
+// Whatever this script prints on stdout becomes additional session context.
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const skillsDir = join(root, ".agents", "skills");
+const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const skillsDir = join(root, '.agents', 'skills');
+const rulesDir = join(root, '.agents', 'rules');
 
-const descOf = (md) => {
-  const fm = md.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!fm) return "";
+const frontMatter = (md) => md.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
+
+const descriptionOf = (md) => {
+  const fm = frontMatter(md);
+  if (!fm) return '';
   const m = fm[1].match(/^description:\s*(>-?|\|-?)?\s*([\s\S]*?)(?=^\w[\w-]*:|$(?![\s\S]))/m);
-  return m ? m[2].replace(/\s+/g, " ").replace(/^["']|["']$/g, "").trim() : "";
+  return m
+    ? m[2]
+        .replace(/\s+/g, ' ')
+        .replace(/^["']|["']$/g, '')
+        .trim()
+    : '';
 };
 
-const lines = [];
-for (const d of readdirSync(skillsDir, { withFileTypes: true })) {
-  const f = join(skillsDir, d.name, "SKILL.md");
-  if (d.isDirectory() && existsSync(f)) lines.push(`- ${d.name}: ${descOf(readFileSync(f, "utf8")).slice(0, 220)}`);
+/** Rules with `trigger: always_on` in their front matter are injected in full. */
+const alwaysOnRules = () => {
+  if (!existsSync(rulesDir)) return [];
+  return readdirSync(rulesDir)
+    .filter((name) => name.endsWith('.md'))
+    .sort()
+    .map((name) => ({ name, md: readFileSync(join(rulesDir, name), 'utf8') }))
+    .filter(({ md }) => /^trigger:\s*always_on\s*$/m.test(frontMatter(md)?.[1] ?? ''))
+    .map(({ name, md }) => `### .agents/rules/${name}\n${md.replace(frontMatter(md)?.[0] ?? '', '').trim()}`);
+};
+
+const skills = [];
+for (const entry of readdirSync(skillsDir, { withFileTypes: true })) {
+  const file = join(skillsDir, entry.name, 'SKILL.md');
+  if (entry.isDirectory() && existsSync(file)) skills.push(`- ${entry.name}: ${descriptionOf(readFileSync(file, 'utf8')).slice(0, 220)}`);
 }
 
-const using = readFileSync(join(skillsDir, "using-superpowers", "SKILL.md"), "utf8");
+const usingSuperpowers = readFileSync(join(skillsDir, 'using-superpowers', 'SKILL.md'), 'utf8');
 process.stdout.write(
-`<EXTREMELY_IMPORTANT>
-Este projeto tem skills em .agents/skills (espelhadas em .claude/skills). Use-as sem o usuário pedir, conforme a tabela do AGENTS.md.
-Regra de git: o agente NUNCA commita, faz push ou abre PR — use a skill ship-via-script e gere scratch/NN-<slug>.ps1.
+  `<EXTREMELY_IMPORTANT>
+This project has skills in .agents/skills (mirrored in .claude/skills). Use them without waiting to be asked, following .agents/rules/workflow.md.
+Git rule: the agent NEVER commits, pushes or opens PRs. Use the ship-via-script skill and write scratch/NN-<slug>.ps1.
 
-Skills disponíveis:
-${lines.join("\n")}
+## Always-on rules
+${alwaysOnRules().join('\n\n')}
 
-Conteúdo da skill using-superpowers:
-${using}
+## Available skills
+${skills.join('\n')}
+
+## using-superpowers skill
+${usingSuperpowers}
 </EXTREMELY_IMPORTANT>
-`);
+`,
+);

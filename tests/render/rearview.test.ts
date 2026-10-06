@@ -89,8 +89,8 @@ describe('rear-view mirror image', () => {
     scenes.length = 0;
     sizes.length = 0;
     for (let i = 0; i < 4; i++) draw();
-    expect(scenes.filter((s) => s === world)).toHaveLength(2); // cena só a cada 2 quadros
-    expect(scenes.filter((s) => s !== world)).toHaveLength(4); // o espelho (textura) aparece todo quadro
-    expect(Math.max(...sizes)).toBe(Math.round(844 * 0.22)); // 1× pixel, não 3×
+    expect(scenes.filter((s) => s === world)).toHaveLength(2); // scene only every 2 frames
+    expect(scenes.filter((s) => s !== world)).toHaveLength(4); // the mirror (texture) appears every frame
+    expect(Math.max(...sizes)).toBe(Math.round(844 * 0.22)); // 1× pixel, not 3×
   });
 });

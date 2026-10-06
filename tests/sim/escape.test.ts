@@ -7,7 +7,7 @@ const DT = 1 / 60;
 const E = BALANCE.match.escapeTime;
 const FIRE = { ...NO_INTENTS, fire: true, left: true };
 
-/** mundo logo antes de 1:30, sem tráfego, polícia colada atirando */
+/** world right before 1:30, no traffic, police tailgating and shooting */
 const nearEnd = (role: Role = 'thief'): WorldState => {
   const w = createWorld({ seed: 4, playerRole: role, traffic: false, curves: false });
   const atEnd = withCar({ ...w, time: E - 0.5 }, 'thief', { ...thiefOf(w), s: 2000, speed: 34 });
@@ -26,7 +26,7 @@ describe('escape: the thief also wins by surviving 1:30', () => {
     expect(w.match.over).toBe(true);
     expect(w.match.winner).toBe('thief');
     expect(w.match.reason).toBe('escape');
-    expect(w.match.endTime).toBe(E); // exato: fugas empatam no ranking
+    expect(w.match.endTime).toBe(E); // exact: escapes tie in the ranking
     expect(w.time).toBeGreaterThanOrEqual(E + BALANCE.match.escapeScene - 0.05);
   });
 
@@ -63,7 +63,7 @@ describe('escape: the thief also wins by surviving 1:30', () => {
     w = { ...w, time: E - DT / 2 };
     w = withCar(w, 'thief', { ...thiefOf(w), hp: 0 });
     w = stepWorld(w, NO_INTENTS, DT);
-    expect(w.match.arrestAt).toBeDefined(); // cena da prisão, não a da fuga
+    expect(w.match.arrestAt).toBeDefined(); // arrest scene, not the escape one
     expect(w.match.escapeAt).toBeUndefined();
     for (let i = 0; i < 60 * 5 && !w.match.over; i++) w = stepWorld(w, NO_INTENTS, DT);
     expect(w.match).toMatchObject({ over: true, winner: 'police', reason: 'thiefDown' });
@@ -91,7 +91,7 @@ describe('escape: the thief also wins by surviving 1:30', () => {
       for (let seed = 1; seed <= 20; seed++) {
         let w = createWorld({ seed, playerRole: role });
         for (let i = 0; i < 95 * 60 && !w.match.over; i++) w = stepWorld(w, 'ai', DT);
-        expect(w.match.over, `seed ${seed}`).toBe(true); // ninguém passa de 1:30 + cena
+        expect(w.match.over, `seed ${seed}`).toBe(true); // nobody goes past 1:30 + scene
         n++;
         if (w.match.winner === 'thief') thief++;
       }
@@ -102,7 +102,9 @@ describe('escape: the thief also wins by surviving 1:30', () => {
 
 describe('end scenes with traffic (playtest: the thief drove through cars)', () => {
   const overlaps = (w: WorldState) =>
-    [policeOf(w), thiefOf(w)].some((g) => w.traffic.some((c) => Math.abs(c.x - g.x) < 2 * BALANCE.car.halfWidth && Math.abs(c.s - g.s) < BALANCE.car.length));
+    [policeOf(w), thiefOf(w)].some((g) =>
+      w.traffic.some((c) => Math.abs(c.x - g.x) < 2 * BALANCE.car.halfWidth && Math.abs(c.s - g.s) < BALANCE.car.length),
+    );
   it('escape: the thief weaves around traffic, never through it; traffic never drives into the braking police (30 seeds)', () => {
     let bad = 0;
     for (let seed = 1; seed <= 30; seed++) {

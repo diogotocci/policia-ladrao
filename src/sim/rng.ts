@@ -1,16 +1,16 @@
-// RNG determinístico (mulberry32). A simulação nunca usa Math.random.
+// Deterministic RNG (mulberry32). The simulation never uses Math.random.
 export interface Rng {
   /** [0, 1) */
   next(): number;
   /** [min, max) */
   range(min: number, max: number): number;
-  /** inteiro em [min, maxInclusive] */
+  /** integer in [min, maxInclusive] */
   int(min: number, maxInclusive: number): number;
-  /** estado interno (número), para guardar no snapshot do mundo */
+  /** internal state (number), to store in the world snapshot */
   state(): number;
 }
 
-/** Retoma um RNG a partir de `rng.state()`. */
+/** Resumes an RNG from `rng.state()`. */
 export function createRngFromState(state: number): Rng {
   return makeRng(state >>> 0);
 }

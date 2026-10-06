@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('right after the first visit the game opens offline (everything precached at install)', async ({ page, context }) => {
   await page.goto('/?app&quality=low&mute');
   await expect(page.locator('.screen-title')).toBeVisible();
-  // espera o service worker assumir a página
+  // wait for the service worker to take over the page
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
     if (!navigator.serviceWorker.controller)

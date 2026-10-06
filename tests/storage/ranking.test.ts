@@ -4,12 +4,27 @@ import { RANKING_KEY, emptyBoard, insert, loadBoard, qualifies, sanitizeInitials
 const memory = (init?: string) => {
   const m = new Map<string, string>();
   if (init !== undefined) m.set(RANKING_KEY, init);
-  return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v), m } as unknown as Storage & { m: Map<string, string> };
+  return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v), m } as unknown as Storage & {
+    m: Map<string, string>;
+  };
 };
-const broken = { getItem: () => { throw new Error('blocked'); }, setItem: () => { throw new Error('blocked'); } } as unknown as Storage;
+const broken = {
+  getItem: () => {
+    throw new Error('blocked');
+  },
+  setItem: () => {
+    throw new Error('blocked');
+  },
+} as unknown as Storage;
 const e = (initials: string, time: number, date = '2026-10-04') => ({ initials, time, date });
-/** vitória do ladrão: fuga (1:30) ou destruiu a polícia, com a vida que sobrou */
-const t = (initials: string, time: number, hp: number, how: 'escape' | 'kill' = 'escape') => ({ initials, time, hp, how, date: '2026-10-05' });
+/** thief win: escape (1:30) or destroyed the police, with the life left */
+const t = (initials: string, time: number, hp: number, how: 'escape' | 'kill' = 'escape') => ({
+  initials,
+  time,
+  hp,
+  how,
+  date: '2026-10-05',
+});
 
 describe('who qualifies', () => {
   it('only wins count, on both sides (the thief now wins by escaping 1:30 or destroying the police)', () => {
@@ -23,12 +38,12 @@ describe('who qualifies', () => {
   it('a full board only takes a better result', () => {
     let b: Board = emptyBoard();
     for (let i = 0; i < 10; i++) b = insert(b, 'police', e('AAA', 60 + i)).board;
-    expect(qualifies(b, 'police', 70, true)).toBe(false); // pior que o 10º (69)
+    expect(qualifies(b, 'police', 70, true)).toBe(false); // worse than 10th (69)
     expect(qualifies(b, 'police', 68.5, true)).toBe(true);
     for (let i = 0; i < 10; i++) b = insert(b, 'thief', t('BBB', 90, 50 + i)).board;
-    expect(qualifies(b, 'thief', 90, true, 49)).toBe(false); // mesma fuga com menos vida
+    expect(qualifies(b, 'thief', 90, true, 49)).toBe(false); // same escape with less life
     expect(qualifies(b, 'thief', 90, true, 51)).toBe(true);
-    expect(qualifies(b, 'thief', 85, true, 5)).toBe(true); // destruiu a polícia antes de 1:30
+    expect(qualifies(b, 'thief', 85, true, 5)).toBe(true); // destroyed the police before 1:30
   });
 });
 
@@ -92,7 +107,12 @@ describe('storage', () => {
 
   it('keeps the valid entries, drops invalid ones, re-sorts and cuts at 10', () => {
     const raw = JSON.stringify({
-      police: [e('BBB', 80), { initials: 'X', time: -1, date: 'x' }, e('AAA', 70), ...Array.from({ length: 12 }, (_, i) => e('CCC', 90 + i))],
+      police: [
+        e('BBB', 80),
+        { initials: 'X', time: -1, date: 'x' },
+        e('AAA', 70),
+        ...Array.from({ length: 12 }, (_, i) => e('CCC', 90 + i)),
+      ],
       thief: [t('ESC', 90, 20), { initials: 'BAD', time: 90, hp: 200, how: 'fly', date: 'x' }, t('KIL', 70, 5, 'kill')],
     });
     const b = loadBoard(memory(raw));

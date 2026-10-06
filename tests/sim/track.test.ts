@@ -18,7 +18,7 @@ describe('bumpsBetween', () => {
       expect(gap).toBeLessThanOrEqual(560);
     }
     for (const b of a) expect(b.lanes[1] - b.lanes[0]).toBe(1);
-    expect(new Set(a.map((b) => b.lanes[0])).size).toBe(3); // usa as 3 combinações
+    expect(new Set(a.map((b) => b.lanes[0])).size).toBe(3); // uses the 3 combinations
   });
 
   it('returns the same bumps for overlapping queries', () => {
@@ -28,7 +28,7 @@ describe('bumpsBetween', () => {
   });
 });
 
-/** carro em cruzeiro andando por cima (ou não) do primeiro quebra-molas */
+/** cruising car driving over (or not) the first speed bump */
 function drive(xOffset: (b: ReturnType<typeof bumpsBetween>[number]) => number) {
   const bump = bumpsBetween(SEED, 0, 2000)[0]!;
   let car: CarState = { ...createCar('police', 1, bump.s - 40), speed: PC, x: xOffset(bump) };
@@ -84,7 +84,7 @@ describe('stepJump', () => {
 
   it('crossing another bump in the air neither restarts the jump nor costs speed again', () => {
     let car: CarState = { ...createCar('police', 1, 0), speed: 25, airTime: 0.4 };
-    car = stepJump({ ...car, s: 10 }, 9, SEED, DT); // nenhum quebra-molas aqui, só desconta
+    car = stepJump({ ...car, s: 10 }, 9, SEED, DT); // no speed bump here, just deducts
     expect(car.airTime).toBeCloseTo(0.4 - DT, 10);
     expect(car.speed).toBe(25);
   });

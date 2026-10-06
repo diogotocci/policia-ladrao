@@ -11,8 +11,7 @@ function listTs(dir: string): string[] {
   });
 }
 
-const isImpure = (src: string) =>
-  /from ['"]three['"]/.test(src) || /\bdocument\./.test(src) || /\bwindow\./.test(src);
+const isImpure = (src: string) => /from ['"]three['"]/.test(src) || /\bdocument\./.test(src) || /\bwindow\./.test(src);
 
 describe('src/sim purity', () => {
   it('detector flags three, document and window usage', () => {

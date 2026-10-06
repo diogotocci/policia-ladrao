@@ -1,4 +1,4 @@
-// Efeitos de combate com pools fixos: traçadores dos tiros, faíscas nos acertos e tremor de câmera nas batidas.
+// Combat effects with fixed pools: shot tracers, sparks on hits and camera shake on impacts.
 import * as THREE from 'three';
 import type { GameEvent, WorldState } from '../sim/types';
 import { HELI_Y } from './heli';
@@ -10,9 +10,9 @@ const SPARK_LIFE = 0.3; // s
 const SHAKE_TIME = 0.2; // s
 const SHAKE_AMP = 0.15; // m
 const TRACER_LEN = 2.2; // m
-const TRACER_Y = 0.9; // altura dos tiros
+const TRACER_Y = 0.9; // shot height
 
-/** ponto redondo: sem isso cada faísca vira um quadrado enorme quando passa perto da câmera */
+/** round dot: without it each spark becomes a huge square when passing near the camera */
 function dotTexture(): THREE.DataTexture {
   const N = 16;
   const data = new Uint8Array(N * N * 4);
@@ -27,7 +27,7 @@ function dotTexture(): THREE.DataTexture {
   return t;
 }
 
-/** altura do traçador: do helicóptero (air = distância até o alvo) desce até a altura dos carros */
+/** tracer height: from the helicopter (air = distance to the target) descends to car height */
 export function tracerHeight(travelled: number, air?: number): number {
   if (!air) return TRACER_Y;
   return TRACER_Y + (HELI_Y - TRACER_Y) * Math.max(0, 1 - travelled / air);
@@ -36,12 +36,12 @@ export function tracerHeight(travelled: number, air?: number): number {
 export function createCombatFx(scene: THREE.Scene): {
   update(w: WorldState, events: GameEvent[], originS: number, dt: number): void;
   activeSparks(): number;
-  /** algumas faíscas saindo de um carro muito danificado */
+  /** a few sparks coming off a heavily damaged car */
   sparkAt(s: number, x: number): void;
-  /** deslocamento de câmera do tremor atual (zero quando parado) */
+  /** camera offset of the current shake (zero when still) */
   shake(): THREE.Vector3;
 } {
-  // traçadores: um InstancedMesh só (1 draw call), cor por instância
+  // tracers: a single InstancedMesh (1 draw call), color per instance
   const tracerGeo = new THREE.CylinderGeometry(0.05, 0.05, TRACER_LEN, 6).rotateX(Math.PI / 2);
   const tracers = new THREE.InstancedMesh(tracerGeo, new THREE.MeshBasicMaterial({ toneMapped: false }), TRACERS);
   tracers.name = 'tracers';
@@ -52,7 +52,7 @@ export function createCombatFx(scene: THREE.Scene): {
   scene.add(tracers);
   const tmp = new THREE.Object3D();
 
-  // faíscas (posições em coordenadas de pista: s, y, x)
+  // sparks (positions in track coordinates: s, y, x)
   const sparkPos = new Float32Array(SPARKS * 3);
   const sparkVel = new Float32Array(SPARKS * 3);
   const sparkWorld = new Float32Array(SPARKS * 3); // s, y, x
@@ -61,7 +61,15 @@ export function createCombatFx(scene: THREE.Scene): {
   sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkPos, 3));
   const sparks = new THREE.Points(
     sparkGeo,
-    new THREE.PointsMaterial({ color: 0xffc860, size: 0.1, map: dotTexture(), alphaTest: 0.5, toneMapped: false, transparent: true, depthWrite: false }),
+    new THREE.PointsMaterial({
+      color: 0xffc860,
+      size: 0.1,
+      map: dotTexture(),
+      alphaTest: 0.5,
+      toneMapped: false,
+      transparent: true,
+      depthWrite: false,
+    }),
   );
   sparks.name = 'sparks';
   sparks.frustumCulled = false;
@@ -89,14 +97,14 @@ export function createCombatFx(scene: THREE.Scene): {
 
   return {
     update(w, events, originS, dt) {
-      // traçadores
+      // tracers
       const n = w.match.over ? 0 : Math.min(TRACERS, w.projectiles.length);
       for (let i = 0; i < n; i++) {
         const p = w.projectiles[i]!;
-        // direção do traçador no mundo: de onde está para onde vai estar (segue a curva)
+        // tracer direction in the world: from where it is to where it will be (follows the curve)
         const a = trackPos(p.s, p.x, originS);
         const b = trackPos(p.s + p.vs * 0.01, p.x + p.vx * 0.01, originS);
-        // tiro do helicóptero: desce na diagonal do alto até a altura do alvo
+        // helicopter shot: descends diagonally from above to the target height
         const ya = tracerHeight(p.travelled, p.air);
         const yb = tracerHeight(p.travelled + Math.hypot(p.vs, p.vx) * 0.01, p.air);
         tmp.position.set(a.x, ya, a.z);
@@ -111,7 +119,7 @@ export function createCombatFx(scene: THREE.Scene): {
       tracers.instanceMatrix.needsUpdate = true;
       if (tracers.instanceColor) tracers.instanceColor.needsUpdate = true;
 
-      // eventos
+      // events
       for (const e of events) {
         if (e.type === 'hit') burst(e.s, e.x, 10, 6);
         else if (e.type === 'crash') {
@@ -120,14 +128,14 @@ export function createCombatFx(scene: THREE.Scene): {
         }
       }
 
-      // faíscas
+      // sparks
       for (let k = 0; k < SPARKS; k++) {
         if (sparkLife[k]! > 0) {
           sparkLife[k] = Math.max(0, sparkLife[k]! - dt);
           sparkWorld[k * 3] = sparkWorld[k * 3]! + sparkVel[k * 3]! * dt;
           sparkWorld[k * 3 + 1] = Math.max(0.02, sparkWorld[k * 3 + 1]! + sparkVel[k * 3 + 1]! * dt);
           sparkWorld[k * 3 + 2] = sparkWorld[k * 3 + 2]! + sparkVel[k * 3 + 2]! * dt;
-          sparkVel[k * 3 + 1] = sparkVel[k * 3 + 1]! - 20 * dt; // gravidade
+          sparkVel[k * 3 + 1] = sparkVel[k * 3 + 1]! - 20 * dt; // gravity
         }
         const alive = sparkLife[k]! > 0;
         const sp = alive ? trackPos(sparkWorld[k * 3]!, sparkWorld[k * 3 + 2]!, originS) : undefined;
@@ -137,7 +145,7 @@ export function createCombatFx(scene: THREE.Scene): {
       }
       sparkGeo.attributes.position!.needsUpdate = true;
 
-      // tremor
+      // shake
       shakeLeft = Math.max(0, shakeLeft - dt);
       if (shakeLeft > 0) {
         const a = SHAKE_AMP * (shakeLeft / SHAKE_TIME);

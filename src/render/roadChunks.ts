@@ -6,7 +6,7 @@ import { FACADE_TILE_METERS, GROUND_HALF_WIDTH, makeFacadeTexture, makeGroundTex
 
 export const CHUNK_LENGTH = 50; // m
 
-/** Índices dos blocos que precisam existir em volta da câmera. */
+/** Indices of the chunks that must exist around the camera. */
 export function visibleChunkRange(cameraS: number, ahead = 250, behind = 50): { first: number; last: number } {
   return {
     first: Math.floor((cameraS - behind) / CHUNK_LENGTH),
@@ -14,7 +14,7 @@ export function visibleChunkRange(cameraS: number, ahead = 250, behind = 50): { 
   };
 }
 
-/** Origem do render: s arredondado para baixo na grade dos blocos (coordenadas pequenas no GPU). */
+/** Render origin: s rounded down to the chunk grid (small coordinates on the GPU). */
 export function renderOrigin(s: number): number {
   return Math.floor(s / CHUNK_LENGTH) * CHUNK_LENGTH;
 }
@@ -30,21 +30,25 @@ interface Slot {
   lamps: THREE.InstancedMesh;
 }
 
-const SEGMENT = 2; // m: o chão de cada bloco é dobrado pela pista em segmentos de 2 m
+const SEGMENT = 2; // m: each chunk's ground is bent by the road in 2 m segments
 
-export function createRoad(scene: THREE.Scene, seed: number, frame: TrackFrame = createTrackFrame(seed, false)): { update(cameraS: number): void } {
+export function createRoad(
+  scene: THREE.Scene,
+  seed: number,
+  frame: TrackFrame = createTrackFrame(seed, false),
+): { update(cameraS: number): void } {
   const { first, last } = visibleChunkRange(0);
   const poolSize = last - first + 1;
 
   const groundMat = new THREE.MeshStandardMaterial({ map: makeGroundTexture(CHUNK_LENGTH), roughness: 0.92, metalness: 0 });
-  // chão em grade (1 coluna × 25 segmentos), dobrado pela pista ao (re)ocupar o bloco: cada bloco tem a sua cópia
+  // gridded ground (1 column × 25 segments), bent by the road when the chunk is (re)occupied: each chunk has its own copy
   const groundTemplate = new THREE.PlaneGeometry(GROUND_HALF_WIDTH * 2, CHUNK_LENGTH, 1, CHUNK_LENGTH / SEGMENT);
   groundTemplate.rotateX(-Math.PI / 2);
-  groundTemplate.translate(0, 0, -CHUNK_LENGTH / 2); // bloco cresce para -z (frente)
+  groundTemplate.translate(0, 0, -CHUNK_LENGTH / 2); // chunk grows toward -z (front)
   const flat = Float32Array.from(groundTemplate.getAttribute('position').array as ArrayLike<number>);
 
   const buildingMat = new THREE.MeshStandardMaterial({ map: makeFacadeTexture(), roughness: 0.8, metalness: 0.05 });
-  // UV em metros (a partir da escala da instância): janelas não esticam em prédios de tamanhos diferentes
+  // UV in meters (from the instance scale): windows do not stretch on buildings of different sizes
   buildingMat.onBeforeCompile = (shader) => {
     shader.vertexShader = shader.vertexShader.replace(
       '#include <uv_vertex>',
@@ -67,7 +71,6 @@ export function createRoad(scene: THREE.Scene, seed: number, frame: TrackFrame =
   const lampGeo = mergeGeometries([pole, arm, head])!;
   const lampMat = new THREE.MeshStandardMaterial({ color: 0x3d4046, roughness: 0.5, metalness: 0.6 });
 
-
   const tmp = new THREE.Object3D();
   const color = new THREE.Color();
   const slots: Slot[] = [];
@@ -81,7 +84,7 @@ export function createRoad(scene: THREE.Scene, seed: number, frame: TrackFrame =
     const lamps = new THREE.InstancedMesh(lampGeo, lampMat, LAMPS_PER_CHUNK);
     lamps.name = 'lamps';
     lamps.frustumCulled = false;
-    lamps.castShadow = false; // postes finos: sombra quase invisível, custo de 7 draw calls
+    lamps.castShadow = false; // thin poles: shadow almost invisible, costs 7 draw calls
     group.add(lamps);
 
     const buildings = new THREE.InstancedMesh(buildingGeo, buildingMat, MAX_BUILDINGS_PER_CHUNK);
@@ -93,12 +96,12 @@ export function createRoad(scene: THREE.Scene, seed: number, frame: TrackFrame =
     slots.push({ index: Number.NaN, group, buildings, ground, lamps });
   }
 
-  /** posição no bloco (relativa ao início do bloco, na orientação do mundo) */
+  /** position in the chunk (relative to the chunk start, in world orientation) */
   const local = (start: number, ds: number, x: number) => frame.toWorld(start + ds, x, start);
 
   const fillBuildings = (slot: Slot, index: number) => {
     const start = index * CHUNK_LENGTH;
-    // chão dobrado pela pista
+    // ground bent by the road
     const pos = slot.ground.geometry.getAttribute('position') as THREE.BufferAttribute;
     const arr = pos.array as Float32Array;
     for (let i = 0; i < arr.length; i += 3) {
@@ -109,7 +112,7 @@ export function createRoad(scene: THREE.Scene, seed: number, frame: TrackFrame =
     }
     pos.needsUpdate = true;
     slot.ground.geometry.computeBoundingSphere();
-    // postes nas duas calçadas, girados com a pista
+    // poles on both sidewalks, rotated with the road
     let li = 0;
     for (const side of [-1, 1]) {
       for (const ds of [0, 25]) {

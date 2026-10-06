@@ -18,12 +18,12 @@ export function createChaseCamera(): {
     update(car, dt, originS = 0) {
       const t = 1 - Math.exp(-LATERAL_FOLLOW * dt);
       camX = camX === undefined ? car.x : camX + (car.x - camX) * t;
-      // atrás do carro ao longo da pista e olhando adiante nela: nas curvas a câmera acompanha a rua
+      // behind the car along the road and looking ahead along it: in curves the camera follows the street
       const eye = trackPos(car.s - BACK, camX, originS);
       const at = trackPos(car.s + LOOK_AHEAD, camX + (car.x - camX) * 0.5, originS);
       camera.position.set(eye.x, UP, eye.z);
       camera.lookAt(at.x, 1, at.z);
-      // inclina um pouco para dentro da curva (sensação de velocidade)
+      // tilts slightly into the curve (sense of speed)
       const turn = at.heading - eye.heading;
       camera.rotateZ(Math.max(-0.035, Math.min(0.035, turn * 0.3)));
     },

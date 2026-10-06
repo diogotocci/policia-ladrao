@@ -11,11 +11,13 @@ const both = (police: Intents, thief: Intents): Record<Role, Intents> => ({ poli
 
 const setup = (thief: Partial<ReturnType<typeof thiefOf>>, police: Partial<ReturnType<typeof policeOf>> = {}) => {
   const w = createWorld({ seed: 1, playerRole: 'police' });
-  return withCar(
-    withCar(w, 'thief', { ...thiefOf(w), speed: 30, ...thief }),
-    'police',
-    { ...policeOf(w), s: 100, x: 1.5, speed: 30, ...police },
-  );
+  return withCar(withCar(w, 'thief', { ...thiefOf(w), speed: 30, ...thief }), 'police', {
+    ...policeOf(w),
+    s: 100,
+    x: 1.5,
+    speed: 30,
+    ...police,
+  });
 };
 
 const flyUntilDone = (w: WorldState) => {
@@ -24,7 +26,7 @@ const flyUntilDone = (w: WorldState) => {
   return s;
 };
 
-/** voa os tiros com o ladrão andando (30 m/s) e, opcionalmente, desviando de lado a 7 m/s */
+/** flies the shots with the thief moving (30 m/s) and, optionally, swerving sideways at 7 m/s */
 const flyWithThief = (w: WorldState, lateral: number) => {
   let s = w;
   for (let i = 0; i < 120 && s.projectiles.length > 0; i++) {
@@ -110,14 +112,15 @@ describe('stepProjectiles', () => {
     const perStep = BALANCE.combat.policeProjectileSpeed * DT;
     const steps = Math.ceil(150 / perStep);
     for (let i = 0; i < steps - 1; i++) w = stepProjectiles(w, DT);
-    expect(w.projectiles).toHaveLength(1); // ainda voando antes dos 150 m
+    expect(w.projectiles).toHaveLength(1); // still flying before 150 m
     w = stepProjectiles(w, DT);
     expect(w.projectiles).toEqual([]);
   });
 });
 
 describe('helicopter = extra gun (playtest 2026-10-06: the officer keeps shooting too)', () => {
-  const withHeli = (w: WorldState) => withCar(w, 'police', { ...policeOf(w), upgrades: { ...policeOf(w).upgrades, heliUntil: w.time + 5 } });
+  const withHeli = (w: WorldState) =>
+    withCar(w, 'police', { ...policeOf(w), upgrades: { ...policeOf(w).upgrades, heliUntil: w.time + 5 } });
 
   it('with the helicopter, holding fire gives two shots: the officer from the car and the helicopter from above', () => {
     const w = fireWeapons(withHeli(setup({ s: 140, x: 1.5 })), both(FIRE, NO_INTENTS), DT);
@@ -134,7 +137,7 @@ describe('helicopter = extra gun (playtest 2026-10-06: the officer keeps shootin
     for (let i = 0; i < 240; i++) w = fireWeapons({ ...w, events: [] }, both(NO_INTENTS, NO_INTENTS), DT);
     const n = w.projectiles.filter((p) => p.air !== undefined).length;
     expect(n).toBe(Math.ceil(4 / BALANCE.items.police.heliFireInterval));
-    expect(w.projectiles.some((p) => p.air === undefined)).toBe(false); // o policial só atira com o botão
+    expect(w.projectiles.some((p) => p.air === undefined)).toBe(false); // the policeman only shoots with the button
     let after: WorldState = { ...setup({ s: 140, x: 1.5 }), projectiles: [] };
     for (let i = 0; i < 120; i++) after = fireWeapons({ ...after, events: [] }, both(NO_INTENTS, NO_INTENTS), DT);
     expect(after.projectiles).toHaveLength(0);

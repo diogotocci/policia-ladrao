@@ -10,7 +10,7 @@ export const QUALITY: Record<QualityTier, { maxPixelRatio: number; shadowMapSize
 
 const ORDER: QualityTier[] = ['high', 'medium', 'low'];
 
-/** Tamanho do canvas = tamanho CSS; densidade limitada pelo nível de qualidade. */
+/** Canvas size = CSS size; density capped by the quality level. */
 export function computeRenderSize(
   cssWidth: number,
   cssHeight: number,
@@ -25,16 +25,16 @@ export function computeRenderSize(
 }
 
 const WINDOW_SECONDS = 3;
-const WARMUP_SECONDS = 2; // compilação de shaders e carregamento da página
-const GRACE_SECONDS = 1; // depois de trocar de nível ou de voltar para a aba
+const WARMUP_SECONDS = 2; // shader compilation and page loading
+const GRACE_SECONDS = 1; // after switching level or returning to the tab
 const MIN_FPS = 45;
 const MAX_FRAME = 0.5;
 const CAP_30HZ = 1 / 30;
 
 /**
- * Desce um nível se a média de FPS ficar abaixo de 45 numa janela de 3 s. Nunca sobe sozinho.
- * Não conta os primeiros 2 s, nem 1 s depois de cada troca ou de reset(). Um aparelho travado
- * em 30 Hz estáveis (economia de bateria) não é rebaixado: baixar a qualidade não ajudaria.
+ * Drops one level if the average FPS stays below 45 over a 3 s window. Never goes up on its own.
+ * Ignores the first 2 s, and 1 s after each switch or reset(). A device locked
+ * at a steady 30 Hz (battery saving) is not downgraded: lowering quality would not help.
  */
 export function createQualityGovernor(initial: QualityTier): {
   readonly tier: QualityTier;
@@ -83,7 +83,7 @@ export function createQualityGovernor(initial: QualityTier): {
   };
 }
 
-/** Textura suave: filtro linear, mipmaps e anisotropia. */
+/** Smooth texture: linear filter, mipmaps and anisotropy. */
 export function smoothTexture<T extends THREE.Texture>(tex: T): T {
   tex.magFilter = THREE.LinearFilter;
   tex.minFilter = THREE.LinearMipmapLinearFilter;
@@ -100,7 +100,7 @@ export function createRenderer(
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.15;
-  renderer.shadowMap.type = THREE.PCFShadowMap; // PCFSoftShadowMap foi removido no r186
+  renderer.shadowMap.type = THREE.PCFShadowMap; // PCFSoftShadowMap was removed in r186
   const canvas = renderer.domElement;
   canvas.style.width = '100%';
   canvas.style.height = '100%';

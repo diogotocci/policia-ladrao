@@ -1,7 +1,11 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest';
+import { CHUNK_LENGTH, renderOrigin, visibleChunkRange, createRoad } from '../../src/render/roadChunks';
+import * as THREE from 'three';
+import { createTrackFrame } from '../../src/render/trackFrame';
+import { curvesBetween } from '../../src/sim/curves';
 
-// texturas de canvas não existem no jsdom: troca por texturas vazias (aqui só a geometria importa)
+// canvas textures do not exist in jsdom: swap for empty textures (only the geometry matters here)
 vi.mock('../../src/render/textures', async () => {
   const T = await import('three');
   return {
@@ -11,7 +15,6 @@ vi.mock('../../src/render/textures', async () => {
     makeFacadeTexture: () => new T.Texture(),
   };
 });
-import { CHUNK_LENGTH, renderOrigin, visibleChunkRange } from '../../src/render/roadChunks';
 
 describe('visibleChunkRange', () => {
   it('s = 0 → chunks -1..5', () => {
@@ -51,11 +54,6 @@ describe('renderOrigin', () => {
   });
 });
 
-import * as THREE from 'three';
-import { createRoad } from '../../src/render/roadChunks';
-import { createTrackFrame } from '../../src/render/trackFrame';
-import { curvesBetween } from '../../src/sim/curves';
-
 describe('curved road chunks (Entrega 6)', () => {
   const worldVerts = (scene: THREE.Scene, k: number) => {
     const g = scene.getObjectByName(`chunk-${k}`)!;
@@ -78,7 +76,7 @@ describe('curved road chunks (Entrega 6)', () => {
     const k = Math.floor(camS / 50);
     const a = worldVerts(scene, k);
     const b = worldVerts(scene, k + 1);
-    // as duas pontas da emenda (x = ±11 em s = início do bloco k+1) existem nas duas malhas, no mesmo lugar
+    // both ends of the seam (x = ±11 at s = start of block k+1) exist in both meshes, in the same place
     const origin = Math.floor(camS / 50) * 50;
     for (const x of [-11, 11]) {
       const e = frame.toWorld((k + 1) * 50, x, origin);
@@ -98,11 +96,16 @@ describe('curved road chunks (Entrega 6)', () => {
     const k = Math.floor(s / 50);
     const target = frame.toWorld(s, 0, Math.floor(s / 50) * 50);
     const verts = worldVerts(scene, k);
-    // linhas da grade: 2 vértices (bordas); o meio de cada linha é o centro da pista
+    // grid lines: 2 vertices (edges); the middle of each line is the road center
     const mids = [];
-    for (let i = 0; i + 1 < verts.length; i += 2) mids.push(verts[i]!.clone().add(verts[i + 1]!).multiplyScalar(0.5));
+    for (let i = 0; i + 1 < verts.length; i += 2)
+      mids.push(
+        verts[i]!.clone()
+          .add(verts[i + 1]!)
+          .multiplyScalar(0.5),
+      );
     const closest = Math.min(...mids.map((v) => Math.hypot(v.x - target.x, v.z - target.z)));
-    expect(closest).toBeLessThan(1.5); // centro de uma linha da grade a no máximo ~um segmento
+    expect(closest).toBeLessThan(1.5); // center of a grid line at most ~one segment away
   });
 
   it('keeps the same number of meshes per chunk', () => {
@@ -110,6 +113,6 @@ describe('curved road chunks (Entrega 6)', () => {
     createRoad(scene, 1, createTrackFrame(1, true)).update(800);
     let n = 0;
     scene.traverse((o) => (o as THREE.Mesh).isMesh && n++);
-    expect(n).toBe(7 * 3); // chão, postes, prédios por bloco
+    expect(n).toBe(7 * 3); // ground, poles, buildings per block
   });
 });

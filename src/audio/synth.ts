@@ -1,12 +1,12 @@
-// Backends de áudio. O mixer só conversa com esta interface:
-// - createWebAudioBackend: síntese real com WebAudio (sem arquivos), contexto criado no 1º gesto do usuário;
-// - createNullBackend: só grava as chamadas (testes e navegadores sem áudio).
+// Audio backends. The mixer only talks to this interface:
+// - createWebAudioBackend: real WebAudio synthesis (no files), context created on the user's 1st gesture;
+// - createNullBackend: only records the calls (tests and browsers without audio).
 import type { Note } from './music';
 import { RECIPES, type SoundName, type Voice } from './sfx';
 
 export interface AudioBackend {
   now(): number;
-  /** o relógio do áudio está andando (contexto destravado e não suspenso) */
+  /** the audio clock is running (context unlocked and not suspended) */
   running(): boolean;
   play(name: SoundName, gain?: number): void;
   setEngine(freq: number, gain: number): void;
@@ -14,14 +14,14 @@ export interface AudioBackend {
   setMaster(gain: number): void;
   setMusic(gain: number): void;
   note(n: Note, when: number): void;
-  /** destrava/retoma (chamar dentro do handler de um gesto do usuário) */
+  /** unlocks/resumes (call inside a user gesture handler) */
   resume(): void;
   suspend(): void;
   close(): void;
 }
 
 export interface NullBackend extends AudioBackend {
-  /** simula contexto travado/suspenso nos testes */
+  /** simulates a locked/suspended context in tests */
   running: () => boolean;
   setRunning(r: boolean): void;
   advance(dt: number): void;
@@ -78,7 +78,7 @@ export function createNullBackend(): NullBackend {
 
 const midiHz = (m: number) => 440 * Math.pow(2, (m - 69) / 12);
 
-/** Síntese WebAudio. Lança se o navegador não tiver AudioContext (quem chama cai para o null backend). */
+/** WebAudio synthesis. Throws if the browser has no AudioContext (the caller falls back to the null backend). */
 export function createWebAudioBackend(): AudioBackend {
   const Ctx = (window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)!;
   const ctx = new Ctx();
@@ -92,12 +92,12 @@ export function createWebAudioBackend(): AudioBackend {
   musicBus.gain.value = 0.35;
   musicBus.connect(master);
 
-  // ruído branco reaproveitado por todos os sons
+  // white noise reused by all sounds
   const noise = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
   const ch = noise.getChannelData(0);
   let seed = 12345;
   for (let i = 0; i < ch.length; i++) ch[i] = ((seed = (seed * 16807) % 2147483647) / 2147483647) * 2 - 1;
-  // pulso 25% (timbre "NES") para a melodia
+  // 25% pulse ("NES" timbre) for the melody
   const pulse = (() => {
     const n = 32;
     const real = new Float32Array(n);
@@ -106,7 +106,7 @@ export function createWebAudioBackend(): AudioBackend {
     return ctx.createPeriodicWave(real, imag);
   })();
 
-  // motor: serra + quadrada graves num passa-baixa
+  // engine: low sawtooth + square through a low-pass
   const engineGain = ctx.createGain();
   engineGain.gain.value = 0;
   const engineFilter = ctx.createBiquadFilter();
@@ -123,7 +123,7 @@ export function createWebAudioBackend(): AudioBackend {
   e1.start();
   e2.start();
 
-  // sirene: quadrada com LFO na frequência (sobe e desce)
+  // siren: square wave with an LFO on frequency (rises and falls)
   const sirenGain = ctx.createGain();
   sirenGain.gain.value = 0;
   const siren = ctx.createOscillator();
@@ -141,7 +141,15 @@ export function createWebAudioBackend(): AudioBackend {
   siren.start();
   lfo.start();
 
-  const voice = (v: Voice, t0: number, gainScale: number, bus: AudioNode, freqOverride?: number, durOverride?: number, wave?: OscillatorType | 'pulse') => {
+  const voice = (
+    v: Voice,
+    t0: number,
+    gainScale: number,
+    bus: AudioNode,
+    freqOverride?: number,
+    durOverride?: number,
+    wave?: OscillatorType | 'pulse',
+  ) => {
     const start = t0 + v.delay;
     const dur = durOverride ?? v.duration;
     const g = ctx.createGain();
@@ -182,14 +190,14 @@ export function createWebAudioBackend(): AudioBackend {
     hat: { wave: 'noise', freq: 9000, freqEnd: 7000, gain: 0.12, attack: 0.001, duration: 0.035, delay: 0 },
   };
 
-  // automação só quando o valor muda (o mixer chama a cada quadro)
+  // automation only when the value changes (the mixer calls every frame)
   const last = new Map<AudioParam, number>();
   const smooth = (p: AudioParam, v: number) => {
     if (last.get(p) === v) return;
     last.set(p, v);
     p.setTargetAtTime(v, ctx.currentTime, 0.05);
   };
-  // contexto travado/suspenso: currentTime parado — nada é agendado (senão os nós se acumulam e estouram juntos)
+  // locked/suspended context: currentTime is stopped — nothing is scheduled (otherwise nodes pile up and burst together)
   const live = () => ctx.state === 'running';
 
   return {
@@ -200,7 +208,7 @@ export function createWebAudioBackend(): AudioBackend {
       for (const v of RECIPES[name]) voice(v, ctx.currentTime, gain, sfxBus);
     },
     setEngine(freq, gain) {
-      freq = Math.round(freq * 2) / 2; // quantizado: evita automação nova a cada quadro
+      freq = Math.round(freq * 2) / 2; // quantized: avoids new automation every frame
       smooth(e1.frequency, Math.max(20, freq));
       smooth(e2.frequency, Math.max(20, freq));
       smooth(engineFilter.frequency, 300 + freq * 4);
@@ -219,7 +227,15 @@ export function createWebAudioBackend(): AudioBackend {
       if (!live()) return;
       if (n.voice === 'kick' || n.voice === 'snare' || n.voice === 'hat') voice(DRUM[n.voice], when, 1, musicBus);
       else {
-        const base: Voice = { wave: 'square', freq: 0, freqEnd: 0, gain: n.voice === 'bass' ? 0.32 : 0.2, attack: 0.005, duration: n.dur, delay: 0 };
+        const base: Voice = {
+          wave: 'square',
+          freq: 0,
+          freqEnd: 0,
+          gain: n.voice === 'bass' ? 0.32 : 0.2,
+          attack: 0.005,
+          duration: n.dur,
+          delay: 0,
+        };
         voice(base, when, 1, musicBus, midiHz(n.midi), n.dur, n.voice === 'lead' ? 'pulse' : 'square');
       }
     },

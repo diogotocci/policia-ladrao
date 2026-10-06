@@ -1,7 +1,7 @@
 import { BALANCE, type Role } from '../config/balance';
 import type { Intents } from './intents';
 
-/** Melhorias e efeitos dos itens das caixinhas (spec §5). Tempos em segundos de partida. */
+/** Upgrades and effects of the item-box items (spec §5). Times in match seconds. */
 export interface Upgrades {
   fireInterval: number;
   power: number;
@@ -28,24 +28,24 @@ export function baseUpgrades(role: Role): Upgrades {
 
 export interface CarState {
   role: Role;
-  /** metros ao longo da pista */
+  /** meters along the road */
   s: number;
-  /** posição lateral em metros (0 = centro da pista) */
+  /** lateral position in meters (0 = road center) */
   x: number;
   /** m/s */
   speed: number;
   steer: -1 | 0 | 1;
   touchingEdge: boolean;
   hp: number;
-  /** arma: a polícia sempre tem; o ladrão ganha numa caixinha (entrega 3) */
+  /** weapon: the police always has one; the thief gets one from a box (delivery 3) */
   hasGun: boolean;
-  /** segundos até poder atirar de novo */
+  /** seconds until it can shoot again */
   fireCooldown: number;
-  /** recarga da arma do helicóptero (polícia) */
+  /** reload of the helicopter's weapon (police) */
   heliCooldown: number;
-  /** segundos restantes no ar (pulo do quebra-molas) */
+  /** seconds left in the air (speed bump jump) */
   airTime: number;
-  /** derrapando na curva (acima da aderência) */
+  /** skidding in the curve (above grip) */
   skidding: boolean;
   upgrades: Upgrades;
 }
@@ -71,8 +71,8 @@ export function createCar(role: Role, laneIndex: 0 | 1 | 2 | 3, s = 0): CarState
 const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
 
 /**
- * Deriva lateral numa curva de curvatura κ (1/m, positiva = curva à direita): empurra para fora (−sinal de κ).
- * Até a aderência é fácil de segurar; acima dela o carro derrapa e o ◀ ▶ rende menos (spec Entrega 6).
+ * Lateral drift in a curve of curvature κ (1/m, positive = right curve): pushes outward (−sign of κ).
+ * Up to the grip limit it is easy to hold; above it the car skids and ◀ ▶ gives less (spec Delivery 6).
  */
 export function cornering(speed: number, curvature: number): { drift: number; skidding: boolean } {
   if (curvature === 0 || speed <= 0) return { drift: 0, skidding: false };
@@ -89,9 +89,10 @@ export function stepCar(car: CarState, intents: Intents, dt: number, opts: { spe
 
   let speed: number;
   if (intents.brake) speed = Math.max(0, car.speed - brakeDecel * dt);
-  else if (car.airTime > 0) speed = car.speed; // no ar: não acelera nem desacelera (só o freio age)
+  else if (car.airTime > 0)
+    speed = car.speed; // in the air: neither accelerates nor decelerates (only the brake acts)
   else if (car.speed < target) speed = Math.min(target, car.speed + accel * dt);
-  else speed = Math.max(target, car.speed - accel * dt); // turbo acabou: desacelera suave
+  else speed = Math.max(target, car.speed - accel * dt); // turbo ended: decelerates smoothly
 
   const steer: CarState['steer'] = intents.left === intents.right ? 0 : intents.left ? -1 : 1;
   const { drift, skidding } = cornering(speed, opts.curvature ?? 0);

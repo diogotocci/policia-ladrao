@@ -3,7 +3,10 @@ import { BALANCE } from '../../src/config/balance';
 import { aiStep, initialAiMemory, type AiMemory } from '../../src/sim/ai';
 import { stepCar } from '../../src/sim/car';
 import { createRng } from '../../src/sim/rng';
-import { createWorld, policeOf, thiefOf, withCar, type WorldState } from '../../src/sim/world';
+import { createWorld, policeOf, stepWorld, thiefOf, withCar, type WorldState } from '../../src/sim/world';
+import { NO_INTENTS as NONE } from '../../src/sim/intents';
+import { bumpXRange, bumpsBetween, stepJump } from '../../src/sim/track';
+import { curvesBetween } from '../../src/sim/curves';
 
 const DT = 1 / 60;
 const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
@@ -13,7 +16,7 @@ const setup = (thief: Partial<ReturnType<typeof thiefOf>>, police: Partial<Retur
   return { ...withCar(withCar(w, 'thief', { ...thiefOf(w), ...thief }), 'police', { ...policeOf(w), ...police }), level };
 };
 
-/** só o ladrão IA dirige; a polícia anda junto, alinhada atrás */
+/** only the AI thief drives; the police move along, aligned behind */
 function timeToFirstLaneChange(seed: number, level: number): number {
   let w: WorldState = setup({ s: 40, x: 1.5, speed: 33 }, { s: 20, x: 1.5, speed: 33 }, level);
   const rng = createRng(seed);
@@ -79,11 +82,6 @@ describe('thief AI', () => {
   });
 });
 
-// ---------- entrega 3: o mundo ----------
-import { NO_INTENTS as NONE } from '../../src/sim/intents';
-import { stepWorld } from '../../src/sim/world';
-import { bumpXRange, bumpsBetween, stepJump } from '../../src/sim/track';
-
 describe('AI uses the world', () => {
   it('steers around a stopped traffic car ahead (no crash in 5 s)', () => {
     let w = createWorld({ seed: 2, playerRole: 'police' });
@@ -97,11 +95,11 @@ describe('AI uses the world', () => {
     expect(crashes).toBe(0);
   });
 
-  /** fração dos quebra-molas (na faixa do ladrão 60 m antes) que ele evitou */
+  /** fraction of speed bumps (in the thief's lane 60 m ahead) that it avoided */
   function bumpDodgeRate(level: number): number {
     const seed = 11;
     let w = { ...createWorld({ seed, playerRole: 'police' }), level };
-    // polícia longe, em outra faixa: o ladrão não está fugindo de ninguém
+    // police far away, in another lane: the thief is not fleeing anyone
     w = withCar(w, 'police', { ...policeOf(w), s: -1e6, x: -4.5 });
     let mem = w.ai.thief;
     const rng = createRng(77);
@@ -180,12 +178,12 @@ describe('AI uses the world', () => {
 });
 
 describe('bombs vs AI (review fixes)', () => {
-  /** fração de bombas na faixa da polícia IA que ela atropela */
+  /** fraction of bombs in the AI police's lane that it runs over */
   function bombHitRate(level: number): number {
     let hits = 0;
     const N = 60;
     for (let k = 0; k < N; k++) {
-      // stepWorld recalcula o nível pelo tempo: começa no tempo daquele nível
+      // stepWorld recomputes the level from time: starts at that level's time
       let w = { ...createWorld({ seed: 100 + k, playerRole: 'thief', traffic: false }), level, time: (level - 1) * 30 + 0.01 };
       const p = { ...policeOf(w), speed: 33 };
       w = withCar(w, 'police', p);
@@ -216,10 +214,8 @@ describe('bombs vs AI (review fixes)', () => {
   });
 });
 
-import { curvesBetween } from '../../src/sim/curves';
-
 describe('AI and curves (Entrega 6)', () => {
-  /** ladrão da IA chega a 34 m/s, 150 m antes de cada curva fechada; conta quantas vezes bate no meio-fio */
+  /** AI thief arrives at 34 m/s, 150 m before each sharp curve; counts how many times it hits the curb */
   const curbRate = (level: number, n = 50) => {
     let hits = 0;
     let tried = 0;

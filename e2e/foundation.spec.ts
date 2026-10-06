@@ -2,12 +2,10 @@ import { expect, test, type Page } from '@playwright/test';
 
 type Snapshot = { time: number; player: { s: number; x: number; speed: number; role: string } };
 
-const snapshot = (page: Page) =>
-  page.evaluate(() => (window as unknown as { __game: { snapshot(): Snapshot } }).__game.snapshot());
-const drawCalls = (page: Page) =>
-  page.evaluate(() => (window as unknown as { __game: { drawCalls(): number } }).__game.drawCalls());
+const snapshot = (page: Page) => page.evaluate(() => (window as unknown as { __game: { snapshot(): Snapshot } }).__game.snapshot());
+const drawCalls = (page: Page) => page.evaluate(() => (window as unknown as { __game: { drawCalls(): number } }).__game.drawCalls());
 
-/** Espera passar N segundos de SIMULAÇÃO (não de relógio): robusto em máquinas lentas / GPU por software. */
+/** Waits for N seconds of SIMULATION (not wall clock): robust on slow machines / software GPU. */
 const waitSim = async (page: Page, seconds: number) => {
   const t0 = (await snapshot(page)).time;
   await page.waitForFunction(
@@ -24,8 +22,8 @@ test.beforeEach(async ({ page }) => {
   page.on('console', (m) => {
     const type = m.type();
     const text = m.text();
-    // Avisos do driver de vídeo (ex.: "GL Driver Message ... GPU stall due to ReadPixels") vêm do
-    // navegador/GPU da máquina, não do jogo — só falham avisos do próprio app (THREE.*, nossos logs).
+    // Video driver warnings (e.g. "GL Driver Message ... GPU stall due to ReadPixels") come from the
+    // browser/GPU of the machine, not the game — only the app's own warnings fail (THREE.*, our logs).
     if (type === 'warning' && /GL Driver Message|GPU stall/.test(text)) return;
     if (type === 'error' || type === 'warning') errors.push(`${type}: ${text}`);
   });
@@ -43,8 +41,8 @@ test('drives on its own to police cruise speed and renders the road', async ({ p
   await waitSim(page, 4);
   const s = await snapshot(page);
   expect(s.player.role).toBe('police');
-  // cruzeiro 34 m/s; pode estar acima com o turbo de compensação (ladrão a mais de 20 m).
-  // Amostra 1 s e usa o máximo: um quebra-molas no meio (−25%) não pode derrubar o teste.
+  // cruise 34 m/s; may be higher with the catch-up turbo (thief more than 20 m away).
+  // Samples 1 s and uses the max: a speed bump in the middle (−25%) must not fail the test.
   let max = 0;
   for (let i = 0; i < 10; i++) {
     max = Math.max(max, (await snapshot(page)).player.speed);
@@ -108,18 +106,21 @@ test('phone held upright: the game draws itself sideways (landscape) and keeps r
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(300);
   const box = await page.locator('#app').boundingBox();
-  // girado: ocupa a tela toda em pé, mas o próprio container é deitado
+  // rotated: fills the whole screen in portrait, but the container itself is landscape
   expect(box!.width).toBeCloseTo(390, 0);
   expect(box!.height).toBeCloseTo(844, 0);
-  const inner = await page.evaluate(() => ({ w: document.getElementById('app')!.clientWidth, h: document.getElementById('app')!.clientHeight }));
+  const inner = await page.evaluate(() => ({
+    w: document.getElementById('app')!.clientWidth,
+    h: document.getElementById('app')!.clientHeight,
+  }));
   expect(inner.w).toBeGreaterThan(inner.h);
   const t1 = (await snapshot(page)).time;
   await waitSim(page, 0.5);
   expect((await snapshot(page)).time).toBeGreaterThan(t1);
-  // o botão ▶ (girado) ainda responde ao toque
+  // the ▶ button (rotated) still responds to touch
   const x0 = (await snapshot(page)).player.x;
   const b = (await page.locator('.touch-btn[data-intent="right"]').boundingBox())!;
-  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2); // toque de verdade no ponto da tela (passa pelo giro)
+  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2); // real touch at the screen point (goes through the rotation)
   await page.mouse.down();
   await page.waitForTimeout(500);
   await page.mouse.up();
@@ -150,7 +151,7 @@ test('thief screenshot (visual check)', async ({ page }, info) => {
   await waitSim(page, 0.4);
   await page.keyboard.up('ArrowRight');
   await waitSim(page, 2.5);
-  // só para a captura: mostra também ATIRAR e BOMBA (ficam ocultos nesta entrega)
+  // only for the capture: also shows SHOOT and BOMB (hidden in this release)
   await page.evaluate(() => document.querySelectorAll<HTMLElement>('.touch-btn[hidden]').forEach((b) => (b.hidden = false)));
   await page.screenshot({ path: `test-results/foundation-thief-${info.project.name}.png` });
 });
@@ -167,16 +168,21 @@ test('real multi-touch: two fingers, slide between arrows, lift (mobile)', async
   const cdp = await page.context().newCDPSession(page);
   const touch = (type: string, pts: { x: number; y: number; id: number }[]) =>
     cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts } as never);
-  const intents = () =>
-    page.evaluate(() => (window as unknown as { __game: { intents(): Record<string, boolean> } }).__game.intents());
+  const intents = () => page.evaluate(() => (window as unknown as { __game: { intents(): Record<string, boolean> } }).__game.intents());
 
-  await touch('touchStart', [{ ...L, id: 1 }, { ...B, id: 2 }]);
+  await touch('touchStart', [
+    { ...L, id: 1 },
+    { ...B, id: 2 },
+  ]);
   await expect.poll(intents).toMatchObject({ left: true, right: false, brake: true });
 
-  await touch('touchMove', [{ ...R, id: 1 }, { ...B, id: 2 }]);
+  await touch('touchMove', [
+    { ...R, id: 1 },
+    { ...B, id: 2 },
+  ]);
   await expect.poll(intents).toMatchObject({ left: false, right: true, brake: true });
 
-  // CDP (Chromium): touchEnd lista os pontos que saíram — só o dedo 1 levanta
+  // CDP (Chromium): touchEnd lists the points that were released — only finger 1 lifts
   await touch('touchEnd', [{ ...R, id: 1 }]);
   await expect.poll(intents).toMatchObject({ left: false, right: false, brake: true });
 

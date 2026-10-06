@@ -11,8 +11,8 @@ describe('snapToGrid', () => {
 
 describe('SHADOW_BOX', () => {
   it('covers the road well ahead of the car (no shadows popping in at 40 m)', () => {
-    expect(SHADOW_BOX.ahead).toBeGreaterThanOrEqual(110); // até onde a neblina começa
+    expect(SHADOW_BOX.ahead).toBeGreaterThanOrEqual(110); // up to where the fog starts
     expect(SHADOW_BOX.behind).toBeGreaterThanOrEqual(10);
-    expect(SHADOW_BOX.halfWidth).toBeGreaterThanOrEqual(25); // pista + calçadas + fachadas
+    expect(SHADOW_BOX.halfWidth).toBeGreaterThanOrEqual(25); // road + sidewalks + facades
   });
 });

@@ -1,4 +1,4 @@
-// Telas da app (spec §7). Componentes DOM finos: só desenham e chamam callbacks; o fluxo fica em flow.ts.
+// App screens (spec §7). Thin DOM components: they only draw and call callbacks; the flow lives in flow.ts.
 import type { Role } from '../../config/balance';
 import type { Board } from '../../storage/ranking';
 import { formatTime } from '../hud';
@@ -21,9 +21,10 @@ const btn = (label: string, cls: string, onClick: () => void) => {
   b.addEventListener('click', onClick);
   return b;
 };
-const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE =
+  'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-/** Tab/Shift+Tab ficam dentro da tela aberta (não escapam para os botões do jogo atrás dela). */
+/** Tab/Shift+Tab stay inside the open screen (they do not escape to the game buttons behind it). */
 export function trapFocus(el: HTMLElement): () => void {
   const onKey = (e: KeyboardEvent) => {
     if (e.key !== 'Tab') return;
@@ -61,10 +62,10 @@ const mount = (root: HTMLElement, el: HTMLElement, focus?: HTMLElement): Disposa
   };
 };
 
-// ---------- título ----------
+// ---------- title ----------
 export function renderTitle(
   root: HTMLElement,
-  p: { onPlay(): void; onRanking(): void; mountToggle(parent: HTMLElement): Disposable },
+  p: { onPlay(): void; onRanking(): void; mountToggle(parent: HTMLElement): Disposable; version?: string },
 ): Disposable {
   const s = h('section', 'screen screen-title');
   s.setAttribute('aria-label', 'Polícia × Ladrão');
@@ -80,23 +81,35 @@ export function renderTitle(
   const sound = h('div', 'title-sound');
   const toggle = p.mountToggle(sound);
   s.append(logo, name, row, sound);
+  if (p.version) s.append(h('p', 'title-version', `v${p.version}`));
   const m = mount(root, s, play);
   return { dispose: () => (toggle.dispose(), m.dispose()) };
 }
 
-// ---------- escolha de lado ----------
+// ---------- side choice ----------
 const RULES: Record<Role, { title: string; lines: string[] }> = {
   police: {
     title: 'Polícia',
-    lines: ['Prenda o ladrão antes de 1:30', 'Você nunca passa o ladrão: encoste e atire', 'Caixinhas azuis: cadência, nitro, helicóptero…'],
+    lines: [
+      'Prenda o ladrão antes de 1:30',
+      'Você nunca passa o ladrão: encoste e atire',
+      'Caixinhas azuis: cadência, nitro, helicóptero…',
+    ],
   },
   thief: {
     title: 'Ladrão',
-    lines: ['Aguente 1:30 e suma no horizonte (ou destrua a viatura)', 'Quebra-molas, tráfego e bombas são aliados', 'Caixinhas vermelhas: placas, bombas, arma traseira'],
+    lines: [
+      'Aguente 1:30 e suma no horizonte (ou destrua a viatura)',
+      'Quebra-molas, tráfego e bombas são aliados',
+      'Caixinhas vermelhas: placas, bombas, arma traseira',
+    ],
   },
 };
 
-export function renderChoose(root: HTMLElement, p: { onChoose(role: Role): void; onBack(): void }): Disposable & { previews: Record<Role, HTMLElement> } {
+export function renderChoose(
+  root: HTMLElement,
+  p: { onChoose(role: Role): void; onBack(): void },
+): Disposable & { previews: Record<Role, HTMLElement> } {
   const s = h('section', 'screen screen-choose');
   s.append(h('h2', 'screen-heading', 'Escolha seu lado'));
   const cards = h('div', 'choose-cards');
@@ -123,7 +136,7 @@ export function renderChoose(root: HTMLElement, p: { onChoose(role: Role): void;
   return { ...mount(root, s, first), previews };
 }
 
-// ---------- contagem ----------
+// ---------- countdown ----------
 export function renderCountdown(root: HTMLElement): Disposable & { set(left: number): void; go(): void } {
   const s = h('section', 'screen screen-countdown');
   s.setAttribute('aria-live', 'assertive');
@@ -137,7 +150,7 @@ export function renderCountdown(root: HTMLElement): Disposable & { set(left: num
       if (n.textContent !== v) {
         n.textContent = v;
         n.classList.remove('pop');
-        void n.offsetWidth; // reinicia a animação
+        void n.offsetWidth; // restarts the animation
         n.classList.add('pop');
       }
     },
@@ -148,7 +161,7 @@ export function renderCountdown(root: HTMLElement): Disposable & { set(left: num
   };
 }
 
-// ---------- pausa ----------
+// ---------- pause ----------
 export function renderPause(
   root: HTMLElement,
   p: { onResume(): void; onRestart(): void; onQuit(): void; mountToggle?(parent: HTMLElement): Disposable },
@@ -169,7 +182,7 @@ export function renderPause(
   return { dispose: () => (toggle?.dispose(), m.dispose()) };
 }
 
-// ---------- fim ----------
+// ---------- end ----------
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 function endReason(r: MatchResult, me: Role): string {
@@ -183,7 +196,7 @@ export function renderEnd(
     role: Role;
     result: MatchResult;
     qualifies: boolean;
-    /** recorde já salvo (voltando do ranking): mostra "Recorde salvo!" em vez das iniciais */
+    /** record already saved (coming back from the ranking): shows "Recorde salvo!" instead of the initials */
     saved?: boolean;
     onSave(initials: string): void;
     onAgain(): void;
@@ -224,7 +237,7 @@ export function renderEnd(
     };
     for (let i = 0; i < 3; i++) {
       const col = h('div', 'initials-col');
-      // roleta de fliperama: ▼ desce para a próxima letra (A → B), ▲ volta (A → Z)
+      // arcade-style wheel: ▼ goes to the next letter (A -> B), ▲ goes back (A -> Z)
       const up = btn('▲', 'initials-up', () => ((letters[i] = (letters[i]! + 25) % 26), render()));
       up.dataset.i = String(i);
       up.setAttribute('aria-label', `Letra ${i + 1}: anterior`);
@@ -246,7 +259,7 @@ export function renderEnd(
     };
     box.addEventListener('keydown', (e) => {
       const k = e.key;
-      if (e.repeat) return void e.preventDefault(); // tecla ainda segurada do jogo (ex.: freio) não mexe nas letras
+      if (e.repeat) return void e.preventDefault(); // a key still held from the game (e.g. brake) does not change the letters
       if (/^[a-zA-Z]$/.test(k)) {
         letters[cursor] = LETTERS.indexOf(k.toUpperCase());
         cursor = Math.min(2, cursor + 1);
@@ -257,7 +270,7 @@ export function renderEnd(
       else if (k === 'Enter') return void (e.preventDefault(), save());
       else return;
       e.preventDefault();
-      e.stopPropagation(); // letras não viram atalhos do jogo (M, P…)
+      e.stopPropagation(); // letters do not become game shortcuts (M, P...)
       render();
     });
     const saveBtn = btn('Salvar', 'is-primary', save);
@@ -313,7 +326,12 @@ export function renderRanking(
       tag.setAttribute('aria-label', e.how === 'kill' ? 'destruiu a viatura' : `fugiu, vida ${Math.round(e.hp ?? 0)}`);
       time.append(tag);
     }
-    row.append(h('span', 'ranking-pos', String(i + 1)), h('span', 'ranking-initials', e.initials), time, h('span', 'ranking-date', shortDate(e.date)));
+    row.append(
+      h('span', 'ranking-pos', String(i + 1)),
+      h('span', 'ranking-initials', e.initials),
+      time,
+      h('span', 'ranking-date', shortDate(e.date)),
+    );
     list.append(row);
   });
   const back = btn('Voltar', 'is-quiet', p.onBack);

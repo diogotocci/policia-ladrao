@@ -2,30 +2,16 @@
 
 Jogo mobile (webapp/PWA) feito do zero. Este arquivo é lido automaticamente por Claude Code (via `CLAUDE.md`), Codex, Cursor, Gemini CLI, Copilot e outros agentes. **As regras daqui têm precedência sobre as skills.**
 
-## 1. Skills — use sem esperar o usuário pedir
+## 1. Regras sempre ativas e skills — use sem esperar o usuário pedir
 
-As skills ficam em `.agents/skills/<nome>/SKILL.md` (fonte da verdade) e são espelhadas em `.claude/skills/` para o Claude Code.
-Antes de responder ou agir, verifique a tabela abaixo. Se houver ~1% de chance de uma skill se aplicar, **leia o SKILL.md e siga-o**, anunciando "Usando <skill> para <objetivo>".
-Skills de processo vêm primeiro (definem o como); skills de implementação vêm depois.
+**Antes de qualquer tarefa, leia e siga todas as regras de `.agents/rules/*.md` com `trigger: always_on`** (o Claude Code recebe esse conteúdo automaticamente pelo hook de início de sessão; outros agentes devem lê-las):
 
-| Situação | Skill |
-|---|---|
-| Nova ideia, feature, mecânica, tela ou mudança de comportamento | `brainstorming` → depois `writing-plans` |
-| Escolher stack/engine, arquitetura do jogo, loop, input, save, performance | `game-studio` (roteador) → `web-game-foundations` |
-| Render 3D: cena, câmeras, materiais, iluminação, performance WebGL (Three.js) | `three-webgl-game` |
-| HUD, menus, overlays, telas de pause/game over, layout responsivo no celular | `game-ui-frontend` + `frontend-design` |
-| Revisar UI/UX/acessibilidade de qualquer tela | `web-design-guidelines` |
-| Executar um plano já escrito | `subagent-driven-development` (preferido) ou `executing-plans` |
-| 2+ tarefas independentes | `dispatching-parallel-agents` |
-| Escrever qualquer código de lógica (regras, IA dos NPCs, pontuação, colisão) | `test-driven-development` |
-| Bug, teste falhando, comportamento estranho | `systematic-debugging` |
-| Testar o jogo no navegador, screenshots, viewport mobile, smoke test | `game-playtest` + `playwright-cli` |
-| Antes de dizer "pronto", "funciona", "passou" | `verification-before-completion` |
-| Terminou uma tarefa/feature, quer revisão | `requesting-code-review`; ao receber feedback: `receiving-code-review` |
-| **Qualquer commit, push, branch, PR ou merge** | **`ship-via-script`** (obrigatório — ver seção 2) |
-| Usuário diz "grill me" / quer estressar uma ideia | `grill-me` |
-| Usuário quer passar o trabalho para outra sessão | `handoff` |
-| Precisa de uma capacidade que nenhuma skill cobre | `find-skills` |
+- `workflow.md` — qual skill usar em cada situação (brainstorming, TDD, debugging, verificação, revisão, ship…), sem o usuário invocar;
+- `coding-standards.md` — padrões de código (inglês no código, sem atribuição de IA, sem emojis em saída técnica, tipos, testes, lint);
+- `minimal-code.md` — escrever o mínimo de código: reusar antes de criar;
+- `graphify.md` — quando consultar o grafo do projeto e quando atualizá-lo.
+
+As skills ficam em `.agents/skills/<nome>/SKILL.md` (fonte da verdade) e são espelhadas em `.claude/skills/` para o Claude Code. Se houver ~1% de chance de uma skill se aplicar, **leia o SKILL.md e siga-o**, anunciando "Usando <skill> para <objetivo>". Skills de processo vêm primeiro; skills de implementação depois.
 
 ### Mapeamento de nomes (skills do Superpowers)
 - `superpowers:<nome>` = `.agents/skills/<nome>`.
@@ -38,16 +24,19 @@ Skills de processo vêm primeiro (definem o como); skills de implementação vê
 O usuário executa tudo de git que altera histórico/remoto por um script PowerShell no terminal dele.
 - **Proibido** ao agente: `git commit`, `git push`, `git merge`, `git rebase`, `git am`, `gh pr create/merge`, criar/trocar branch.
 - **Permitido**: `git status`, `git diff`, `git log`, `git show`, `git format-patch` (para gerar patch).
+- Commits e PRs nunca levam atribuição de IA (sem `Co-authored-by` de ferramenta, link de sessão ou rodapé "Generated with").
 - Quando houver algo para commitar/abrir PR: siga `.agents/skills/ship-via-script/SKILL.md`, gere `scratch/NN-<slug>.ps1` e entregue ao usuário o comando:
   `powershell -ExecutionPolicy Bypass -File .\scratch\NN-<slug>.ps1`
 
 ## 3. Projeto
 - Repositório: `https://github.com/diogotocci/policia-ladrao` · branch padrão: `main` · pasta local: `C:\dev\policia-ladrao` (Windows).
 - Stack: TypeScript + Vite + Three.js (3D low-poly estilizado, qualidade automática), Vitest (+ jsdom), Playwright, pnpm. Spec: `docs/superpowers/specs/2026-10-03-policia-ladrao-design.md`.
-- Comandos: `pnpm install` · `pnpm dev` · `pnpm test` · `pnpm typecheck` · `pnpm build` · `pnpm e2e` (1ª vez: `pnpm exec playwright install chromium`).
+- Comandos: `pnpm install` · `pnpm dev` · `pnpm test` · `pnpm typecheck` · `pnpm lint` (Prettier + ESLint) · `pnpm lint:fix` · `pnpm lint:types` (opcional, só avisos) · `pnpm build` · `pnpm e2e` (1ª vez: `pnpm exec playwright install chromium`).
+- TypeScript: o projeto compila com o TypeScript 7 (`typescript7`, binário `tsc`); o pacote `typescript` aponta para a API do TypeScript 6 só porque o typescript-eslint ainda não suporta o 7.
+- Grafo do projeto: `graphify update .` (instalar com `uv tool install graphifyy==0.9.77`); `graphify query "<pergunta>"` para descoberta. Ver `.agents/rules/graphify.md`.
 - `src/sim/**` é TypeScript puro (sem `three`, DOM ou `window`); números de jogo só em `src/config/balance.ts`.
 - Mobile first: toque, retrato/paisagem, safe areas, 60 fps em celular médio.
-- Idioma: conversas e docs em português; código, commits e PRs em inglês (Conventional Commits).
+- Idioma: conversas, spec, planos, backlog e este arquivo em português; código, comentários, testes, scripts, mensagens técnicas, commits e PRs em inglês (Conventional Commits). Texto do jogo (UI) em português. Detalhes em `.agents/rules/coding-standards.md`.
 
 ## 4. Manutenção das skills
 - Atualizar as de terceiros: `npx skills update` e depois `node scripts/sync-skills.mjs`.

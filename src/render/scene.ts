@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { QUALITY, type QualityTier } from './renderer';
 import { makeSkyTexture } from './textures';
 
-/** Céu, neblina, luz ambiente, reflexos e sol com sombra que acompanha o carro. */
+/** Sky, fog, ambient light, reflections and a sun with a shadow that follows the car. */
 export function createLighting(
   scene: THREE.Scene,
   renderer: THREE.WebGLRenderer,
@@ -11,7 +11,7 @@ export function createLighting(
   scene.fog = new THREE.Fog(0xd3dbe2, 110, 300);
 
   const pmrem = new THREE.PMREMGenerator(renderer);
-  // reflexos só nos carros (aplicados por quem cria os carros); prédios e rua ficam com a luz difusa
+  // reflections on cars only (applied by whoever creates the cars); buildings and street get diffuse light
   const reflections = pmrem.fromScene(makeStreetEnvironment(), 0.02).texture;
   pmrem.dispose();
 
@@ -22,7 +22,7 @@ export function createLighting(
   sun.shadow.normalBias = 0.04;
   scene.add(sun, sun.target);
 
-  // Caixa de sombra em volta do carro, alinhada à luz; calculada uma vez (a direção do sol é fixa).
+  // Shadow box around the car, aligned to the light; computed once (the sun direction is fixed).
   const basis = new THREE.Matrix4().lookAt(SUN_DIR, new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0));
   const inv = basis.clone().invert();
   const zMid = -(SHADOW_BOX.ahead - SHADOW_BOX.behind) / 2;
@@ -34,7 +34,7 @@ export function createLighting(
   let boxHeading = Number.NaN;
   const corner = new THREE.Vector3();
   const box = new THREE.Box3();
-  /** caixa de sombra girada com a direção da pista (nas curvas a rua à frente muda de direção) */
+  /** shadow box rotated with the road direction (in curves the road ahead changes direction) */
   const fitBox = (heading: number) => {
     boxHeading = heading;
     box.makeEmpty();
@@ -47,7 +47,7 @@ export function createLighting(
     cam.right = box.max.x;
     cam.bottom = box.min.y;
     cam.top = box.max.y;
-    // a luz fica a SUN_DISTANCE do centro, olhando para ele: profundidade em volta disso
+    // the light sits SUN_DISTANCE from the center, looking at it: depth around that
     cam.near = Math.max(0.1, SUN_DISTANCE - box.max.z);
     cam.far = SUN_DISTANCE - box.min.z;
     cam.updateProjectionMatrix();
@@ -63,8 +63,8 @@ export function createLighting(
   return {
     reflections,
     follow(x, z, heading = 0) {
-      if (Math.abs(heading - boxHeading) > 0.03) fitBox(heading); // refaz só quando a direção muda de verdade
-      // centro da caixa (à frente na direção da pista) em coordenadas da luz, arredondado ao texel
+      if (Math.abs(heading - boxHeading) > 0.03) fitBox(heading); // only refits when the direction really changes
+      // box center (ahead along the road direction) in light coordinates, rounded to the texel
       local.set(x - Math.sin(heading) * zMid, 0, z + Math.cos(heading) * zMid).applyMatrix4(inv);
       local.x = snapToGrid(local.x, texelX);
       local.y = snapToGrid(local.y, texelY);
@@ -89,9 +89,9 @@ export function createLighting(
   };
 }
 
-/** Área coberta por sombras projetadas, relativa ao carro (m). Vai até onde a neblina começa. */
+/** Area covered by cast shadows, relative to the car (m). Extends to where the fog starts. */
 export const SHADOW_BOX = { ahead: 120, behind: 15, halfWidth: 28, height: 48 } as const;
-/** Direção de onde vem o sol (alto, atrás e à esquerda da câmera). */
+/** Direction the sun comes from (high, behind and to the left of the camera). */
 const SUN_DIR = new THREE.Vector3(-30, 50, 12);
 const SUN_DISTANCE = 150;
 
@@ -100,8 +100,8 @@ export function snapToGrid(v: number, step: number): number {
 }
 
 /**
- * Ambiente para reflexos: céu claro em cima, "prédios" escuros no horizonte e asfalto embaixo.
- * (Um ambiente branco tipo estúdio deixava o carro preto prateado.)
+ * Environment for reflections: light sky on top, dark "buildings" on the horizon and asphalt below.
+ * (A white studio-like environment made the black car look silvery.)
  */
 function makeStreetEnvironment(): THREE.Scene {
   const env = new THREE.Scene();

@@ -22,7 +22,7 @@ describe('match end', () => {
     }
     expect(w.match.over).toBe(true);
     expect(w.match.winner).toBe('police');
-    // o fim vem depois da cena da prisão; o tempo que conta é o do instante em que zerou
+    // the end comes after the arrest scene; the time that counts is the moment it hit zero
     expect(w.match.arrestAt).toBeDefined();
     expect(w.match.endTime).toBe(w.match.arrestAt);
     expect(w.time).toBeGreaterThanOrEqual(w.match.arrestAt! + BALANCE.match.arrestScene - 1e-6);
@@ -47,7 +47,7 @@ describe('match end', () => {
 
   it('both at 0 in the same step → the thief wins', () => {
     let w = createWorld({ seed: 3, playerRole: 'police', debugHp: { police: 3, thief: 3 } });
-    // encosta a polícia no ladrão (mesma faixa) para uma batida que tira 5 / 3
+    // puts the police next to the thief (same lane) for a hit that takes 5 / 3
     const t = thiefOf(w);
     w = withCar(w, 'police', { ...policeOf(w), s: t.s - 2, x: t.x, speed: t.speed + 5 });
     w = stepWorld(w, NO_INTENTS, DT);

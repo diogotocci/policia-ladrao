@@ -1,4 +1,4 @@
-// Fluxo das telas (spec §7) como máquina de estados pura: título → escolha → contagem → jogo ⇄ pausa → fim → ranking.
+// Screen flow (spec §7) as a pure state machine: title -> choice -> countdown -> game <-> pause -> end -> ranking.
 import type { Role } from '../../config/balance';
 
 export const COUNTDOWN = 3; // s
@@ -6,9 +6,9 @@ export const COUNTDOWN = 3; // s
 export interface MatchResult {
   winner: Role;
   time: number;
-  /** como acabou (Entrega 7) */
+  /** how it ended (Delivery 7) */
   reason?: 'escape' | 'policeDown' | 'thiefDown';
-  /** vida do carro do jogador no fim (desempata fugas no ranking do ladrão) */
+  /** player's car health at the end (breaks ties between escapes in the thief ranking) */
   hp?: number;
 }
 
@@ -20,7 +20,7 @@ export type FlowState =
   | { screen: 'paused'; role: Role }
   | EndState
   | { screen: 'ranking'; tab: Role; from: 'title' }
-  /** aberto pela tela de fim: Voltar devolve a mesma tela de fim (recorde ainda por salvar continua lá) */
+  /** opened from the end screen: Back returns to the same end screen (an unsaved record is still there) */
   | { screen: 'ranking'; tab: Role; from: 'end'; end: EndState };
 
 export type EndState = { screen: 'end'; role: Role; result: MatchResult; qualifies: boolean; saved?: boolean };
@@ -35,7 +35,7 @@ export type FlowAction =
   | { type: 'quit' }
   | { type: 'ended'; result: MatchResult; qualifies?: boolean }
   | { type: 'openRanking' }
-  /** iniciais salvas na tela de fim */
+  /** initials saved on the end screen */
   | { type: 'saved' }
   | { type: 'tab'; tab: Role }
   | { type: 'back' };

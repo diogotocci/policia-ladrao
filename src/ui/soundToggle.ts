@@ -1,10 +1,10 @@
-// Botão de som (alto-falante desenhado em SVG) e tecla M. A escolha fica salva; storage indisponível não quebra nada.
+// Sound button (speaker drawn in SVG) and the M key. The choice is saved; unavailable storage breaks nothing.
 import { ICONS } from './icons';
 import { onTap } from './mobileShell';
 
 const KEY = 'pl.sound';
 
-/** true = mudo. Padrão: som ligado. */
+/** true = muted. Default: sound on. */
 export function readSoundPref(storage: Storage | undefined): boolean {
   try {
     return storage?.getItem(KEY) === 'off';
@@ -17,7 +17,7 @@ export function writeSoundPref(storage: Storage | undefined, muted: boolean): vo
   try {
     storage?.setItem(KEY, muted ? 'off' : 'on');
   } catch {
-    /* sem storage: vale só nesta sessão */
+    /* no storage: applies only to this session */
   }
 }
 
@@ -41,7 +41,7 @@ export function createSoundToggle(
   };
   onTap(btn, () => {
     toggle();
-    btn.blur(); // sem foco no botão: Espaço continua atirando no PC
+    btn.blur(); // no focus on the button: Space keeps firing on PC
   });
   const onKey = (e: Event) => {
     const k = e as KeyboardEvent;

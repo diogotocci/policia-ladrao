@@ -1,7 +1,7 @@
 import type { Intents } from './sim/intents';
 import type { WorldState } from './sim/world';
 
-/** Overlay de FPS/draw calls e handle window.__game para testes (só com ?debug). */
+/** FPS/draw-call overlay and window.__game handle for tests (only with ?debug). */
 export function createDebug(
   root: HTMLElement,
   getWorld: () => WorldState,
@@ -19,13 +19,13 @@ export function createDebug(
 
   (window as unknown as { __game?: unknown }).__game = {
     snapshot: () => structuredClone(getWorld()),
-    /** draw calls do passe principal (cena + sombras) no último quadro */
+    /** draw calls of the main pass (scene + shadows) in the last frame */
     drawCalls: () => lastCalls,
-    /** draw calls do retrovisor no último quadro (0 quando escondido) */
+    /** draw calls of the rear-view mirror in the last frame (0 when hidden) */
     mirrorDrawCalls: () => mirrorCalls,
     intents: () => ({ ...getIntents() }),
     quality: () => getQuality(),
-    /** estado visual para os testes e2e (partículas vivas, atiradores visíveis…) */
+    /** visual state for e2e tests (live particles, visible shooters...) */
     visuals: () => getVisuals(),
   };
 

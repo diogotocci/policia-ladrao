@@ -24,15 +24,17 @@ const startAs = async (page: Page, side: 'police' | 'thief', extra = '') => {
   await page.waitForFunction(() => '__game' in window && !document.querySelector('.screen-countdown'), null, { timeout: 60_000 });
 };
 
-test('full product flow: title → choose thief → 3-2-1 → play → escape at the time limit → arcade initials → ranking (kept after reload)', async ({ page }) => {
-  await page.goto('/?app&quality=low&mute&debug&traffic=0&escape=4'); // fuga em 4 s (só debug)
+test('full product flow: title → choose thief → 3-2-1 → play → escape at the time limit → arcade initials → ranking (kept after reload)', async ({
+  page,
+}) => {
+  await page.goto('/?app&quality=low&mute&debug&traffic=0&escape=4'); // escape at 4 s (debug only)
   await expect(page.locator('.screen-title')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Jogar', exact: true })).toBeFocused();
   await page.getByRole('button', { name: 'Jogar', exact: true }).click();
   await expect(page.locator('.choose-card')).toHaveCount(2);
   await page.locator('[data-role="thief"]').click();
   await expect(page.locator('.countdown-number')).toHaveText(/[123]/);
-  // a simulação não anda durante a contagem
+  // the simulation does not advance during the countdown
   const t0 = await simTime(page);
   await page.waitForTimeout(800);
   if (await page.locator('.screen-countdown').isVisible()) expect(await simTime(page)).toBe(t0);
@@ -64,7 +66,7 @@ test('ranking opened from the end screen: Voltar comes back to the end screen an
   await expect(page.locator('.screen-ranking')).toBeVisible();
   await page.getByRole('button', { name: 'Voltar' }).click();
   await expect(page.locator('.screen-end')).toBeVisible();
-  await expect(page.locator('.initials')).toBeVisible(); // o recorde não se perdeu
+  await expect(page.locator('.initials')).toBeVisible(); // the record was not lost
   await page.locator('.initials').press('Enter');
   await expect(page.locator('.end-saved')).toBeVisible();
   await page.getByRole('button', { name: 'Ranking' }).click();
@@ -91,7 +93,7 @@ test('pause freezes the game (Esc and the ⏸ button), Continuar resumes', async
 });
 
 test('restarting 6 times leaks nothing: no errors, one canvas, draw calls stable', async ({ page }) => {
-  test.setTimeout(420_000); // cada reinício recria o WebGL; lento no Chromium sem GPU
+  test.setTimeout(420_000); // each restart recreates WebGL; slow in Chromium without GPU
   await startAs(page, 'police');
   const before = await page.evaluate(() => (window as unknown as { __game: G }).__game.drawCalls());
   for (let i = 0; i < 6; i++) {
@@ -119,7 +121,7 @@ test('the browser/Android Back button pauses instead of leaving', async ({ page 
 test('pressing Back on the title first does not disarm the trap: Back during a match still pauses', async ({ page }) => {
   await page.goto('/?app&quality=low&mute&debug&traffic=0');
   await expect(page.locator('.screen-title')).toBeVisible();
-  await page.goto('/?app&quality=low&mute&debug&traffic=0#x'); // uma entrada extra no histórico para o Voltar não sair do site
+  await page.goto('/?app&quality=low&mute&debug&traffic=0#x'); // an extra history entry so Back does not leave the site
   await page.goBack();
   await expect(page.locator('.screen-title')).toBeVisible();
   await page.getByRole('button', { name: 'Jogar', exact: true }).click();

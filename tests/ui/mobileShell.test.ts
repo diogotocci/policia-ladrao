@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest';
-import { installFullscreenOnFirstTap, installNoZoom, isStandalone } from '../../src/ui/mobileShell';
+import { installFullscreenOnFirstTap, installNoZoom, isStandalone, onTap } from '../../src/ui/mobileShell';
 
 const touchEnd = () => new Event('touchend', { bubbles: true, cancelable: true });
 
@@ -10,7 +10,7 @@ describe('installNoZoom (double tap / pinch never zooms)', () => {
     const dispose = installNoZoom(document, () => now);
     const first = touchEnd();
     document.body.dispatchEvent(first);
-    expect(first.defaultPrevented).toBe(false); // um toque normal passa
+    expect(first.defaultPrevented).toBe(false); // a normal tap passes through
     now += 200;
     const second = touchEnd();
     document.body.dispatchEvent(second);
@@ -88,13 +88,20 @@ describe('fullscreen on the first touch (browser bars hidden)', () => {
 
   it('a phone without orientation lock (iPhone) does not throw', () => {
     const { doc, win } = setup({ enabled: false });
-    Object.assign(win, { screen: { orientation: { lock: () => { throw new Error('nope'); } } } });
+    Object.assign(win, {
+      screen: {
+        orientation: {
+          lock: () => {
+            throw new Error('nope');
+          },
+        },
+      },
+    });
     installFullscreenOnFirstTap(doc, win);
     expect(() => tap(win)).not.toThrow();
   });
 });
 
-import { onTap } from '../../src/ui/mobileShell';
 describe('onTap (HUD buttons react on touch-down: a tap right after steering is not swallowed by the no-zoom guard)', () => {
   it('fires on pointerdown, ignores the click that follows, still works from the keyboard (click with detail 0)', () => {
     const b = document.createElement('button');
@@ -104,7 +111,7 @@ describe('onTap (HUD buttons react on touch-down: a tap right after steering is 
     expect(n).toBe(1);
     b.dispatchEvent(new MouseEvent('click', { detail: 1, bubbles: true }));
     expect(n).toBe(1);
-    b.dispatchEvent(new MouseEvent('click', { detail: 0, bubbles: true })); // Enter/Espaço
+    b.dispatchEvent(new MouseEvent('click', { detail: 0, bubbles: true })); // Enter/Space
     expect(n).toBe(2);
     off();
     b.dispatchEvent(new Event('pointerdown', { bubbles: true, cancelable: true }));

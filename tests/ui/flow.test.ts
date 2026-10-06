@@ -16,19 +16,22 @@ describe('screen flow', () => {
     s = reduce(s, { type: 'openRanking' });
     expect(s).toMatchObject({ screen: 'ranking', tab: 'thief', from: 'end' });
     s = reduce(s, { type: 'back' });
-    expect(s.screen).toBe('end'); // Voltar volta para a tela de fim (de lá: jogar de novo / título)
+    expect(s.screen).toBe('end'); // Back returns to the end screen (from there: play again / title)
     expect(reduce(s, { type: 'quit' }).screen).toBe('title');
   });
 
   it('ranking opened from the end screen goes back to the same end screen, record still pending if not saved', () => {
-    const end = reduce({ screen: 'playing', role: 'thief' }, { type: 'ended', result: { winner: 'thief', time: 90, reason: 'escape', hp: 40 }, qualifies: true });
+    const end = reduce(
+      { screen: 'playing', role: 'thief' },
+      { type: 'ended', result: { winner: 'thief', time: 90, reason: 'escape', hp: 40 }, qualifies: true },
+    );
     let s = reduce(end, { type: 'openRanking' });
     s = reduce(s, { type: 'tab', tab: 'police' });
     s = reduce(s, { type: 'back' });
-    expect(s).toEqual(end); // as iniciais continuam esperando
+    expect(s).toEqual(end); // the initials are still pending
     const saved = reduce(end, { type: 'saved' });
     expect(saved).toMatchObject({ screen: 'end', saved: true });
-    expect(reduce(reduce(saved, { type: 'openRanking' }), { type: 'back' })).toEqual(saved); // já salvo: não pede de novo
+    expect(reduce(reduce(saved, { type: 'openRanking' }), { type: 'back' })).toEqual(saved); // already saved: does not ask again
   });
 
   it('the countdown goes 3 → 0 in 3 s and cannot be paused', () => {
@@ -67,7 +70,13 @@ describe('screen flow', () => {
 
   it('invalid actions are ignored (same object back)', () => {
     const t = initialState();
-    for (const a of [{ type: 'pause' }, { type: 'resume' }, { type: 'restart' }, { type: 'tick', dt: 1 }, { type: 'ended', result: { winner: 'police', time: 1 } }] as const)
+    for (const a of [
+      { type: 'pause' },
+      { type: 'resume' },
+      { type: 'restart' },
+      { type: 'tick', dt: 1 },
+      { type: 'ended', result: { winner: 'police', time: 1 } },
+    ] as const)
       expect(reduce(t, a)).toBe(t);
     const playing: FlowState = { screen: 'playing', role: 'police' };
     expect(reduce(playing, { type: 'play' })).toBe(playing);

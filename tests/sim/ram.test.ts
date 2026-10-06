@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { BALANCE, type Role } from '../../src/config/balance';
 import { NO_INTENTS } from '../../src/sim/intents';
 import { createWorld, policeOf, stepWorld, thiefOf, withCar, type WorldState } from '../../src/sim/world';
+import { aiStep, initialAiMemory } from '../../src/sim/ai';
+import { createRng } from '../../src/sim/rng';
 
 const DT = 1 / 60;
 const isRam = (e: WorldState['events'][number]) =>
@@ -15,7 +17,7 @@ describe('police AI rams the thief (pressure for whoever plays thief)', () => {
     w = { ...w, level: 10, time: 30 };
     let hit = false;
     for (let i = 0; i < 60 * 15 && !hit; i++) {
-      w = stepWorld(w, NO_INTENTS, DT); // ladrão (jogador) só segue reto
+      w = stepWorld(w, NO_INTENTS, DT); // thief (player) just goes straight
       hit = w.events.some(isRam);
     }
     expect(hit).toBe(true);
@@ -33,7 +35,7 @@ describe('police AI rams the thief (pressure for whoever plays thief)', () => {
       w = stepWorld(w, NO_INTENTS, DT);
       gapMax = Math.max(gapMax, thiefOf(w).s - policeOf(w).s);
     }
-    expect(gapMax).toBeGreaterThan(15); // o ladrão escapa
+    expect(gapMax).toBeGreaterThan(15); // the thief escapes
   });
 
   it('AI vs AI: the police rams more often than before (≥ 1.0 per match on average; before ~0.6) and the thief still wins 30–70%', () => {
@@ -70,9 +72,6 @@ describe('police AI rams the thief (pressure for whoever plays thief)', () => {
     expect(w.ai.police.ramUntil).toBe(0);
   });
 });
-
-import { aiStep, initialAiMemory } from '../../src/sim/ai';
-import { createRng } from '../../src/sim/rng';
 describe('ram safety', () => {
   it('a charge is called off when a traffic car shows up in the lane ahead (danger beats the ram)', () => {
     const w0 = createWorld({ seed: 2, playerRole: 'thief', traffic: false, curves: false });
@@ -82,6 +81,6 @@ describe('ram safety', () => {
     const mem = { ...initialAiMemory('police', w), ramUntil: 32, nextDecisionAt: 99 };
     const r = aiStep(w, 'police', createRng(1), mem);
     expect(r.memory.ramUntil).toBe(0);
-    expect(Math.abs(r.memory.targetX - 1.5)).toBeGreaterThan(1); // sai da faixa bloqueada
+    expect(Math.abs(r.memory.targetX - 1.5)).toBeGreaterThan(1); // leaves the blocked lane
   });
 });

@@ -1,11 +1,11 @@
-// Traçado das curvas (Entrega 6): retas e curvas alternadas, determinísticas pela semente.
-// A sim continua em (s, x); a curva só entra como curvatura κ(s) (deriva lateral na física e desenho no render).
+// Curve layout (Delivery 6): alternating straights and curves, deterministic from the seed.
+// The sim stays in (s, x); the curve only enters as curvature κ(s) (lateral drift in physics and drawing in the renderer).
 import { BALANCE } from '../config/balance';
 import { createRng } from './rng';
 import { bumpsBetween } from './track';
 
 export interface Curve {
-  start: number; // s de entrada
+  start: number; // s at entry
   length: number; // m
   radius: number; // m (no meio da curva)
   dir: -1 | 1; // 1 = direita, -1 = esquerda
@@ -14,8 +14,8 @@ export interface Curve {
 
 interface Layout {
   curves: Curve[];
-  until: number; // s até onde o traçado já foi gerado
-  next: number; // s onde começa a próxima reta
+  until: number; // s up to where the layout has been generated
+  next: number; // s where the next straight starts
   rng: ReturnType<typeof createRng>;
 }
 
@@ -27,12 +27,12 @@ function layoutFor(seed: number): Layout {
   if (!l) {
     l = { curves: [], until: 0, next: BALANCE.curves.straightStart, rng: createRng((Math.imul(seed, 0x2c1b3c6d) ^ 0x51ed27) >>> 0) };
     layouts.set(seed, l);
-    if (layouts.size > 32) layouts.delete(layouts.keys().next().value!); // não cresce sem limite
+    if (layouts.size > 32) layouts.delete(layouts.keys().next().value!); // doesn't grow without limit
   }
   return l;
 }
 
-/** gera curvas, em ordem, até cobrir s (mesma sequência não importa a ordem das consultas) */
+/** generates curves, in order, until s is covered (same sequence regardless of query order) */
 function extend(seed: number, l: Layout, s: number) {
   const C = BALANCE.curves;
   const gap = C.bumpClearance;
@@ -43,7 +43,7 @@ function extend(seed: number, l: Layout, s: number) {
     const [r0, r1] = sharp ? C.sharpRadius : C.gentleRadius;
     const radius = l.rng.range(r0, r1);
     const dir: -1 | 1 = l.rng.next() < 0.5 ? -1 : 1;
-    // fica entre dois quebra-molas, com folga; se não couber, pula para depois do próximo
+    // stays between two speed bumps, with clearance; if it doesn't fit, skips to after the next one
     for (let tries = 0; tries < 20; tries++) {
       const bumps = bumpsBetween(seed, start - gap, start + length + gap).filter((b) => b.s > start - gap + 1e-6);
       if (bumps.length === 0) break;
@@ -66,12 +66,12 @@ export function curvesBetween(seed: number, s0: number, s1: number): Curve[] {
   return l.curves.filter((c) => c.start + c.length > s0 && c.start < s1);
 }
 
-/** curvatura em s (1/m): positiva = curva para a direita. Entrada e saída em rampa suave (cosseno). */
+/** curvature at s (1/m): positive = curve to the right. Smooth ramp (cosine) in and out. */
 export function curvatureAt(seed: number, s: number, on = true): number {
   if (!on || s < BALANCE.curves.straightStart) return 0;
   const l = layoutFor(seed);
   extend(seed, l, s + 1);
-  // busca binária pela curva que contém s
+  // binary search for the curve containing s
   const cs = l.curves;
   let lo = 0;
   let hi = cs.length - 1;

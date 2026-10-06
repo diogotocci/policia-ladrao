@@ -5,7 +5,11 @@ import { curvatureAt, curvesBetween } from '../../src/sim/curves';
 describe('track frame (world position along the curves)', () => {
   it('without curves it is the old straight mapping (x = x, z = −(s − origin))', () => {
     const f = createTrackFrame(4, false);
-    for (const [s, x, o] of [[0, 0, 0], [123.4, 2.5, 100], [5000, -4.5, 4990]] as const) {
+    for (const [s, x, o] of [
+      [0, 0, 0],
+      [123.4, 2.5, 100],
+      [5000, -4.5, 4990],
+    ] as const) {
       const p = f.toWorld(s, x, o);
       expect(p.x).toBeCloseTo(x, 9);
       expect(p.z).toBeCloseTo(-(s - o), 9);
@@ -45,7 +49,7 @@ describe('track frame (world position along the curves)', () => {
     const b = createTrackFrame(9, true).toWorld(20000.5, 1.5, 20000);
     expect(Math.abs(a.x - b.x)).toBeLessThan(1e-3);
     expect(Math.abs(a.z - b.z)).toBeLessThan(1e-3);
-    expect(Math.hypot(a.x, a.z)).toBeLessThan(3); // relativo à origem: números pequenos
+    expect(Math.hypot(a.x, a.z)).toBeLessThan(3); // relative to the origin: small numbers
   });
 
   it('behind the start line (s < 0) the road continues straight — camera and mirror sit behind the car', () => {

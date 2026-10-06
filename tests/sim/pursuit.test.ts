@@ -10,7 +10,7 @@ import { createWorld, policeOf, thiefOf, withCar, type WorldState } from '../../
 const DT = 1 / 60;
 const L = BALANCE.car.length;
 
-/** mini-loop: move os dois, colisões, regra de não-ultrapassar */
+/** mini-loop: moves both, collisions, no-overtaking rule */
 const step = (w: WorldState, thiefIntents = NO_INTENTS, policeIntents = NO_INTENTS) => {
   let s = withCar(w, 'thief', stepCar(thiefOf(w), thiefIntents, DT));
   s = withCar(s, 'police', stepCar(policeOf(s), policeIntents, DT, { speedBonus: pursuitBonus(s) }));

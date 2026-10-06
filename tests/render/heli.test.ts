@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { BALANCE } from '../../src/config/balance';
-import { HELI_EXIT, HELI_Y, heliPose } from '../../src/render/heli';
+import { HELI_EXIT, HELI_Y, heliPose, createHeli } from '../../src/render/heli';
+import { tracerHeight } from '../../src/render/combatFx';
+import * as THREE from 'three';
+import { createCar } from '../../src/sim/car';
 
 const T = BALANCE.items.police.heliTime;
 
@@ -37,8 +40,6 @@ describe('helicopter pose (visible while the power-up lasts, blinks at the end, 
     expect(heliPose(until + HELI_EXIT + 0.01, until).visible).toBe(false);
   });
 });
-
-import { tracerHeight } from '../../src/render/combatFx';
 describe('helicopter tracers', () => {
   it('start up at the helicopter and come down to the target; normal shots stay level', () => {
     expect(tracerHeight(0, 40)).toBeCloseTo(HELI_Y, 5);
@@ -47,10 +48,6 @@ describe('helicopter tracers', () => {
     expect(tracerHeight(10)).toBe(tracerHeight(0));
   });
 });
-
-import * as THREE from 'three';
-import { createHeli } from '../../src/render/heli';
-import { createCar } from '../../src/sim/car';
 describe('createHeli', () => {
   it('arrives when picked, keeps hovering when picked again, never visible without the item', () => {
     const scene = new THREE.Scene();

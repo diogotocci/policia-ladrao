@@ -58,7 +58,7 @@ describe('audio mixer', () => {
       { type: 'explosion', s: 0, x: 0 },
       { type: 'pickup', role: 'thief', item: 'bomb' },
       { type: 'pickup', role: 'thief', item: 'wrong' },
-      { type: 'pickup', role: 'police', item: 'heal' }, // não é do jogador: sem som
+      { type: 'pickup', role: 'police', item: 'heal' }, // not the player's: no sound
       { type: 'bombDropped', s: 0, x: 0 },
       { type: 'end', winner: 'thief' },
     ]);
@@ -71,7 +71,7 @@ describe('audio mixer', () => {
     mx.frame(world(), DT);
     mx.events(Array.from({ length: 20 }, () => shot));
     expect(be.played).toHaveLength(6);
-    for (let i = 0; i < 7; i++) mx.frame(world(), DT); // > 100 ms depois
+    for (let i = 0; i < 7; i++) mx.frame(world(), DT); // > 100 ms later
     mx.events([shot]);
     expect(be.played).toHaveLength(7);
   });
@@ -100,7 +100,7 @@ describe('audio mixer', () => {
     const step = stepSeconds(SONG.bpm);
     const times = [...new Set(be.notes.map((n) => n.when))].sort((a, b) => a - b);
     for (let i = 1; i < times.length; i++) {
-      const k = (times[i]! - times[i - 1]!) / step; // passos vazios (pausa) contam: múltiplo inteiro do passo
+      const k = (times[i]! - times[i - 1]!) / step; // empty steps (pause) count: integer multiple of the step
       expect(k).toBeGreaterThanOrEqual(1 - 1e-6);
       expect(Math.abs(k - Math.round(k))).toBeLessThan(1e-6);
     }
@@ -257,7 +257,11 @@ describe('audio mixer', () => {
     expect(run(w)).toBe(0);
     expect(run(heli)).toBeGreaterThanOrEqual(8);
     const t = world('thief');
-    const near = withCar(t, 'police', { ...policeOf(t), s: thiefOf(t).s - 30, upgrades: { ...policeOf(t).upgrades, heliUntil: t.time + 5 } });
+    const near = withCar(t, 'police', {
+      ...policeOf(t),
+      s: thiefOf(t).s - 30,
+      upgrades: { ...policeOf(t).upgrades, heliUntil: t.time + 5 },
+    });
     const far = withCar(near, 'police', { ...policeOf(near), s: thiefOf(t).s - 300 });
     expect(run(near)).toBeGreaterThanOrEqual(8);
     expect(run(far)).toBe(0);
@@ -289,7 +293,11 @@ describe('audio mixer', () => {
     const be = createNullBackend();
     const mx = createMixer(be);
     const t0 = world('thief');
-    const w = withCar({ ...t0, time: 91, match: { over: false, escapeAt: 90 } }, 'police', { ...policeOf(t0), s: thiefOf(t0).s - 20, upgrades: { ...policeOf(t0).upgrades, heliUntil: 95 } });
+    const w = withCar({ ...t0, time: 91, match: { over: false, escapeAt: 90 } }, 'police', {
+      ...policeOf(t0),
+      s: thiefOf(t0).s - 20,
+      upgrades: { ...policeOf(t0).upgrades, heliUntil: 95 },
+    });
     for (let i = 0; i < 30; i++) mx.frame(w, DT);
     expect(be.siren).toBe(0);
     expect(be.played.filter((n) => n === 'rotor')).toHaveLength(0);

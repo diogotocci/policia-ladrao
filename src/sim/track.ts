@@ -1,11 +1,11 @@
-// Quebra-molas: 1 a cada ~400 m, cobrindo 2 faixas vizinhas. Passar por cima faz pular 0,6 s e perder 25%.
+// Speed bumps: 1 every ~400 m, covering 2 adjacent lanes. Driving over one makes the car jump for 0.6 s and lose 25%.
 import { BALANCE } from '../config/balance';
 import type { CarState } from './car';
 import { createRng } from './rng';
 
 export interface Bump {
   s: number;
-  /** índices de 2 faixas vizinhas cobertas */
+  /** indices of the 2 adjacent lanes covered */
   lanes: [number, number];
 }
 
@@ -20,7 +20,7 @@ function bumpInBlock(seed: number, k: number): Bump {
   return { s, lanes: [first, first + 1] };
 }
 
-/** Quebra-molas com s em [s0, s1), determinísticos pela semente. */
+/** Speed bumps with s in [s0, s1), deterministic from the seed. */
 export function bumpsBetween(seed: number, s0: number, s1: number): Bump[] {
   const every = BALANCE.track.bumpEvery;
   const out: Bump[] = [];
@@ -31,14 +31,14 @@ export function bumpsBetween(seed: number, s0: number, s1: number): Bump[] {
   return out;
 }
 
-/** Faixa lateral coberta pelo quebra-molas: [xMin, xMax]. */
+/** Lateral range covered by the speed bump: [xMin, xMax]. */
 export function bumpXRange(b: Bump): [number, number] {
   const c0 = BALANCE.road.laneCenters[b.lanes[0]]!;
   const c1 = BALANCE.road.laneCenters[b.lanes[1]]!;
   return [c0 - LANE_WIDTH / 2, c1 + LANE_WIDTH / 2];
 }
 
-/** O carro (no chão) passou por cima de um quebra-molas entre prevS e car.s? */
+/** Did the car (on the ground) drive over a speed bump between prevS and car.s? */
 export function crossedBump(car: CarState, prevS: number, seed: number): Bump | undefined {
   if (car.s <= prevS) return undefined;
   const W = BALANCE.car.halfWidth;
@@ -50,7 +50,7 @@ export function crossedBump(car: CarState, prevS: number, seed: number): Bump | 
   return undefined;
 }
 
-/** Atualiza o pulo: no ar só desconta; no chão, cruzar um quebra-molas liga o pulo e tira 25%. */
+/** Updates the jump: in the air it only counts down; on the ground, crossing a speed bump starts the jump and removes 25%. */
 export function stepJump(car: CarState, prevS: number, seed: number, dt: number): CarState {
   if (car.airTime > 0) return { ...car, airTime: Math.max(0, car.airTime - dt) };
   if (!crossedBump(car, prevS, seed)) return car;
@@ -58,7 +58,7 @@ export function stepJump(car: CarState, prevS: number, seed: number, dt: number)
   return { ...car, airTime: t.jumpTime, speed: car.speed * (1 - t.bumpSpeedLoss) };
 }
 
-/** Altura do pulo (m) pelo tempo restante no ar: parábola com pico de 0,9 m no meio. */
+/** Jump height (m) from the remaining air time: parabola peaking at 0.9 m in the middle. */
 export function jumpHeight(airTime: number): number {
   const T = BALANCE.track.jumpTime;
   if (airTime <= 0 || airTime >= T) return 0;

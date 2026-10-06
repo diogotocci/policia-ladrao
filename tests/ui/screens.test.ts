@@ -10,13 +10,23 @@ beforeEach(() => {
 });
 afterEach(() => root.remove());
 
-const button = (label: string) => [...root.querySelectorAll('button')].find((b) => b.textContent?.includes(label) || b.getAttribute('aria-label') === label)!;
+const button = (label: string) =>
+  [...root.querySelectorAll('button')].find((b) => b.textContent?.includes(label) || b.getAttribute('aria-label') === label)!;
 
 describe('title', () => {
+  it('shows the app version in the footer', () => {
+    renderTitle(root, { onPlay: vi.fn(), onRanking: vi.fn(), mountToggle: () => ({ dispose() {} }), version: '0.8.0' });
+    expect(root.querySelector('.title-version')!.textContent).toBe('v0.8.0');
+  });
+
   it('Jogar and Ranking buttons, focus on Jogar, sound toggle slot', () => {
     const onPlay = vi.fn();
     const onRanking = vi.fn();
-    const s = renderTitle(root, { onPlay, onRanking, mountToggle: (p) => (p.append(Object.assign(document.createElement('button'), { className: 'sound-toggle' })), { dispose() {} }) });
+    const s = renderTitle(root, {
+      onPlay,
+      onRanking,
+      mountToggle: (p) => (p.append(Object.assign(document.createElement('button'), { className: 'sound-toggle' })), { dispose() {} }),
+    });
     expect(document.activeElement).toBe(button('Jogar'));
     button('Jogar').click();
     button('Ranking').click();
@@ -40,7 +50,7 @@ describe('choose', () => {
     expect(onChoose).toHaveBeenCalledWith('thief');
     button('Voltar').click();
     expect(onBack).toHaveBeenCalled();
-    expect(root.querySelector('[data-preview="police"]')).not.toBeNull(); // slot do carro 3D
+    expect(root.querySelector('[data-preview="police"]')).not.toBeNull(); // 3D car slot
   });
 });
 
@@ -60,7 +70,15 @@ describe('countdown', () => {
 
 describe('pause', () => {
   it('Continuar, Reiniciar, Sair; focus on Continuar; sound toggle (spec §9: on/off in the pause)', () => {
-    const cb = { onResume: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn(), mountToggle: (p: HTMLElement) => (p.append(Object.assign(document.createElement('button'), { className: 'sound-toggle' })), { dispose() {} }) };
+    const cb = {
+      onResume: vi.fn(),
+      onRestart: vi.fn(),
+      onQuit: vi.fn(),
+      mountToggle: (p: HTMLElement) => (
+        p.append(Object.assign(document.createElement('button'), { className: 'sound-toggle' })),
+        { dispose() {} }
+      ),
+    };
     renderPause(root, cb);
     expect(root.querySelector('.screen-pause .sound-toggle')).not.toBeNull();
     expect(root.querySelector('.screen-pause')!.getAttribute('aria-modal')).toBe('true');
@@ -91,12 +109,12 @@ describe('end', () => {
     expect(root.textContent).toContain('Você perdeu');
     const slots = () => [...root.querySelectorAll('.initials-slot')].map((x) => x.textContent);
     expect(slots()).toEqual(['A', 'A', 'A']);
-    // como numa roleta de fliperama: ▼ desce para a próxima letra (A → B), ▲ volta (A → Z)
+    // like an arcade dial: ▼ goes down to the next letter (A → B), ▲ goes back (A → Z)
     (root.querySelector('.initials-down[data-i="0"]') as HTMLButtonElement).click(); // A → B
     (root.querySelector('.initials-up[data-i="1"]') as HTMLButtonElement).click(); // A → Z
     expect(slots()).toEqual(['B', 'Z', 'A']);
     const input = root.querySelector('.initials') as HTMLElement;
-    // tecla ainda segurada do jogo (auto-repetição) não escreve nas iniciais
+    // key still held from the game (auto-repeat) does not write into the initials
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', repeat: true, bubbles: true }));
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', repeat: true, bubbles: true }));
     expect(slots()).toEqual(['B', 'Z', 'A']);
@@ -106,7 +124,7 @@ describe('end', () => {
     expect(slots()).toEqual(['D', 'I', 'O']);
     const salvar = button('Salvar');
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-    salvar.click(); // já salvo: não salva de novo
+    salvar.click(); // already saved: does not save again
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith('DIO');
     expect(root.querySelector('.initials')).toBeNull();
@@ -122,11 +140,23 @@ describe('end', () => {
     renderEnd(root, { ...base, role: 'thief', result: { winner: 'thief', time: 90, reason: 'escape' }, qualifies: false, onSave: vi.fn() });
     expect(root.textContent).toContain('Fugiu!');
     root.innerHTML = '';
-    renderEnd(root, { ...base, role: 'police', result: { winner: 'thief', time: 90, reason: 'escape' }, qualifies: false, onSave: vi.fn() });
+    renderEnd(root, {
+      ...base,
+      role: 'police',
+      result: { winner: 'thief', time: 90, reason: 'escape' },
+      qualifies: false,
+      onSave: vi.fn(),
+    });
     expect(root.textContent).toContain('Você perdeu');
     expect(root.textContent).toContain('fugiu');
     root.innerHTML = '';
-    renderEnd(root, { ...base, role: 'thief', result: { winner: 'thief', time: 70, reason: 'policeDown' }, qualifies: false, onSave: vi.fn() });
+    renderEnd(root, {
+      ...base,
+      role: 'thief',
+      result: { winner: 'thief', time: 70, reason: 'policeDown' },
+      qualifies: false,
+      onSave: vi.fn(),
+    });
     expect(root.textContent).toContain('A viatura foi destruída');
   });
 });
@@ -148,7 +178,7 @@ describe('ranking', () => {
     expect(onTab).toHaveBeenCalledWith('thief');
     root.innerHTML = '';
     renderRanking(root, { board, tab: 'thief', focusTab: true, onTab, onBack: vi.fn() });
-    expect(document.activeElement).toBe(button('Ladrão — mais rápidos a vencer')); // foco fica na aba após trocar
+    expect(document.activeElement).toBe(button('Ladrão — mais rápidos a vencer')); // focus stays on the tab after switching
     root.innerHTML = '';
     renderRanking(root, { board, tab: 'thief', onTab, onBack: vi.fn() });
     expect(root.textContent).toContain('Nenhum recorde ainda');
@@ -171,7 +201,8 @@ describe('focus stays inside the open screen (keyboard)', () => {
     document.body.append(outside);
     const v = renderPause(root, { onResume: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn(), mountToggle: () => ({ dispose() {} }) });
     const buttons = [...root.querySelectorAll<HTMLButtonElement>('button')];
-    const tab = (shiftKey = false) => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true }));
+    const tab = (shiftKey = false) =>
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true }));
     buttons.at(-1)!.focus();
     tab();
     expect(document.activeElement).toBe(buttons[0]);
@@ -183,8 +214,7 @@ describe('focus stays inside the open screen (keyboard)', () => {
     v.dispose();
     outside.focus();
     tab();
-    expect(document.activeElement).toBe(outside); // fechada: não prende mais
+    expect(document.activeElement).toBe(outside); // closed: no longer traps
     outside.remove();
   });
 });
-

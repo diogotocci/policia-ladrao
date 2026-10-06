@@ -1,31 +1,27 @@
-// Regras numéricas puras da spec §4 (sem estado).
+// Pure numeric rules from spec §4 (stateless).
 import { BALANCE } from '../config/balance';
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
-/** Fator de dano do tiro pela distância: 1 até 40 m, linear até 0 em 150 m. */
+/** Shot damage factor by distance: 1 up to 40 m, linear down to 0 at 150 m. */
 export function distanceFactor(d: number): number {
   const { falloffStart, falloffEnd } = BALANCE.combat;
   return 1 - clamp01((Math.abs(d) - falloffStart) / (falloffEnd - falloffStart));
 }
 
-/** Bônus de velocidade da polícia: 0 até 60 m, linear até +35% em 150 m. */
+/** Police speed bonus: 0 up to 60 m, linear up to +35% at 150 m. */
 export function catchUpBonus(d: number): number {
   const { start, end, maxBonus } = BALANCE.catchUp;
   return maxBonus * clamp01((d - start) / (end - start));
 }
 
-/** Armadura do ladrão (placas de titânio): −15% por placa, até 3. */
+/** Thief armor (titanium plates): −15% per plate, up to 3. */
 export function armorFactor(plates: number): number {
   return 1 - 0.15 * Math.min(Math.max(0, plates), 3);
 }
 
-/** O alvo está no cone de tiro (frontal ou traseiro, incluindo as laterais) e no alcance? */
-export function inFireCone(
-  shooter: { s: number; x: number },
-  target: { s: number; x: number },
-  facing: 'front' | 'rear',
-): boolean {
+/** Is the target in the firing cone (front or rear, including the sides) and in range? */
+export function inFireCone(shooter: { s: number; x: number }, target: { s: number; x: number }, facing: 'front' | 'rear'): boolean {
   const ds = (target.s - shooter.s) * (facing === 'front' ? 1 : -1);
   const dx = target.x - shooter.x;
   if (Math.hypot(ds, dx) > BALANCE.combat.range) return false;
@@ -33,7 +29,7 @@ export function inFireCone(
   return angle <= BALANCE.combat.sideConeDeg;
 }
 
-/** Nível de dificuldade: sobe a cada 30 s, até 10. */
+/** Difficulty level: rises every 30 s, up to 10. */
 export function levelAt(timeSeconds: number): number {
   const { levelEvery, maxLevel } = BALANCE.difficulty;
   return Math.min(maxLevel, 1 + Math.floor(timeSeconds / levelEvery));

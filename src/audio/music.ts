@@ -1,17 +1,17 @@
-// Música chiptune: sequenciador puro e determinístico (semicolcheias), tocado pelo mixer com antecedência.
+// Chiptune music: pure, deterministic sequencer (sixteenth notes), played by the mixer ahead of time.
 
 export type MusicVoice = 'bass' | 'lead' | 'kick' | 'snare' | 'hat';
 
 export interface Note {
   voice: MusicVoice;
-  midi: number; // percussão usa 0
-  at: number; // s a partir do início do quadro atual
+  midi: number; // percussion uses 0
+  at: number; // s from the start of the current frame
   dur: number; // s
 }
 
 export interface Song {
   bpm: number;
-  length: number; // passos (múltiplo de 16)
+  length: number; // steps (multiple of 16)
   bass: (number | null)[];
   lead: (number | null)[];
   drums: ('k' | 's' | 'h' | null)[];
@@ -19,7 +19,7 @@ export interface Song {
 
 export const stepSeconds = (bpm: number) => 60 / bpm / 4;
 
-// notas: "A2" etc.; "." = pausa
+// notes: "A2" etc.; "." = rest
 const NAMES: Record<string, number> = { C: 0, 'C#': 1, D: 2, 'D#': 3, E: 4, F: 5, 'F#': 6, G: 7, 'G#': 8, A: 9, 'A#': 10, B: 11 };
 function parse(seq: string): (number | null)[] {
   return seq
@@ -28,12 +28,12 @@ function parse(seq: string): (number | null)[] {
     .map((t) => {
       if (t === '.') return null;
       const m = /^([A-G]#?)(\d)$/.exec(t);
-      if (!m) throw new Error(`nota inválida: ${t}`);
+      if (!m) throw new Error(`invalid note: ${t}`);
       return 12 * (Number(m[2]) + 1) + NAMES[m[1]!]!;
     });
 }
 
-// 4 compassos: Am · Am · F · G (perseguição em lá menor)
+// 4 bars: Am · Am · F · G (chase in A minor)
 const BASS = parse(`
 A2 . A2 A3  . A2 . A2  A2 . A2 A3  . G2 . G2
 A2 . A2 A3  . A2 . A2  A2 . C3 .   D3 . E3 .
@@ -56,7 +56,7 @@ export const SONG: Song = {
   drums: Array.from({ length: 64 }, (_, i) => DRUM_BAR[i % 16]!),
 };
 
-// Menu: mais calmo (110 bpm), lá menor arpejado, sem bateria pesada
+// Menu: calmer (110 bpm), arpeggiated A minor, no heavy drums
 const MENU_BASS = parse(`
 A2 . . .   . . . .   E2 . . .   . . . .
 F2 . . .   . . . .   G2 . . .   . . . .
@@ -77,7 +77,7 @@ export const MENU_SONG: Song = {
 
 export function createSequencer(song: Song): {
   step(dt: number, intense: boolean): Note[];
-  /** exatamente um passo (at = 0) e avança — usado pelo agendador no relógio do áudio */
+  /** exactly one step (at = 0), then advances — used by the scheduler on the audio clock */
   next(intense: boolean): Note[];
   stepIndex(): number;
   reset(): void;
@@ -95,7 +95,7 @@ export function createSequencer(song: Song): {
     const d = song.drums[k];
     if (d === 'k') out.push({ voice: 'kick', midi: 0, at, dur: 0.12 });
     else if (d === 's') out.push({ voice: 'snare', midi: 0, at, dur: 0.12 });
-    else if (d === 'h' || (intense && d == null)) out.push({ voice: 'hat', midi: 0, at, dur: 0.04 }); // camada extra quando aperta
+    else if (d === 'h' || (intense && d == null)) out.push({ voice: 'hat', midi: 0, at, dur: 0.04 }); // extra layer when it intensifies
     return out;
   };
   return {

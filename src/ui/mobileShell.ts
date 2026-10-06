@@ -1,20 +1,20 @@
-// "Cara de app" no celular: sem zoom por toque duplo/pinça e tela cheia no primeiro toque (esconde as barras do navegador).
-// Instalado na tela de início (manifest) ele já abre sem barras; aqui é para quem joga direto no navegador.
+// "App feel" on phones: no double-tap/pinch zoom and fullscreen on first touch (hides the browser bars).
+// When installed on the home screen (manifest) it already opens without bars; this is for those playing directly in the browser.
 
 const DOUBLE_TAP_MS = 300;
 
-/** Bloqueia o zoom de toque duplo e de pinça (o iOS ignora user-scalable=no). Devolve a função que desfaz. */
+/** Blocks double-tap and pinch zoom (iOS ignores user-scalable=no). Returns the function that undoes it. */
 export function installNoZoom(doc: Document, now: () => number = () => performance.now()): () => void {
   let lastTouchEnd = -Infinity;
   const onTouchEnd = (e: Event) => {
     const t = now();
-    if (t - lastTouchEnd < DOUBLE_TAP_MS) e.preventDefault(); // 2º toque rápido: sem zoom
+    if (t - lastTouchEnd < DOUBLE_TAP_MS) e.preventDefault(); // quick 2nd tap: no zoom
     lastTouchEnd = t;
   };
   const block = (e: Event) => e.preventDefault();
   const opts = { passive: false } as AddEventListenerOptions;
   doc.addEventListener('touchend', onTouchEnd, opts);
-  doc.addEventListener('gesturestart', block, opts); // pinça no iOS Safari
+  doc.addEventListener('gesturestart', block, opts); // pinch on iOS Safari
   doc.addEventListener('dblclick', block, opts);
   return () => {
     doc.removeEventListener('touchend', onTouchEnd, opts);
@@ -23,7 +23,7 @@ export function installNoZoom(doc: Document, now: () => number = () => performan
   };
 }
 
-/** Aberto como app instalado (tela de início)? */
+/** Opened as an installed app (home screen)? */
 export function isStandalone(win: Window): boolean {
   const nav = win.navigator as Navigator & { standalone?: boolean };
   return (
@@ -38,13 +38,13 @@ const lockLandscape = (win: Window): void => {
     const o = win.screen?.orientation as (ScreenOrientation & { lock?: (o: string) => Promise<void> }) | undefined;
     o?.lock?.('landscape')?.catch?.(() => {});
   } catch {
-    /* iPhone: sem trava de rotação pela web (o jogo se desenha girado — ver styles.css) */
+    /* iPhone: no rotation lock via the web (the game draws rotated — see styles.css) */
   }
 };
 
 /**
- * No primeiro toque (dedo, não mouse) pede tela cheia e trava em paisagem.
- * Instalado (ou sem tela cheia), só trava a rotação (Android). Precisa de um gesto do usuário; falhas são ignoradas.
+ * On the first touch (finger, not mouse) requests fullscreen and locks to landscape.
+ * When installed (or without fullscreen), only locks rotation (Android). Needs a user gesture; failures are ignored.
  */
 export function installFullscreenOnFirstTap(doc: Document, win: Window): () => void {
   const fullscreen = !isStandalone(win) && doc.fullscreenEnabled;
@@ -57,7 +57,7 @@ export function installFullscreenOnFirstTap(doc: Document, win: Window): () => v
     el.requestFullscreen?.({ navigationUI: 'hide' })
       .then(() => lockLandscape(win))
       .catch(() => {
-        /* sem tela cheia/rotação: segue no navegador */
+        /* no fullscreen/rotation: stays in the browser */
       });
   };
   win.addEventListener('pointerup', onUp, true);
@@ -65,9 +65,9 @@ export function installFullscreenOnFirstTap(doc: Document, win: Window): () => v
 }
 
 /**
- * Botão do HUD que reage no toque (pointerdown), não no click: durante a partida o dedo vive tocando nas setas,
- * e o bloqueio de zoom por toque duplo engolia o click de um toque logo em seguida (pausa "difícil de apertar").
- * Pelo teclado (Enter/Espaço → click com detail 0) continua funcionando.
+ * HUD button that reacts on touch (pointerdown), not on click: during a match the finger is constantly on the arrows,
+ * and the double-tap zoom block swallowed the click of a touch right after (pause "hard to press").
+ * Via keyboard (Enter/Space -> click with detail 0) it still works.
  */
 export function onTap(el: HTMLElement, fn: () => void): () => void {
   const down = (e: Event) => {

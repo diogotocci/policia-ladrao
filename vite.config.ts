@@ -1,8 +1,9 @@
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, type Plugin } from 'vite';
 import { injectPrecache, precacheList } from './src/pwa/strategy';
 
-/** escreve no /sw.js a lista de arquivos do build para o pré-cache (offline já na 1ª visita) */
+/** writes the build's file list into /sw.js for precaching (offline from the 1st visit) */
 const swPrecache = (): Plugin => ({
   name: 'pl-sw-precache',
   apply: 'build',
@@ -15,8 +16,14 @@ const swPrecache = (): Plugin => ({
 
 export default defineConfig({
   plugins: [swPrecache()],
-  // versão do build: nome do cache do service worker (um build novo limpa o cache antigo)
-  define: { __BUILD_ID__: JSON.stringify(Date.now().toString(36)) },
+  // build version: service worker cache name (a new build clears the old cache)
+  // app version shown on the title screen (package.json)
+  define: {
+    __BUILD_ID__: JSON.stringify(Date.now().toString(36)),
+    __APP_VERSION__: JSON.stringify(
+      (JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { version: string }).version,
+    ),
+  },
   build: {
     target: 'es2022',
     rollupOptions: {
@@ -25,7 +32,7 @@ export default defineConfig({
         sw: fileURLToPath(new URL('./src/pwa/sw.ts', import.meta.url)),
       },
       output: {
-        // o service worker precisa de nome fixo na raiz (/sw.js) para controlar o site todo
+        // the service worker needs a fixed name at the root (/sw.js) to control the whole site
         entryFileNames: (chunk) => (chunk.name === 'sw' ? 'sw.js' : 'assets/[name]-[hash].js'),
       },
     },

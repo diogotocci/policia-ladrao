@@ -1,5 +1,5 @@
-// Partículas com pool fixo num InstancedMesh só (1 draw call): fumaça de dano, explosão da bomba e batidas.
-// Posições em coordenadas de pista (x, altura, s): ficam no lugar enquanto os carros seguem.
+// Particles with a fixed pool in a single InstancedMesh (1 draw call): damage smoke, bomb explosion and impacts.
+// Positions in track coordinates (x, height, s): they stay in place while the cars move on.
 import * as THREE from 'three';
 import type { QualityTier } from './renderer';
 import { trackPos } from './trackFrame';
@@ -32,14 +32,21 @@ export interface Particles {
   emitBurst(x: number, s: number, kind: 'explosion' | 'crash'): void;
   update(dt: number, originS: number, camera: THREE.Camera): void;
   setQuality(q: QualityTier): void;
-  /** fator para a taxa de fumaça de cada emissor (0,5 em low) */
+  /** factor for each emitter's smoke rate (0.5 on low) */
   emissionScale(): number;
   alive(): number;
 }
 
 export function createParticles(scene: THREE.Scene, max = 160): Particles {
   const geo = new THREE.PlaneGeometry(1, 1);
-  const mat = new THREE.MeshBasicMaterial({ map: puffTexture(), transparent: true, opacity: 0.6, depthWrite: false, fog: true, side: THREE.DoubleSide });
+  const mat = new THREE.MeshBasicMaterial({
+    map: puffTexture(),
+    transparent: true,
+    opacity: 0.6,
+    depthWrite: false,
+    fog: true,
+    side: THREE.DoubleSide,
+  });
   const mesh = new THREE.InstancedMesh(geo, mat, max);
   mesh.name = 'particles';
   mesh.frustumCulled = false;
@@ -49,13 +56,13 @@ export function createParticles(scene: THREE.Scene, max = 160): Particles {
 
   const pos = new Float32Array(max * 3); // x, y, s
   const vel = new Float32Array(max * 3);
-  const life = new Float32Array(max); // restante (s)
+  const life = new Float32Array(max); // remaining (s)
   const total = new Float32Array(max);
-  const size = new Float32Array(max * 2); // inicial, final
+  const size = new Float32Array(max * 2); // initial, final
   const kind: Kind[] = new Array(max).fill('white');
   let next = 0;
   let seed = 3;
-  const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   let half = false;
 
   const spawn = (k: Kind, x: number, y: number, s: number, v: [number, number, number], lifeS: number, s0: number, s1: number) => {
@@ -73,7 +80,16 @@ export function createParticles(scene: THREE.Scene, max = 160): Particles {
   const tmp = new THREE.Object3D();
   return {
     emitSmoke(x, y, s, color) {
-      spawn(color, x + (rand() - 0.5) * 0.3, y, s, [(rand() - 0.5) * 0.6, 1.1 + rand() * 0.6, (rand() - 0.5) * 0.6], 1.0, 0.3, color === 'black' ? 1.3 : 1.0);
+      spawn(
+        color,
+        x + (rand() - 0.5) * 0.3,
+        y,
+        s,
+        [(rand() - 0.5) * 0.6, 1.1 + rand() * 0.6, (rand() - 0.5) * 0.6],
+        1.0,
+        0.3,
+        color === 'black' ? 1.3 : 1.0,
+      );
     },
     emitBurst(x, s, k) {
       const n = Math.round((k === 'explosion' ? 18 : 6) / (half ? 2 : 1));
@@ -100,7 +116,7 @@ export function createParticles(scene: THREE.Scene, max = 160): Particles {
         if (kind[i] === 'fire' || kind[i] === 'dust') vel[k + 1] = vel[k + 1]! - 6 * dt;
         const t = 1 - life[i]! / total[i]!; // 0 → 1
         const grow = size[i * 2]! + (size[i * 2 + 1]! - size[i * 2]!) * t;
-        const sc = grow * Math.min(1, (1 - t) * 4); // encolhe no fim (some suave)
+        const sc = grow * Math.min(1, (1 - t) * 4); // shrinks at the end (fades out smoothly)
         const wp = trackPos(pos[k + 2]!, pos[k]!, originS);
         tmp.position.set(wp.x, Math.max(0.05, pos[k + 1]!), wp.z);
         tmp.quaternion.copy(camera.quaternion);

@@ -6,16 +6,16 @@ export interface Projectile {
   from: Role;
   s: number;
   x: number;
-  /** velocidade ao longo da pista (m/s) */
+  /** speed along the road (m/s) */
   vs: number;
-  /** velocidade lateral (m/s) */
+  /** lateral speed (m/s) */
   vx: number;
-  /** metros percorridos */
+  /** meters traveled */
   travelled: number;
   damage: number;
-  /** atravessa o tráfego (Tiro perfurante) */
+  /** passes through traffic (Piercing Shot) */
   piercing?: boolean;
-  /** veio do helicóptero: distância até o alvo no disparo (o traçador desce do alto até ele) */
+  /** came from the helicopter: distance to the target at firing (the tracer descends from above to it) */
   air?: number;
 }
 
@@ -25,7 +25,7 @@ export interface TrafficCar {
   x: number;
   speed: number;
   targetX: number;
-  /** modelo visual 0..3 */
+  /** visual model 0..3 */
   model: number;
 }
 
@@ -52,7 +52,7 @@ export type GameEvent =
   | { type: 'pickup'; role: Role; item: ItemId | 'wrong' | 'none' }
   | { type: 'bombDropped'; s: number; x: number }
   | { type: 'explosion'; s: number; x: number }
-  | { type: 'shot'; from: Role; s: number; x: number; /** do helicóptero */ air?: true }
+  | { type: 'shot'; from: Role; s: number; x: number; /** from the helicopter */ air?: true }
   | { type: 'noTarget'; from: Role }
   | { type: 'skid'; role: Role; s: number; x: number }
   | { type: 'end'; winner: Role }
@@ -63,51 +63,51 @@ export interface MatchState {
   over: boolean;
   winner?: Role;
   endTime?: number;
-  /** como acabou: fuga (1:30), polícia destruída, ladrão destruído */
+  /** how it ended: escape (1:30), police destroyed, thief destroyed */
   reason?: 'escape' | 'policeDown' | 'thiefDown';
-  /** instante em que começou a cena de fuga (1:30) */
+  /** instant the escape scene started (1:30) */
   escapeAt?: number;
-  /** instante em que o ladrão foi destruído (cena da prisão) */
+  /** instant the thief was destroyed (arrest scene) */
   arrestAt?: number;
 }
 
 export interface WorldState {
   seed: number;
-  /** segundos de simulação */
+  /** simulation seconds */
   time: number;
   level: number;
   playerRole: Role;
   player: CarState;
   opponent: CarState;
   projectiles: Projectile[];
-  /** segundos restantes de imunidade por chave (ex.: 'cars', 'edge:police') */
+  /** seconds of immunity left per key (e.g. 'cars', 'edge:police') */
   immunity: Record<string, number>;
-  /** eventos do último passo (render, áudio, HUD) */
+  /** events from the last step (render, audio, HUD) */
   events: GameEvent[];
   match: MatchState;
-  /** estado serializável do RNG da IA */
+  /** serializable state of the AI's RNG */
   aiRng: number;
   traffic: TrafficCar[];
-  /** desligado só em testes/debug (?traffic=0) */
+  /** off only in tests/debug (?traffic=0) */
   trafficOn: boolean;
-  /** curvas ligadas (Entrega 6) */
+  /** curves enabled (Delivery 6) */
   curvesOn: boolean;
-  /** chegando vivo a este tempo o ladrão foge (BALANCE.match.escapeTime; menor só em debug) */
+  /** reaching this time alive the thief escapes (BALANCE.match.escapeTime; lower only in debug) */
   escapeTime: number;
   boxes: Box[];
   bombs: Bomb[];
   nextBombId: number;
-  /** o botão de bomba do ladrão estava apertado no passo anterior (borda de subida) */
+  /** the thief's bomb button was pressed in the previous step (rising edge) */
   bombHeld: boolean;
-  /** depois de bater no ladrão, a polícia fica sem turbo de compensação até este instante */
+  /** after hitting the thief, the police has no catch-up turbo until this instant */
   policeTurboOffUntil: number;
   nextBoxId: number;
-  /** s do próximo spawn de caixinha */
+  /** s of the next item-box spawn */
   nextBoxAt: number;
   itemRng: number;
   nextTrafficId: number;
-  /** estado serializável do RNG do tráfego */
+  /** serializable state of the traffic RNG */
   trafficRng: number;
-  /** memória da IA por papel (o adversário; o jogador também, em partidas IA × IA) */
+  /** AI memory per role (the opponent; the player too, in AI × AI matches) */
   ai: Record<Role, AiMemory>;
 }

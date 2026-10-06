@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 
 const errors: string[] = [];
@@ -14,7 +15,7 @@ test.beforeEach(async ({ page }) => {
 test.afterEach(() => expect(errors).toEqual([]));
 
 test('splash: shows right away, then fades out once the title is ready; iPhone launch images exist', async ({ page, request }) => {
-  // está no próprio HTML (aparece antes do JS); com a máquina lenta pode já ter sumido quando o goto termina
+  // is in the HTML itself (shows before the JS); on a slow machine it may already be gone when goto returns
   const html = await (await request.get('/?app')).text();
   expect(html).toContain('id="splash"');
   expect(html).toContain('Ladrão');
@@ -24,6 +25,12 @@ test('splash: shows right away, then fades out once the title is ready; iPhone l
   const imgs = await page.locator('link[rel="apple-touch-startup-image"]').evaluateAll((ls) => ls.map((l) => l.getAttribute('href')!));
   expect(imgs.length).toBeGreaterThanOrEqual(10);
   for (const src of imgs.slice(0, 3)) expect((await request.get(src)).ok(), src).toBe(true);
+});
+
+test('title screen footer shows the app version from package.json', async ({ page }) => {
+  const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { version: string };
+  await page.goto('/?app');
+  await expect(page.locator('.title-version')).toHaveText(`v${version}`);
 });
 
 test('installable webapp: manifest (fullscreen, landscape) and icons are served', async ({ page, request }) => {
@@ -64,7 +71,7 @@ test('no zoom: viewport locked and a quick double tap is swallowed', async ({ pa
 test('the picture never stretches: a size change without a resize event (iOS standalone) is picked up', async ({ page }) => {
   await page.goto('/?debug&seed=1&quality=low&traffic=0');
   await page.waitForFunction(() => '__game' in window);
-  // muda só o container (sem evento de resize na janela), como o iOS faz ao abrir o app instalado / girar
+  // changes only the container (no window resize event), as iOS does when opening the installed app / rotating
   await page.evaluate(() => {
     const app = document.getElementById('app')!;
     app.style.width = '600px';
@@ -78,6 +85,8 @@ test('the picture never stretches: a size change without a resize event (iOS sta
     null,
     { timeout: 15_000 },
   );
-  const aspect = await page.evaluate(() => (window as unknown as { __game: { visuals(): { cameraAspect: number } } }).__game.visuals().cameraAspect);
+  const aspect = await page.evaluate(
+    () => (window as unknown as { __game: { visuals(): { cameraAspect: number } } }).__game.visuals().cameraAspect,
+  );
   expect(aspect).toBeCloseTo(600 / 390, 2);
 });

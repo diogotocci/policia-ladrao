@@ -24,7 +24,14 @@ describe('service worker strategy', () => {
 
   it('precaches the whole build at install (first visit already works offline)', () => {
     const list = precacheList(['assets/main-abc.js', 'assets/main-def.css', 'sw.js', 'index.html', 'assets/sw-x.js.map']);
-    expect(list).toEqual(['/', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/assets/main-abc.js', '/assets/main-def.css']);
+    expect(list).toEqual([
+      '/',
+      '/manifest.webmanifest',
+      '/icons/icon-192.png',
+      '/icons/icon-512.png',
+      '/assets/main-abc.js',
+      '/assets/main-def.css',
+    ]);
   });
 
   it('injects the list into the built worker in place of the token, whatever the quotes', () => {

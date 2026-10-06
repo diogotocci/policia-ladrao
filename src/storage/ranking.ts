@@ -1,17 +1,17 @@
-// Ranking local (spec §8): top 10 por lado, validado ao carregar, nunca quebra o jogo.
+// Local ranking (spec §8): top 10 per side, validated on load, never breaks the game.
 import type { Role } from '../config/balance';
 
-// v2 (Entrega 7): o ladrão passou a vencer fugindo em 1:30 — as regras mudaram, os dois rankings recomeçam
+// v2 (Delivery 7): the thief now wins by escaping at 1:30 — the rules changed, both rankings restart
 export const RANKING_KEY = 'pl.ranking.v2';
 const MAX = 10;
 
 export interface Entry {
   initials: string;
   time: number; // s
-  date: string; // ISO (yyyy-mm-dd ou completo)
-  /** ladrão: vida que sobrou (desempata fugas) */
+  date: string; // ISO (yyyy-mm-dd or full)
+  /** thief: life left (breaks ties between escapes) */
   hp?: number;
-  /** ladrão: fugiu em 1:30 ou destruiu a polícia */
+  /** thief: escaped at 1:30 or destroyed the police */
   how?: 'escape' | 'kill';
 }
 export interface Board {
@@ -22,7 +22,7 @@ export interface Board {
 export const emptyBoard = (): Board => ({ police: [], thief: [] });
 
 type Result = Pick<Entry, 'time' | 'hp'>;
-/** os dois lados: vencer mais rápido é melhor; ladrão empatado (fugas em 1:30) → mais vida na frente */
+/** both sides: winning faster is better; thief tied (escapes at 1:30) → more life first */
 const better = (role: Role, a: Result, b: Result) => {
   if (Math.abs(a.time - b.time) > 1e-6) return a.time < b.time;
   return role === 'thief' && (a.hp ?? 0) > (b.hp ?? 0);
@@ -41,7 +41,7 @@ const valid = (x: unknown): x is Entry =>
   ((x as Entry).hp === undefined || (typeof (x as Entry).hp === 'number' && (x as Entry).hp! >= 0 && (x as Entry).hp! <= 100)) &&
   ((x as Entry).how === undefined || (x as Entry).how === 'escape' || (x as Entry).how === 'kill');
 
-/** Ordena mantendo a ordem original nos empates (o mais antigo foi inserido antes) e corta em 10. */
+/** Sorts keeping the original order on ties (the oldest was inserted first) and truncates to 10. */
 function normalize(role: Role, list: Entry[]): Entry[] {
   return list
     .map((e, i) => ({ e, i }))
@@ -50,7 +50,7 @@ function normalize(role: Role, list: Entry[]): Entry[] {
     .map((x) => x.e);
 }
 
-/** só vitórias entram (polícia: prendeu; ladrão: fugiu ou destruiu a polícia) */
+/** only wins qualify (police: arrested; thief: escaped or destroyed the police) */
 export function qualifies(board: Board, role: Role, time: number, won: boolean, hp?: number): boolean {
   if (!won) return false;
   const list = board[role];
@@ -58,7 +58,7 @@ export function qualifies(board: Board, role: Role, time: number, won: boolean, 
   return better(role, { time, hp }, list[list.length - 1]!);
 }
 
-/** Insere e devolve a posição (1 = primeiro; 0 = não entrou). Empate: o novo fica depois dos antigos. */
+/** Inserts and returns the position (1 = first; 0 = didn't make it). Tie: the new one goes after the old ones. */
 export function insert(board: Board, role: Role, entry: Entry): { board: Board; rank: number } {
   const list = board[role];
   let at = list.findIndex((e) => better(role, entry, e));
@@ -85,7 +85,7 @@ export function saveBoard(storage: Storage | undefined, board: Board): void {
   try {
     storage?.setItem(RANKING_KEY, JSON.stringify(board));
   } catch {
-    /* sem storage: o ranking vale só nesta sessão */
+    /* no storage: the ranking only lasts this session */
   }
 }
 

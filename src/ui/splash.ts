@@ -1,5 +1,5 @@
-// Splash: desenhado direto no index.html (aparece antes do JS); some com um fade quando a primeira tela está pronta.
-const MIN_MS = 700; // não pisca rápido demais
+// Splash: drawn directly in index.html (shown before the JS); fades out when the first screen is ready.
+const MIN_MS = 700; // does not flash too quickly
 const FADE_MS = 400;
 
 export function hideSplash(doc: Document, opts: { now?: number; immediate?: boolean } = {}): void {

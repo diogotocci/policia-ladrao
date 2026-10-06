@@ -14,7 +14,14 @@ const memory = () => {
   const m = new Map<string, string>();
   return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v) } as unknown as Storage;
 };
-const broken = { getItem: () => { throw new Error('blocked'); }, setItem: () => { throw new Error('blocked'); } } as unknown as Storage;
+const broken = {
+  getItem: () => {
+    throw new Error('blocked');
+  },
+  setItem: () => {
+    throw new Error('blocked');
+  },
+} as unknown as Storage;
 
 describe('sound preference', () => {
   it('defaults to sound on, persists, and survives a storage that throws', () => {
@@ -33,7 +40,7 @@ describe('createSoundToggle', () => {
     const t = createSoundToggle(root, { muted: false, onChange: (m) => changes.push(m), keyTarget: window });
     const btn = root.querySelector('button.sound-toggle') as HTMLButtonElement;
     expect(btn.getAttribute('aria-label')).toBe('Som ligado');
-    // ícone desenhado (SVG), não emoji: igual em todo celular
+    // drawn icon (SVG), not emoji: same on every phone
     expect(btn.querySelector('svg')).not.toBeNull();
     expect(btn.textContent).toBe('');
     const on = btn.innerHTML;

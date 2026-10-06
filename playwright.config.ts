@@ -9,7 +9,7 @@ export default defineConfig({
   reporter: [['list']],
   use: {
     baseURL: 'http://localhost:4173',
-    // Sem GPU (container/CI com Chromium próprio): WebGL por software. Na máquina local, o padrão do Playwright.
+    // No GPU (container/CI with its own Chromium): software WebGL. On the local machine, Playwright's default.
     launchOptions: executablePath
       ? { executablePath, args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] }
       : {},

@@ -1,4 +1,4 @@
-// HUD mínimo da partida (vida, tempo, distância, nível) e a tela de fim. Ranking e telas completas: entrega 5.
+// Minimal match HUD (health, time, distance, level) and the end screen. Ranking and full screens: delivery 5.
 import type { Role } from '../config/balance';
 import { BALANCE } from '../config/balance';
 import type { WorldState } from '../sim/types';
@@ -25,7 +25,7 @@ const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls: string, text = '
   return e;
 };
 
-/** Rótulos curtos dos itens (aviso ao pegar e dica dos ícones). */
+/** Short item labels (pickup notice and icon hint). */
 export const ITEM_LABEL: Record<string, string> = {
   fireRate: 'Cadência',
   power: 'Potência',
@@ -39,13 +39,20 @@ export const ITEM_LABEL: Record<string, string> = {
   gun: 'Arma traseira',
 };
 const ITEM_ICON: Record<string, string> = {
-  fireRate: '⚡', power: '💥', ram: '🛡️', nitro: '🔥', heli: '🚁', pierce: '🎯', plate: '🛡️', gun: '🔫', // escudo nos dois (cada um só vê o seu lado)
+  fireRate: '⚡',
+  power: '💥',
+  ram: '🛡️',
+  nitro: '🔥',
+  heli: '🚁',
+  pierce: '🎯',
+  plate: '🛡️',
+  gun: '🔫', // shield for both (each only sees their own side)
 };
 
 interface HudItem {
   id: string;
   count?: string;
-  left?: number; // fração restante (itens temporários)
+  left?: number; // remaining fraction (temporary items)
 }
 
 function playerItems(w: WorldState, role: Role): HudItem[] {
@@ -74,14 +81,14 @@ function playerItems(w: WorldState, role: Role): HudItem[] {
   return out;
 }
 
-/** Aviso curto ao pegar uma caixinha. */
+/** Short notice when picking up a box. */
 export function pickupToast(item: string): string {
   if (item === 'wrong') return '−2 caixinha errada';
   if (item === 'none') return 'Itens no máximo';
   return `+ ${ITEM_LABEL[item] ?? item}`;
 }
 
-/** últimos segundos da contagem: amarelo pulsando + bip */
+/** last seconds of the countdown: pulsing yellow + beep */
 export const ALERT_LEFT = 10;
 
 export function createHud(
@@ -96,7 +103,7 @@ export function createHud(
   const bar = (role: Role, label: string) => {
     const b = el('div', `hud-bar hud-bar--${role}`);
     const name = el('span', 'hud-bar-label', label);
-    // só a barra (sem número — playtest); o valor fica para leitores de tela
+    // bar only (no number — playtest); the value is kept for screen readers
     const track = el('div', 'hud-bar-track');
     track.setAttribute('role', 'meter');
     track.setAttribute('aria-label', `Vida — ${label}`);
@@ -114,10 +121,10 @@ export function createHud(
   const items = el('div', 'hud-items');
   bars.append(items);
   let itemsSig = '';
-  // últimos 10 s: número grande no meio da tela
+  // last 10 s: big number in the middle of the screen
   const finalEl = el('div', 'hud-final');
   finalEl.hidden = true;
-  finalEl.setAttribute('aria-hidden', 'true'); // o cronômetro do topo já anuncia o tempo
+  finalEl.setAttribute('aria-hidden', 'true'); // the top timer already announces the time
   let finalShown = '';
   const toastEl = el('div', 'hud-toast');
   toastEl.hidden = true;
@@ -125,7 +132,7 @@ export function createHud(
   let toastTimer: ReturnType<typeof setTimeout> | undefined;
 
   const center = el('div', 'hud-center');
-  // contagem regressiva até a fuga (1:30): "Fuga em" (ladrão) / "Prenda em" (polícia)
+  // countdown to the escape (1:30): "Fuga em" (thief) / "Prenda em" (police)
   const timeBox = el('div', 'hud-time-box');
   const timeLabel = el('span', 'hud-time-label', playerRole === 'thief' ? 'Fuga em' : 'Prenda em');
   const time = el('div', 'hud-time', '00:00.0');
@@ -174,7 +181,7 @@ export function createHud(
         finalShown = n;
         finalEl.hidden = !alert;
         finalEl.textContent = n;
-        // reinicia a animação de "pulo" a cada segundo
+        // restarts the "jump" animation every second
         finalEl.classList.remove('pop');
         void finalEl.offsetWidth;
         if (alert) finalEl.classList.add('pop');
@@ -210,8 +217,12 @@ export function createHud(
         endTitle.textContent = won ? 'Você venceu!' : 'Você perdeu';
         endReason.textContent =
           w.match.reason === 'escape'
-            ? playerRole === 'thief' ? 'Fugiu! Sumiu no horizonte 🏁' : 'O ladrão fugiu 🏁'
-            : w.match.winner === 'police' ? 'O ladrão foi detido' : 'A viatura foi destruída';
+            ? playerRole === 'thief'
+              ? 'Fugiu! Sumiu no horizonte 🏁'
+              : 'O ladrão fugiu 🏁'
+            : w.match.winner === 'police'
+              ? 'O ladrão foi detido'
+              : 'A viatura foi destruída';
         endTime.textContent = `Tempo: ${formatTime(w.match.endTime ?? w.time)}`;
         end.dataset.result = won ? 'win' : 'lose';
         end.hidden = false;
@@ -225,7 +236,7 @@ export function createHud(
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => (toastEl.hidden = true), opts.big ? 2000 : 1200);
     },
-    /** pausado: o alerta dos últimos 10 s para de pulsar atrás da tela de pausa */
+    /** paused: the last-10-s alert stops pulsing behind the pause screen */
     setPaused(paused) {
       hud.classList.toggle('is-paused', paused);
     },

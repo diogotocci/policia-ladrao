@@ -1,10 +1,10 @@
-// Perseguição: turbo de compensação da polícia e a regra "a polícia nunca ultrapassa o ladrão" (spec §4.3).
+// Pursuit: police catch-up turbo and the rule "the police never overtakes the thief" (spec §4.3).
 import { BALANCE } from '../config/balance';
 import { catchUpBonus } from './rules';
 import type { WorldState } from './types';
 import { policeOf, thiefOf, withCar } from './world';
 
-/** Bônus de velocidade da polícia: só quando está atrás do ladrão. */
+/** Police speed bonus: only when behind the thief. */
 export function pursuitBonus(w: WorldState): number {
   const police = policeOf(w);
   const d = thiefOf(w).s - police.s;
@@ -14,15 +14,15 @@ export function pursuitBonus(w: WorldState): number {
 }
 
 /**
- * A dianteira da viatura nunca passa a do ladrão. Com sobreposição lateral (mesma faixa),
- * ela fica no mínimo 1 comprimento atrás. Ao encostar, a velocidade fica limitada à do ladrão.
+ * The patrol car's front never passes the thief's. With lateral overlap (same lane),
+ * it stays at least 1 car length behind. On contact, speed is capped at the thief's.
  */
 export function enforceNoOvertake(w: WorldState): WorldState {
   const police = policeOf(w);
   const thief = thiefOf(w);
   const sameLane = Math.abs(thief.x - police.x) < 2 * BALANCE.car.halfWidth;
   const limit = sameLane ? thief.s - BALANCE.car.length : thief.s;
-  // encostada (ou passando do limite): trava a posição e a velocidade na do ladrão
+  // touching (or past the limit): locks position and speed to the thief's
   if (police.s < limit - 1e-6) return w;
   return withCar(w, 'police', { ...police, s: Math.min(police.s, limit), speed: Math.min(police.speed, thief.speed) });
 }

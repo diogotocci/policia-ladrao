@@ -3,7 +3,25 @@ import { RECIPES, envelopeAt, recipeDuration, type Voice } from '../../src/audio
 
 describe('sound recipes', () => {
   it('there is a recipe for every game sound', () => {
-    for (const k of ['shot-police', 'shot-thief', 'hit', 'crash', 'explosion', 'pickup', 'wrong', 'bomb-drop', 'win', 'lose', 'beep', 'go', 'ui', 'skid', 'bomb-hit', 'rotor', 'escape'])
+    for (const k of [
+      'shot-police',
+      'shot-thief',
+      'hit',
+      'crash',
+      'explosion',
+      'pickup',
+      'wrong',
+      'bomb-drop',
+      'win',
+      'lose',
+      'beep',
+      'go',
+      'ui',
+      'skid',
+      'bomb-hit',
+      'rotor',
+      'escape',
+    ])
       expect(RECIPES[k as keyof typeof RECIPES], k).toBeDefined();
   });
 
@@ -34,7 +52,7 @@ describe('sound recipes', () => {
     for (const r of [police, thief]) {
       expect(loud(r).wave).toBe('noise');
       expect(loud(r).attack).toBeLessThanOrEqual(0.002);
-      expect(r.some((x) => x.wave !== 'noise' && x.freq <= 250)).toBe(true); // corpo grave do estampido
+      expect(r.some((x) => x.wave !== 'noise' && x.freq <= 250)).toBe(true); // low body of the bang
     }
     expect(bright(police)).toBeGreaterThanOrEqual(bright(thief) * 2);
     expect(recipeDuration(thief)).toBeGreaterThan(recipeDuration(police) * 1.3);
@@ -43,15 +61,14 @@ describe('sound recipes', () => {
   it('tyre squeal (playtest 2026-10-06: the two beating tones sounded like a train horn): narrow-band noise around 1.4–3 kHz, no oscillator tones', () => {
     const r = RECIPES.skid;
     expect(r.every((x) => x.wave === 'squeal')).toBe(true);
-    expect(r.length).toBeGreaterThanOrEqual(2); // faixas sobrepostas e desencontradas: chiado irregular de borracha
+    expect(r.length).toBeGreaterThanOrEqual(2); // overlapping, out-of-sync tracks: irregular rubber squeal
     for (const x of r) {
       expect(x.freq).toBeGreaterThanOrEqual(1400);
       expect(x.freq).toBeLessThanOrEqual(3000);
-      expect(x.q ?? 0).toBeGreaterThanOrEqual(6); // faixa estreita: guincho, não chiado de vento
+      expect(x.q ?? 0).toBeGreaterThanOrEqual(6); // narrow band: screech, not wind hiss
     }
     expect(new Set(r.map((x) => x.delay)).size).toBeGreaterThan(1);
     expect(recipeDuration(r)).toBeGreaterThanOrEqual(0.4);
     expect(recipeDuration(r)).toBeLessThanOrEqual(0.8);
   });
-
 });

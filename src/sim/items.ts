@@ -1,4 +1,4 @@
-// Caixinhas e itens (spec §5): spawn espaçado, cor tendendo a quem perde, coleta no chão, efeitos com limites.
+// Item boxes and items (spec §5): spaced spawn, color tending toward whoever is losing, pickup on the ground, effects with caps.
 import { BALANCE, type Role } from '../config/balance';
 import type { CarState } from './car';
 import { createRngFromState, type Rng } from './rng';
@@ -8,7 +8,7 @@ import { policeOf, thiefOf, withCar } from './world';
 
 const I = BALANCE.items;
 
-/** Probabilidade de a caixinha ser azul (da polícia): 0,5 com vidas iguais, até 0,65/0,35 para quem tem menos. */
+/** Probability of the box being blue (police): 0.5 with equal lives, up to 0.65/0.35 for whoever has fewer. */
 export function colorChance(policeHp: number, thiefHp: number): number {
   const diff = Math.max(-1, Math.min(1, (thiefHp - policeHp) / I.colorTiltAtHpDiff));
   return 0.5 + I.colorTilt * diff;
@@ -33,7 +33,7 @@ function available(car: CarState): ItemId[] {
   return out;
 }
 
-/** Sorteia um item do grupo do carro, sem os que já estão no máximo. `null` se nada serve. */
+/** Picks an item from the car's group, excluding those already at max. `null` if none fits. */
 export function rollItem(car: CarState, rng: Rng): ItemId | null {
   const options = available(car);
   if (options.length === 0) return null;
@@ -93,7 +93,7 @@ export function applyItem(car: CarState, item: ItemId, time: number): CarState {
 
 const onBump = (seed: number, s: number) => bumpsBetween(seed, s - 6, s + 6).length > 0;
 
-/** Spawn, limpeza e coleta das caixinhas. */
+/** Spawn, cleanup and pickup of item boxes. */
 export function stepBoxes(w: WorldState): WorldState {
   const rng = createRngFromState(w.itemRng);
   const events: GameEvent[] = [...w.events];
@@ -104,7 +104,7 @@ export function stepBoxes(w: WorldState): WorldState {
   let boxes: Box[] = w.boxes.filter((b) => b.s > back - 20);
   let { nextBoxAt, nextBoxId } = w;
 
-  // spawn: até 2 visíveis, à frente, fora de quebra-molas e de tráfego
+  // spawn: up to 2 visible, ahead, away from speed bumps and traffic
   if (nextBoxAt < front + I.spawnAhead && boxes.length < I.maxVisible) {
     let s = Math.max(nextBoxAt, front + 60);
     while (onBump(w.seed, s)) s += 8;
@@ -117,10 +117,10 @@ export function stepBoxes(w: WorldState): WorldState {
     boxes.push({ id: nextBoxId++, s, x, color });
     nextBoxAt = s + rng.range(I.boxEvery - I.boxJitter, I.boxEvery + I.boxJitter);
   } else if (nextBoxAt < front + I.spawnAhead) {
-    nextBoxAt = front + I.spawnAhead; // há 2 na pista: adia
+    nextBoxAt = front + I.spawnAhead; // 2 on the road: postpone
   }
 
-  // coleta (só no chão)
+  // pickup (ground only)
   const reachS = BALANCE.car.length / 2 + 0.6;
   const reachX = BALANCE.car.halfWidth + 0.6;
   const take = (car: CarState): CarState => {

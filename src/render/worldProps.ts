@@ -1,4 +1,4 @@
-// Objetos do mundo com pools fixos: tráfego, caixinhas, bombas, quebra-molas e placas de aviso.
+// World objects with fixed pools: traffic, item boxes, bombs, speed bumps and warning signs.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { BALANCE } from '../config/balance';
@@ -12,10 +12,10 @@ import { createCar } from '../sim/car';
 const TRAFFIC_SLOTS = 8;
 const MODELS = 4;
 const BOXES = 2;
-const BOMBS = 6; // até 3 no estoque + as que ainda estão na pista (duram 20 s)
+const BOMBS = 6; // up to 3 in stock + those still on the road (last 20 s)
 const BUMPS = 4;
 const CURVE_SIGNS = 3;
-const CURVE_SIGN_BEFORE = 90; // m antes da curva fechada
+const CURVE_SIGN_BEFORE = 90; // m before the sharp curve
 
 function stripeTexture(): THREE.DataTexture {
   const W = 32;
@@ -34,14 +34,14 @@ function stripeTexture(): THREE.DataTexture {
   return t;
 }
 
-/** Placa de aviso: losango amarelo de borda preta com o desenho de uma lombada (fora do losango é transparente). */
+/** Warning sign: yellow diamond with a black border and a speed bump drawing (outside the diamond is transparent). */
 function bumpSignTexture(): THREE.DataTexture {
   const N = 64;
   const data = new Uint8Array(N * N * 4);
   for (let py = 0; py < N; py++)
     for (let px = 0; px < N; px++) {
       const x = ((px + 0.5) / N) * 2 - 1;
-      const y = ((py + 0.5) / N) * 2 - 1; // y para cima (DataTexture começa embaixo)
+      const y = ((py + 0.5) / N) * 2 - 1; // y up (DataTexture starts at the bottom)
       const r = Math.abs(x) + Math.abs(y);
       let c: [number, number, number, number] = [0, 0, 0, 0];
       if (r <= 1) {
@@ -58,7 +58,7 @@ function bumpSignTexture(): THREE.DataTexture {
   return t;
 }
 
-/** Placa de curva: retângulo amarelo com 3 flechas pretas (›››) apontando para a direita (espelhada para a esquerda). */
+/** Curve sign: yellow rectangle with 3 black arrows (›››) pointing right (mirrored for left). */
 function chevronTexture(): THREE.DataTexture {
   const W = 96;
   const H = 48;
@@ -68,7 +68,7 @@ function chevronTexture(): THREE.DataTexture {
       const x = (px + 0.5) / W;
       const y = (py + 0.5) / H - 0.5;
       const border = x < 0.04 || x > 0.96 || Math.abs(y) > 0.42;
-      // cada flecha: faixa em "›" — distância horizontal até a linha x = c + 0.35·|y|·(-1)
+      // each arrow: a "›" band — horizontal distance to the line x = c + 0.35·|y|·(-1)
       let arrow = false;
       for (const c of [0.27, 0.5, 0.73]) {
         const d = x - (c - 0.3 * Math.abs(y));
@@ -94,7 +94,7 @@ export function createWorldProps(
       for (const m of Array.isArray(mat) ? mat : mat ? [mat] : []) if ('envMap' in m) m.envMap = reflections;
     });
 
-  // tráfego: 8 de cada modelo (o pior caso), todos criados agora
+  // traffic: 8 of each model (the worst case), all created now
   const traffic: THREE.Group[][] = [];
   for (let m = 0; m < MODELS; m++) {
     const list: THREE.Group[] = [];
@@ -108,10 +108,10 @@ export function createWorldProps(
     }
     traffic.push(list);
   }
-  const trafficCar = createCar('police', 1); // estado temporário só para posicionar o modelo
+  const trafficCar = createCar('police', 1); // temporary state just to position the model
 
-  // caixinhas: casca colorida e translúcida com núcleo branco brilhante.
-  // Polícia = cubo azul; ladrão = losango (octaedro) vermelho — forma e cor diferentes, dá para distinguir de longe.
+  // item boxes: colored translucent shell with a bright white core.
+  // Police = blue cube; thief = red diamond (octahedron) — different shape and color, distinguishable from afar.
   const shapes: Record<'blue' | 'red', { shell: THREE.BufferGeometry; core: THREE.BufferGeometry }> = {
     blue: { shell: new THREE.BoxGeometry(1.05, 1.05, 1.05), core: new THREE.BoxGeometry(0.5, 0.5, 0.5) },
     red: { shell: new THREE.OctahedronGeometry(0.8), core: new THREE.OctahedronGeometry(0.38) },
@@ -122,10 +122,21 @@ export function createWorldProps(
     g.name = `box-${i}`;
     const shell = new THREE.Mesh(
       shapes.blue.shell,
-      new THREE.MeshPhysicalMaterial({ color: 0x2f6bff, emissive: 0x2f6bff, emissiveIntensity: 0.45, transparent: true, opacity: 0.7, roughness: 0.15, clearcoat: 1 }),
+      new THREE.MeshPhysicalMaterial({
+        color: 0x2f6bff,
+        emissive: 0x2f6bff,
+        emissiveIntensity: 0.45,
+        transparent: true,
+        opacity: 0.7,
+        roughness: 0.15,
+        clearcoat: 1,
+      }),
     );
     shell.name = 'shell';
-    const core = new THREE.Mesh(shapes.blue.core, new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 2 }));
+    const core = new THREE.Mesh(
+      shapes.blue.core,
+      new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 2 }),
+    );
     core.name = 'core';
     shell.castShadow = true;
     g.add(shell, core);
@@ -134,16 +145,22 @@ export function createWorldProps(
     return { g, shell, core };
   });
 
-  // bombas: esfera escura, pavio e luz piscando
+  // bombs: dark sphere, fuse and blinking light
   const bombs = Array.from({ length: BOMBS }, (_, i) => {
     const g = new THREE.Group();
     g.name = `bomb-${i}`;
-    const ball = new THREE.Mesh(new THREE.SphereGeometry(0.38, 16, 12), new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.4, metalness: 0.4 }));
+    const ball = new THREE.Mesh(
+      new THREE.SphereGeometry(0.38, 16, 12),
+      new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.4, metalness: 0.4 }),
+    );
     ball.position.y = 0.38;
     ball.castShadow = true;
     const fuse = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.25, 6), new THREE.MeshStandardMaterial({ color: 0x8b6b3d }));
     fuse.position.y = 0.85;
-    const light = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), new THREE.MeshStandardMaterial({ color: 0xff3020, emissive: 0xff3020, emissiveIntensity: 2 }));
+    const light = new THREE.Mesh(
+      new THREE.SphereGeometry(0.07, 8, 6),
+      new THREE.MeshStandardMaterial({ color: 0xff3020, emissive: 0xff3020, emissiveIntensity: 2 }),
+    );
     light.name = 'light';
     light.position.y = 0.98;
     g.add(ball, fuse, light);
@@ -152,15 +169,21 @@ export function createWorldProps(
     return { g, light };
   });
 
-  // quebra-molas (2 faixas = 6 m), placa grande na beira da pista 75 m antes e faixas amarelas pintadas nas 2 faixas
+  // speed bumps (2 lanes = 6 m), large sign at the roadside 75 m before and yellow stripes painted on both lanes
   const SIGN_BEFORE = 75;
-  const PAINT_BEFORE = 22; // centro das 3 faixas pintadas (16, 22 e 28 m antes)
+  const PAINT_BEFORE = 22; // center of the 3 painted stripes (16, 22 and 28 m before)
   const bumpGeo = new THREE.BoxGeometry(6, 0.14, 0.8);
   const bumpMat = new THREE.MeshStandardMaterial({ map: stripeTexture(), roughness: 0.7 });
   bumpMat.map!.repeat.set(3, 1);
   const signGeo = new THREE.CylinderGeometry(0.06, 0.06, 2.6, 6).translate(0, 1.3, 0);
   const signPlateGeo = new THREE.PlaneGeometry(1.5, 1.5).translate(0, 3, 0);
-  const signMat = new THREE.MeshStandardMaterial({ map: bumpSignTexture(), alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.5, emissive: 0x3a2a00 });
+  const signMat = new THREE.MeshStandardMaterial({
+    map: bumpSignTexture(),
+    alphaTest: 0.5,
+    side: THREE.DoubleSide,
+    roughness: 0.5,
+    emissive: 0x3a2a00,
+  });
   const paintGeo = mergeGeometries([-6, 0, 6].map((dz) => new THREE.PlaneGeometry(6, 0.6).rotateX(-Math.PI / 2).translate(0, 0, dz)))!;
   const paintMat = new THREE.MeshStandardMaterial({ color: 0xf2c230, roughness: 0.8, polygonOffset: true, polygonOffsetFactor: -2 });
   const poleMat = new THREE.MeshStandardMaterial({ color: 0x55585e, metalness: 0.6, roughness: 0.4 });
@@ -181,7 +204,7 @@ export function createWorldProps(
     return { m, sign, paint };
   });
 
-  // curvas fechadas: placa de flechas 90 m antes, por fora da curva
+  // sharp curves: arrow sign 90 m before, on the outside of the curve
   const chevronGeo = new THREE.PlaneGeometry(2.2, 1.1).translate(0, 2.4, 0);
   const chevronMat = new THREE.MeshStandardMaterial({ map: chevronTexture(), side: THREE.DoubleSide, roughness: 0.5, emissive: 0x3a2a00 });
   const chevronPoleGeo = mergeGeometries([-0.8, 0.8].map((dx) => new THREE.CylinderGeometry(0.05, 0.05, 1.9, 6).translate(dx, 0.95, 0)))!;
@@ -196,7 +219,7 @@ export function createWorldProps(
 
   return {
     update(w, originS, time, prev, alpha = 1) {
-      /** posiciona no mundo seguindo a curva e gira com a pista */
+      /** places in the world following the curve and rotates with the road */
       const put = (o: THREE.Object3D, s: number, x: number, y: number) => {
         const p = trackPos(s, x, originS);
         o.position.set(p.x, y, p.z);
@@ -211,7 +234,7 @@ export function createWorldProps(
         const m = ((t.model % MODELS) + MODELS) % MODELS;
         const g = traffic[m]![used[m]!++]!;
         g.visible = true;
-        // interpolado entre o passo anterior e o atual (como os carros do jogo): sem tremer a 60+ fps
+        // interpolated between the previous and current step (like the game cars): no jitter at 60+ fps
         const b = before.get(t.id);
         const s = b ? b.s + (t.s - b.s) * alpha : t.s;
         const x = b ? b.x + (t.x - b.x) * alpha : t.x;
@@ -254,13 +277,15 @@ export function createWorldProps(
         put(sign, b.s - SIGN_BEFORE, side * (BALANCE.road.halfWidth + 0.5), 0);
       });
 
-      const sharp = w.curvesOn ? curvesBetween(w.seed, originS - 60 + CURVE_SIGN_BEFORE, originS + 300 + CURVE_SIGN_BEFORE).filter((c) => c.sharp) : [];
+      const sharp = w.curvesOn
+        ? curvesBetween(w.seed, originS - 60 + CURVE_SIGN_BEFORE, originS + 300 + CURVE_SIGN_BEFORE).filter((c) => c.sharp)
+        : [];
       curveSigns.forEach((g, i) => {
         const c = sharp[i];
         g.visible = !!c;
         if (!c) return;
         put(g, c.start - CURVE_SIGN_BEFORE, -c.dir * (BALANCE.road.halfWidth + 0.8), 0);
-        g.scale.x = c.dir; // flechas apontando para o lado da curva
+        g.scale.x = c.dir; // arrows pointing toward the side of the curve
       });
     },
   };

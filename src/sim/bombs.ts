@@ -1,4 +1,4 @@
-// Bombas do ladrão: soltas atrás dele ao apertar 💣 (borda de subida), duram 20 s, −10 na polícia no chão.
+// Thief bombs: dropped behind him when pressing 💣 (rising edge), last 20 s, −10 to the police on the ground.
 import { BALANCE } from '../config/balance';
 import type { Intents } from './intents';
 import type { Bomb, GameEvent, WorldState } from './types';
@@ -6,7 +6,7 @@ import { policeOf, thiefOf, withCar } from './world';
 
 const B = BALANCE.items.bomb;
 
-/** `intents` = intents do ladrão neste passo. */
+/** `intents` = the thief's intents this step. */
 export function dropBomb(w: WorldState, intents: Intents): WorldState {
   const pressed = intents.bomb && !w.bombHeld;
   const out: WorldState = { ...w, bombHeld: intents.bomb };

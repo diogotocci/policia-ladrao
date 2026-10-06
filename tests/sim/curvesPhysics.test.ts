@@ -2,10 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { BALANCE } from '../../src/config/balance';
 import { createCar, stepCar, type CarState } from '../../src/sim/car';
 import { NO_INTENTS, type Intents } from '../../src/sim/intents';
+import { curvesBetween } from '../../src/sim/curves';
+import { createWorld, stepWorld, thiefOf, policeOf, withCar } from '../../src/sim/world';
 
 const DT = 1 / 60;
 const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
-/** dirige `seconds` numa curva de raio r (dir 1 = direita) com as intenções dadas */
+/** drives `seconds` on a curve of radius r (dir 1 = right) with the given intents */
 const drive = (car: CarState, r: number, dir: 1 | -1, intents: Partial<Intents>, seconds: number) => {
   let c = car;
   let touched = false;
@@ -36,7 +38,7 @@ describe('cornering', () => {
 
   it('gentle curve (r 400) at cruise: holding ◀/▶ to the inside keeps the car off the curb, no skid', () => {
     const r = drive(atSpeed(34, 2), 400, 1, { right: true }, 6);
-    expect(r.touched && r.c.x < 0).toBe(false); // nunca encosta no meio-fio de fora
+    expect(r.touched && r.c.x < 0).toBe(false); // never touches the outer curb
     expect(r.skid).toBe(false);
   });
 
@@ -44,13 +46,13 @@ describe('cornering', () => {
     const r = drive(atSpeed(34, 2), 120, 1, { right: true }, 3);
     expect(r.skid).toBe(true);
     expect(r.touched).toBe(true);
-    expect(r.c.x).toBeCloseTo(-EDGE, 5); // borda de fora
+    expect(r.c.x).toBeCloseTo(-EDGE, 5); // outer edge
   });
 
   it('the same sharp curve braking to ~25 m/s first: clean, no skid, no curb', () => {
     let c = atSpeed(34, 2);
     for (let i = 0; i < 30 && c.speed > 25; i++) c = stepCar(c, { ...NO_INTENTS, brake: true }, DT);
-    // segura a velocidade (soltar o freio volta a acelerar; aqui alterna como um jogador faria)
+    // holds the speed (releasing the brake accelerates again; here it alternates as a player would)
     let touched = false;
     let skid = false;
     for (let i = 0; i < 180; i++) {
@@ -64,7 +66,7 @@ describe('cornering', () => {
 
   it('skidding: steering is worth only half', () => {
     const grip = BALANCE.curves.grip;
-    const v = Math.sqrt(((grip + 2) * 120)); // acima da aderência
+    const v = Math.sqrt((grip + 2) * 120); // above the grip
     const base = { ...atSpeed(v, 1), x: 0 };
     const none = stepCar(base, NO_INTENTS, DT, { curvature: 1 / 120 });
     const steer = stepCar(base, { ...NO_INTENTS, right: true }, DT, { curvature: 1 / 120 });
@@ -72,9 +74,6 @@ describe('cornering', () => {
     expect(none.skidding).toBe(true);
   });
 });
-
-import { curvesBetween } from '../../src/sim/curves';
-import { createWorld, stepWorld, thiefOf, policeOf, withCar } from '../../src/sim/world';
 
 describe('cornering in the world', () => {
   it('a thief entering a sharp curve at full speed skids (event) and hits the curb (−5); with curves=0 nothing happens', () => {

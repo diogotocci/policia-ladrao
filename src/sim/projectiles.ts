@@ -1,5 +1,5 @@
-// Tiros com mira automática: miram a posição prevista do alvo (só no avanço, não no desvio lateral) e podem errar.
-// O da polícia voa a 150 m/s: um ladrão ziguezagueando de longe escapa.
+// Auto-aimed shots: aim at the target's predicted position (forward motion only, not lateral drift) and can miss.
+// The police's flies at 150 m/s: a thief zigzagging from afar escapes.
 import { BALANCE, type Role } from '../config/balance';
 import type { CarState } from './car';
 import type { Intents } from './intents';
@@ -8,7 +8,7 @@ import type { GameEvent, Projectile, WorldState } from './types';
 import { policeOf, thiefOf, withCar } from './world';
 
 const HIT_MARGIN = 0.2;
-const SUBSTEP = 1; // m — evita atravessar um carro (4,4 m) em um passo de 5 m
+const SUBSTEP = 1; // m — avoids passing through a car (4.4 m) in a 5 m step
 
 const other = (r: Role): Role => (r === 'police' ? 'thief' : 'police');
 const carOf = (w: WorldState, r: Role) => (r === 'police' ? policeOf(w) : thiefOf(w));
@@ -31,7 +31,7 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
       const target = carOf(out, other(role));
       const facing = role === 'police' ? 'front' : 'rear';
       if (inFireCone(car, target, facing)) {
-        // mira com antecipação linear
+        // aims with linear lead
         const dist = Math.hypot(target.s - car.s, target.x - car.x);
         const speed = role === 'police' ? c.policeProjectileSpeed : c.projectileSpeed;
         const tFly = dist / speed;
@@ -41,9 +41,7 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
         const d = Math.abs(target.s - car.s);
         const falloff = distanceFactor(d);
         const damage =
-          role === 'police'
-            ? c.policeDamage * car.upgrades.power * falloff * armorFactor(target.upgrades.plates)
-            : c.thiefDamage * falloff;
+          role === 'police' ? c.policeDamage * car.upgrades.power * falloff * armorFactor(target.upgrades.plates) : c.thiefDamage * falloff;
         const piercing = role === 'police' && w.time < car.upgrades.pierceUntil;
         projectiles.push({
           from: role,
@@ -64,7 +62,7 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
     out = withCar(out, role, car);
   }
 
-  // helicóptero: arma extra da polícia, atira sozinho do alto (dano cheio em todo o alcance, sem cone)
+  // helicopter: extra police weapon, shoots on its own from above (full damage across the whole range, no cone)
   let police = carOf(out, 'police');
   if (w.time < police.upgrades.heliUntil) {
     police = { ...police, heliCooldown: Math.max(0, police.heliCooldown - dt) };
@@ -111,7 +109,7 @@ export function stepProjectiles(w: WorldState, dt: number): WorldState {
     for (let i = 1; i <= n && !hit && !blocked; i++) {
       s = p.s + (p.vs * dt * i) / n;
       x = p.x + (p.vx * dt * i) / n;
-      // o alvo também se move durante o passo; aproximação: posição atual
+      // the target also moves during the step; approximation: current position
       if (Math.abs(s - target.s) <= L2 && Math.abs(x - target.x) <= W) hit = true;
       else if (!p.piercing && out.traffic.some((t) => Math.abs(s - t.s) <= L2 && Math.abs(x - t.x) <= W)) blocked = true;
     }
