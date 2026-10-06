@@ -41,6 +41,14 @@ export const BALANCE = {
   },
   catchUp: { start: 20, end: 150, maxBonus: 0.35 },
   difficulty: { levelEvery: 30, maxLevel: 10 },
+  // IA da polícia investe contra o ladrão (pressão para quem joga de ladrão); depois da batida vale a penalidade de sempre
+  ai: {
+    ramRange: 35, // m: só investe com o ladrão até aqui à frente
+    ramMinGap: 5, // m
+    ramChance: [0.01, 0.06] as const, // por decisão alinhada, do nível 1 ao 10
+    ramBoost: 0.3, // +30% do cruzeiro durante a investida
+    ramTime: 2.5, // s no máximo
+  },
   // Fuga (Entrega 7): chegando vivo a 1:30 o ladrão some no horizonte e vence. Cresce com as fases (backlog).
   match: {
     escapeTime: 90, // s

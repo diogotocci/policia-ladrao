@@ -126,6 +126,7 @@ export function startGame(
   };
   const marker = createOpponentMarker(scene, opponentRole);
   const rearview = createRearview();
+  rearview.setQuality(view.quality);
   const props = createWorldProps(scene, lighting.reflections);
   const chase = createChaseCamera();
   const fog = scene.fog instanceof THREE.Fog ? scene.fog : null;
@@ -187,6 +188,7 @@ export function startGame(
   let paused = opts.startPaused === true;
   const setPaused = (p: boolean) => {
     paused = p;
+    hud.setPaused(p);
     pauseBtn.setAttribute('aria-pressed', String(p));
   };
   const requestPause = () => {
@@ -375,6 +377,7 @@ export function startGame(
         view.setQuality(tier);
         lighting.setQuality(tier);
         particles.setQuality(tier);
+        rearview.setQuality(tier);
       }
     }
     // contagem de draw calls por passe: o info acumula no quadro e é zerado aqui

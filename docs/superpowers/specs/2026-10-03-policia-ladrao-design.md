@@ -19,9 +19,9 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 - Polícia e ladrão começam com **100 de vida**. Vida mínima 0, máxima 100.
 - **Vitória**: quem chega a 0 perde. Se os dois chegarem a 0 no mesmo passo de simulação, vence o ladrão (ele "sobreviveu" até o fim).
 - **Prisão** (*revisado em 2026-10-05*): quando a polícia vence, há uma cena de 3 s antes da tela de fim. O carro do ladrão para, arrebentado e soltando fumaça preta grossa, e a viatura encosta logo atrás, na faixa ao lado (para a câmera ver o carro destruído). Durante a cena não há controles nem combate. O tempo registrado é o do instante em que o ladrão zerou.
-- **Fuga** (*entrega 7, 2026-10-05*): se o ladrão chega vivo a **1:30**, ele vence. Cena de ~2 s: controles e combate param (sem tiros, bombas, caixinhas, batidas ou dano), o ladrão ganha nitro (até 2× o cruzeiro), a polícia freia e a neblina fecha até ele sumir no horizonte; depois a tela de fim ("Fugiu!"). O tempo registrado é exatamente 1:30. O limite fica em `BALANCE.match.escapeTime` e vai crescer com as fases (backlog). IA × IA: ladrão vence ~30–70%.
+- **Fuga** (*entrega 7, 2026-10-05*): se o ladrão chega vivo a **1:30**, ele vence. Cena de ~2 s: controles e combate param (sem tiros, bombas, caixinhas, batidas ou dano), o ladrão ganha nitro (até 2× o cruzeiro), a polícia freia e a neblina fecha até ele sumir no horizonte; depois a tela de fim ("Fugiu!"). Na cena o ladrão desvia do tráfego (troca para a faixa mais livre e nunca atravessa um carro); o tráfego também não atravessa a viatura freando. O tempo registrado é exatamente 1:30. O limite fica em `BALANCE.match.escapeTime` e vai crescer com as fases (backlog). IA × IA: ladrão vence ~30–70%.
 - **Cronômetro**: começa no fim da contagem e conta **para baixo** até a fuga ("Fuga em" para o ladrão, "Prenda em" para a polícia). Nos últimos 10 s fica amarelo pulsando (sem pulsar com "reduzir movimento") com um bip por segundo. Nos mesmos 10 s um **número grande** (10 … 1) aparece no meio da tela. Precisão interna de ms, exibição `mm:ss.d`.
-- **Dificuldade crescente**: a cada 30 s o nível sobe 1 (máximo 10). Cada nível melhora a IA adversária (tempo de reação, precisão de desvio, agressividade de batida) e aumenta a densidade de tráfego em ~8%. Aplica-se ao adversário controlado pela IA, seja ele polícia ou ladrão.
+- **Dificuldade crescente**: a cada 30 s o nível sobe 1 (máximo 10). Cada nível melhora a IA adversária (tempo de reação, precisão de desvio, agressividade de batida) e aumenta a densidade de tráfego em ~8%. Aplica-se ao adversário controlado pela IA, seja ele polícia ou ladrão. **Investida da polícia** (*revisado em 2026-10-06*): perto (5–35 m) e quase alinhada, a IA da polícia às vezes acelera (+30% por até 2,5 s) para bater no ladrão; a chance cresce com o nível. Depois da batida vale a penalidade de sempre (perde 50% da velocidade e fica 4 s sem turbo, o ladrão escapa). Só a IA faz isso; a polícia jogada por uma pessoa não ganha o empurrão. IA × IA: ~1,2 batida por partida (antes ~0,6); o ladrão passa a vencer ~30–35% (antes ~50%).
 
 ## 3. Pista e movimento
 
@@ -109,7 +109,7 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
 - PC: ←/→ ou A/D, ↓/S freio, Espaço atira, B bomba, Esc pausa.
 - HUD (*revisado em 2026-10-05*): barras de vida dos dois **sem número** (só a barra; o valor fica para leitores de tela), cronômetro, distância colorida, ícones dos upgrades ativos/permanentes (com timer nos temporários), nível de dificuldade discreto, botões de som e pausa com ícones desenhados (SVG, iguais em todo celular). Em telas estreitas a pílula central encolhe para não encostar nas barras. Ícones dos itens: titânio e quebra-mato = 🛡️ (escudo; cada jogador só vê o seu lado).
 - **Marcador do adversário**: seta de tamanho fixo na cor do outro lado (vermelha = ladrão, azul = polícia) flutuando sobre o carro dele, desenhada por cima de tudo e sem neblina; aparece quando ele está a mais de 15 m.
-- **Retrovisor**: segunda câmera, imagem espelhada, pequena (22% da largura) no canto superior direito, ativa sempre que o adversário está atrás do jogador (*revisado em 2026-10-04: no topo central e maior, cobria tráfego, caixinhas e quebra-molas*).
+- **Retrovisor**: segunda câmera, imagem espelhada, pequena (22% da largura) no canto superior direito, ativa sempre que o adversário está atrás do jogador (*revisado em 2026-10-04: no topo central e maior, cobria tráfego, caixinhas e quebra-molas*). Mais leve em celular fraco (*2026-10-06*): na qualidade baixa a cena de trás é redesenhada a cada 2 quadros, em 1× de densidade de pixels e com alcance menor (≈ metade das draw calls do espelho); na média, alcance menor e até 1,5×.
 - **Sempre em paisagem** (*revisado na entrega 6*): com o celular em pé o jogo inteiro se desenha girado 90° (o iPhone não deixa travar a rotação pela web); os botões continuam funcionando. No Android o primeiro toque também trava a tela em paisagem (inclusive instalado). Perder o foco da aba pausa.
 - **Splash** (*entrega 6*): fundo escuro, ícone com o giroflex piscando e "Polícia × Ladrão", já no primeiro desenho; some com um fade quando a primeira tela está pronta (≥ 0,7 s). iPhone instalado usa imagens de abertura; Android, o manifest.
 
@@ -118,9 +118,9 @@ Quando um item permanente já está no máximo, o sorteio o exclui.
 1. **Título**: Jogar · Ranking · Som on/off.
 2. **Escolha**: dois cards — viatura branca e azul com giroscópio vermelho/azul piscando; muscle car vermelho — com 3 linhas de regras de cada lado.
 3. **Jogo** (contagem 3-2-1 com sirene).
-4. **Pausa**: continuar, reiniciar, sair.
+4. **Pausa**: continuar, reiniciar, sair. Em todas as telas o foco do teclado fica preso dentro delas (Tab/Shift+Tab dão a volta). Na pausa, o cronômetro amarelo e o número grande dos últimos 10 s param de pulsar.
 5. **Fim**: vitória/derrota, tempo, motivo ("Fugiu! Sumiu no horizonte", "A viatura foi destruída", "O ladrão foi detido"). Se entrou no top 10, campo de **3 iniciais estilo arcade**.
-6. **Ranking**: abas "Polícia — mais rápidos" e "Ladrão — mais rápidos a vencer". Top 10 com iniciais, tempo e data (ladrão: 💥 destruiu a polícia / 🏁 fugiu com ♥ vida que sobrou).
+6. **Ranking** (aberto do título ou da tela de fim; da tela de fim, "Voltar" volta para a mesma tela de fim, e um recorde ainda não salvo continua esperando as iniciais): abas "Polícia — mais rápidos" e "Ladrão — mais rápidos a vencer". Top 10 com iniciais, tempo e data (ladrão: 💥 destruiu a polícia / 🏁 fugiu com ♥ vida que sobrou).
 
 ## 8. Ranking
 
