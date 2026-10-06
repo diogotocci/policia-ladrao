@@ -218,4 +218,13 @@ describe('item HUD', () => {
     hud.dispose();
   });
 
+
+  it('paused: the last-10-s alert stops pulsing (class on the HUD root)', () => {
+    const hud = createHud(root, 'thief');
+    hud.setPaused(true);
+    expect(root.querySelector('.hud')!.classList.contains('is-paused')).toBe(true);
+    hud.setPaused(false);
+    expect(root.querySelector('.hud')!.classList.contains('is-paused')).toBe(false);
+    hud.dispose();
+  });
 });

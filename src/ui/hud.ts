@@ -88,7 +88,7 @@ export function createHud(
   root: HTMLElement,
   playerRole: Role,
   opts: { onRestart?: () => void; showEnd?: boolean } = {},
-): { update(w: WorldState): void; toast(text: string, opts?: { big?: boolean }): void; dispose(): void } {
+): { update(w: WorldState): void; toast(text: string, opts?: { big?: boolean }): void; setPaused(paused: boolean): void; dispose(): void } {
   const hud = el('div', 'hud');
   hud.dataset.role = playerRole;
 
@@ -224,6 +224,10 @@ export function createHud(
       toastEl.classList.toggle('is-big', opts.big === true);
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => (toastEl.hidden = true), opts.big ? 2000 : 1200);
+    },
+    /** pausado: o alerta dos últimos 10 s para de pulsar atrás da tela de pausa */
+    setPaused(paused) {
+      hud.classList.toggle('is-paused', paused);
     },
     dispose() {
       clearTimeout(toastTimer);
