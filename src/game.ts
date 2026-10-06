@@ -24,6 +24,7 @@ import type { Intents } from './sim/intents';
 import { createWorld, stepWorld, type GameEvent, type ItemId, type WorldState } from './sim/world';
 import { feedbackForFrame } from './ui/feedback';
 import { ICONS } from './ui/icons';
+import { onTap } from './ui/mobileShell';
 import { createHud, pickupToast } from './ui/hud';
 
 const lerpCar = (a: CarState, b: CarState, t: number): CarState => ({
@@ -214,7 +215,8 @@ export function startGame(
   pauseBtn.className = 'pause-toggle';
   pauseBtn.innerHTML = ICONS.pause;
   pauseBtn.setAttribute('aria-label', 'Pausar');
-  pauseBtn.addEventListener('click', () => {
+  // no toque (não no click): logo depois de soltar uma seta o click podia ser engolido (pausa difícil de apertar)
+  onTap(pauseBtn, () => {
     pauseBtn.blur();
     if (paused && !opts.onPauseRequest) setPaused(false); // sem app: o mesmo botão retoma
     else requestPause();
@@ -334,12 +336,14 @@ export function startGame(
       }
     }
     heli.update(car.role === 'police' ? car : foe, world.time, origin, dt);
-    // prisão: o ladrão arrebentado solta fumaça preta grossa e faíscas enquanto a viatura encosta
-    if (world.match.arrestAt !== undefined && !frozen) {
-      const th = car.role === 'thief' ? car : foe;
-      const acc = emitAcc.thief;
+    // fim com um carro destruído (prisão: o ladrão; polícia destruída: a viatura) — fumaça preta grossa enquanto a cena roda
+    const wreckRole: Role | undefined =
+      world.match.arrestAt !== undefined ? 'thief' : world.match.escapeAt !== undefined && world.match.reason === 'policeDown' ? 'police' : undefined;
+    if (wreckRole && !frozen) {
+      const wc = car.role === wreckRole ? car : foe;
+      const acc = emitAcc[wreckRole];
       acc.wreck += dt * 28 * particles.emissionScale();
-      for (; acc.wreck >= 1; acc.wreck--) particles.emitSmoke(th.x + (acc.side = -acc.side) * 0.5, 1.1, th.s + 1.6, 'black');
+      for (; acc.wreck >= 1; acc.wreck--) particles.emitSmoke(wc.x + (acc.side = -acc.side) * 0.5, 1.1, wc.s + 1.6, 'black');
     }
     // pneus cantando: fumaça branca das rodas de trás enquanto derrapa
     for (let k = 0; k < 2 && !frozen; k++) {
@@ -352,7 +356,7 @@ export function startGame(
     props.update(world, origin, world.time, frozen ? undefined : prev, alpha);
     fx.update(world, frameEvents, origin, dt);
     for (const e of frameEvents) {
-      if (e.type === 'shot') flashGunner(gunners[e.from], clock);
+      if (e.type === 'shot' && !e.air) flashGunner(gunners[e.from], clock);
       else if (e.type === 'explosion') particles.emitBurst(e.x, e.s, 'explosion');
       else if (e.type === 'crash') particles.emitBurst(e.x, e.s, 'crash');
     }
