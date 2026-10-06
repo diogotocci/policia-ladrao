@@ -1,5 +1,9 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest';
+import { CHUNK_LENGTH, renderOrigin, visibleChunkRange, createRoad } from '../../src/render/roadChunks';
+import * as THREE from 'three';
+import { createTrackFrame } from '../../src/render/trackFrame';
+import { curvesBetween } from '../../src/sim/curves';
 
 // canvas textures do not exist in jsdom: swap for empty textures (only the geometry matters here)
 vi.mock('../../src/render/textures', async () => {
@@ -11,7 +15,6 @@ vi.mock('../../src/render/textures', async () => {
     makeFacadeTexture: () => new T.Texture(),
   };
 });
-import { CHUNK_LENGTH, renderOrigin, visibleChunkRange } from '../../src/render/roadChunks';
 
 describe('visibleChunkRange', () => {
   it('s = 0 → chunks -1..5', () => {
@@ -50,11 +53,6 @@ describe('renderOrigin', () => {
     expect(1e6 + 30 - renderOrigin(1e6 + 30)).toBeLessThan(CHUNK_LENGTH);
   });
 });
-
-import * as THREE from 'three';
-import { createRoad } from '../../src/render/roadChunks';
-import { createTrackFrame } from '../../src/render/trackFrame';
-import { curvesBetween } from '../../src/sim/curves';
 
 describe('curved road chunks (Entrega 6)', () => {
   const worldVerts = (scene: THREE.Scene, k: number) => {

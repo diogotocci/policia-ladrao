@@ -3,7 +3,10 @@ import { BALANCE } from '../../src/config/balance';
 import { aiStep, initialAiMemory, type AiMemory } from '../../src/sim/ai';
 import { stepCar } from '../../src/sim/car';
 import { createRng } from '../../src/sim/rng';
-import { createWorld, policeOf, thiefOf, withCar, type WorldState } from '../../src/sim/world';
+import { createWorld, policeOf, stepWorld, thiefOf, withCar, type WorldState } from '../../src/sim/world';
+import { NO_INTENTS as NONE } from '../../src/sim/intents';
+import { bumpXRange, bumpsBetween, stepJump } from '../../src/sim/track';
+import { curvesBetween } from '../../src/sim/curves';
 
 const DT = 1 / 60;
 const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
@@ -78,11 +81,6 @@ describe('thief AI', () => {
     expect(mean(10)).toBeLessThan(mean(1));
   });
 });
-
-// ---------- delivery 3: the world ----------
-import { NO_INTENTS as NONE } from '../../src/sim/intents';
-import { stepWorld } from '../../src/sim/world';
-import { bumpXRange, bumpsBetween, stepJump } from '../../src/sim/track';
 
 describe('AI uses the world', () => {
   it('steers around a stopped traffic car ahead (no crash in 5 s)', () => {
@@ -215,8 +213,6 @@ describe('bombs vs AI (review fixes)', () => {
     expect(dropped).toBe(true);
   });
 });
-
-import { curvesBetween } from '../../src/sim/curves';
 
 describe('AI and curves (Entrega 6)', () => {
   /** AI thief arrives at 34 m/s, 150 m before each sharp curve; counts how many times it hits the curb */

@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { BALANCE, type Role } from '../../src/config/balance';
 import { NO_INTENTS } from '../../src/sim/intents';
 import { createWorld, policeOf, stepWorld, thiefOf, withCar, type WorldState } from '../../src/sim/world';
+import { aiStep, initialAiMemory } from '../../src/sim/ai';
+import { createRng } from '../../src/sim/rng';
 
 const DT = 1 / 60;
 const isRam = (e: WorldState['events'][number]) =>
@@ -70,9 +72,6 @@ describe('police AI rams the thief (pressure for whoever plays thief)', () => {
     expect(w.ai.police.ramUntil).toBe(0);
   });
 });
-
-import { aiStep, initialAiMemory } from '../../src/sim/ai';
-import { createRng } from '../../src/sim/rng';
 describe('ram safety', () => {
   it('a charge is called off when a traffic car shows up in the lane ahead (danger beats the ram)', () => {
     const w0 = createWorld({ seed: 2, playerRole: 'thief', traffic: false, curves: false });

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BALANCE } from '../../src/config/balance';
-import { feedbackFor } from '../../src/ui/feedback';
+import { feedbackFor, feedbackForFrame } from '../../src/ui/feedback';
 
 describe('player feedback (works on iPhone: visual first, vibration where supported)', () => {
   it('taking a hit flashes the screen edge, stronger for bigger hits, and buzzes', () => {
@@ -32,7 +32,6 @@ describe('player feedback (works on iPhone: visual first, vibration where suppor
   });
 });
 
-import { feedbackForFrame } from '../../src/ui/feedback';
 describe('one feedback per frame (events of the same frame never cancel each other)', () => {
   it('bomb on the police = explosion + hit in the same frame: the full flash and long buzz win', () => {
     const f = feedbackForFrame(

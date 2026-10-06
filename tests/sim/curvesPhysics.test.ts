@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { BALANCE } from '../../src/config/balance';
 import { createCar, stepCar, type CarState } from '../../src/sim/car';
 import { NO_INTENTS, type Intents } from '../../src/sim/intents';
+import { curvesBetween } from '../../src/sim/curves';
+import { createWorld, stepWorld, thiefOf, policeOf, withCar } from '../../src/sim/world';
 
 const DT = 1 / 60;
 const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
@@ -72,9 +74,6 @@ describe('cornering', () => {
     expect(none.skidding).toBe(true);
   });
 });
-
-import { curvesBetween } from '../../src/sim/curves';
-import { createWorld, stepWorld, thiefOf, policeOf, withCar } from '../../src/sim/world';
 
 describe('cornering in the world', () => {
   it('a thief entering a sharp curve at full speed skids (event) and hits the curb (−5); with curves=0 nothing happens', () => {

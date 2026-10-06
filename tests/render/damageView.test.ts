@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import type * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import { createCarModel } from '../../src/render/carFactory';
 import { applyDamage, damageLook } from '../../src/render/damageView';
