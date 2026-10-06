@@ -1,4 +1,6 @@
-// Botão de som (🔊/🔇) e tecla M. A escolha fica salva; storage indisponível não quebra nada.
+// Botão de som (alto-falante desenhado em SVG) e tecla M. A escolha fica salva; storage indisponível não quebra nada.
+import { ICONS } from './icons';
+
 const KEY = 'pl.sound';
 
 /** true = mudo. Padrão: som ligado. */
@@ -27,7 +29,7 @@ export function createSoundToggle(
   btn.type = 'button';
   btn.className = 'sound-toggle';
   const render = () => {
-    btn.textContent = muted ? '🔇' : '🔊';
+    btn.innerHTML = muted ? ICONS.soundOff : ICONS.soundOn;
     btn.setAttribute('aria-label', muted ? 'Som desligado' : 'Som ligado');
     btn.setAttribute('aria-pressed', String(muted));
   };

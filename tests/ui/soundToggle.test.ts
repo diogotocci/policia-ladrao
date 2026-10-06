@@ -33,7 +33,12 @@ describe('createSoundToggle', () => {
     const t = createSoundToggle(root, { muted: false, onChange: (m) => changes.push(m), keyTarget: window });
     const btn = root.querySelector('button.sound-toggle') as HTMLButtonElement;
     expect(btn.getAttribute('aria-label')).toBe('Som ligado');
+    // ícone desenhado (SVG), não emoji: igual em todo celular
+    expect(btn.querySelector('svg')).not.toBeNull();
+    expect(btn.textContent).toBe('');
+    const on = btn.innerHTML;
     btn.click();
+    expect(btn.innerHTML).not.toBe(on);
     expect(btn.getAttribute('aria-label')).toBe('Som desligado');
     expect(changes).toEqual([true]);
     t.dispose();
