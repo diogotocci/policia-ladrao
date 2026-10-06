@@ -533,8 +533,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "e2e_world_spec",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 68,
+      "community_name": "world.spec.ts",
       "norm_label": "world.spec.ts"
     },
     {
@@ -546,8 +546,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "e2e_world_spec_car",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 68,
+      "community_name": "world.spec.ts",
       "norm_label": "car"
     },
     {
@@ -559,8 +559,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "e2e_world_spec_snap",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 68,
+      "community_name": "world.spec.ts",
       "norm_label": "snap"
     },
     {
@@ -571,8 +571,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "e2e_world_spec_snapshot",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 68,
+      "community_name": "world.spec.ts",
       "norm_label": "snapshot()"
     },
     {
@@ -583,8 +583,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "e2e_world_spec_waitsim",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 68,
+      "community_name": "world.spec.ts",
       "norm_label": "waitsim()"
     },
     {
@@ -594,8 +594,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "e2e_world_spec_errors",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 68,
+      "community_name": "world.spec.ts",
       "norm_label": "errors"
     },
     {
@@ -2745,8 +2745,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_buildings",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 65,
+      "community_name": "createRng",
       "norm_label": "buildings.ts"
     },
     {
@@ -2758,8 +2758,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_buildings_buildingspec",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 65,
+      "community_name": "createRng",
       "norm_label": "buildingspec"
     },
     {
@@ -2769,8 +2769,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_render_buildings_palette",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 65,
+      "community_name": "createRng",
       "norm_label": "palette"
     },
     {
@@ -2781,8 +2781,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_buildings_buildingsforchunk",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 65,
+      "community_name": "createRng",
       "norm_label": "buildingsforchunk()"
     },
     {
@@ -3179,7 +3179,7 @@
       "_origin": "ast",
       "id": "src_render_carfactory_createtrafficmodel",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "createtrafficmodel()"
     },
     {
@@ -3474,8 +3474,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_damageview_applydamage",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 11,
+      "community_name": "damageView.ts",
       "norm_label": "applydamage()"
     },
     {
@@ -3588,8 +3588,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_flashgunner",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "flashgunner()"
     },
     {
@@ -4000,8 +4000,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_renderer_smoothtexture",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "smoothtexture()"
     },
     {
@@ -4023,8 +4023,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_roadchunks",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "roadchunks.ts"
     },
     {
@@ -4034,8 +4034,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_render_roadchunks_chunk_length",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "chunk_length"
     },
     {
@@ -4046,8 +4046,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_visiblechunkrange",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "visiblechunkrange()"
     },
     {
@@ -4058,8 +4058,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_renderorigin",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "renderorigin()"
     },
     {
@@ -4071,8 +4071,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_slot",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "slot"
     },
     {
@@ -4083,8 +4083,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_createroad",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "createroad()"
     },
     {
@@ -4163,8 +4163,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_textures",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "textures.ts"
     },
     {
@@ -4174,8 +4174,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_render_textures_ground_ppm",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "ground_ppm"
     },
     {
@@ -4185,8 +4185,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_render_textures_ground_half_width",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "ground_half_width"
     },
     {
@@ -4196,8 +4196,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_render_textures_facade_tile_meters",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "facade_tile_meters"
     },
     {
@@ -4208,8 +4208,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_canvas",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "canvas()"
     },
     {
@@ -4220,8 +4220,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_makegroundtexture",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "makegroundtexture()"
     },
     {
@@ -4232,8 +4232,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_makefacadetexture",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "makefacadetexture()"
     },
     {
@@ -4244,8 +4244,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_makeskytexture",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "makeskytexture()"
     },
     {
@@ -4255,8 +4255,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_trackframe",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 66,
+      "community_name": "curves.ts",
       "norm_label": "trackframe.ts"
     },
     {
@@ -4268,8 +4268,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "trackframe"
     },
     {
@@ -4280,8 +4280,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe_toworld",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": ".toworld()"
     },
     {
@@ -4292,8 +4292,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe_headingat",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": ".headingat()"
     },
     {
@@ -4304,8 +4304,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_trackframe_createtrackframe",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 66,
+      "community_name": "curves.ts",
       "norm_label": "createtrackframe()"
     },
     {
@@ -4315,8 +4315,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "src_render_trackframe_active",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 66,
+      "community_name": "curves.ts",
       "norm_label": "active"
     },
     {
@@ -4351,7 +4351,7 @@
       "_origin": "ast",
       "id": "src_render_worldprops",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "worldprops.ts"
     },
     {
@@ -4363,7 +4363,7 @@
       "_origin": "ast",
       "id": "src_render_worldprops_stripetexture",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "stripetexture()"
     },
     {
@@ -4375,7 +4375,7 @@
       "_origin": "ast",
       "id": "src_render_worldprops_bumpsigntexture",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "bumpsigntexture()"
     },
     {
@@ -4387,7 +4387,7 @@
       "_origin": "ast",
       "id": "src_render_worldprops_chevrontexture",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "chevrontexture()"
     },
     {
@@ -4399,7 +4399,7 @@
       "_origin": "ast",
       "id": "src_render_worldprops_createworldprops",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "createworldprops()"
     },
     {
@@ -4409,7 +4409,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_ai",
-      "community": 1,
+      "community": 67,
       "community_name": "ai.ts",
       "norm_label": "ai.ts"
     },
@@ -4434,7 +4434,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_ai_skill",
-      "community": 1,
+      "community": 67,
       "community_name": "ai.ts",
       "norm_label": "skill()"
     },
@@ -4446,7 +4446,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_ai_lerp",
-      "community": 1,
+      "community": 67,
       "community_name": "ai.ts",
       "norm_label": "lerp()"
     },
@@ -4470,7 +4470,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_ai_steerto",
-      "community": 1,
+      "community": 67,
       "community_name": "ai.ts",
       "norm_label": "steerto()"
     },
@@ -4482,7 +4482,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_ai_nearestlane",
-      "community": 1,
+      "community": 67,
       "community_name": "ai.ts",
       "norm_label": "nearestlane()"
     },
@@ -4494,7 +4494,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_ai_laneblocked",
-      "community": 1,
+      "community": 67,
       "community_name": "ai.ts",
       "norm_label": "laneblocked()"
     },
@@ -4506,7 +4506,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_ai_bumpcovers",
-      "community": 1,
+      "community": 67,
       "community_name": "ai.ts",
       "norm_label": "bumpcovers()"
     },
@@ -4518,7 +4518,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_ai_safelane",
-      "community": 1,
+      "community": 67,
       "community_name": "ai.ts",
       "norm_label": "safelane()"
     },
@@ -4530,7 +4530,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_ai_considerbump",
-      "community": 1,
+      "community": 67,
       "community_name": "ai.ts",
       "norm_label": "considerbump()"
     },
@@ -4542,7 +4542,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_ai_considerbombs",
-      "community": 1,
+      "community": 67,
       "community_name": "ai.ts",
       "norm_label": "considerbombs()"
     },
@@ -4554,7 +4554,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_ai_curvebraking",
-      "community": 1,
+      "community": 67,
       "community_name": "ai.ts",
       "norm_label": "curvebraking()"
     },
@@ -4566,7 +4566,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_ai_aistep",
-      "community": 1,
+      "community": 67,
       "community_name": "ai.ts",
       "norm_label": "aistep()"
     },
@@ -4744,8 +4744,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_curves",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 66,
+      "community_name": "curves.ts",
       "norm_label": "curves.ts"
     },
     {
@@ -4757,8 +4757,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_curves_curve",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 66,
+      "community_name": "curves.ts",
       "norm_label": "curve"
     },
     {
@@ -4770,8 +4770,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_curves_layout",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 65,
+      "community_name": "createRng",
       "norm_label": "layout"
     },
     {
@@ -4781,8 +4781,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_sim_curves_layouts",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 66,
+      "community_name": "curves.ts",
       "norm_label": "layouts"
     },
     {
@@ -4793,8 +4793,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_curves_layoutfor",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 66,
+      "community_name": "curves.ts",
       "norm_label": "layoutfor()"
     },
     {
@@ -4805,8 +4805,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_curves_extend",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 66,
+      "community_name": "curves.ts",
       "norm_label": "extend()"
     },
     {
@@ -4817,8 +4817,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_curves_curvesbetween",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 66,
+      "community_name": "curves.ts",
       "norm_label": "curvesbetween()"
     },
     {
@@ -4829,8 +4829,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_curves_curvatureat",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 66,
+      "community_name": "curves.ts",
       "norm_label": "curvatureat()"
     },
     {
@@ -4923,8 +4923,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_items",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 53,
+      "community_name": "items.ts",
       "norm_label": "items.ts"
     },
     {
@@ -4935,8 +4935,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_items_colorchance",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 53,
+      "community_name": "items.ts",
       "norm_label": "colorchance()"
     },
     {
@@ -4947,8 +4947,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_items_available",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 53,
+      "community_name": "items.ts",
       "norm_label": "available()"
     },
     {
@@ -4959,8 +4959,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_items_rollitem",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 53,
+      "community_name": "items.ts",
       "norm_label": "rollitem()"
     },
     {
@@ -4971,8 +4971,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_items_round",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 53,
+      "community_name": "items.ts",
       "norm_label": "round()"
     },
     {
@@ -4983,8 +4983,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_items_applyitem",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 53,
+      "community_name": "items.ts",
       "norm_label": "applyitem()"
     },
     {
@@ -4995,8 +4995,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_items_onbump",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 53,
+      "community_name": "items.ts",
       "norm_label": "onbump()"
     },
     {
@@ -5007,8 +5007,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_items_stepboxes",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 53,
+      "community_name": "items.ts",
       "norm_label": "stepboxes()"
     },
     {
@@ -5124,8 +5124,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_rng",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 65,
+      "community_name": "createRng",
       "norm_label": "rng.ts"
     },
     {
@@ -5138,7 +5138,7 @@
       "_origin": "ast",
       "id": "src_sim_rng_rng",
       "community": 53,
-      "community_name": "Rng",
+      "community_name": "items.ts",
       "norm_label": "rng"
     },
     {
@@ -5150,7 +5150,7 @@
       "_origin": "ast",
       "id": "src_sim_rng_rng_next",
       "community": 53,
-      "community_name": "Rng",
+      "community_name": "items.ts",
       "norm_label": ".next()"
     },
     {
@@ -5162,7 +5162,7 @@
       "_origin": "ast",
       "id": "src_sim_rng_rng_range",
       "community": 53,
-      "community_name": "Rng",
+      "community_name": "items.ts",
       "norm_label": ".range()"
     },
     {
@@ -5174,7 +5174,7 @@
       "_origin": "ast",
       "id": "src_sim_rng_rng_int",
       "community": 53,
-      "community_name": "Rng",
+      "community_name": "items.ts",
       "norm_label": ".int()"
     },
     {
@@ -5186,7 +5186,7 @@
       "_origin": "ast",
       "id": "src_sim_rng_rng_state",
       "community": 53,
-      "community_name": "Rng",
+      "community_name": "items.ts",
       "norm_label": ".state()"
     },
     {
@@ -5197,8 +5197,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_rng_createrngfromstate",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 65,
+      "community_name": "createRng",
       "norm_label": "createrngfromstate()"
     },
     {
@@ -5209,8 +5209,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_rng_createrng",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 65,
+      "community_name": "createRng",
       "norm_label": "createrng()"
     },
     {
@@ -5221,8 +5221,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_rng_makerng",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 65,
+      "community_name": "createRng",
       "norm_label": "makerng()"
     },
     {
@@ -5316,7 +5316,7 @@
       "_origin": "ast",
       "id": "src_sim_track",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "track.ts"
     },
     {
@@ -5329,7 +5329,7 @@
       "_origin": "ast",
       "id": "src_sim_track_bump",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "bump"
     },
     {
@@ -5341,7 +5341,7 @@
       "_origin": "ast",
       "id": "src_sim_track_bumpinblock",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "bumpinblock()"
     },
     {
@@ -5353,7 +5353,7 @@
       "_origin": "ast",
       "id": "src_sim_track_bumpsbetween",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "bumpsbetween()"
     },
     {
@@ -5365,7 +5365,7 @@
       "_origin": "ast",
       "id": "src_sim_track_bumpxrange",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "bumpxrange()"
     },
     {
@@ -5377,7 +5377,7 @@
       "_origin": "ast",
       "id": "src_sim_track_crossedbump",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "crossedbump()"
     },
     {
@@ -5388,8 +5388,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_track_stepjump",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": "stepjump()"
     },
     {
@@ -5401,7 +5401,7 @@
       "_origin": "ast",
       "id": "src_sim_track_jumpheight",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "jumpheight()"
     },
     {
@@ -5497,8 +5497,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_types_itemid",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 7,
+      "community_name": "main.ts",
       "norm_label": "itemid"
     },
     {
@@ -5510,8 +5510,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_types_box",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 53,
+      "community_name": "items.ts",
       "norm_label": "box"
     },
     {
@@ -5849,8 +5849,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_feedback",
-      "community": 48,
-      "community_name": "feedback.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": "feedback.ts"
     },
     {
@@ -5862,8 +5862,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_feedback_feedback",
-      "community": 48,
-      "community_name": "feedback.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": "feedback"
     },
     {
@@ -5874,8 +5874,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_feedback_feedbackfor",
-      "community": 48,
-      "community_name": "feedback.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": "feedbackfor()"
     },
     {
@@ -5886,8 +5886,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_feedback_feedbackforframe",
-      "community": 48,
-      "community_name": "feedback.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": "feedbackforframe()"
     },
     {
@@ -6640,8 +6640,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_buildings_test",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 65,
+      "community_name": "createRng",
       "norm_label": "buildings.test.ts"
     },
     {
@@ -6928,8 +6928,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_roadchunks_test",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 48,
+      "community_name": "roadChunks.ts",
       "norm_label": "roadchunks.test.ts"
     },
     {
@@ -6950,8 +6950,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_trackframe_test",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 66,
+      "community_name": "curves.ts",
       "norm_label": "trackframe.test.ts"
     },
     {
@@ -6962,7 +6962,7 @@
       "_origin": "ast",
       "id": "tests_render_worldprops_test",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "worldprops.test.ts"
     },
     {
@@ -6974,7 +6974,7 @@
       "_origin": "ast",
       "id": "tests_render_worldprops_test_traffic",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "traffic()"
     },
     {
@@ -6986,7 +6986,7 @@
       "_origin": "ast",
       "id": "tests_render_worldprops_test_visiblenamed",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "visiblenamed()"
     },
     {
@@ -7043,8 +7043,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_ai_test_bumpdodgerate",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": "bumpdodgerate()"
     },
     {
@@ -7216,8 +7216,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_curves_test",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 66,
+      "community_name": "curves.ts",
       "norm_label": "curves.test.ts"
     },
     {
@@ -7550,8 +7550,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_rng_test",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 65,
+      "community_name": "createRng",
       "norm_label": "rng.test.ts"
     },
     {
@@ -7562,8 +7562,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_rng_test_take",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 65,
+      "community_name": "createRng",
       "norm_label": "take()"
     },
     {
@@ -7585,7 +7585,7 @@
       "_origin": "ast",
       "id": "tests_sim_track_test",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "track.test.ts"
     },
     {
@@ -7596,8 +7596,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_track_test_drive",
-      "community": 1,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "drive()"
     },
     {
@@ -7609,7 +7609,7 @@
       "_origin": "ast",
       "id": "tests_sim_track_test_coveredcentre",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "coveredcentre()"
     },
     {
@@ -7621,7 +7621,7 @@
       "_origin": "ast",
       "id": "tests_sim_track_test_freelanex",
       "community": 1,
-      "community_name": "ai.ts",
+      "community_name": "track.ts",
       "norm_label": "freelanex()"
     },
     {
@@ -7712,8 +7712,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_storage_ranking_test_e",
-      "community": 48,
-      "community_name": "feedback.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "e()"
     },
     {
@@ -7724,8 +7724,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_storage_ranking_test_t",
-      "community": 28,
-      "community_name": "touchButtons.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "t()"
     },
     {
@@ -7762,14 +7762,25 @@
       "norm_label": "maxfilelines"
     },
     {
+      "label": "version.test.ts",
+      "file_type": "code",
+      "source_file": "tests/tooling/version.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_tooling_version_test",
+      "community": 4,
+      "community_name": "strategy.ts",
+      "norm_label": "version.test.ts"
+    },
+    {
       "label": "feedback.test.ts",
       "file_type": "code",
       "source_file": "tests/ui/feedback.test.ts",
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_feedback_test",
-      "community": 48,
-      "community_name": "feedback.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": "feedback.test.ts"
     },
     {
@@ -8572,10 +8583,32 @@
       "norm_label": "formatting and linting"
     },
     {
-      "label": "Completion quality",
+      "label": "Versioning",
       "file_type": "document",
       "source_file": ".agents/rules/coding-standards.md",
       "source_location": "L102",
+      "_origin": "ast",
+      "id": "agents_rules_coding_standards_versioning",
+      "community": 13,
+      "community_name": "Coding Standards",
+      "norm_label": "versioning"
+    },
+    {
+      "label": "Dependencies and security updates",
+      "file_type": "document",
+      "source_file": ".agents/rules/coding-standards.md",
+      "source_location": "L112",
+      "_origin": "ast",
+      "id": "agents_rules_coding_standards_dependencies_and_security_updates",
+      "community": 13,
+      "community_name": "Coding Standards",
+      "norm_label": "dependencies and security updates"
+    },
+    {
+      "label": "Completion quality",
+      "file_type": "document",
+      "source_file": ".agents/rules/coding-standards.md",
+      "source_location": "L116",
       "_origin": "ast",
       "id": "agents_rules_coding_standards_completion_quality",
       "community": 13,
@@ -8795,7 +8828,7 @@
       "label": "4. Manuten\u00e7\u00e3o das skills",
       "file_type": "document",
       "source_file": "AGENTS.md",
-      "source_location": "L41",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "agents_4_manuten\u00e7\u00e3o_das_skills",
       "community": 31,
@@ -32095,6 +32128,18 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/tooling/version.test.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_tooling_version_test",
+      "target": "ref_node_fs",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/ui/flow.test.ts",
@@ -32639,7 +32684,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/rules/coding-standards.md",
-      "source_location": "L102",
+      "source_location": "L116",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_rules_coding_standards_coding_standards",
@@ -32666,6 +32711,17 @@
       "_origin": "ast",
       "source": "agents_rules_coding_standards_coding_standards",
       "target": "agents_rules_coding_standards_dependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/rules/coding-standards.md",
+      "source_location": "L112",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_rules_coding_standards_coding_standards",
+      "target": "agents_rules_coding_standards_dependencies_and_security_updates",
       "confidence_score": 1.0
     },
     {
@@ -32787,6 +32843,17 @@
       "_origin": "ast",
       "source": "agents_rules_coding_standards_coding_standards",
       "target": "agents_rules_coding_standards_type_safety",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/rules/coding-standards.md",
+      "source_location": "L102",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_rules_coding_standards_coding_standards",
+      "target": "agents_rules_coding_standards_versioning",
       "confidence_score": 1.0
     },
     {
@@ -32947,7 +33014,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AGENTS.md",
-      "source_location": "L41",
+      "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_agents_md_policia_ladrao",
@@ -34144,5 +34211,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "30027c84a0261ed67dbce74ac19d2c74b125db74"
+  "built_at_commit": "8dc2a96c2ada411183536ffaba9cf5883bc48c71"
 }
