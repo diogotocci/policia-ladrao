@@ -99,6 +99,20 @@ Do not add dependencies unnecessarily. Before adding one, weigh necessity, maint
 
 Prettier owns formatting (`.prettierrc.json`); ESLint owns correctness and architecture (`eslint.config.mjs`). Run `pnpm lint` (Prettier check + ESLint). Do not disable lint rules globally to solve a local problem; fix the code. Errors block; warnings are refactoring pressure to address when touching the code.
 
+## Versioning
+
+`package.json` `version` follows Semantic Versioning and is shown on the title screen footer. Every PR bumps it exactly once, in its last commit (`chore(release): x.y.z`), based on the highest-impact change in the PR:
+
+- **major** (`x`): a breaking change for players or their data (saved ranking or settings no longer compatible, a removed mode). While the version is `0.y.z`, a breaking change bumps the minor instead; `1.0.0` is set only when the owner declares the launch.
+- **minor** (`y`): new player-facing behavior (`feat`): a new mechanic, item, screen, setting or rule change. Resets the patch to 0.
+- **patch** (`z`): everything else (`fix`, `perf`, `refactor`, `style`, `test`, `docs`, `chore`, `ci`, `build`).
+
+The PR title or body states the new version. Dependabot security PRs are the exception: they do not bump the version; the next regular PR includes them in its bump.
+
+## Dependencies and security updates
+
+Dependabot opens a PR when a dependency has a known vulnerability (security updates only; routine version bumps are disabled in `.github/dependabot.yml`). The CI workflow (`.github/workflows/ci.yml`: typecheck, lint, unit tests, build) checks those PRs like any other. Review the changelog of the fixed package before merging.
+
 ## Completion quality
 
 A change is complete only when:
@@ -107,4 +121,5 @@ A change is complete only when:
 - `pnpm test`, `pnpm typecheck`, `pnpm lint` and `pnpm build` pass, and the relevant e2e specs pass;
 - the Graphify refresh is done when indexed files changed (`graphify.md`);
 - the spec is updated when game behavior changes;
+- `package.json` `version` is bumped according to Versioning;
 - no unrelated changes are included.

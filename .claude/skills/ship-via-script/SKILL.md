@@ -23,16 +23,17 @@ Never run `git commit`, `git push`, `git merge`, `git rebase`, `git am`, `git ch
    - branch `feat/…`, `fix/…`, `chore/…`, `docs/…`, `test/…` (kebab-case, English);
    - Conventional Commit messages in English, one per plan checkpoint;
    - PR title and body in English: what changes for players and developers, how it was validated.
-4. Refresh the Graphify graph when indexed files changed (`.agents/rules/graphify.md`). The script also runs `graphify update .` and stops with `GRAPHIFY_UPDATE_FAILED` if it fails.
-5. Copy `template.ps1` to `scratch/NN-<slug>.ps1`, keep exactly one of the two modes and fill every `<...>`:
-   - **Mode A (patches)** when you worked in your own clone/sandbox: commit there with the final messages, export with `git format-patch origin/main -o scratch/NN-<slug>/`, and ship the folder with the script. The patches must apply on the current `origin/main`.
+4. Bump `package.json` `version` once per PR following SemVer (`.agents/rules/coding-standards.md`, Versioning): `feat` → minor, everything else → patch, breaking → major (minor while `0.y.z`). Put it in the last commit, `chore(release): x.y.z`, and mention the version in the PR body.
+5. Refresh the Graphify graph when indexed files changed (`.agents/rules/graphify.md`). The script also runs `graphify update .` and stops with `GRAPHIFY_UPDATE_FAILED` if it fails.
+6. Copy `template.ps1` to `scratch/NN-<slug>.ps1`, keep exactly one of the two modes and fill every `<...>`:
+   - **Mode A (patches)** when you worked in your own clone/sandbox: commit there with the final messages, export with `git format-patch origin/main -o scratch/NN-<slug>/`, and ship the folder with the script. The patches must apply on the current `origin/main`. Do not include `graphify-out/` in the patches: the graph's community ordering differs between Linux and Windows, so the script rebuilds it on the owner's machine and folds it into the last commit.
    - **Mode B (working tree)** when you edited the owner's folder directly: one `git add` with explicit paths + `git commit` per checkpoint.
-6. Script text is ASCII-only English (Windows PowerShell 5.1 reads `.ps1` without BOM as ANSI).
-7. Reply with a short summary and the command:
+7. Script text is ASCII-only English (Windows PowerShell 5.1 reads `.ps1` without BOM as ANSI).
+8. Reply with a short summary and the command:
    ```
    powershell -ExecutionPolicy Bypass -File .\scratch\NN-<slug>.ps1
    ```
-8. If the owner sends a failure ("STOPPED: ..."), use `systematic-debugging`, fix the cause and give a corrected script.
+9. If the owner sends a failure ("STOPPED: ..."), use `systematic-debugging`, fix the cause and give a corrected script.
 
 ## Script rules
 

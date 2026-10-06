@@ -1,0 +1,34 @@
+# Checks every pull request (including Dependabot security PRs) and every push to main.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: npx --yes pnpm@12.8.1 install --frozen-lockfile
+      - name: Type check
+        run: npx --yes pnpm@12.8.1 typecheck
+      - name: Lint
+        run: npx --yes pnpm@12.8.1 lint
+      - name: Unit tests
+        run: npx --yes pnpm@12.8.1 test
+      - name: Build
+        run: npx --yes pnpm@12.8.1 build

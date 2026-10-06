@@ -33,6 +33,7 @@ O usuário executa tudo de git que altera histórico/remoto por um script PowerS
 - Stack: TypeScript + Vite + Three.js (3D low-poly estilizado, qualidade automática), Vitest (+ jsdom), Playwright, pnpm. Spec: `docs/superpowers/specs/2026-10-03-policia-ladrao-design.md`.
 - Comandos: `pnpm install` · `pnpm dev` · `pnpm test` · `pnpm typecheck` · `pnpm lint` (Prettier + ESLint) · `pnpm lint:fix` · `pnpm lint:types` (opcional, só avisos) · `pnpm build` · `pnpm e2e` (1ª vez: `pnpm exec playwright install chromium`).
 - TypeScript: o projeto compila com o TypeScript 7 (`typescript7`, binário `tsc`); o pacote `typescript` aponta para a API do TypeScript 6 só porque o typescript-eslint ainda não suporta o 7.
+- Segurança de dependências: o Dependabot abre PR sozinho quando alguma lib tem vulnerabilidade conhecida (só correções de segurança, sem PRs de atualização de rotina); o CI do GitHub (`.github/workflows/ci.yml`) valida typecheck, lint, testes e build em toda PR.
 - Grafo do projeto: `graphify update .` (instalar com `uv tool install graphifyy==0.9.77`); `graphify query "<pergunta>"` para descoberta. Ver `.agents/rules/graphify.md`.
 - `src/sim/**` é TypeScript puro (sem `three`, DOM ou `window`); números de jogo só em `src/config/balance.ts`.
 - Mobile first: toque, retrato/paisagem, safe areas, 60 fps em celular médio.
