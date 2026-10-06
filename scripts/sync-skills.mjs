@@ -1,5 +1,5 @@
-// Espelha .agents/skills (fonte da verdade) em .claude/skills (lido pelo Claude Code).
-// Uso: node scripts/sync-skills.mjs
+// Mirrors .agents/skills (source of truth) into .claude/skills (read by Claude Code).
+// Usage: node scripts/sync-skills.mjs
 import { cpSync, existsSync, readdirSync, rmSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -22,4 +22,4 @@ for (const name of wanted) {
   if (!existsSync(join(src, name, 'SKILL.md'))) continue;
   cpSync(join(src, name), join(dst, name), { recursive: true, force: true });
 }
-console.log(`sync-skills: ${wanted.size} skills espelhadas em .claude/skills`);
+console.log(`sync-skills: ${wanted.size} skills mirrored into .claude/skills`);
