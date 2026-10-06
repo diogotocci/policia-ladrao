@@ -44,7 +44,7 @@ graphify update .
 
 Install once with `uv tool install graphifyy==0.9.77` (or `pipx install graphifyy==0.9.77`). The ship script (`ship-via-script` skill) runs the refresh automatically before committing and stops if it fails.
 
-Commit legitimate graph changes together with the source change that caused them. Do not hide graph updates to make a PR smaller. Do not commit ignored transient files.
+Commit legitimate graph changes together with the source change that caused them. The committed graph is built on the owner's Windows machine (the ship script does it): a graph built on another OS orders communities differently and would only add noise. Do not hide graph updates to make a PR smaller. Do not commit ignored transient files.
 
 ### Refresh failure
 

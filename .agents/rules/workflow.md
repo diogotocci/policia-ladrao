@@ -21,7 +21,7 @@ Skills live in `.agents/skills/<name>/SKILL.md` (mirrored to `.claude/skills/`).
 | Browser testing, screenshots, mobile viewport, smoke tests | `game-playtest` and `playwright-cli` |
 | Before saying "done", "works", "passes" | `verification-before-completion` |
 | Task finished, needs review / review feedback received | `requesting-code-review` / `receiving-code-review` |
-| Any commit, push, branch, PR or merge | `ship-via-script` (mandatory) |
+| Any commit, push, branch, PR or merge | `ship-via-script` (mandatory; bumps the version per SemVer) |
 | Cross-module discovery or impact analysis | Graphify query (see `graphify.md`) |
 | Owner says "grill me" | `grill-me` |
 | Hand work over to another session | `handoff` |
