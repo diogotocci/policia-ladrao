@@ -112,6 +112,12 @@ describe('end', () => {
     expect(root.querySelector('.initials')).toBeNull();
   });
 
+  it('coming back from the ranking after saving: shows "Recorde salvo!" and no initials', () => {
+    renderEnd(root, { ...base, role: 'police', result: { winner: 'police', time: 60 }, qualifies: true, saved: true, onSave: vi.fn() });
+    expect(root.textContent).toContain('Recorde salvo!');
+    expect(root.querySelector('.initials')).toBeNull();
+  });
+
   it('the reason says how it ended: escape (1:30), police destroyed, thief caught', () => {
     renderEnd(root, { ...base, role: 'thief', result: { winner: 'thief', time: 90, reason: 'escape' }, qualifies: false, onSave: vi.fn() });
     expect(root.textContent).toContain('Fugiu!');
@@ -158,3 +164,27 @@ describe('ranking', () => {
     expect(rows[1]).toContain('42');
   });
 });
+
+describe('focus stays inside the open screen (keyboard)', () => {
+  it('Tab on the last button wraps to the first; Shift+Tab on the first goes to the last; focus outside comes back in', () => {
+    const outside = document.createElement('button');
+    document.body.append(outside);
+    const v = renderPause(root, { onResume: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn(), mountToggle: () => ({ dispose() {} }) });
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('button')];
+    const tab = (shiftKey = false) => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true }));
+    buttons.at(-1)!.focus();
+    tab();
+    expect(document.activeElement).toBe(buttons[0]);
+    tab(true);
+    expect(document.activeElement).toBe(buttons.at(-1));
+    outside.focus();
+    tab();
+    expect(document.activeElement).toBe(buttons[0]);
+    v.dispose();
+    outside.focus();
+    tab();
+    expect(document.activeElement).toBe(outside); // fechada: não prende mais
+    outside.remove();
+  });
+});
+

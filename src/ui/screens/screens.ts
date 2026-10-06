@@ -21,10 +21,44 @@ const btn = (label: string, cls: string, onClick: () => void) => {
   b.addEventListener('click', onClick);
   return b;
 };
+const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+/** Tab/Shift+Tab ficam dentro da tela aberta (não escapam para os botões do jogo atrás dela). */
+export function trapFocus(el: HTMLElement): () => void {
+  const onKey = (e: KeyboardEvent) => {
+    if (e.key !== 'Tab') return;
+    const visible = (x: HTMLElement) => {
+      const cs = getComputedStyle(x);
+      return !x.closest('[hidden]') && cs.display !== 'none' && cs.visibility !== 'hidden';
+    };
+    const items = [...el.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(visible);
+    if (items.length === 0) return;
+    const first = items[0]!;
+    const last = items[items.length - 1]!;
+    const active = document.activeElement as HTMLElement | null;
+    const inside = !!active && el.contains(active);
+    if (e.shiftKey && (active === first || !inside)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && (active === last || !inside)) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+  document.addEventListener('keydown', onKey, true);
+  return () => document.removeEventListener('keydown', onKey, true);
+}
+
 const mount = (root: HTMLElement, el: HTMLElement, focus?: HTMLElement): Disposable => {
   root.append(el);
   focus?.focus();
-  return { dispose: () => el.remove() };
+  const untrap = el.classList.contains('screen-countdown') ? () => {} : trapFocus(el);
+  return {
+    dispose: () => {
+      untrap();
+      el.remove();
+    },
+  };
 };
 
 // ---------- título ----------
@@ -149,6 +183,8 @@ export function renderEnd(
     role: Role;
     result: MatchResult;
     qualifies: boolean;
+    /** recorde já salvo (voltando do ranking): mostra "Recorde salvo!" em vez das iniciais */
+    saved?: boolean;
     onSave(initials: string): void;
     onAgain(): void;
     onRanking(): void;
@@ -170,7 +206,8 @@ export function renderEnd(
   actions.append(again, btn('Ranking', '', p.onRanking), btn('Título', 'is-quiet', p.onTitle));
 
   let focus: HTMLElement = again;
-  if (p.qualifies) {
+  if (p.saved) card.append(h('p', 'end-saved', 'Recorde salvo!'));
+  else if (p.qualifies) {
     const letters = [0, 0, 0];
     let cursor = 0;
     let saved = false;

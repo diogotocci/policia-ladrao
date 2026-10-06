@@ -18,8 +18,12 @@ export type FlowState =
   | { screen: 'countdown'; role: Role; left: number }
   | { screen: 'playing'; role: Role }
   | { screen: 'paused'; role: Role }
-  | { screen: 'end'; role: Role; result: MatchResult; qualifies: boolean }
-  | { screen: 'ranking'; tab: Role; from: 'title' | 'end' };
+  | EndState
+  | { screen: 'ranking'; tab: Role; from: 'title' }
+  /** aberto pela tela de fim: Voltar devolve a mesma tela de fim (recorde ainda por salvar continua lá) */
+  | { screen: 'ranking'; tab: Role; from: 'end'; end: EndState };
+
+export type EndState = { screen: 'end'; role: Role; result: MatchResult; qualifies: boolean; saved?: boolean };
 
 export type FlowAction =
   | { type: 'play' }
@@ -31,6 +35,8 @@ export type FlowAction =
   | { type: 'quit' }
   | { type: 'ended'; result: MatchResult; qualifies?: boolean }
   | { type: 'openRanking' }
+  /** iniciais salvas na tela de fim */
+  | { type: 'saved' }
   | { type: 'tab'; tab: Role }
   | { type: 'back' };
 
@@ -67,10 +73,12 @@ export function reduce(s: FlowState, a: FlowAction): FlowState {
     case 'end':
       if (a.type === 'restart') return countdown(s.role);
       if (a.type === 'quit' || a.type === 'back') return initialState();
-      if (a.type === 'openRanking') return { screen: 'ranking', tab: s.role, from: 'end' };
+      if (a.type === 'openRanking') return { screen: 'ranking', tab: s.role, from: 'end', end: s };
+      if (a.type === 'saved') return s.saved ? s : { ...s, saved: true };
       return s;
     case 'ranking':
       if (a.type === 'tab') return { ...s, tab: a.tab };
+      if (a.type === 'back' && s.from === 'end') return s.end;
       if (a.type === 'back' || a.type === 'quit') return initialState();
       return s;
   }

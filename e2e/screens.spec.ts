@@ -54,6 +54,25 @@ test('full product flow: title → choose thief → 3-2-1 → play → escape at
   await expect(page.locator('.ranking-row').first()).toContainText('DIO');
 });
 
+test('ranking opened from the end screen: Voltar comes back to the end screen and an unsaved record is still waiting', async ({ page }) => {
+  await page.goto('/?app&quality=low&mute&debug&traffic=0&escape=4');
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await page.locator('[data-role="thief"]').click();
+  await expect(page.locator('.screen-end')).toBeVisible({ timeout: 150_000 });
+  await expect(page.locator('.initials')).toBeVisible();
+  await page.getByRole('button', { name: 'Ranking' }).click();
+  await expect(page.locator('.screen-ranking')).toBeVisible();
+  await page.getByRole('button', { name: 'Voltar' }).click();
+  await expect(page.locator('.screen-end')).toBeVisible();
+  await expect(page.locator('.initials')).toBeVisible(); // o recorde não se perdeu
+  await page.locator('.initials').press('Enter');
+  await expect(page.locator('.end-saved')).toBeVisible();
+  await page.getByRole('button', { name: 'Ranking' }).click();
+  await page.getByRole('button', { name: 'Voltar' }).click();
+  await expect(page.locator('.end-saved')).toBeVisible();
+  await expect(page.locator('.initials')).toHaveCount(0);
+});
+
 test('pause freezes the game (Esc and the ⏸ button), Continuar resumes', async ({ page }) => {
   await startAs(page, 'police');
   await page.keyboard.press('Escape');
