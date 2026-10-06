@@ -111,3 +111,25 @@ describe('traffic interactions', () => {
     expect(w.events.some((e) => e.type === 'blocked')).toBe(true);
   });
 });
+
+describe('traffic cars never overlap each other (playtest: "one on top of the other")', () => {
+  it('a faster car follows a slower one in its lane and lane changes wait for room (40 seeds × 60 s)', () => {
+    const L = BALANCE.car.length;
+    let worst = 0;
+    for (let seed = 1; seed <= 40; seed++) {
+      let w = createWorld({ seed, playerRole: 'police' });
+      w = { ...w, level: 10 }; // trânsito mais denso
+      for (let i = 0; i < 60 * 60; i++) {
+        w = { ...stepTraffic(w, DT), level: 10 };
+        const cars = w.traffic;
+        for (let a = 0; a < cars.length; a++)
+          for (let b = a + 1; b < cars.length; b++) {
+            const A = cars[a]!;
+            const B = cars[b]!;
+            if (Math.abs(A.x - B.x) < 2 * W && Math.abs(A.s - B.s) < L) worst++;
+          }
+      }
+    }
+    expect(worst).toBe(0);
+  });
+});
