@@ -1,0 +1,24 @@
+// Screen icons (buttons and the yellow road-sign tips). Stroke/fill use currentColor.
+const svg = (body: string, fill = false) =>
+  `<svg viewBox="0 0 24 24" fill="${fill ? 'currentColor' : 'none'}" stroke="${fill ? 'none' : 'currentColor'}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${body}</svg>`;
+
+export const SCREEN_ICONS = {
+  back: svg('<path d="M15 5l-7 7 7 7"/>'),
+  forward: svg('<path d="M9 5l7 7-7 7"/>'),
+  up: svg('<path d="M12 6l7 11H5z"/>', true),
+  down: svg('<path d="M12 18L5 7h14z"/>', true),
+  help: svg('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h0"/>'),
+  replay: svg('<path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v5h5"/>'),
+  swap: svg('<path d="M4 8h14M14 4l4 4-4 4M20 16H6M10 12l-4 4 4 4"/>'),
+  trophy: svg('<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v4M8 20h8"/>'),
+  home: svg('<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'),
+  // road-sign tips
+  auto: svg('<path d="M12 20V5M6 11l6-6 6 6"/><path d="M4 20h4M16 20h4"/>'),
+  curve: svg('<path d="M7 21v-6c0-4 2-6 6-6h2"/><path d="M13 5l4 4-4 4"/>'),
+  box: svg('<path d="M4 8l8-4 8 4v8l-8 4-8-4z"/><path d="M4 8l8 4 8-4M12 12v8"/>'),
+  bump: svg('<path d="M2 18h20v2H2z"/><path d="M6 18c1-5 3-7 6-7s5 2 6 7z"/>', true),
+  crash: svg('<path d="M12 3l1.8 5.2L19 6l-2.6 4.6L21 13l-5.3.8L16 19l-4-3.4L8 19l.3-5.2L3 13l4.6-2.4L5 6l5.2 2.2z"/>'),
+  shot: svg('<circle cx="12" cy="12" r="7"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/>'),
+  bomb: svg('<circle cx="11" cy="14" r="6"/><path d="M15 9l2-2M17 7c1-2 3-2 4-1"/>'),
+  flag: svg('<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>'),
+} as const;

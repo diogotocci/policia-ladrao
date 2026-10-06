@@ -39,18 +39,76 @@ describe('title', () => {
 });
 
 describe('choose', () => {
-  it('two cards with 3 rule lines each; choosing calls back with the side; Voltar', () => {
-    const onChoose = vi.fn();
-    const onBack = vi.fn();
-    renderChoose(root, { onChoose, onBack });
-    const cards = root.querySelectorAll('.choose-card');
+  const cb = () => ({ onChoose: vi.fn(), onBack: vi.fn(), onHowToSeen: vi.fn() });
+  // each screen installs a document-level focus trap: dispose it so tests do not leak into each other
+  const open: { dispose(): void }[] = [];
+  const show = (p: Parameters<typeof renderChoose>[1]) => open.push(renderChoose(root, p));
+  afterEach(() => open.splice(0).forEach((v) => v.dispose()));
+
+  it('two cards with the goal, the box color and a "Jogar de…" call; choosing calls back with the side; Voltar', () => {
+    const p = cb();
+    show(p);
+    const cards = [...root.querySelectorAll('.choose-card')];
     expect(cards).toHaveLength(2);
-    for (const c of cards) expect(c.querySelectorAll('li')).toHaveLength(3);
+    expect(cards[0]!.textContent).toContain('Destrua o carro do ladrão antes de 1:30');
+    expect(cards[0]!.textContent).toContain('caixas azuis');
+    expect(cards[0]!.textContent).toContain('Jogar de polícia');
+    expect(cards[1]!.textContent).toContain('Aguente 1:30');
+    expect(cards[1]!.textContent).toContain('caixas vermelhas');
+    expect(cards[1]!.textContent).toContain('Jogar de ladrão');
     (root.querySelector('[data-role="thief"]') as HTMLButtonElement).click();
-    expect(onChoose).toHaveBeenCalledWith('thief');
+    expect(p.onChoose).toHaveBeenCalledWith('thief');
     button('Voltar').click();
-    expect(onBack).toHaveBeenCalled();
+    expect(p.onBack).toHaveBeenCalled();
     expect(root.querySelector('[data-preview="police"]')).not.toBeNull(); // 3D car slot
+    expect(root.querySelector('.howto')).toBeNull(); // closed unless asked for
+  });
+
+  it('"Como jogar" opens two pages of tips with the real numbers; Entendi closes and marks it as seen', () => {
+    const p = cb();
+    show(p);
+    button('Como jogar').click();
+    const dialog = root.querySelector('.howto')!;
+    expect(dialog.getAttribute('role')).toBe('dialog');
+    expect(dialog.querySelectorAll('.howto-tip')).toHaveLength(4);
+    expect(dialog.textContent).toContain('O carro acelera sozinho');
+    expect(dialog.textContent).toContain('Freie nas curvas fechadas');
+    expect(dialog.textContent).toContain('perde 5 de vida'); // BALANCE.collision.scenery
+    expect(dialog.textContent).toContain('tira 2 de vida'); // BALANCE.items.wrongBoxDamage
+    expect(dialog.textContent).toContain('Quebra-molas');
+    button('Próximo: tráfego e tiros').click();
+    expect(dialog.textContent).toContain('tiram 15 de vida'); // BALANCE.items.bomb.damage
+    expect(dialog.textContent).toContain('Quem vence');
+    button('Anterior').click();
+    expect(dialog.textContent).toContain('O carro acelera sozinho');
+    button('Entendi').click();
+    expect(root.querySelector('.howto')).toBeNull();
+    expect(p.onHowToSeen).toHaveBeenCalledOnce();
+    expect(document.activeElement).toBe(button('Como jogar'));
+  });
+
+  it('keyboard: changing page keeps the focus in the dialog; Tab cycles only inside it (cards behind are inert)', () => {
+    show(cb());
+    button('Como jogar').click();
+    const next = button('Próximo: tráfego e tiros');
+    next.focus(); // keyboard user on the pager button
+    next.click();
+    expect(document.activeElement).toBe(button('Anterior'));
+    button('Entendi').focus();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
+    expect(document.activeElement).toBe(button('Anterior')); // wraps to the first control of the dialog, not to the inert Voltar
+  });
+
+  it('first time: opens by itself; Esc closes it too', () => {
+    const p = cb();
+    show({ ...p, showHowTo: true });
+    const dialog = root.querySelector('.howto')!;
+    expect(dialog).not.toBeNull();
+    expect(document.activeElement).toBe(button('Entendi'));
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(root.querySelector('.howto')).toBeNull();
+    expect(p.onHowToSeen).toHaveBeenCalledOnce();
+    expect(document.activeElement).toBe(root.querySelector('.choose-card')); // ready to pick a side
   });
 });
 
@@ -93,26 +151,65 @@ describe('pause', () => {
 });
 
 describe('end', () => {
-  const base = { onAgain: vi.fn(), onRanking: vi.fn(), onTitle: vi.fn() };
+  const base = { onAgain: vi.fn(), onRanking: vi.fn(), onHome: vi.fn(), onChangeSide: vi.fn() };
 
-  it('without a record: result, reason and time, no initials', () => {
-    renderEnd(root, { ...base, role: 'police', result: { winner: 'police', time: 83.45 }, qualifies: false, onSave: vi.fn() });
+  it('without a record: result, reason, time, own health and level; no initials', () => {
+    renderEnd(root, {
+      ...base,
+      role: 'police',
+      result: { winner: 'police', time: 83.45, hp: 64.4, level: 3 },
+      qualifies: false,
+      onSave: vi.fn(),
+    });
     expect(root.textContent).toContain('Você venceu!');
     expect(root.textContent).toContain('O ladrão foi detido');
-    expect(root.textContent).toContain('01:23.4');
+    expect(root.querySelector('.end-time')!.textContent).toContain('01:23.4');
+    expect(root.textContent).toContain('Vida restante 64');
+    expect(root.textContent).toContain('Nível 3');
     expect(root.querySelector('.initials')).toBeNull();
+    expect(root.querySelector('.end-layout.has-record')).toBeNull();
   });
 
-  it('record: 3 arcade slots changed with ▲▼ and typing; Enter/Salvar saves once', () => {
+  it('a destroyed car does not show "Vida restante 0"', () => {
+    renderEnd(root, { ...base, role: 'thief', result: { winner: 'police', time: 50, hp: 0, level: 2 }, qualifies: false, onSave: vi.fn() });
+    expect(root.textContent).not.toContain('Vida restante');
+    expect(root.textContent).toContain('Nível 2');
+  });
+
+  it('actions: Jogar de novo, Trocar de lado, Ranking, Início (no "Título")', () => {
+    renderEnd(root, { ...base, role: 'police', result: { winner: 'police', time: 60 }, qualifies: false, onSave: vi.fn() });
+    expect(root.textContent).not.toContain('Título');
+    button('Jogar de novo').click();
+    button('Trocar de lado').click();
+    button('Ranking').click();
+    button('Início').click();
+    expect(base.onAgain).toHaveBeenCalled();
+    expect(base.onChangeSide).toHaveBeenCalled();
+    expect(base.onRanking).toHaveBeenCalled();
+    expect(base.onHome).toHaveBeenCalled();
+  });
+
+  it('record: a plate with 3 slots; tap a slot, then ▲▼ change it and ◀ ▶ move; typing; Enter/Salvar saves once', () => {
     const onSave = vi.fn();
     renderEnd(root, { ...base, role: 'thief', result: { winner: 'police', time: 95 }, qualifies: true, onSave });
     expect(root.textContent).toContain('Você perdeu');
+    expect(root.querySelector('.end-layout.has-record')).not.toBeNull();
+    expect(root.querySelector('.plate')!.textContent).toContain('BRASIL');
     const slots = () => [...root.querySelectorAll('.initials-slot')].map((x) => x.textContent);
+    const current = () => [...root.querySelectorAll('.initials-slot')].findIndex((x) => x.classList.contains('is-current'));
     expect(slots()).toEqual(['A', 'A', 'A']);
+    expect(current()).toBe(0);
     // like an arcade dial: ▼ goes down to the next letter (A → B), ▲ goes back (A → Z)
-    (root.querySelector('.initials-down[data-i="0"]') as HTMLButtonElement).click(); // A → B
-    (root.querySelector('.initials-up[data-i="1"]') as HTMLButtonElement).click(); // A → Z
+    button('Próxima letra').click(); // A → B
+    button('Próximo espaço').click();
+    expect(current()).toBe(1);
+    button('Letra anterior').click(); // A → Z
     expect(slots()).toEqual(['B', 'Z', 'A']);
+    (root.querySelectorAll('.initials-slot')[2] as HTMLElement).click();
+    expect(current()).toBe(2);
+    button('Espaço anterior').click();
+    expect(current()).toBe(1);
+    (root.querySelectorAll('.initials-slot')[0] as HTMLElement).click();
     const input = root.querySelector('.initials') as HTMLElement;
     // key still held from the game (auto-repeat) does not write into the initials
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', repeat: true, bubbles: true }));
@@ -128,6 +225,7 @@ describe('end', () => {
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith('DIO');
     expect(root.querySelector('.initials')).toBeNull();
+    expect(root.textContent).toContain('Recorde salvo!');
   });
 
   it('coming back from the ranking after saving: shows "Recorde salvo!" and no initials', () => {

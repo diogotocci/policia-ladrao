@@ -6,6 +6,8 @@ const simTime = (page: Page) => page.evaluate(() => (window as unknown as { __ga
 const errors: string[] = [];
 test.beforeEach(async ({ page }) => {
   errors.length = 0;
+  // "Como jogar" opens by itself on the first visit (covered in app.spec.ts); these tests go straight to the cards
+  await page.addInitScript(() => localStorage.setItem('pl.howto.v1', '1'));
   page.on('console', (m) => {
     const type = m.type();
     const text = m.text();

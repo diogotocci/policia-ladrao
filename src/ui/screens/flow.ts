@@ -10,6 +10,8 @@ export interface MatchResult {
   reason?: 'escape' | 'policeDown' | 'thiefDown';
   /** player's car health at the end (breaks ties between escapes in the thief ranking) */
   hp?: number;
+  /** difficulty level reached */
+  level?: number;
 }
 
 export type FlowState =
@@ -35,6 +37,8 @@ export type FlowAction =
   | { type: 'quit' }
   | { type: 'ended'; result: MatchResult; qualifies?: boolean }
   | { type: 'openRanking' }
+  /** end screen: play again choosing the side */
+  | { type: 'changeSide' }
   /** initials saved on the end screen */
   | { type: 'saved' }
   | { type: 'tab'; tab: Role }
@@ -73,6 +77,7 @@ export function reduce(s: FlowState, a: FlowAction): FlowState {
     case 'end':
       if (a.type === 'restart') return countdown(s.role);
       if (a.type === 'quit' || a.type === 'back') return initialState();
+      if (a.type === 'changeSide') return { screen: 'choose' };
       if (a.type === 'openRanking') return { screen: 'ranking', tab: s.role, from: 'end', end: s };
       if (a.type === 'saved') return s.saved ? s : { ...s, saved: true };
       return s;

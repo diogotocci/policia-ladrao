@@ -12,6 +12,8 @@ import { renderChoose, renderCountdown, renderEnd, renderPause, renderRanking, r
 declare const __APP_VERSION__: string | undefined;
 /** injected by Vite (package.json version); absent when the module runs outside a Vite build (unit tests) */
 const APP_VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : undefined;
+/** "Como jogar" already closed once on this device */
+const HOWTO_KEY = 'pl.howto.v1';
 
 export function startApp(
   container: HTMLElement,
@@ -39,6 +41,21 @@ export function startApp(
 
   let state: FlowState = initialState();
   let board: Board = storage ? loadBoard(storage) : emptyBoard();
+  // "Como jogar" opens by itself until the player closes it once
+  const howToSeen = () => {
+    try {
+      return storage?.getItem(HOWTO_KEY) === '1';
+    } catch {
+      return false;
+    }
+  };
+  const markHowToSeen = () => {
+    try {
+      storage?.setItem(HOWTO_KEY, '1');
+    } catch {
+      // storage full or blocked: the tips just open again next time
+    }
+  };
   let highlight: { role: Role; rank: number } | undefined;
   let game: GameHandle | undefined;
   let view: { dispose(): void } | undefined;
@@ -101,7 +118,13 @@ export function startApp(
         });
         break;
       case 'choose': {
-        const c = renderChoose(layer, { onChoose: (role) => press({ type: 'choose', role }), onBack: () => press({ type: 'back' }) });
+        stopGame(); // coming from the end screen ("Trocar de lado")
+        const c = renderChoose(layer, {
+          onChoose: (role) => press({ type: 'choose', role }),
+          onBack: () => press({ type: 'back' }),
+          showHowTo: !howToSeen(),
+          onHowToSeen: markHowToSeen,
+        });
         const preview = createCarPreview(c.previews);
         view = { dispose: () => (preview.dispose(), c.dispose()) };
         break;
@@ -147,8 +170,9 @@ export function startApp(
             state = reduce(state, { type: 'saved' }); // no redraw: the screen already shows "Recorde salvo!"
           },
           onAgain: () => press({ type: 'restart' }),
+          onChangeSide: () => press({ type: 'changeSide' }),
           onRanking: () => press({ type: 'openRanking' }),
-          onTitle: () => press({ type: 'quit' }),
+          onHome: () => press({ type: 'quit' }),
         });
         break;
       case 'ranking':
