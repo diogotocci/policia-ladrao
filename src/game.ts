@@ -72,7 +72,7 @@ export function startGame(
     /** the app decides what the pause shows; without it the game pauses/resumes by itself (Esc/P/⏸) */
     onPauseRequest?: () => void;
     /** match end (the app shows the end screen; without it the HUD shows the end card) */
-    onEnd?: (result: { winner: Role; time: number; reason?: 'escape' | 'policeDown' | 'thiefDown'; hp: number }) => void;
+    onEnd?: (result: { winner: Role; time: number; reason?: 'escape' | 'policeDown' | 'thiefDown'; hp: number; level: number }) => void;
   },
 ): GameHandle {
   const view = createRenderer(container, opts.quality ?? 'high');
@@ -389,6 +389,7 @@ export function startGame(
         time: world.match.endTime ?? world.time,
         reason: world.match.reason,
         hp: world.player.hp,
+        level: world.level,
       });
     }
     const here = trackPos(car.s, car.x, origin);

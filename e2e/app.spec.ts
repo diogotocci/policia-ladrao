@@ -90,3 +90,21 @@ test('the picture never stretches: a size change without a resize event (iOS sta
   );
   expect(aspect).toBeCloseTo(600 / 390, 2);
 });
+
+test('first visit: "Como jogar" opens by itself on the side choice; after Entendi it stays closed', async ({ page }) => {
+  await page.goto('/?app&quality=low&mute');
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  const howTo = page.getByRole('dialog', { name: 'Como jogar' });
+  await expect(howTo).toBeVisible();
+  await expect(howTo).toContainText('O carro acelera sozinho');
+  await howTo.getByRole('button', { name: 'Próximo: tráfego e tiros' }).click();
+  await expect(howTo).toContainText('Quem vence');
+  await howTo.getByRole('button', { name: 'Entendi' }).click();
+  await expect(howTo).toHaveCount(0);
+  await page.getByRole('button', { name: 'Voltar' }).click();
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await expect(page.locator('.choose-card')).toHaveCount(2);
+  await expect(page.locator('.howto')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Como jogar' }).click();
+  await expect(howTo).toBeVisible();
+});

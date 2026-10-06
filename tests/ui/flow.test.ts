@@ -20,6 +20,12 @@ describe('screen flow', () => {
     expect(reduce(s, { type: 'quit' }).screen).toBe('title');
   });
 
+  it('end → "Trocar de lado" goes straight to the side choice', () => {
+    const end = reduce({ screen: 'playing', role: 'police' }, { type: 'ended', result: { winner: 'thief', time: 90 } });
+    expect(reduce(end, { type: 'changeSide' })).toEqual({ screen: 'choose' });
+    expect(reduce({ screen: 'title' }, { type: 'changeSide' })).toEqual({ screen: 'title' }); // only from the end screen
+  });
+
   it('ranking opened from the end screen goes back to the same end screen, record still pending if not saved', () => {
     const end = reduce(
       { screen: 'playing', role: 'thief' },
