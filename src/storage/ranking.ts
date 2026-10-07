@@ -1,5 +1,5 @@
 // Local ranking (spec §8): top 10 per side, validated on load, never breaks the game.
-import type { Role } from '../config/balance';
+import { DIFFICULTIES, type Difficulty, type Role } from '../config/balance';
 
 // v2 (Delivery 7): the thief now wins by escaping at 1:30 — the rules changed, both rankings restart
 export const RANKING_KEY = 'pl.ranking.v2';
@@ -20,6 +20,12 @@ export interface Board {
 }
 
 export const emptyBoard = (): Board => ({ police: [], thief: [] });
+
+// v3 (V2 part 2): one ranking per difficulty. The first load without v3 turns v2 into Médio; v2 is never deleted.
+export const RANKING_V3_KEY = 'pl.ranking.v3';
+export type Boards = Record<Difficulty, Board>;
+export const emptyBoards = (): Boards => ({ easy: emptyBoard(), normal: emptyBoard(), hard: emptyBoard() });
+export const countRecords = (b: Boards): number => DIFFICULTIES.reduce((n, d) => n + b[d].police.length + b[d].thief.length, 0);
 
 type Result = Pick<Entry, 'time' | 'hp'>;
 /** both sides: winning faster is better; thief tied (escapes at 1:30) → more life first */
@@ -68,14 +74,19 @@ export function insert(board: Board, role: Role, entry: Entry): { board: Board; 
   return { board: { ...board, [role]: next }, rank: at + 1 };
 }
 
+/** Validates one board (police + thief lists) read from storage. */
+function parseBoard(data: unknown): Board {
+  if (typeof data !== 'object' || data === null) return emptyBoard();
+  const d = data as Partial<Record<Role, unknown>>;
+  const pick = (role: Role) => (Array.isArray(d[role]) ? normalize(role, (d[role] as unknown[]).filter(valid)) : []);
+  return { police: pick('police'), thief: pick('thief') };
+}
+
+/** v2: a single ranking (now the Médio one); kept only to migrate into v3 */
 export function loadBoard(storage: Storage | undefined): Board {
   try {
     const raw = storage?.getItem(RANKING_KEY);
-    if (!raw) return emptyBoard();
-    const data = JSON.parse(raw) as Partial<Record<Role, unknown>>;
-    if (typeof data !== 'object' || data === null) return emptyBoard();
-    const pick = (role: Role) => (Array.isArray(data[role]) ? normalize(role, (data[role] as unknown[]).filter(valid)) : []);
-    return { police: pick('police'), thief: pick('thief') };
+    return raw ? parseBoard(JSON.parse(raw)) : emptyBoard();
   } catch {
     return emptyBoard();
   }
@@ -91,4 +102,29 @@ export function saveBoard(storage: Storage | undefined, board: Board): void {
 
 export function sanitizeInitials(s: string): string {
   return (s.toUpperCase().replace(/[^A-Z]/g, '') + 'AAA').slice(0, 3);
+}
+
+export function loadBoards(storage: Storage | undefined): Boards {
+  let raw: string | null | undefined;
+  try {
+    raw = storage?.getItem(RANKING_V3_KEY);
+  } catch {
+    return emptyBoards();
+  }
+  if (raw === null || raw === undefined) return { ...emptyBoards(), normal: loadBoard(storage) };
+  try {
+    const data = JSON.parse(raw) as Partial<Record<Difficulty, unknown>>;
+    if (typeof data !== 'object' || data === null) return emptyBoards();
+    return { easy: parseBoard(data.easy), normal: parseBoard(data.normal), hard: parseBoard(data.hard) };
+  } catch {
+    return emptyBoards();
+  }
+}
+
+export function saveBoards(storage: Storage | undefined, boards: Boards): void {
+  try {
+    storage?.setItem(RANKING_V3_KEY, JSON.stringify(boards));
+  } catch {
+    /* no storage: the ranking only lasts this session */
+  }
 }
