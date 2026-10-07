@@ -61,6 +61,15 @@ export const RECIPES = {
   // escape: nitro rising and fading
   escape: [v('sawtooth', 120, 900, 0.18, 1.4, 0.05), v('noise', 800, 6000, 0.12, 1.2, 0.1)],
   ui: [v('triangle', 1200, 900, 0.1, 0.05)], // menu click
+  // V2 part 3: thief specials
+  'oil-splash': [v('noise', 1800, 400, 0.3, 0.25, 0.005), v('sine', 240, 110, 0.18, 0.2)], // wet splat
+  'tire-pop': [v('noise', 6000, 1500, 0.55, 0.08, 0.001), v('noise', 1200, 300, 0.25, 0.625, 0.015625, 0.0625)], // bang + air out
+  smoke: [v('noise', 5000, 2500, 0.18, 0.9, 0.05)], // hiss
+  spikes: [v('triangle', 1400, 1100, 0.12, 0.06), v('triangle', 1700, 1300, 0.1, 0.06, 0.004, 0.05)], // metal clink
+  // yellow box: roulette ticks, then good (rising) or bad (falling)
+  'mystery-spin': [0, 0.125, 0.25, 0.375, 0.5].map((d) => v('square', 1100, 1100, 0.08, 0.0625, 0.001953125, d)),
+  'mystery-good': [v('square', 784, 784, 0.13, 0.09), v('square', 1175, 1175, 0.13, 0.18, 0.004, 0.09)],
+  'mystery-bad': [v('sawtooth', 330, 150, 0.15, 0.35)],
   lose: [v('square', 392, 392, 0.15, 0.2), v('square', 311, 311, 0.15, 0.2, 0.004, 0.2), v('square', 196, 196, 0.15, 0.6, 0.004, 0.4)],
 } satisfies Record<string, Voice[]>;
 

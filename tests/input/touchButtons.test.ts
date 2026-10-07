@@ -23,7 +23,7 @@ afterEach(() => {
 
 describe('touch buttons', () => {
   it('renders 5 icon buttons with accessible Portuguese labels', () => {
-    const labels = { left: 'Esquerda', right: 'Direita', brake: 'Freio', fire: 'Atirar', bomb: 'Bomba' };
+    const labels = { left: 'Esquerda', right: 'Direita', brake: 'Freio', fire: 'Atirar', bomb: 'Especial' };
     for (const [name, label] of Object.entries(labels)) {
       const b = btn(name);
       expect(b.getAttribute('aria-label')).toBe(label);
@@ -152,20 +152,44 @@ describe('fire button feedback', () => {
 });
 
 describe('bomb and thief fire state', () => {
-  it('bomb button shows the stock and hides at 0; fire can be locked', () => {
+  it('special button shows the charges and hides without a special; fire can be locked', () => {
     const r = document.createElement('div');
     document.body.append(r);
     const t = createTouchButtons(r, { role: 'thief' });
-    t.setBombs(2);
+    t.setSpecial({ kind: 'bomb', charges: 2 });
     const bomb = r.querySelector<HTMLElement>('button[data-intent="bomb"]')!;
     expect(bomb.hidden).toBe(false);
     expect(bomb.querySelector('.touch-count')!.textContent).toBe('2');
-    t.setBombs(0);
+    t.setSpecial(null);
     expect(bomb.hidden).toBe(true);
     t.setVisible('fire', true);
     t.setLocked('fire', true);
     expect(r.querySelector('button[data-intent="fire"]')!.classList.contains('locked')).toBe(true);
     t.dispose();
     r.remove();
+  });
+});
+
+describe('special button (V2 part 3)', () => {
+  it('shows the kind kept with its icon, charges and label; hidden without a special', () => {
+    const b = btn('bomb') as HTMLButtonElement;
+    expect(b.hidden).toBe(true);
+    tb.setSpecial({ kind: 'oil', charges: 2 });
+    expect(b.hidden).toBe(false);
+    expect(b.getAttribute('aria-label')).toBe('Especial: óleo (2)');
+    expect(b.querySelector('.touch-count')!.textContent).toBe('2');
+    expect(b.dataset.kind).toBe('oil');
+    tb.setSpecial({ kind: 'smoke', charges: 1 });
+    expect(b.getAttribute('aria-label')).toBe('Especial: fumaça (1)');
+    expect(b.querySelector('svg')).not.toBeNull();
+    tb.setSpecial(null);
+    expect(b.hidden).toBe(true);
+  });
+
+  it('the brake can be locked (yellow box: no brake)', () => {
+    tb.setLocked('brake', true);
+    expect(btn('brake').classList.contains('locked')).toBe(true);
+    tb.setLocked('brake', false);
+    expect(btn('brake').classList.contains('locked')).toBe(false);
   });
 });

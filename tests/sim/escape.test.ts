@@ -84,11 +84,12 @@ describe('escape: the thief also wins by surviving 1:30', () => {
     expect(w.match.endTime).toBe(3);
   });
 
+  // 120 matches (V2 part 3): with 40 the share swung ±8 points from seed luck alone
   it('AI vs AI: the thief wins 30–70% of the matches', () => {
     let thief = 0;
     let n = 0;
     for (const role of ['police', 'thief'] as Role[])
-      for (let seed = 1; seed <= 20; seed++) {
+      for (let seed = 1; seed <= 60; seed++) {
         let w = createWorld({ seed, playerRole: role });
         for (let i = 0; i < 95 * 60 && !w.match.over; i++) w = stepWorld(w, 'ai', DT);
         expect(w.match.over, `seed ${seed}`).toBe(true); // nobody goes past 1:30 + scene
@@ -97,7 +98,7 @@ describe('escape: the thief also wins by surviving 1:30', () => {
       }
     expect(thief / n).toBeGreaterThanOrEqual(0.3);
     expect(thief / n).toBeLessThanOrEqual(0.7);
-  }, 120000);
+  }, 300000);
 });
 
 describe('end scenes with traffic (playtest: the thief drove through cars)', () => {

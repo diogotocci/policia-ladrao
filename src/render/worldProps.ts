@@ -9,6 +9,7 @@ import type { WorldState } from '../sim/types';
 import { createTrafficModel, updateCarModel } from './carFactory';
 import { trackPos } from './trackFrame';
 import { createCar } from '../sim/car';
+import { createMysteryBox, pulseMysteryHalo } from './mysteryBox';
 
 const TRAFFIC_SLOTS = 8;
 const MODELS = 4;
@@ -141,10 +142,11 @@ export function createWorldProps(
     );
     core.name = 'core';
     shell.castShadow = true;
-    g.add(shell, core);
+    const mystery = createMysteryBox(); // the yellow "?" box (V2 part 3)
+    g.add(shell, core, mystery);
     g.visible = false;
     scene.add(g);
-    return { g, shell, core };
+    return { g, shell, core, mystery };
   });
 
   // bombs: dark sphere, fuse and blinking light
@@ -165,10 +167,14 @@ export function createWorldProps(
     );
     light.name = 'light';
     light.position.y = 0.98;
-    g.add(ball, fuse, light);
+    // area bomb (Sobrevivência): a second bomb on the lane next to it
+    const twin = new THREE.Group();
+    twin.name = 'twin';
+    twin.add(ball.clone(), fuse.clone(), light.clone());
+    g.add(ball, fuse, light, twin);
     g.visible = false;
     scene.add(g);
-    return { g, light };
+    return { g, light, twin };
   });
 
   // speed bumps (2 lanes = 6 m), large sign at the roadside 75 m before and yellow stripes painted on both lanes
@@ -244,12 +250,18 @@ export function createWorldProps(
         updateCarModel(g, { ...trafficCar, s, x, steer: Math.sign(t.targetX - t.x) as -1 | 0 | 1 }, time, originS);
       }
 
-      boxes.forEach(({ g, shell, core }, i) => {
+      pulseMysteryHalo(time);
+      boxes.forEach(({ g, shell, core, mystery }, i) => {
         const b = w.boxes[i];
         g.visible = !!b;
         if (!b) return;
         put(g, b.s, b.x, 1 + Math.sin(time * 3 + i) * 0.15);
         g.rotation.y = time * 1.5;
+        const yellow = b.color === 'yellow';
+        mystery.visible = yellow;
+        shell.visible = !yellow;
+        core.visible = !yellow;
+        if (b.color === 'yellow') return;
         shell.geometry = shapes[b.color].shell;
         core.geometry = shapes[b.color].core;
         const mat = shell.material as THREE.MeshPhysicalMaterial;
@@ -257,11 +269,13 @@ export function createWorldProps(
         mat.emissive.copy(boxColors[b.color]);
       });
 
-      bombs.forEach(({ g, light }, i) => {
+      bombs.forEach(({ g, light, twin }, i) => {
         const b = w.bombs[i];
         g.visible = !!b;
         if (!b) return;
         put(g, b.s, b.x, 0);
+        twin.visible = b.x2 !== undefined;
+        twin.position.x = (b.x2 ?? b.x) - b.x;
         (light.material as THREE.MeshStandardMaterial).emissiveIntensity = Math.floor(time * 4) % 2 === 0 ? 3 : 0.2;
       });
 

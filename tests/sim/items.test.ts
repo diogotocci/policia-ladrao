@@ -55,11 +55,15 @@ describe('applyItem — police', () => {
 });
 
 describe('applyItem — thief', () => {
-  it('plates up to 3, bombs up to 3', () => {
+  it('plates up to 3; a special of the same kind adds a charge up to 3, another kind replaces it', () => {
     let c = thief();
     for (let i = 0; i < 5; i++) c = applyItem(applyItem(c, 'plate', 0), 'bomb', 0);
     expect(c.upgrades.plates).toBe(3);
-    expect(c.upgrades.bombs).toBe(3);
+    expect(c.upgrades.special).toEqual({ kind: 'bomb', charges: 3 });
+    c = applyItem(c, 'oil', 0);
+    expect(c.upgrades.special).toEqual({ kind: 'oil', charges: 1 });
+    c = applyItem(c, 'oil', 0);
+    expect(c.upgrades.special).toEqual({ kind: 'oil', charges: 2 });
   });
   it('gun: first unlocks at 1.2 s, then −0.15 s down to 0.6', () => {
     let c = applyItem(thief(), 'gun', 0);
@@ -75,8 +79,14 @@ describe('rollItem', () => {
     const rng = createRng(4);
     const maxed: CarState = { ...police(), upgrades: { ...police().upgrades, fireInterval: 0.3, power: 3 } };
     for (let i = 0; i < 1000; i++) expect(['fireRate', 'power', 'heal']).not.toContain(rollItem(maxed, rng));
-    const t: CarState = { ...thief(), hasGun: true, upgrades: { ...thief().upgrades, plates: 3, bombs: 3, fireInterval: 0.6 } };
-    for (let i = 0; i < 100; i++) expect(rollItem(t, rng)).toBeNull();
+    // a thief at the max: only specials of another kind are left (they replace the one kept)
+    const t: CarState = {
+      ...thief(),
+      hp: thief().maxHp,
+      hasGun: true,
+      upgrades: { ...thief().upgrades, plates: 3, special: { kind: 'bomb', charges: 3 }, fireInterval: 0.6 },
+    };
+    for (let i = 0; i < 100; i++) expect(['oil', 'spikes', 'smoke']).toContain(rollItem(t, rng));
   });
 });
 

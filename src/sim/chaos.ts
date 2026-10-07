@@ -21,8 +21,20 @@ type Scaling = Pick<WorldState, 'chaos' | 'mode'>;
  */
 const takenFactor = (role: Role, w: Scaling): number => (w.mode === 'survival' && role === 'thief' ? S.thiefDamageTaken : 1);
 
-/** Damage after the chaos scale and the mode factor (what the HUD and the coins count). */
-export const scaledDamage = (amount: number, w: Scaling, target: Role): number => amount * damageScale(w) * takenFactor(target, w);
+/**
+ * Yellow box "dano dobrado": x2 while it lasts. Looked up in the world passed in (every caller passes the world of
+ * the current step; a bare {chaos, mode} has no cars and gets x1). Tested in tests/sim/mystery.test.ts.
+ */
+function doubled(w: Scaling, target: Role): number {
+  const full = w as Partial<WorldState>;
+  if (!full.player || !full.opponent) return 1;
+  const car = full.playerRole === target ? full.player : full.opponent;
+  return (full.time ?? 0) < (car.effects?.doubleUntil ?? 0) ? 2 : 1;
+}
+
+/** Damage after the chaos scale, the mode factor and "dano dobrado" (what the HUD and the coins count). */
+export const scaledDamage = (amount: number, w: Scaling, target: Role): number =>
+  amount * damageScale(w) * takenFactor(target, w) * doubled(w, target);
 
 /** The only way to take life from a car: applies the scales and never goes below 0. */
 export const hurt = (car: CarState, amount: number, w: Scaling): CarState => ({

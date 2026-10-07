@@ -65,6 +65,22 @@ describe('audio mixer', () => {
     expect(be.played).toEqual(['shot-police', 'hit', 'crash', 'explosion', 'pickup', 'wrong', 'bomb-drop', 'win']);
   });
 
+  it('V2 part 3 events: oil, flat tire, smoke, spikes and the yellow box roulette (player only)', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.frame(world('thief'), DT);
+    mx.events([
+      { type: 'oilSkid', role: 'police', s: 0, x: 0 },
+      { type: 'tirePop', role: 'police', s: 0, x: 0 },
+      { type: 'special', role: 'thief', kind: 'smoke', s: 0, x: 0 },
+      { type: 'special', role: 'thief', kind: 'spikes', s: 0, x: 0 },
+      { type: 'mystery', role: 'thief', outcome: { good: true, item: 'heal' }, s: 0, x: 0 },
+      { type: 'mystery', role: 'police', outcome: { good: true, item: 'heal' }, s: 0, x: 0 },
+      { type: 'mysteryReveal', role: 'thief', outcome: { good: false, effect: 'mud' } },
+    ]);
+    expect(be.played).toEqual(['oil-splash', 'tire-pop', 'smoke', 'spikes', 'mystery-spin', 'mystery-bad']);
+  });
+
   it('a burst of 20 shots in the same frame plays at most 6', () => {
     const be = createNullBackend();
     const mx = createMixer(be);

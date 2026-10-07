@@ -97,6 +97,29 @@ describe('createWorldProps', () => {
     expect(Math.abs(hue(blue).h - hue(red).h)).toBeGreaterThan(0.3);
   });
 
+  it('the yellow "?" box is a solid block with a halo instead of the translucent shell (V2 part 3)', () => {
+    const { scene, props } = setup();
+    const w = createWorld({ seed: 1, playerRole: 'thief' });
+    props.update({ ...w, boxes: [{ id: 1, s: 80, x: 1.5, color: 'yellow' }] } as WorldState, 0, 0);
+    const box = scene.getObjectByName('box-0')!;
+    expect(box.getObjectByName('mystery')!.visible).toBe(true);
+    expect(box.getObjectByName('shell')!.visible).toBe(false);
+    props.update({ ...w, boxes: [{ id: 2, s: 80, x: 1.5, color: 'red' }] } as WorldState, 0, 0);
+    expect(box.getObjectByName('mystery')!.visible).toBe(false);
+    expect(box.getObjectByName('shell')!.visible).toBe(true);
+  });
+
+  it('the area bomb shows a second bomb on the lane next to it', () => {
+    const { scene, props } = setup();
+    const w = createWorld({ seed: 1, playerRole: 'thief' });
+    props.update({ ...w, bombs: [{ id: 1, s: 80, x: 4.5, x2: 1.5, expiresAt: 9 }] } as WorldState, 0, 0);
+    const twin = scene.getObjectByName('bomb-0')!.getObjectByName('twin')!;
+    expect(twin.visible).toBe(true);
+    expect(twin.position.x).toBeCloseTo(-3);
+    props.update({ ...w, bombs: [{ id: 2, s: 80, x: 4.5, expiresAt: 9 }] } as WorldState, 0, 0);
+    expect(twin.visible).toBe(false);
+  });
+
   it('warns about each bump: a big sign at least 70 m before and paint on its 2 lanes', () => {
     const { scene, props } = setup();
     const w = world({});

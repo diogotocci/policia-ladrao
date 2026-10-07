@@ -1,4 +1,4 @@
-// "Como jogar": two pages of tips drawn as yellow road signs, with the numbers from BALANCE.
+// "Como jogar": pages of tips drawn as yellow road signs, with the numbers from BALANCE.
 import { BALANCE } from '../../config/balance';
 import { gameDelta } from '../mobileShell';
 import { btn, h, openModal } from './dom';
@@ -61,6 +61,31 @@ const PAGES: { tips: Tip[] }[] = [
         text: `A partir do caos ${BALANCE.survival.worksFromChaos}, uma faixa fechada por cones. Bater tira vida como a calçada.`,
       },
       { icon: 'flag', title: 'Ranking', text: 'Polícia: a vitória mais rápida. Ladrão: o maior tempo vivo, mesmo perdendo.' },
+    ],
+  },
+  {
+    // V2 part 3: the yellow box and the thief's specials (both modes)
+    tips: [
+      {
+        icon: 'mystery',
+        title: 'Caixa amarela ?',
+        text: 'Boa: um item do seu lado. Ruim: motor falhando, dano dobrado, lama na tela ou sem freio.',
+      },
+      {
+        icon: 'bomb',
+        title: 'Especial do ladrão',
+        text: `Um botão só: bomba, óleo, miguelito ou fumaça, até ${BALANCE.items.thief.specialMax} cargas. Outro tipo troca o guardado.`,
+      },
+      {
+        icon: 'oil',
+        title: 'Óleo e miguelito',
+        text: 'Ficam na pista atrás do ladrão. A viatura derrapa ou fura o pneu e fica para trás.',
+      },
+      {
+        icon: 'smoke',
+        title: 'Fumaça',
+        text: `Por ${BALANCE.items.smoke.time} s os tiros da polícia erram mais e o helicóptero não atira.`,
+      },
     ],
   },
 ];

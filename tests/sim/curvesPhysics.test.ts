@@ -80,7 +80,7 @@ describe('cornering in the world', () => {
     const seed = 3;
     const sharp = curvesBetween(seed, 0, 30000).find((c) => c.sharp)!;
     const setup = (curves: boolean) => {
-      const w0 = createWorld({ seed, playerRole: 'thief', traffic: false, curves });
+      const w0 = { ...createWorld({ seed, playerRole: 'thief', traffic: false, curves }), nextBoxAt: 1e9 }; // no boxes
       const t = { ...thiefOf(w0), s: sharp.start + sharp.length * 0.3, speed: 34 };
       return withCar(withCar(w0, 'thief', t), 'police', { ...policeOf(w0), s: t.s - 200 });
     };

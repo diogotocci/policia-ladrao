@@ -13,10 +13,12 @@ import { curvatureAt } from './curves';
 import { stepJump } from './track';
 import { stepTraffic } from './traffic';
 import { applyItem, stepBoxes } from './items';
-import { dropBomb, stepBombs } from './bombs';
+import { stepBombs } from './bombs';
+import { stepMystery } from './mystery';
+import { clearForScene, policeSlowed, stepHazards, useSpecial } from './specials';
 import type { ItemId, WorldState } from './types';
 
-export type { Bomb, Box, GameEvent, ItemId, MatchState, Projectile, TrafficCar, WorldState } from './types';
+export type { Bomb, Box, GameEvent, Hazard, ItemId, MatchState, Projectile, TrafficCar, WorldState } from './types';
 
 export const policeOf = (w: WorldState): CarState => (w.playerRole === 'police' ? w.player : w.opponent);
 export const thiefOf = (w: WorldState): CarState => (w.playerRole === 'thief' ? w.player : w.opponent);
@@ -43,6 +45,8 @@ export function createWorld(opts: {
   mode?: Mode;
   /** seconds per chaos level; only debug/e2e shorten it */
   chaosEvery?: number;
+  /** share of yellow "?" boxes; only debug/e2e change it (?mystery=1) */
+  mysteryShare?: number;
 }): WorldState {
   const mode: Mode = opts.mode && MODES.includes(opts.mode) ? opts.mode : 'pursuit';
   const difficulty: Difficulty = opts.difficulty && DIFFICULTIES.includes(opts.difficulty) ? opts.difficulty : 'normal';
@@ -63,6 +67,7 @@ export function createWorld(opts: {
     worksFrom: {},
     works: [],
     chaosEvery: opts.chaosEvery ?? BALANCE.survival.chaosEvery,
+    mysteryShare: opts.mysteryShare ?? BALANCE.items.mystery.share,
     playerRole: opts.playerRole,
     player,
     opponent,
@@ -78,6 +83,8 @@ export function createWorld(opts: {
     boxes: [],
     bombs: [],
     nextBombId: 1,
+    hazards: [],
+    nextHazardId: 1,
     bombHeld: false,
     policeTurboOffUntil: 0,
     nextBoxId: 1,
@@ -96,6 +103,9 @@ export function createWorld(opts: {
         dodgeBump: false,
         nextBombAt: 0,
         bombDodge: {},
+        hazardDodge: {},
+        lastHp: 0,
+        hurtAt: -1,
         curveS: -1,
         curveBrake: false,
         curveLate: 0,
@@ -110,6 +120,9 @@ export function createWorld(opts: {
         dodgeBump: false,
         nextBombAt: 0,
         bombDodge: {},
+        hazardDodge: {},
+        lastHp: 0,
+        hurtAt: -1,
         curveS: -1,
         curveBrake: false,
         curveLate: 0,
@@ -151,13 +164,18 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   // police AI ram (never for a police car played by a human)
   const policeAi = playerIntents === 'ai' || w.playerRole !== 'police';
   const ram = policeAi && out.time < out.ai.police.ramUntil && out.time >= out.policeTurboOffUntil ? BALANCE.ai.ramBoost : 0;
-  const bonus = pursuitBonus(out) + ram;
+  const bonus = (policeSlowed(out) ? 0 : pursuitBonus(out)) + ram;
   const t0 = thiefOf(out);
   const p0 = policeOf(out);
   const kT = curvatureAt(w.seed, t0.s, w.curvesOn);
   const kP = curvatureAt(w.seed, p0.s, w.curvesOn);
-  out = withCar(out, 'thief', stepJump(stepCar(t0, intents.thief, dt, { curvature: kT }), t0.s, w.seed, dt));
-  out = withCar(out, 'police', stepJump(stepCar(p0, intents.police, dt, { speedBonus: bonus, curvature: kP }), p0.s, w.seed, dt));
+  const time0 = out.time;
+  out = withCar(out, 'thief', stepJump(stepCar(t0, intents.thief, dt, { curvature: kT, time: time0 }), t0.s, w.seed, dt));
+  out = withCar(
+    out,
+    'police',
+    stepJump(stepCar(p0, intents.police, dt, { speedBonus: bonus, curvature: kP, time: time0 }), p0.s, w.seed, dt),
+  );
   // skid start: event (tire sound, smoke from the wheels)
   for (const [before, now] of [
     [t0, thiefOf(out)],
@@ -169,8 +187,10 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   out = hitWorks(stepWorks(out));
   out = enforceNoOvertake(out);
   out = stepBoxes(out);
-  out = dropBomb(out, intents.thief);
+  out = stepMystery(out);
+  out = useSpecial(out, intents.thief);
   out = stepBombs(out);
+  out = stepHazards(out);
   // whoever reached zero life this step (crash, bomb, item box) no longer shoots
   if (policeOf(out).hp > 0 && thiefOf(out).hp > 0) {
     out = fireWeapons(out, intents, dt);
@@ -183,13 +203,11 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   const thiefDead = thiefOf(out).hp <= 0;
   if (thiefDead && !policeDead) {
     // police won: arrest scene (the thief stops destroyed, the patrol car pulls up behind) before the end
-    out = { ...out, projectiles: [], bombs: [], match: { over: false, arrestAt: time }, events: [...out.events, { type: 'arrest' }] };
+    out = { ...clearForScene(out), match: { over: false, arrestAt: time }, events: [...out.events, { type: 'arrest' }] };
   } else if (policeDead && !thiefDead) {
     // police destroyed: it stops (wrecked) and the thief drives away — same scene as the escape, with the win reason
     out = {
-      ...out,
-      projectiles: [],
-      bombs: [],
+      ...clearForScene(out),
       match: { over: false, escapeAt: time, reason: 'policeDown' },
       events: [...out.events, { type: 'escape' }],
     };
@@ -204,9 +222,7 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
     // 1:30 with both alive: the escape scene starts (shots in the air vanish)
     // exact instant of the limit (not the step's, which may come out as 89.9999…): escapes tie in the ranking
     out = {
-      ...out,
-      projectiles: [],
-      bombs: [],
+      ...clearForScene(out),
       match: { over: false, escapeAt: w.escapeTime },
       events: [...out.events, { type: 'escape' }],
     };

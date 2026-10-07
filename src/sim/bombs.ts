@@ -1,26 +1,11 @@
-// Thief bombs: dropped behind him when pressing 💣 (rising edge), last 20 s, −10 to the police on the ground.
+// Thief bombs (dropped with the special button, see specials.ts): last 20 s, damage to the police on the ground.
+// The area bomb (Sobrevivência chaos 2+) also covers a second lane (x2).
 import { BALANCE } from '../config/balance';
 import { hurt, scaledDamage } from './chaos';
-import type { Intents } from './intents';
 import type { Bomb, GameEvent, WorldState } from './types';
-import { policeOf, thiefOf, withCar } from './world';
+import { policeOf, withCar } from './world';
 
 const B = BALANCE.items.bomb;
-
-/** `intents` = the thief's intents this step. */
-export function dropBomb(w: WorldState, intents: Intents): WorldState {
-  const pressed = intents.bomb && !w.bombHeld;
-  const out: WorldState = { ...w, bombHeld: intents.bomb };
-  const thief = thiefOf(out);
-  if (!pressed || thief.upgrades.bombs <= 0) return out;
-  const bomb: Bomb = { id: w.nextBombId, s: thief.s - B.dropBehind, x: thief.x, expiresAt: w.time + B.lifetime };
-  return {
-    ...withCar(out, 'thief', { ...thief, upgrades: { ...thief.upgrades, bombs: thief.upgrades.bombs - 1 } }),
-    bombs: [...w.bombs, bomb],
-    nextBombId: w.nextBombId + 1,
-    events: [...w.events, { type: 'bombDropped', s: bomb.s, x: bomb.x }],
-  };
-}
 
 export function stepBombs(w: WorldState): WorldState {
   let police = policeOf(w);
@@ -31,7 +16,7 @@ export function stepBombs(w: WorldState): WorldState {
     const over =
       police.airTime <= 0 &&
       Math.abs(police.s - b.s) < BALANCE.car.length / 2 + B.radiusS &&
-      Math.abs(police.x - b.x) < BALANCE.car.halfWidth + B.radiusX;
+      [b.x, b.x2].some((x) => x !== undefined && Math.abs(police.x - x) < BALANCE.car.halfWidth + B.radiusX);
     if (over) {
       police = hurt(police, B.damage, w);
       events.push({ type: 'explosion', s: b.s, x: b.x });

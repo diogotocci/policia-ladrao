@@ -40,12 +40,13 @@ describe('police AI rams the thief (pressure for whoever plays thief)', () => {
     expect(gapMax).toBeGreaterThan(15); // the thief escapes
   });
 
+  // 120 matches (V2 part 3): with 40 the share swung ±8 points from seed luck alone
   it('AI vs AI: the police rams often (≥ 0.8 per match on average; ~0.6 before the ram, rarer at the start since playtest 2026-10-07) and the thief still wins 30–70%', () => {
     let rams = 0;
     let thief = 0;
     let n = 0;
     for (const role of ['police', 'thief'] as Role[])
-      for (let seed = 1; seed <= 20; seed++) {
+      for (let seed = 1; seed <= 60; seed++) {
         let w = createWorld({ seed, playerRole: role });
         for (let i = 0; i < 95 * 60 && !w.match.over; i++) {
           w = stepWorld(w, 'ai', DT);
@@ -57,7 +58,7 @@ describe('police AI rams the thief (pressure for whoever plays thief)', () => {
     expect(rams / n).toBeGreaterThanOrEqual(0.8);
     expect(thief / n).toBeGreaterThanOrEqual(0.3);
     expect(thief / n).toBeLessThanOrEqual(0.7);
-  }, 120000);
+  }, 300000);
 
   it('a police played by a person never gets the AI charge', () => {
     expect(BALANCE.ai.ramBoost).toBeGreaterThan(0);

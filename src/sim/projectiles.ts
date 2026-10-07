@@ -5,6 +5,7 @@ import { hurt, scaledDamage } from './chaos';
 import type { CarState } from './car';
 import type { Intents } from './intents';
 import { armorFactor, distanceFactor, inFireCone } from './rules';
+import { createRngFromState } from './rng';
 import type { GameEvent, Projectile, WorldState } from './types';
 import { policeOf, thiefOf, withCar } from './world';
 
@@ -24,6 +25,14 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
   const events: GameEvent[] = [...w.events];
   const projectiles: Projectile[] = [...w.projectiles];
   const c = BALANCE.combat;
+  // the thief's smoke (V2 part 3): police shots spread up to ±12° and the helicopter does not fire
+  const smoke = w.time < thiefOf(w).effects.smokeUntil;
+  const rng = createRngFromState(w.itemRng);
+  const spread = (vs: number, vx: number): [number, number] => {
+    if (!smoke) return [vs, vx];
+    const a = ((rng.next() * 2 - 1) * BALANCE.items.smoke.spreadDeg * Math.PI) / 180;
+    return [vs * Math.cos(a) - vx * Math.sin(a), vs * Math.sin(a) + vx * Math.cos(a)];
+  };
 
   for (const role of ['police', 'thief'] as Role[]) {
     let car = carOf(out, role);
@@ -44,12 +53,16 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
         const damage =
           role === 'police' ? c.policeDamage * car.upgrades.power * falloff * armorFactor(target.upgrades.plates) : c.thiefDamage * falloff;
         const piercing = role === 'police' && w.time < car.upgrades.pierceUntil;
+        const [vs, vx] =
+          role === 'police'
+            ? spread(((aimS - car.s) / len) * speed, ((aimX - car.x) / len) * speed)
+            : [((aimS - car.s) / len) * speed, ((aimX - car.x) / len) * speed];
         projectiles.push({
           from: role,
           s: car.s,
           x: car.x,
-          vs: ((aimS - car.s) / len) * speed,
-          vx: ((aimX - car.x) / len) * speed,
+          vs,
+          vx,
           travelled: 0,
           damage,
           piercing,
@@ -69,7 +82,7 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
     police = { ...police, heliCooldown: Math.max(0, police.heliCooldown - dt) };
     const target = carOf(out, 'thief');
     const ahead = target.s - police.s;
-    if (police.heliCooldown <= 0 && ahead > 0 && ahead < c.range) {
+    if (police.heliCooldown <= 0 && ahead > 0 && ahead < c.range && !smoke) {
       const dist = Math.hypot(ahead, target.x - police.x);
       const speed = c.policeProjectileSpeed;
       const aimS = target.s + target.speed * (dist / speed);
@@ -94,7 +107,7 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
     }
     out = withCar(out, 'police', police);
   } else if (police.heliCooldown !== 0) out = withCar(out, 'police', { ...police, heliCooldown: 0 });
-  return { ...out, projectiles, events };
+  return { ...out, projectiles, events, itemRng: smoke ? rng.state() : w.itemRng };
 }
 
 export function stepProjectiles(w: WorldState, dt: number): WorldState {

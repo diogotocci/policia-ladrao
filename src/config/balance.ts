@@ -137,10 +137,30 @@ export const BALANCE = {
       radiusS: 1.4,
       radiusX: 1.2,
     },
-    thief: { platesMax: 3, bombsMax: 3, heal: 3, gunStep: 0.15, gunIntervalMin: 0.6 },
+    thief: { platesMax: 3, specialMax: 3, heal: 3, gunStep: 0.15, gunIntervalMin: 0.6 },
+    // V2 part 3 (spec 2026-10-07-v2-parte3-modos-design.md §4.1): the thief's specials, one kind kept, up to 3 charges.
+    // "strong" values from chaos 3 (Sobrevivência only).
+    strongFromChaos: 3,
+    oil: { lifetime: 15, length: 10, dropBehind: 3, skidTime: 1.5, skidSteer: 0.5, skidPush: 2, speedLoss: 0.3 },
+    spikes: { lifetime: 15, length: 2, dropBehind: 3, flatTime: 4, flatTimeStrong: 6, speedFactor: 0.7, pull: 1.5 },
+    smoke: { time: 3, timeStrong: 5, spreadDeg: 12 },
+    bigBombFromChaos: 2, // Sobrevivência: the bomb covers 2 lanes from chaos 2
+    // V2 part 3: the yellow "?" box (both modes): a good item of your side or a bad effect, after a 0.6 s roulette
+    mystery: {
+      share: 0.15, // of the boxes (about 1 in 7; at 1 in 5 the computer thief lost too often)
+      good: { easy: 0.7, normal: 0.6, hard: 0.45 } as Record<Difficulty, number>,
+      revealTime: 0.6,
+      slow: { time: 4, factor: 0.7 },
+      double: { time: 6 },
+      mud: { time: 4 },
+      noBrake: { time: 3 },
+    },
     weights: {
       police: { fireRate: 2, power: 2, heal: 3, nitro: 2, ram: 2, heli: 1, pierce: 2 },
-      thief: { plate: 3, bomb: 3, heal: 3, gun: 5 },
+      // the thief's specials share the weight the bomb had (3), then split by kind: the rest of the mix stays as it was
+      // (balance: with each kind weighing on its own, plates, heal and gun came much less and the thief won ~28%)
+      thief: { plate: 3, special: 3, heal: 3, gun: 5 },
+      specials: { bomb: 3, oil: 2, spikes: 2, smoke: 2 },
     },
   },
   // Curves (Delivery 6): gentle ones call for ◀ ▶, sharp ones call for braking
