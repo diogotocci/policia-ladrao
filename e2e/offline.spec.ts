@@ -12,7 +12,7 @@ test('right after the first visit the game opens offline (everything precached a
   await context.setOffline(true);
   await page.reload();
   await expect(page.locator('.screen-title')).toBeVisible();
-  await page.getByRole('button', { name: 'Jogar' }).click();
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
   await expect(page.locator('.screen-choose')).toBeVisible();
   await context.setOffline(false);
 });

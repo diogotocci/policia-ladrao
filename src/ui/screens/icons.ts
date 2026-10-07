@@ -3,6 +3,7 @@ const svg = (body: string, fill = false) =>
   `<svg viewBox="0 0 24 24" fill="${fill ? 'currentColor' : 'none'}" stroke="${fill ? 'none' : 'currentColor'}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${body}</svg>`;
 
 export const SCREEN_ICONS = {
+  play: svg('<path d="M7 4l13 8-13 8z"/>', true),
   back: svg('<path d="M15 5l-7 7 7 7"/>'),
   forward: svg('<path d="M9 5l7 7-7 7"/>'),
   up: svg('<path d="M12 6l7 11H5z"/>', true),

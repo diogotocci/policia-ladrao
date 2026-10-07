@@ -110,7 +110,9 @@ test('restarting 6 times leaks nothing: no errors, one canvas, draw calls stable
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Sair' }).click();
   await expect(page.locator('.screen-title')).toBeVisible();
-  expect(await page.locator('canvas').count()).toBe(0);
+  // the game's canvas is gone; only the two spinning cars of the title screen remain
+  expect(await page.locator('canvas').count()).toBe(2);
+  expect(await page.locator('.screen-title canvas').count()).toBe(2);
 });
 
 test('the browser/Android Back button pauses instead of leaving', async ({ page }) => {

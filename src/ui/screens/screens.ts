@@ -3,6 +3,8 @@ import type { Role } from '../../config/balance';
 import type { Board } from '../../storage/ranking';
 import { formatTime } from '../hud';
 import { btn, h, mount, type Disposable } from './dom';
+import { openHowTo } from './howto';
+import { SCREEN_ICONS } from './icons';
 import './screens.css';
 
 export { trapFocus } from './dom';
@@ -10,27 +12,40 @@ export { renderChoose } from './choose';
 export { renderEnd } from './end';
 
 // ---------- title ----------
+/** Logo (a blue street-name plate) over the two spinning 3D cars. */
+function titleHero(): { hero: HTMLElement; previews: Record<Role, HTMLElement> } {
+  const plate = h('h1', 'title-plate');
+  plate.append('Polícia ', h('span', 'title-x', '×'), ' ', h('span', 'title-line', 'Ladrão'));
+  const cars = h('div', 'title-cars');
+  const previews = {} as Record<Role, HTMLElement>;
+  for (const role of ['police', 'thief'] as Role[]) {
+    const slot = h('div', 'title-car');
+    slot.dataset.preview = role; // 3D car (carPreview)
+    previews[role] = slot;
+    cars.append(slot);
+  }
+  const hero = h('div', 'title-hero');
+  hero.append(plate, cars);
+  return { hero, previews };
+}
+
 export function renderTitle(
   root: HTMLElement,
-  p: { onPlay(): void; onRanking(): void; mountToggle(parent: HTMLElement): Disposable; version?: string },
-): Disposable {
+  p: { onPlay(): void; onRanking(): void; onHowToSeen?(): void; mountToggle(parent: HTMLElement): Disposable; version?: string },
+): Disposable & { previews: Record<Role, HTMLElement> } {
   const s = h('section', 'screen screen-title');
   s.setAttribute('aria-label', 'Polícia × Ladrão');
-  const logo = h('img', 'title-logo');
-  logo.src = '/icons/icon-192.png';
-  logo.alt = '';
-  const name = h('h1', 'title-name');
-  name.innerHTML = 'Polícia <span>×</span> Ladrão';
-  const play = btn('Jogar', 'is-primary', p.onPlay);
-  const ranking = btn('Ranking', '', p.onRanking);
-  const row = h('div', 'screen-actions');
-  row.append(play, ranking);
+  const { hero, previews } = titleHero();
+  const play = btn('Jogar', 'is-primary title-play', p.onPlay, SCREEN_ICONS.play);
+  const help = btn('Como jogar', '', () => openHowTo(s, () => (p.onHowToSeen?.(), help.focus())), SCREEN_ICONS.help);
+  const menu = h('div', 'title-menu');
+  menu.append(play, help, btn('Ranking', '', p.onRanking, SCREEN_ICONS.trophy));
   const sound = h('div', 'title-sound');
   const toggle = p.mountToggle(sound);
-  s.append(logo, name, row, sound);
+  s.append(hero, menu, sound);
   if (p.version) s.append(h('p', 'title-version', `v${p.version}`));
   const m = mount(root, s, play);
-  return { dispose: () => (toggle.dispose(), m.dispose()) };
+  return { dispose: () => (toggle.dispose(), m.dispose()), previews };
 }
 
 // ---------- countdown ----------
