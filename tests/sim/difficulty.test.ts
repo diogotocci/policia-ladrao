@@ -27,7 +27,11 @@ describe('difficulty: the computer level', () => {
     const w = createWorld({ seed: 1, playerRole: 'thief' });
     expect(w.difficulty).toBe('normal');
     expect(w.level).toBe(1);
-    expect(createWorld({ seed: 1, playerRole: 'thief', difficulty: 'insane' as Difficulty }).difficulty).toBe('normal');
+    for (const bad of ['insane', 'constructor', 'toString'])
+      expect(createWorld({ seed: 1, playerRole: 'thief', difficulty: bad as Difficulty })).toMatchObject({
+        difficulty: 'normal',
+        level: 1,
+      });
   });
 
   it('keeps the level from the difficulty while the match runs', () => {

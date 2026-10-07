@@ -1,4 +1,4 @@
-import { BALANCE, type Difficulty, type Role } from '../config/balance';
+import { BALANCE, DIFFICULTIES, type Difficulty, type Role } from '../config/balance';
 import { aiStep } from './ai';
 import { createCar, stepCar, type CarState } from './car';
 import { resolveCollisions } from './collisions';
@@ -38,7 +38,7 @@ export function createWorld(opts: {
   /** V2 part 2: the computer's start level and pace, traffic and its helicopter; default Médio */
   difficulty?: Difficulty;
 }): WorldState {
-  const difficulty: Difficulty = opts.difficulty && opts.difficulty in BALANCE.difficulties ? opts.difficulty : 'normal';
+  const difficulty: Difficulty = opts.difficulty && DIFFICULTIES.includes(opts.difficulty) ? opts.difficulty : 'normal';
   const police: CarState = { ...createCar('police', 1, 0), hasGun: true, hp: opts.debugHp?.police ?? BALANCE.hp };
   const thief: CarState = { ...createCar('thief', 2, 40), hp: opts.debugHp?.thief ?? BALANCE.hp };
   let player = opts.playerRole === 'police' ? police : thief;

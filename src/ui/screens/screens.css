@@ -1023,3 +1023,19 @@
 .screen-ranking .difficulty-picker {
   align-self: center;
 }
+
+/* short screens: the ranking with its difficulty picker must still show Voltar without scrolling */
+@media (max-height: 420px) {
+  .screen-ranking .screen-heading {
+    display: none;
+  }
+  .screen-ranking .difficulty-option {
+    min-height: 32px;
+  }
+  .screen-ranking .ranking-tab {
+    min-height: 34px;
+  }
+  .screen-ranking .screen-btn.is-quiet {
+    min-height: 36px;
+  }
+}

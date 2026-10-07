@@ -136,11 +136,14 @@ export function renderRanking(
     tab: Role;
     highlight?: { difficulty: Difficulty; role: Role; rank: number };
     focusTab?: boolean;
+    /** redrawn after a difficulty switch: keep the keyboard on the picker */
+    focusDifficulty?: boolean;
     onTab(tab: Role): void;
     onBack(): void;
   },
 ): Disposable {
   const s = h('section', 'screen screen-ranking');
+  s.setAttribute('aria-label', 'Ranking'); // the visible heading hides on short screens
   const card = h('div', 'screen-card is-wide');
   const tabs = h('div', 'ranking-tabs');
   tabs.setAttribute('role', 'tablist');
@@ -178,7 +181,9 @@ export function renderRanking(
     list.append(row);
   });
   const back = btn('Voltar', 'is-quiet', p.onBack);
-  card.append(h('h2', 'screen-heading', 'Ranking'), difficultyPicker(p.difficulty, p.onDifficulty), tabs, list, back);
+  const picker = difficultyPicker(p.difficulty, p.onDifficulty);
+  card.append(h('h2', 'screen-heading', 'Ranking'), picker, tabs, list, back);
   s.append(card);
-  return mount(root, s, p.focusTab ? selected : back);
+  const checked = picker.querySelector<HTMLElement>('[aria-checked="true"]') ?? undefined;
+  return mount(root, s, p.focusDifficulty ? checked : p.focusTab ? selected : back);
 }

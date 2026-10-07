@@ -143,6 +143,7 @@ export function startApp(
   };
 
   let tabSwitch = false;
+  let difficultySwitch = false;
   function trap() {
     history.pushState({ pl: true }, '');
   }
@@ -237,7 +238,8 @@ export function startApp(
         view = renderRanking(layer, {
           boards,
           difficulty: s.difficulty,
-          onDifficulty: (d) => press({ type: 'difficultyTab', difficulty: d }),
+          onDifficulty: (d) => ((difficultySwitch = true), press({ type: 'difficultyTab', difficulty: d })),
+          focusDifficulty: difficultySwitch,
           tab: s.tab,
           highlight,
           focusTab: tabSwitch,
@@ -245,6 +247,7 @@ export function startApp(
           onBack: () => press({ type: 'back' }),
         });
         tabSwitch = false;
+        difficultySwitch = false;
         break;
     }
   };

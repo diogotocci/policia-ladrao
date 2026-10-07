@@ -454,6 +454,18 @@ describe('ranking', () => {
     renderRanking(root, { boards, difficulty: 'normal', onDifficulty, tab: 'police', highlight, onTab: vi.fn(), onBack: vi.fn() });
     expect(root.querySelector('.ranking-row')!.textContent).toContain('MED');
     expect(root.querySelector('.ranking-row')!.classList.contains('is-new')).toBe(false);
+    root.innerHTML = '';
+    // after switching difficulty with the keyboard the screen is redrawn: focus stays on the picker
+    renderRanking(root, {
+      boards,
+      difficulty: 'easy',
+      onDifficulty,
+      focusDifficulty: true,
+      tab: 'police',
+      onTab: vi.fn(),
+      onBack: vi.fn(),
+    });
+    expect(document.activeElement).toBe(root.querySelector('[role="radio"][aria-checked="true"]'));
   });
 
   it('tabs, rows with rank, initials, time and date; highlight of the new record; empty state', () => {
