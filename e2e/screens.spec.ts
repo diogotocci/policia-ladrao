@@ -189,8 +189,8 @@ test('difficulty: Difícil is remembered, pays x1,5 and has its own ranking', as
 });
 
 test('Sobrevivência: no clock, chaos rises, roadworks appear and the match still ends', async ({ page }) => {
-  test.setTimeout(240_000);
-  await page.goto('/?app&quality=low&mute&debug&traffic=0&mode=survival&chaosEvery=4&thiefHp=60');
+  test.setTimeout(300_000);
+  await page.goto('/?app&quality=low&mute&debug&traffic=0&mode=survival&chaosEvery=4&thiefHp=60&policeHp=25');
   await page.evaluate(() => localStorage.setItem('pl.howto.v1', '1'));
   await page.getByRole('button', { name: 'Jogar', exact: true }).click();
   await page.getByRole('button', { name: 'Jogar Sobrevivência' }).click();

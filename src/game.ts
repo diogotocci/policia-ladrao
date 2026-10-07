@@ -18,7 +18,7 @@ import { createQualityGovernor, createRenderer, type QualityTier } from './rende
 import { createLighting } from './render/scene';
 import { createRoad, renderOrigin } from './render/roadChunks';
 import { createTrackFrame, setActiveTrackFrame, trackPos } from './render/trackFrame';
-import type { CarState } from './sim/car';
+import { hpPct, type CarState } from './sim/car';
 import { FixedStepper } from './sim/fixedStepper';
 import type { Intents } from './sim/intents';
 import { addEvents, emptyStats, type MatchStats } from './meta/rewards';
@@ -126,7 +126,7 @@ export function startGame(
   };
   let clock = 0; // render clock (muzzle flash)
   const damageFx = (c: CarState, dt: number) => {
-    const look = damageLook(c.hp);
+    const look = damageLook(hpPct(c));
     const acc = emitAcc[c.role];
     if (look.whiteSmoke || look.blackSmoke) {
       acc.smoke += dt * (look.blackSmoke ? 20 : 12) * particles.emissionScale();
@@ -362,8 +362,8 @@ export function startGame(
     const foe = frozen ? world.opponent : lerpCar(prev.opponent, world.opponent, alpha);
     updateCarModel(opponentModel, foe, world.time, origin);
     clock += dt;
-    applyDamage(model, frozen ? damageLook(car.hp) : damageFx(car, dt), world.time);
-    applyDamage(opponentModel, frozen ? damageLook(foe.hp) : damageFx(foe, dt), world.time);
+    applyDamage(model, frozen ? damageLook(hpPct(car)) : damageFx(car, dt), world.time);
+    applyDamage(opponentModel, frozen ? damageLook(hpPct(foe)) : damageFx(foe, dt), world.time);
     updateGunner(gunners[car.role], car, foe, clock);
     updateGunner(gunners[foe.role], foe, car, clock);
     marker.update(foe, Math.abs(foe.s - car.s), origin);

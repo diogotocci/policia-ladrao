@@ -1,9 +1,11 @@
 // Local ranking (spec §8): top 10 per side, validated on load, never breaks the game.
-import { DIFFICULTIES, MODES, type Difficulty, type Mode, type Role } from '../config/balance';
+import { BALANCE, DIFFICULTIES, MODES, type Difficulty, type Mode, type Role } from '../config/balance';
 
 // v2 (Delivery 7): the thief now wins by escaping at 1:30 — the rules changed, both rankings restart
 export const RANKING_KEY = 'pl.ranking.v2';
 const MAX = 10;
+/** highest life a car can have (Sobrevivência) */
+const MAX_HP = BALANCE.survival.hp;
 
 export interface Entry {
   initials: string;
@@ -48,7 +50,7 @@ const valid = (x: unknown): x is Entry =>
   Number.isFinite((x as Entry).time) &&
   (x as Entry).time >= 0 &&
   typeof (x as Entry).date === 'string' &&
-  ((x as Entry).hp === undefined || (typeof (x as Entry).hp === 'number' && (x as Entry).hp! >= 0 && (x as Entry).hp! <= 100)) &&
+  ((x as Entry).hp === undefined || (typeof (x as Entry).hp === 'number' && (x as Entry).hp! >= 0 && (x as Entry).hp! <= MAX_HP)) &&
   ((x as Entry).how === undefined || (x as Entry).how === 'escape' || (x as Entry).how === 'kill' || (x as Entry).how === 'caught');
 
 /** Sorts keeping the original order on ties (the oldest was inserted first) and truncates to 10. */
@@ -179,5 +181,5 @@ export function recordEntry(
 ): Entry {
   if (role === 'police') return { initials, time: result.time, date };
   const how = result.winner === 'police' ? 'caught' : result.reason === 'escape' ? 'escape' : 'kill';
-  return { initials, time: result.time, date, hp: Math.max(0, Math.min(100, result.hp ?? 0)), how };
+  return { initials, time: result.time, date, hp: Math.max(0, Math.min(MAX_HP, result.hp ?? 0)), how };
 }

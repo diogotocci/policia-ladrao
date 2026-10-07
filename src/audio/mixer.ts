@@ -1,6 +1,7 @@
 // Pure mixer: turns world state and events into commands for the audio backend.
 // It knows nothing about WebAudio — tests use the null backend.
 import type { GameEvent, WorldState } from '../sim/types';
+import { hpPct } from '../sim/car';
 import { MENU_SONG, SONG, createSequencer, stepSeconds, type Song } from './music';
 import type { SoundName } from './sfx';
 import type { AudioBackend } from './synth';
@@ -122,7 +123,7 @@ export function createMixer(initial: AudioBackend): Mixer {
         nextNoteTime = -1;
         return;
       }
-      scheduleMusic(!over && (Math.abs(thief.s - police.s) < 40 || Math.min(police.hp, thief.hp) <= 30));
+      scheduleMusic(!over && (Math.abs(thief.s - police.s) < 40 || Math.min(hpPct(police), hpPct(thief)) <= 30));
     },
     menu(dt) {
       clock += dt;

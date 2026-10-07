@@ -259,3 +259,14 @@ describe('Sobrevivência HUD', () => {
     hud.dispose();
   });
 });
+
+describe('life bars with 200 of life', () => {
+  it('the bar shows the percentage of the car max', () => {
+    const hud = createHud(root, 'thief', { showEnd: false });
+    const w = createWorld({ seed: 1, playerRole: 'thief', mode: 'survival' });
+    hud.update(withCar(w, 'thief', { ...thiefOf(w), hp: 100 }));
+    const fills = [...root.querySelectorAll<HTMLElement>('.hud-bar-fill')];
+    expect(fills.map((f) => f.style.width)).toEqual(['100%', '50%']);
+    hud.dispose();
+  });
+});
