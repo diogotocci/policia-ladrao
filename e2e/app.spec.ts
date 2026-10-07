@@ -97,7 +97,7 @@ test('first visit: "Como jogar" opens by itself on the side choice; after Entend
   const howTo = page.getByRole('dialog', { name: 'Como jogar' });
   await expect(howTo).toBeVisible();
   await expect(howTo).toContainText('O carro acelera sozinho');
-  await howTo.getByRole('button', { name: 'Próximo: tráfego e tiros' }).click();
+  await howTo.getByRole('button', { name: 'Próximo' }).click();
   await expect(howTo).toContainText('Quem vence');
   await howTo.getByRole('button', { name: 'Entendi' }).click();
   await expect(howTo).toHaveCount(0);
@@ -107,4 +107,25 @@ test('first visit: "Como jogar" opens by itself on the side choice; after Entend
   await expect(page.locator('.howto')).toHaveCount(0);
   await page.getByRole('button', { name: 'Como jogar' }).click();
   await expect(howTo).toBeVisible();
+});
+
+test('Como jogar: a real finger swipe turns the page and back (mobile)', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'touch only');
+  await page.goto('/?app&quality=low&mute');
+  await page.getByRole('button', { name: 'Como jogar' }).click();
+  const current = page.locator('.howto-dot[aria-current="true"]');
+  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 2');
+  const cdp = await page.context().newCDPSession(page);
+  const swipe = async (x0: number, x1: number) => {
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: x0, y: 200 }] });
+    for (let i = 1; i <= 8; i++)
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x0 + ((x1 - x0) * i) / 8, y: 200 }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  };
+  await swipe(600, 250);
+  await expect(current).toHaveAttribute('aria-label', 'Página 2 de 2');
+  await expect(page.getByRole('button', { name: 'Próximo' })).toBeHidden();
+  await swipe(250, 600);
+  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 2');
+  await expect(page.getByRole('button', { name: 'Anterior' })).toBeHidden();
 });

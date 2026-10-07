@@ -97,6 +97,9 @@
   cursor: pointer;
   touch-action: manipulation;
 }
+.screen-btn[hidden] {
+  display: none;
+}
 .screen-btn svg {
   width: 20px;
   height: 20px;
@@ -357,15 +360,35 @@
   padding: max(12px, var(--safe-top)) max(16px, var(--safe-right)) max(12px, var(--safe-bottom)) max(16px, var(--safe-left));
   background: rgba(14, 15, 19, 0.96);
 }
-.howto-tips {
+.howto-view {
   flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  overflow: hidden;
+  touch-action: pan-y; /* horizontal drags turn the page */
+  user-select: none;
+  cursor: grab;
+}
+.howto-strip {
+  display: flex;
+  height: 100%;
+  transition: transform 0.28s ease-out;
+}
+.howto-tips {
+  flex: 0 0 100%;
+  box-sizing: border-box;
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
+  padding: 0 1px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .howto-strip {
+    transition: none;
+  }
 }
 .howto-tip {
   display: flex;
@@ -424,17 +447,35 @@
 }
 .howto-dots {
   display: flex;
-  gap: 6px;
+  gap: 2px;
   margin-right: auto;
 }
-.howto-dots i {
-  width: 8px;
-  height: 8px;
+.howto-dot.screen-btn {
+  min-width: 0;
+  width: 32px;
+  min-height: 44px;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.howto-dot::before {
+  content: '';
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: #555b65;
 }
-.howto-dots i.is-on {
+.howto-dot[aria-current='true']::before {
   background: var(--sign);
+}
+.howto-prev.screen-btn,
+.howto-next.screen-btn {
+  min-width: 0;
+  padding: 0 16px;
+}
+.howto-next svg {
+  width: 18px;
+  height: 18px;
 }
 
 /* countdown */
