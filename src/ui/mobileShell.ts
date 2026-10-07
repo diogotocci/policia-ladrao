@@ -23,6 +23,18 @@ export function installNoZoom(doc: Document, now: () => number = () => performan
   };
 }
 
+/** Same media query as styles.css: phone held upright, the whole game drawn rotated -90°. */
+export const ROTATED_QUERY = '(orientation: portrait) and (pointer: coarse)';
+
+/**
+ * A finger movement on the screen, in the game's own axes. Rotated -90°: the game's right is the screen's top,
+ * so moving along the game's x is moving up the screen (and its y is the screen's x).
+ */
+export function gameDelta(dxScreen: number, dyScreen: number, win: Window = window): { dx: number; dy: number } {
+  const rotated = win.matchMedia?.(ROTATED_QUERY).matches === true;
+  return rotated ? { dx: -dyScreen, dy: dxScreen } : { dx: dxScreen, dy: dyScreen };
+}
+
 /** Opened as an installed app (home screen)? */
 export function isStandalone(win: Window): boolean {
   const nav = win.navigator as Navigator & { standalone?: boolean };
