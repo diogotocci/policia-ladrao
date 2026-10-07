@@ -2,6 +2,7 @@
 // The coins of a match are credited once, saved before the end screen shows, and survive a reload.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+type Opts = { onEnd: OnEnd; difficulty?: string };
 type OnEnd = (r: {
   winner: 'police' | 'thief';
   time: number;
@@ -11,9 +12,11 @@ type OnEnd = (r: {
   stats: { damageDealt: number; rightBoxes: number };
 }) => void;
 const ends: OnEnd[] = [];
+const gameOpts: Opts[] = [];
 vi.mock('../../src/game', () => ({
-  startGame: (_c: HTMLElement, o: { onEnd: OnEnd }) => {
+  startGame: (_c: HTMLElement, o: Opts) => {
     ends.push(o.onEnd);
+    gameOpts.push(o);
     return { stop() {}, pause() {}, resume() {} };
   },
 }));
@@ -41,6 +44,7 @@ beforeEach(() => {
   localStorage.clear();
   localStorage.setItem('pl.howto.v1', '1');
   ends.length = 0;
+  gameOpts.length = 0;
   container = document.createElement('div');
   document.body.append(container);
 });
@@ -97,6 +101,36 @@ describe('storage that stops saving', () => {
     click('Início');
     click('Progresso');
     expect(container.textContent).toContain('Seu progresso não está sendo salvo neste navegador');
+    app.stop();
+  });
+});
+
+describe('difficulty', () => {
+  it('the saved difficulty is preselected, goes to the match, multiplies the coins and picks the ranking', () => {
+    localStorage.setItem('pl.difficulty', 'hard');
+    const app = startApp(container, { mute: true });
+    click('Jogar');
+    expect(container.querySelector('[role="radio"][aria-checked="true"]')!.textContent).toContain('Difícil');
+    (container.querySelector('[data-role="thief"]') as HTMLButtonElement).click();
+    expect(gameOpts[0]!.difficulty).toBe('hard');
+    frames(60);
+    ends[0]!({ winner: 'thief', time: 90, reason: 'escape', hp: 50, level: 6, stats: { damageDealt: 20, rightBoxes: 2 } });
+    // (30 + 5 + 4) x 2 x 1.5 = 117
+    expect(saved()).toBe(117);
+    (container.querySelector('.initials') as HTMLElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    const v3 = JSON.parse(localStorage.getItem('pl.ranking.v3')!);
+    expect(v3.hard.thief).toHaveLength(1);
+    expect(v3.normal.thief).toHaveLength(0);
+    click('Ranking');
+    expect(container.querySelector('.screen-ranking [role="radio"][aria-checked="true"]')!.textContent).toBe('Difícil');
+    app.stop();
+  });
+
+  it('changing it on the side choice is remembered', () => {
+    const app = startApp(container, { mute: true });
+    click('Jogar');
+    (container.querySelectorAll('.screen-choose [role="radio"]')[0] as HTMLElement).click();
+    expect(localStorage.getItem('pl.difficulty')).toBe('easy');
     app.stop();
   });
 });

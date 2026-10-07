@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { BALANCE, type Role } from './config/balance';
+import { BALANCE, type Difficulty, type Role } from './config/balance';
 import { createAudioSession, type AudioSession } from './audio/session';
 import { createDebug } from './debug';
 import { createKeyboardInput } from './input/keyboard';
@@ -64,6 +64,8 @@ export function startGame(
     curves?: boolean;
     /** shorter escape time (debug/e2e only: ?escape=N) */
     escapeTime?: number;
+    /** V2 part 2: Fácil / Médio / Difícil (default Médio) */
+    difficulty?: Difficulty;
     /** starts muted (?mute), without touching the saved preference */
     mute?: boolean;
     /** app audio session (without it the game creates its own) */
@@ -151,6 +153,7 @@ export function startGame(
     traffic: opts.traffic,
     curves: curvesOn,
     escapeTime: opts.escapeTime,
+    difficulty: opts.difficulty,
   });
   let frameEvents: GameEvent[] = [];
   let prev = world;

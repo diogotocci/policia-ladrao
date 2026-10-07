@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderChoose, renderCountdown, renderEnd, renderPause, renderRanking, renderTitle } from '../../src/ui/screens/screens';
-import { emptyBoard, insert } from '../../src/storage/ranking';
+import { emptyBoard, emptyBoards, insert, type Board } from '../../src/storage/ranking';
 
 let root: HTMLElement;
 beforeEach(() => {
@@ -297,6 +297,39 @@ describe('end', () => {
     expect(root.querySelector('.end-reward-total')!.textContent).toContain('+60 moedas');
   });
 
+  it('difficulty: a badge next to the reason and the coins multiplier line (none on Médio)', () => {
+    renderEnd(root, {
+      ...base,
+      role: 'thief',
+      difficulty: 'hard',
+      result: { winner: 'thief', time: 69.9, reason: 'policeDown', level: 5, stats: { damageDealt: 100, rightBoxes: 4 } },
+      reward: { time: 23, damage: 25, boxes: 8, won: true, difficulty: 'hard', total: 168 },
+      animateReward: false,
+      qualifies: false,
+      onSave: vi.fn(),
+    });
+    const badge = root.querySelector('.end-difficulty')!;
+    expect(badge.textContent).toBe('Difícil');
+    expect(badge.classList.contains('is-hard')).toBe(true);
+    const lines = root.querySelector('.end-reward')!.textContent!;
+    expect(lines).toContain('Difícil');
+    expect(lines).toContain('×1,5');
+    expect(lines).toContain('+168 moedas');
+    root.innerHTML = '';
+    renderEnd(root, {
+      ...base,
+      role: 'thief',
+      difficulty: 'normal',
+      result: { winner: 'thief', time: 69.9, reason: 'policeDown' },
+      reward: { time: 23, damage: 0, boxes: 0, won: true, difficulty: 'normal', total: 46 },
+      animateReward: false,
+      qualifies: false,
+      onSave: vi.fn(),
+    });
+    expect(root.querySelector('.end-reward')!.textContent).not.toContain('Médio');
+    expect(root.querySelector('.end-difficulty')!.textContent).toBe('Médio');
+  });
+
   it('a loss shows no "Vitória" line; no reward, no box', () => {
     renderEnd(root, {
       ...base,
@@ -402,11 +435,38 @@ describe('end', () => {
 });
 
 describe('ranking', () => {
+  // one board in Médio, the other difficulties empty
+  const R = (board: Board) => ({ boards: { ...emptyBoards(), normal: board }, difficulty: 'normal' as const, onDifficulty: vi.fn() });
+
+  it("a difficulty picker on top shows that difficulty's list; the new-record highlight only where it was made", () => {
+    const boards = emptyBoards();
+    boards.hard = insert(emptyBoard(), 'police', { initials: 'HRD', time: 40, date: '2026-10-07' }).board;
+    boards.normal = insert(emptyBoard(), 'police', { initials: 'MED', time: 50, date: '2026-10-07' }).board;
+    const onDifficulty = vi.fn();
+    const highlight = { difficulty: 'hard' as const, role: 'police' as const, rank: 1 };
+    renderRanking(root, { boards, difficulty: 'hard', onDifficulty, tab: 'police', highlight, onTab: vi.fn(), onBack: vi.fn() });
+    expect(root.querySelector('[role="radiogroup"] [aria-checked="true"]')!.textContent).toBe('Difícil');
+    expect(root.querySelector('.ranking-row')!.textContent).toContain('HRD');
+    expect(root.querySelector('.ranking-row')!.classList.contains('is-new')).toBe(true);
+    (root.querySelectorAll('[role="radio"]')[1] as HTMLElement).click();
+    expect(onDifficulty).toHaveBeenCalledWith('normal');
+    root.innerHTML = '';
+    renderRanking(root, { boards, difficulty: 'normal', onDifficulty, tab: 'police', highlight, onTab: vi.fn(), onBack: vi.fn() });
+    expect(root.querySelector('.ranking-row')!.textContent).toContain('MED');
+    expect(root.querySelector('.ranking-row')!.classList.contains('is-new')).toBe(false);
+  });
+
   it('tabs, rows with rank, initials, time and date; highlight of the new record; empty state', () => {
     let board = insert(emptyBoard(), 'police', { initials: 'ANA', time: 61.2, date: '2026-10-04T10:00:00Z' }).board;
     board = insert(board, 'police', { initials: 'DIO', time: 55.0, date: '2026-10-05T10:00:00Z' }).board;
     const onTab = vi.fn();
-    renderRanking(root, { board, tab: 'police', highlight: { role: 'police', rank: 1 }, onTab, onBack: vi.fn() });
+    renderRanking(root, {
+      ...R(board),
+      tab: 'police',
+      highlight: { difficulty: 'normal', role: 'police', rank: 1 },
+      onTab,
+      onBack: vi.fn(),
+    });
     const rows = [...root.querySelectorAll('.ranking-row')];
     expect(rows).toHaveLength(2);
     expect(rows[0]!.textContent).toContain('1');
@@ -417,17 +477,17 @@ describe('ranking', () => {
     button('Ladrão — mais rápidos a vencer').click();
     expect(onTab).toHaveBeenCalledWith('thief');
     root.innerHTML = '';
-    renderRanking(root, { board, tab: 'thief', focusTab: true, onTab, onBack: vi.fn() });
+    renderRanking(root, { ...R(board), tab: 'thief', focusTab: true, onTab, onBack: vi.fn() });
     expect(document.activeElement).toBe(button('Ladrão — mais rápidos a vencer')); // focus stays on the tab after switching
     root.innerHTML = '';
-    renderRanking(root, { board, tab: 'thief', onTab, onBack: vi.fn() });
+    renderRanking(root, { ...R(board), tab: 'thief', onTab, onBack: vi.fn() });
     expect(root.textContent).toContain('Nenhum recorde ainda');
   });
 
   it('thief rows show how the win came (💥 destroyed the police / 🏁 escaped) and the life left', () => {
     let board = insert(emptyBoard(), 'thief', { initials: 'ESC', time: 90, hp: 42, how: 'escape', date: '2026-10-05' }).board;
     board = insert(board, 'thief', { initials: 'KIL', time: 71, hp: 8, how: 'kill', date: '2026-10-05' }).board;
-    renderRanking(root, { board, tab: 'thief', onTab: vi.fn(), onBack: vi.fn() });
+    renderRanking(root, { ...R(board), tab: 'thief', onTab: vi.fn(), onBack: vi.fn() });
     const rows = [...root.querySelectorAll('.ranking-row')].map((r) => r.textContent);
     expect(rows[0]).toContain('💥');
     expect(rows[1]).toContain('🏁');
