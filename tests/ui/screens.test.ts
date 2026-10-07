@@ -250,7 +250,7 @@ describe('end', () => {
         ...base,
         role: 'thief',
         result: { winner: 'thief', time: 69.9, reason: 'policeDown', level: 2, stats: { damageDealt: 100, rightBoxes: 4 } },
-        reward: { time: 23, damage: 25, boxes: 8, won: true, total: 112 },
+        reward: { time: 23, damage: 25, boxes: 8, won: true, difficulty: 'normal', total: 112 },
         qualifies: false,
         onSave: vi.fn(),
       });
@@ -277,7 +277,7 @@ describe('end', () => {
       ...base,
       role: 'thief',
       result: { winner: 'thief', time: 90, reason: 'escape' },
-      reward: { time: 30, damage: 0, boxes: 0, won: true, total: 60 },
+      reward: { time: 30, damage: 0, boxes: 0, won: true, difficulty: 'normal', total: 60 },
       animateReward: false,
       qualifies: false,
       onSave: vi.fn(),
@@ -290,7 +290,7 @@ describe('end', () => {
       ...base,
       role: 'police',
       result: { winner: 'thief', time: 30, reason: 'escape', stats: { damageDealt: 10, rightBoxes: 0 } },
-      reward: { time: 10, damage: 2, boxes: 0, won: false, total: 12 },
+      reward: { time: 10, damage: 2, boxes: 0, won: false, difficulty: 'normal', total: 12 },
       qualifies: false,
       onSave: vi.fn(),
     });
