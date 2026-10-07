@@ -51,7 +51,7 @@ describe('roadworks (Sobrevivência, chaos 3+)', () => {
     const next = stepWorld(w, NO_INTENTS, DT);
     const t = thiefOf(next);
     expect(next.events.some((e) => e.type === 'crash' && e.b === 'works')).toBe(true);
-    expect(BALANCE.hp - t.hp).toBeCloseTo(BALANCE.collision.scenery * 1.4 * BALANCE.survival.thiefDamageTaken);
+    expect(BALANCE.survival.hp - t.hp).toBeCloseTo(BALANCE.collision.scenery * 1.3 * BALANCE.survival.thiefDamageTaken);
     expect(t.speed).toBeLessThan(30);
     expect(Math.abs(t.x - x)).toBeGreaterThan(1.5);
   });

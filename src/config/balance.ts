@@ -53,13 +53,14 @@ export const BALANCE = {
     chaosMax: 5,
     trafficPerChaos: 0.15, // +15% target traffic per chaos level above 1
     boxEveryPerChaos: 0.9, // box spacing x0.9 per level above 1
-    damagePerChaos: 0.2, // all damage x(1 + 0.2 x (chaos - 1)): guarantees the match ends
+    damagePerChaos: 0.15, // all damage x(1 + 0.15 x (chaos - 1)): guarantees the match ends
     worksFromChaos: 3,
     worksEvery: [500, 700] as const, // m between roadworks
     worksLength: 60, // m of closed lane
     worksSign: 80, // m: warning sign before
     timeCoinsMax: 60,
-    thiefDamageTaken: 0.75, // no escape at 1:30 here: the thief takes less damage (AI x AI thief wins 30-70%)
+    hp: 200, // both cars (playtest 2026-10-07: at 100 the matches ended too fast)
+    thiefDamageTaken: 0.9, // no escape at 1:30 here: the thief takes a bit less damage (AI x AI thief wins ~50%)
   },
   // V2 part 2 (spec 2026-10-07-v2-parte2-dificuldade-design.md §2). Médio is the 0.11 game:
   // level every 45 s (playtest 2026-10-07: it felt harder on both sides at 30 s) and the computer's helicopter every 1 s.

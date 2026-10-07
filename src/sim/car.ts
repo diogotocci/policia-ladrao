@@ -37,6 +37,8 @@ export interface CarState {
   steer: -1 | 0 | 1;
   touchingEdge: boolean;
   hp: number;
+  /** life cap: 100, or 200 in Sobrevivência (V2 part 3) */
+  maxHp: number;
   /** weapon: the police always has one; the thief gets one from a box (delivery 3) */
   hasGun: boolean;
   /** seconds until it can shoot again */
@@ -59,6 +61,7 @@ export function createCar(role: Role, laneIndex: 0 | 1 | 2 | 3, s = 0): CarState
     steer: 0,
     touchingEdge: false,
     hp: BALANCE.hp,
+    maxHp: BALANCE.hp,
     hasGun: false,
     fireCooldown: 0,
     heliCooldown: 0,
@@ -110,3 +113,6 @@ export function stepCar(car: CarState, intents: Intents, dt: number, opts: { spe
     skidding,
   };
 }
+
+/** Life as a percentage of the car's max (bars, damage looks, box colors, music). */
+export const hpPct = (car: Pick<CarState, 'hp' | 'maxHp'>): number => (car.hp / car.maxHp) * 100;

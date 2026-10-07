@@ -1,6 +1,6 @@
 // Item boxes and items (spec §5): spaced spawn, color tending toward whoever is losing, pickup on the ground, effects with caps.
 import { BALANCE, type Role } from '../config/balance';
-import type { CarState } from './car';
+import { hpPct, type CarState } from './car';
 import { hurt, scaledDamage } from './chaos';
 import { createRngFromState, type Rng } from './rng';
 import { bumpsBetween } from './track';
@@ -22,13 +22,13 @@ function available(car: CarState): ItemId[] {
     const P = I.police;
     if (u.fireInterval > P.fireIntervalMin + 1e-9) out.push('fireRate');
     if (u.power < P.powerMax - 1e-9) out.push('power');
-    if (car.hp < BALANCE.hp) out.push('heal');
+    if (car.hp < car.maxHp) out.push('heal');
     out.push('nitro', 'ram', 'heli', 'pierce');
   } else {
     const T = I.thief;
     if (u.plates < T.platesMax) out.push('plate');
     if (u.bombs < T.bombsMax) out.push('bomb');
-    if (car.hp < BALANCE.hp) out.push('heal');
+    if (car.hp < car.maxHp) out.push('heal');
     if (!car.hasGun || u.fireInterval > T.gunIntervalMin + 1e-9) out.push('gun');
   }
   return out;
@@ -64,7 +64,7 @@ export function applyItem(car: CarState, item: ItemId, time: number): CarState {
       u.power = Math.min(P.powerMax, u.power + P.powerStep);
       break;
     case 'heal':
-      hp = Math.min(BALANCE.hp, hp + (car.role === 'police' ? P.heal : T.heal));
+      hp = Math.min(car.maxHp, hp + (car.role === 'police' ? P.heal : T.heal));
       break;
     case 'nitro':
       u.nitroUntil = time + P.nitroTime;
@@ -114,7 +114,7 @@ export function stepBoxes(w: WorldState): WorldState {
     for (let k = 0; k < 4 && w.traffic.some((t) => Math.abs(t.x - x) < 1.5 && Math.abs(t.s - s) < 10); k++) {
       x = lanes[rng.int(0, lanes.length - 1)]!;
     }
-    const color = rng.next() < colorChance(police.hp, thief.hp) ? 'blue' : 'red';
+    const color = rng.next() < colorChance(hpPct(police), hpPct(thief)) ? 'blue' : 'red';
     boxes.push({ id: nextBoxId++, s, x, color });
     // Sobrevivência: boxes come closer together as chaos rises
     const every = I.boxEvery * BALANCE.survival.boxEveryPerChaos ** (w.chaos - 1);

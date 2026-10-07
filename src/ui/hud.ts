@@ -2,6 +2,7 @@
 import type { Role } from '../config/balance';
 import { BALANCE } from '../config/balance';
 import type { WorldState } from '../sim/types';
+import { hpPct } from '../sim/car';
 import { createChaosMeter } from './hudSurvival';
 import { policeOf, thiefOf } from '../sim/world';
 import './hud.css';
@@ -171,8 +172,8 @@ export function createHud(
     update(w) {
       const police = policeOf(w);
       const thief = thiefOf(w);
-      setBar(policeBar, police.hp);
-      setBar(thiefBar, thief.hp);
+      setBar(policeBar, hpPct(police));
+      setBar(thiefBar, hpPct(thief));
       const at = w.match.escapeAt ?? w.match.arrestAt ?? (w.match.over ? (w.match.endTime ?? w.time) : w.time);
       // Sobrevivência: no clock to beat, the time counts up next to the chaos level
       const survival = w.mode === 'survival';

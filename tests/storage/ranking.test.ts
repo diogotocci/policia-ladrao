@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   RANKING_KEY,
   RANKING_V4_KEY,
+  emptyModeBoards,
+  recordEntry,
   countModeRecords,
   loadModeBoards,
   saveModeBoards,
@@ -234,5 +236,18 @@ describe('one ranking per mode (v4)', () => {
     board = insert(board, 'police', { initials: 'SLO', time: 300, date: 'x' }, 'survival').board;
     board = insert(board, 'police', { initials: 'FST', time: 120, date: 'x' }, 'survival').board;
     expect(board.police.map((x) => x.initials)).toEqual(['FST', 'SLO']);
+  });
+});
+
+describe('Sobrevivência life in the ranking', () => {
+  it('keeps a thief life up to 200 (survival max)', () => {
+    const entry = recordEntry('thief', { winner: 'thief', time: 200, reason: 'policeDown', hp: 180 }, 'AAA', 'x');
+    expect(entry.hp).toBe(180);
+    const s = new Map<string, string>();
+    const st = { getItem: (k: string) => s.get(k) ?? null, setItem: (k: string, v: string) => void s.set(k, v) } as unknown as Storage;
+    const b = emptyModeBoards();
+    b.survival.normal.thief = [entry];
+    saveModeBoards(st, b);
+    expect(loadModeBoards(st).survival.normal.thief[0]!.hp).toBe(180);
   });
 });

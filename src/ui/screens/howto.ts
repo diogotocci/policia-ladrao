@@ -45,7 +45,11 @@ const PAGES: { tips: Tip[] }[] = [
   {
     // V2 part 3: the Sobrevivência page (the new items join it in the next releases)
     tips: [
-      { icon: 'skull', title: 'Sobrevivência', text: 'Sem relógio: ganha quem zerar a vida do outro primeiro.' },
+      {
+        icon: 'skull',
+        title: 'Sobrevivência',
+        text: `Sem relógio e ${BALANCE.survival.hp} de vida para cada um: ganha quem zerar a vida do outro primeiro.`,
+      },
       {
         icon: 'clock',
         title: 'O caos sobe',

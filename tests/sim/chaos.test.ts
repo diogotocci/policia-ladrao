@@ -22,16 +22,16 @@ describe('chaos (Sobrevivência)', () => {
     expect(chaosAt(10, 'survival', 5)).toBe(3); // debug: short chaos
   });
 
-  it('damage x(1 + 0.2 x (chaos - 1)); hurt never goes below 0', () => {
+  it('damage x(1 + 0.15 x (chaos - 1)); hurt never goes below 0', () => {
     const w = createWorld({ seed: 1, playerRole: 'thief', mode: 'survival' });
     expect(damageScale(w)).toBe(1);
-    expect(damageScale({ ...w, chaos: 3 })).toBeCloseTo(1.4);
+    expect(damageScale({ ...w, chaos: 3 })).toBeCloseTo(1.3);
     const car = policeOf(w);
-    expect(hurt(car, 10, { ...w, chaos: 3 }).hp).toBeCloseTo(BALANCE.hp - 14);
+    expect(hurt(car, 10, { ...w, chaos: 3 }).hp).toBeCloseTo(BALANCE.survival.hp - 13);
     expect(hurt({ ...car, hp: 3 }, 10, w).hp).toBe(0);
-    // Sobrevivência: the thief takes x0.75 (no escape at 1:30); the police takes it all
-    expect(hurt(thiefOf(w), 10, w).hp).toBeCloseTo(BALANCE.hp - 10 * BALANCE.survival.thiefDamageTaken);
-    expect(hurt(policeOf(w), 10, w).hp).toBeCloseTo(BALANCE.hp - 10);
+    // Sobrevivência: the thief takes x0.9 (no escape at 1:30); the police takes it all
+    expect(hurt(thiefOf(w), 10, w).hp).toBeCloseTo(BALANCE.survival.hp - 10 * BALANCE.survival.thiefDamageTaken);
+    expect(hurt(policeOf(w), 10, w).hp).toBeCloseTo(BALANCE.survival.hp - 10);
     expect(damageScale(createWorld({ seed: 1, playerRole: 'thief' }))).toBe(1); // Perseguição
   });
 
@@ -53,14 +53,14 @@ describe('chaos (Sobrevivência)', () => {
     expect(w.match.over).toBe(false);
   });
 
-  it('a wall hit at chaos 3 costs 7 x 0.75 for the thief and reports the same', () => {
+  it('a wall hit at chaos 3 costs 6.5 x 0.9 for the thief and reports the same', () => {
     let w = createWorld({ seed: 1, playerRole: 'thief', mode: 'survival', traffic: false, curves: false });
     w = { ...w, time: 90, chaos: 3 };
     w = withCar(w, 'thief', { ...thiefOf(w), x: BALANCE.road.halfWidth, steer: 1 });
     const before = thiefOf(w).hp;
     const next = stepWorld(w, { ...NO_INTENTS, right: true }, DT);
     const hit = next.events.find((e) => e.type === 'hit' && e.target === 'thief');
-    const cost = BALANCE.collision.scenery * 1.4 * BALANCE.survival.thiefDamageTaken;
+    const cost = BALANCE.collision.scenery * 1.3 * BALANCE.survival.thiefDamageTaken;
     expect(hit && hit.type === 'hit' && hit.amount).toBeCloseTo(cost);
     expect(before - thiefOf(next).hp).toBeCloseTo(cost);
   });
