@@ -40,12 +40,13 @@ export const BALANCE = {
     policeTurboOff: 4, // s
   },
   catchUp: { start: 20, end: 150, maxBonus: 0.35 },
-  difficulty: { levelEvery: 30, maxLevel: 10 },
+  // playtest 2026-10-07 (felt harder on both sides): the computer levels up every 45 s (was 30 s)
+  difficulty: { levelEvery: 45, maxLevel: 10 },
   // police AI rams the thief (pressure on whoever plays the thief); after the crash the usual penalty applies
   ai: {
     ramRange: 35, // m: only rams with the thief up to this far ahead
     ramMinGap: 5, // m
-    ramChance: [0.01, 0.06] as const, // per aligned decision, from level 1 to 10
+    ramChance: [0.004, 0.06] as const, // per aligned decision, from level 1 to 10 (rare at the start: playtest 2026-10-07)
     ramBoost: 0.3, // +30% of cruise during the ram
     ramTime: 2, // s at most
   },
@@ -98,6 +99,7 @@ export const BALANCE = {
       heliTime: 8,
       pierceTime: 10,
       heliFireInterval: 0.7, // s: the helicopter shoots on its own, besides the officer (full damage, no loss over distance)
+      heliFireIntervalAi: 1, // s: slower when the computer drives the police (playtest 2026-10-07)
     },
     bomb: {
       damage: 15, // balance test C

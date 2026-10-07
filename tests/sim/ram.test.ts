@@ -6,6 +6,8 @@ import { aiStep, initialAiMemory } from '../../src/sim/ai';
 import { createRng } from '../../src/sim/rng';
 
 const DT = 1 / 60;
+// the world recomputes the level from the time (and the thief escapes at 1:30): start at level 2, a minute in
+const MINUTE_IN = BALANCE.difficulty.levelEvery + 15;
 const isRam = (e: WorldState['events'][number]) =>
   e.type === 'crash' && ((e.a === 'police' && e.b === 'thief') || (e.a === 'thief' && e.b === 'police'));
 
@@ -14,7 +16,7 @@ describe('police AI rams the thief (pressure for whoever plays thief)', () => {
     const w0 = createWorld({ seed: 2, playerRole: 'thief', traffic: false, curves: false });
     let w = withCar(w0, 'thief', { ...thiefOf(w0), s: 600, x: 1.5, speed: 34 });
     w = withCar(w, 'police', { ...policeOf(w), s: 580, x: 1.5, speed: 34 });
-    w = { ...w, level: 10, time: 30 };
+    w = { ...w, level: 10, time: MINUTE_IN };
     let hit = false;
     for (let i = 0; i < 60 * 15 && !hit; i++) {
       w = stepWorld(w, NO_INTENTS, DT); // thief (player) just goes straight
@@ -27,7 +29,7 @@ describe('police AI rams the thief (pressure for whoever plays thief)', () => {
     const w0 = createWorld({ seed: 2, playerRole: 'thief', traffic: false, curves: false });
     let w = withCar(w0, 'thief', { ...thiefOf(w0), s: 600, x: 1.5, speed: 34 });
     w = withCar(w, 'police', { ...policeOf(w), s: 580, x: 1.5, speed: 34 });
-    w = { ...w, level: 10, time: 30 };
+    w = { ...w, level: 10, time: MINUTE_IN };
     while (!w.events.some(isRam)) w = stepWorld(w, NO_INTENTS, DT);
     const off = w.policeTurboOffUntil;
     let gapMax = 0;
@@ -38,7 +40,7 @@ describe('police AI rams the thief (pressure for whoever plays thief)', () => {
     expect(gapMax).toBeGreaterThan(15); // the thief escapes
   });
 
-  it('AI vs AI: the police rams more often than before (≥ 1.0 per match on average; before ~0.6) and the thief still wins 30–70%', () => {
+  it('AI vs AI: the police rams often (≥ 0.8 per match on average; ~0.6 before the ram, rarer at the start since playtest 2026-10-07) and the thief still wins 30–70%', () => {
     let rams = 0;
     let thief = 0;
     let n = 0;
@@ -52,7 +54,7 @@ describe('police AI rams the thief (pressure for whoever plays thief)', () => {
         n++;
         if (w.match.winner === 'thief') thief++;
       }
-    expect(rams / n).toBeGreaterThanOrEqual(1.0);
+    expect(rams / n).toBeGreaterThanOrEqual(0.8);
     expect(thief / n).toBeGreaterThanOrEqual(0.3);
     expect(thief / n).toBeLessThanOrEqual(0.7);
   }, 120000);
@@ -62,7 +64,7 @@ describe('police AI rams the thief (pressure for whoever plays thief)', () => {
     const w0 = createWorld({ seed: 2, playerRole: 'police', traffic: false, curves: false });
     let w = withCar(w0, 'thief', { ...thiefOf(w0), s: 600, x: 1.5, speed: 34 });
     w = withCar(w, 'police', { ...policeOf(w), s: 580, x: 1.5, speed: 34 });
-    w = { ...w, level: 10, time: 30 };
+    w = { ...w, level: 10, time: MINUTE_IN };
     let maxSpeed = 0;
     for (let i = 0; i < 60 * 3; i++) {
       w = stepWorld(w, NO_INTENTS, DT);

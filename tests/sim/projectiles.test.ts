@@ -119,6 +119,24 @@ describe('stepProjectiles', () => {
 });
 
 describe('helicopter = extra gun (playtest 2026-10-06: the officer keeps shooting too)', () => {
+  it("the computer's police helicopter fires slower (1 s) than the player's (0.7 s): playtest 2026-10-07", () => {
+    const shots = (playerRole: 'police' | 'thief') => {
+      const base = createWorld({ seed: 1, playerRole });
+      let w = withCar(withCar(base, 'thief', { ...thiefOf(base), s: 140, x: 1.5, speed: 30 }), 'police', {
+        ...policeOf(base),
+        s: 100,
+        x: 1.5,
+        speed: 30,
+        upgrades: { ...policeOf(base).upgrades, heliUntil: 5 },
+      });
+      for (let i = 0; i < 240; i++) w = fireWeapons({ ...w, events: [] }, both(NO_INTENTS, NO_INTENTS), DT);
+      return w.projectiles.filter((p) => p.air !== undefined).length;
+    };
+    expect(BALANCE.items.police.heliFireIntervalAi).toBe(1);
+    expect(shots('thief')).toBe(4); // 4 s at 1 shot/s
+    expect(shots('police')).toBe(Math.ceil(4 / BALANCE.items.police.heliFireInterval));
+  });
+
   const withHeli = (w: WorldState) =>
     withCar(w, 'police', { ...policeOf(w), upgrades: { ...policeOf(w).upgrades, heliUntil: w.time + 5 } });
 
@@ -136,7 +154,7 @@ describe('helicopter = extra gun (playtest 2026-10-06: the officer keeps shootin
     let w = withHeli(setup({ s: 140, x: 1.5 }));
     for (let i = 0; i < 240; i++) w = fireWeapons({ ...w, events: [] }, both(NO_INTENTS, NO_INTENTS), DT);
     const n = w.projectiles.filter((p) => p.air !== undefined).length;
-    expect(n).toBe(Math.ceil(4 / BALANCE.items.police.heliFireInterval));
+    expect(n).toBe(Math.ceil(4 / BALANCE.items.police.heliFireInterval)); // player's police: 0.7 s
     expect(w.projectiles.some((p) => p.air === undefined)).toBe(false); // the policeman only shoots with the button
     let after: WorldState = { ...setup({ s: 140, x: 1.5 }), projectiles: [] };
     for (let i = 0; i < 120; i++) after = fireWeapons({ ...after, events: [] }, both(NO_INTENTS, NO_INTENTS), DT);
