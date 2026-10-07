@@ -1,5 +1,8 @@
 // All game numbers. Spec: docs/superpowers/specs/2026-10-03-policia-ladrao-design.md
 export type Role = 'police' | 'thief';
+/** V2 part 2: Fácil / Médio / Difícil */
+export type Difficulty = 'easy' | 'normal' | 'hard';
+export const DIFFICULTIES: readonly Difficulty[] = ['easy', 'normal', 'hard'];
 
 export const BALANCE = {
   road: { laneCenters: [-4.5, -1.5, 1.5, 4.5], halfWidth: 6 },
@@ -40,8 +43,14 @@ export const BALANCE = {
     policeTurboOff: 4, // s
   },
   catchUp: { start: 20, end: 150, maxBonus: 0.35 },
-  // playtest 2026-10-07 (felt harder on both sides): the computer levels up every 45 s (was 30 s)
-  difficulty: { levelEvery: 45, maxLevel: 10 },
+  difficulty: { maxLevel: 10 },
+  // V2 part 2 (spec 2026-10-07-v2-parte2-dificuldade-design.md §2). Médio is the 0.11 game:
+  // level every 45 s (playtest 2026-10-07: it felt harder on both sides at 30 s) and the computer's helicopter every 1 s.
+  difficulties: {
+    easy: { startLevel: 1, levelEvery: 60, traffic: 0.7, heliFireIntervalAi: 1.2, coins: 0.75 },
+    normal: { startLevel: 1, levelEvery: 45, traffic: 1, heliFireIntervalAi: 1, coins: 1 },
+    hard: { startLevel: 3, levelEvery: 30, traffic: 1.3, heliFireIntervalAi: 0.7, coins: 1.5 },
+  },
   // police AI rams the thief (pressure on whoever plays the thief); after the crash the usual penalty applies
   ai: {
     ramRange: 35, // m: only rams with the thief up to this far ahead
@@ -99,7 +108,6 @@ export const BALANCE = {
       heliTime: 8,
       pierceTime: 10,
       heliFireInterval: 0.7, // s: the helicopter shoots on its own, besides the officer (full damage, no loss over distance)
-      heliFireIntervalAi: 1, // s: slower when the computer drives the police (playtest 2026-10-07)
     },
     bomb: {
       damage: 15, // balance test C

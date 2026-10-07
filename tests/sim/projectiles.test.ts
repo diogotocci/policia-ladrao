@@ -132,7 +132,7 @@ describe('helicopter = extra gun (playtest 2026-10-06: the officer keeps shootin
       for (let i = 0; i < 240; i++) w = fireWeapons({ ...w, events: [] }, both(NO_INTENTS, NO_INTENTS), DT);
       return w.projectiles.filter((p) => p.air !== undefined).length;
     };
-    expect(BALANCE.items.police.heliFireIntervalAi).toBe(1);
+    expect(BALANCE.difficulties.normal.heliFireIntervalAi).toBe(1);
     expect(shots('thief')).toBe(4); // 4 s at 1 shot/s
     expect(shots('police')).toBe(Math.ceil(4 / BALANCE.items.police.heliFireInterval));
   });

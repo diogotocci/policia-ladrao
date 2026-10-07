@@ -1,4 +1,4 @@
-import type { Role } from '../config/balance';
+import type { Difficulty, Role } from '../config/balance';
 import type { AiMemory } from './ai';
 import type { CarState } from './car';
 
@@ -76,6 +76,7 @@ export interface WorldState {
   /** simulation seconds */
   time: number;
   level: number;
+  difficulty: Difficulty;
   playerRole: Role;
   player: CarState;
   opponent: CarState;

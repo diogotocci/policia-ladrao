@@ -1,5 +1,5 @@
 // Pure numeric rules from spec §4 (stateless).
-import { BALANCE } from '../config/balance';
+import { BALANCE, type Difficulty } from '../config/balance';
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
@@ -30,7 +30,7 @@ export function inFireCone(shooter: { s: number; x: number }, target: { s: numbe
 }
 
 /** Difficulty level: rises every 30 s, up to 10. */
-export function levelAt(timeSeconds: number): number {
-  const { levelEvery, maxLevel } = BALANCE.difficulty;
-  return Math.min(maxLevel, 1 + Math.floor(timeSeconds / levelEvery));
+export function levelAt(timeSeconds: number, difficulty: Difficulty = 'normal'): number {
+  const { startLevel, levelEvery } = BALANCE.difficulties[difficulty];
+  return Math.min(BALANCE.difficulty.maxLevel, startLevel + Math.floor(timeSeconds / levelEvery));
 }

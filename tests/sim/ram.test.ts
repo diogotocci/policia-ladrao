@@ -7,7 +7,7 @@ import { createRng } from '../../src/sim/rng';
 
 const DT = 1 / 60;
 // the world recomputes the level from the time (and the thief escapes at 1:30): start at level 2, a minute in
-const MINUTE_IN = BALANCE.difficulty.levelEvery + 15;
+const MINUTE_IN = BALANCE.difficulties.normal.levelEvery + 15;
 const isRam = (e: WorldState['events'][number]) =>
   e.type === 'crash' && ((e.a === 'police' && e.b === 'thief') || (e.a === 'thief' && e.b === 'police'));
 
