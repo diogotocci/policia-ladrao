@@ -138,8 +138,9 @@ export function renderRanking(
     tab: Role;
     highlight?: { mode: Mode; difficulty: Difficulty; role: Role; rank: number };
     focusTab?: boolean;
-    /** redrawn after a difficulty switch: keep the keyboard on the picker */
+    /** redrawn after a difficulty or mode switch: keep the keyboard on that picker */
     focusDifficulty?: boolean;
+    focusMode?: boolean;
     onTab(tab: Role): void;
     onBack(): void;
   },
@@ -167,7 +168,10 @@ export function renderRanking(
     const row = h('li', 'ranking-row');
     const hl = p.highlight;
     if (hl && hl.mode === p.mode && hl.difficulty === p.difficulty && hl.role === p.tab && hl.rank === i + 1) row.classList.add('is-new');
-    const how = e.how === 'kill' ? '💥' : e.how === 'escape' ? `🏁 ♥${Math.round(e.hp ?? 0)}` : e.how === 'caught' ? 'preso' : '';
+    const life = `♥${Math.round(e.hp ?? 0)}`;
+    // Sobrevivência thief: the life left also when he destroyed the police (spec §6)
+    const kill = p.mode === 'survival' ? `💥 ${life}` : '💥';
+    const how = e.how === 'kill' ? kill : e.how === 'escape' ? `🏁 ${life}` : e.how === 'caught' ? 'preso' : '';
     const time = h('span', 'ranking-time', formatTime(e.time));
     if (how) {
       const tag = h('span', 'ranking-how', ` ${how}`);
@@ -185,8 +189,10 @@ export function renderRanking(
   });
   const back = btn('Voltar', 'is-quiet', p.onBack);
   const picker = difficultyPicker(p.difficulty, p.onDifficulty);
-  card.append(h('h2', 'screen-heading', 'Ranking'), modePicker(p.mode, p.onMode), picker, tabs, list, back);
+  const modes = modePicker(p.mode, p.onMode);
+  card.append(h('h2', 'screen-heading', 'Ranking'), modes, picker, tabs, list, back);
   s.append(card);
-  const checked = picker.querySelector<HTMLElement>('[aria-checked="true"]') ?? undefined;
-  return mount(root, s, p.focusDifficulty ? checked : p.focusTab ? selected : back);
+  const checkedIn = (g: HTMLElement) => g.querySelector<HTMLElement>('[aria-checked="true"]') ?? undefined;
+  const focus = p.focusMode ? checkedIn(modes) : p.focusDifficulty ? checkedIn(picker) : p.focusTab ? selected : back;
+  return mount(root, s, focus);
 }

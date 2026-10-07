@@ -498,6 +498,22 @@ describe('ranking', () => {
     expect(root.querySelector('.ranking-row')!.textContent).toContain('preso');
     (groups[0]!.querySelectorAll('[role="radio"]')[0] as HTMLElement).click();
     expect(onMode).toHaveBeenCalledWith('pursuit');
+    root.innerHTML = '';
+    // redrawn after a mode switch from the keyboard: focus stays on the mode picker
+    const won = insert(emptyBoard(), 'thief', { initials: 'KIL', time: 150, hp: 42, how: 'kill', date: 'x' }, 'survival').board;
+    renderRanking(root, {
+      boards: { pursuit: emptyBoards(), survival: { ...emptyBoards(), normal: won } },
+      mode: 'survival',
+      onMode,
+      focusMode: true,
+      difficulty: 'normal',
+      onDifficulty: vi.fn(),
+      tab: 'thief',
+      onTab: vi.fn(),
+      onBack: vi.fn(),
+    });
+    expect(document.activeElement).toBe(root.querySelector('[aria-label="Modo"] [aria-checked="true"]'));
+    expect(root.querySelector('.ranking-row')!.textContent).toContain('♥42'); // survival win shows the life left
   });
 
   it("a difficulty picker on top shows that difficulty's list; the new-record highlight only where it was made", () => {

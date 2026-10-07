@@ -13,6 +13,9 @@ const S = BALANCE.survival;
 const BLOCK = (S.worksEvery[0] + S.worksEvery[1]) / 2;
 const CLEARANCE = 20; // m from bumps and sharp curves
 const LANE_HALF = 1.5;
+/** m into the works that still count as a front hit */
+const FRONT = 4;
+const HOLD_SPEED = 0.35;
 
 export interface Works {
   s: number;
@@ -75,13 +78,28 @@ export function hitWorks(w: WorldState): WorldState {
     const car = role === 'police' ? policeOf(out) : thiefOf(out);
     const wk = out.works.find((x) => inside(car, x));
     const key = `works:${role}`;
-    if (!wk || (immunity[key] ?? 0) > 0 || car.airTime > 0) continue;
+    if (!wk || car.airTime > 0) continue;
     const lx = worksLaneX(wk);
-    const side = car.x >= lx ? 1 : -1;
-    const edge = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
-    let x = lx + side * (LANE_HALF + BALANCE.car.halfWidth + 0.05);
-    if (Math.abs(x) > edge) x = lx - side * (LANE_HALF + BALANCE.car.halfWidth + 0.05);
-    const hit = hurt({ ...car, x, speed: car.speed * (1 - BALANCE.collision.speedLoss) }, BALANCE.collision.scenery, out);
+    // the cones always block; damage and the crash event only once per immunity window
+    const fresh = (immunity[key] ?? 0) <= 0;
+    let moved: CarState;
+    if (car.s - wk.s < FRONT) {
+      // straight into the first cones: held right before them, much slower (like hitting a barrier)
+      moved = { ...car, s: wk.s - BALANCE.car.length / 2 - 0.1, speed: fresh ? car.speed * HOLD_SPEED : Math.min(car.speed, 3) };
+    } else {
+      // from the side: pushed back out on the nearest side that is still on the road
+      const edge = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
+      const out1 = lx + (LANE_HALF + BALANCE.car.halfWidth + 0.05);
+      const out0 = lx - (LANE_HALF + BALANCE.car.halfWidth + 0.05);
+      const options = [out0, out1].filter((x) => Math.abs(x) <= edge);
+      const x = options.reduce((a, b) => (Math.abs(b - car.x) < Math.abs(a - car.x) ? b : a));
+      moved = { ...car, x, speed: fresh ? car.speed * (1 - BALANCE.collision.speedLoss) : car.speed };
+    }
+    if (!fresh) {
+      out = withCar(out, role, moved);
+      continue;
+    }
+    const hit = hurt(moved, BALANCE.collision.scenery, out);
     out = withCar(out, role, hit);
     immunity[key] = BALANCE.collision.immunity;
     events.push({ type: 'crash', a: role, b: 'works', s: car.s, x: lx });

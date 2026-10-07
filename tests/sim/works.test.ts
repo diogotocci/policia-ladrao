@@ -56,6 +56,37 @@ describe('roadworks (Sobrevivência, chaos 3+)', () => {
     expect(Math.abs(t.x - x)).toBeGreaterThan(1.5);
   });
 
+  it('steering into the closed lane from the side pushes the car back out on that side (no jump across the lane)', () => {
+    let w: WorldState = createWorld({ seed: 4, playerRole: 'thief', mode: 'survival', traffic: false, curves: false });
+    const wk = worksBetween(4, 2000, 5000).find((x) => x.lane === 0 || x.lane === 1)!;
+    const lx = worksLaneX(wk);
+    w = { ...w, chaos: 3, worksFromS: 0 };
+    // coming from the lane on the right of the works, already alongside the cones
+    const from = lx + 2.2;
+    w = withCar(w, 'thief', { ...thiefOf(w), s: wk.s + 20, x: from, speed: 30 });
+    w = withCar(w, 'police', { ...policeOf(w), s: wk.s - 200 });
+    const next = stepWorld(w, NO_INTENTS, DT);
+    expect(Math.abs(thiefOf(next).x - from)).toBeLessThan(0.6);
+    expect(thiefOf(next).x).toBeGreaterThan(lx);
+  });
+
+  it('driving straight into the start of the works stops the car at the cones (held, not teleported sideways)', () => {
+    let w: WorldState = createWorld({ seed: 4, playerRole: 'thief', mode: 'survival', traffic: false, curves: false });
+    const wk = worksBetween(4, 2000, 5000).find((x) => x.lane === 0)!;
+    const lx = worksLaneX(wk);
+    w = { ...w, chaos: 3, worksFromS: 0 };
+    w = withCar(w, 'thief', { ...thiefOf(w), s: wk.s + 0.2, x: lx - 0.5, speed: 30 });
+    w = withCar(w, 'police', { ...policeOf(w), s: wk.s - 200 });
+    let next = stepWorld(w, NO_INTENTS, DT);
+    const t = thiefOf(next);
+    expect(Math.abs(t.x - (lx - 0.5))).toBeLessThan(0.2);
+    expect(t.s).toBeLessThan(wk.s);
+    expect(t.speed).toBeLessThan(15);
+    // still pushing forward (immune for 1 s): held at the cones, never through them, no extra damage
+    for (let i = 0; i < 120; i++) next = stepWorld(next, NO_INTENTS, DT);
+    expect(thiefOf(next).s).toBeLessThan(wk.s + 0.5);
+  });
+
   it('the computer changes lane before the works', () => {
     let w: WorldState = createWorld({ seed: 4, playerRole: 'police', mode: 'survival', traffic: false, curves: false });
     const wk = worksBetween(4, 2000, 5000)[0]!;
@@ -73,15 +104,20 @@ describe('roadworks (Sobrevivência, chaos 3+)', () => {
 });
 
 describe('traffic and roadworks', () => {
-  it('traffic never drives through the cones', () => {
-    let w: WorldState = createWorld({ seed: 11, playerRole: 'thief', mode: 'survival', chaosEvery: 1, curves: false });
+  it('traffic never drives through the cones (10 seeds, 2 min each)', () => {
     let inside = 0;
-    for (let i = 0; i < 90 * 60; i++) {
-      w = stepWorld(w, 'ai', DT);
-      for (const t of w.traffic)
-        for (const wk of w.works) if (t.s > wk.s && t.s < wk.s + wk.length && Math.abs(t.x - worksLaneX(wk)) < 1.2) inside++;
+    let seen = 0;
+    for (let seed = 1; seed <= 10; seed++) {
+      let w: WorldState = createWorld({ seed, playerRole: 'thief', mode: 'survival', chaosEvery: 5 });
+      w = withCar(withCar(w, 'thief', { ...thiefOf(w), hp: 1e6 }), 'police', { ...policeOf(w), hp: 1e6 });
+      for (let i = 0; i < 120 * 60; i++) {
+        w = stepWorld(w, 'ai', DT);
+        seen += w.works.length ? 1 : 0;
+        for (const t of w.traffic)
+          for (const wk of w.works) if (t.s > wk.s && t.s < wk.s + wk.length && Math.abs(t.x - worksLaneX(wk)) < 1.4) inside++;
+      }
     }
-    expect(w.works.length).toBeGreaterThan(0);
+    expect(seen).toBeGreaterThan(0);
     expect(inside).toBe(0);
-  }, 60_000);
+  }, 240_000);
 });
