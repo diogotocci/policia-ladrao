@@ -1,24 +1,24 @@
 # Graph Report - policia-ladrao  (2026-10-06)
 
 ## Corpus Check
-- 164 files · ~102,654 words
+- 164 files · ~103,290 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 997 nodes · 2362 edges · 67 communities (50 shown, 17 thin omitted)
+- 999 nodes · 2367 edges · 70 communities (54 shown, 16 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.7)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `52e16a18`
+- Built from commit: `2dda0f40`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - world.ts
-- ai.ts
+- profile.ts
 - carFactory.ts
-- app.ts
+- screens.ts
 - strategy.ts
 - Review Focus
 - combat.spec.ts
@@ -31,7 +31,7 @@
 - Coding Standards
 - compilerOptions
 - devDependencies
-- keyboard.ts
+- gunner.ts
 - session.ts
 - package.json
 - heli.ts
@@ -61,8 +61,8 @@
 - mixer.test.ts
 - foundation.spec.ts
 - visual.spec.ts
-- curves.ts
-- profile.ts
+- ai.ts
+- backup.ts
 - GameHandle
 - vitest
 - fixedStepper.ts
@@ -77,6 +77,9 @@
 - Review Focus
 - app-credit.test.ts
 - renderer.ts
+- app.ts
+- end.ts
+- createCar
 
 ## God Nodes (most connected - your core abstractions)
 1. `thiefOf()` - 49 edges
@@ -91,37 +94,37 @@
 10. `h()` - 26 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `feedbackForFrame()` --indirect_call--> `e()`  [INFERRED]
-  src/ui/feedback.ts → tests/storage/ranking.test.ts
 - `createTouchButtons()` --indirect_call--> `t()`  [INFERRED]
   src/input/touchButtons.ts → tests/storage/ranking.test.ts
+- `police()` --calls--> `createCar()`  [EXTRACTED]
+  tests/sim/items.test.ts → src/sim/car.ts
+- `thief()` --calls--> `createCar()`  [EXTRACTED]
+  tests/sim/items.test.ts → src/sim/car.ts
 - `world()` --calls--> `createWorld()`  [EXTRACTED]
   tests/audio/mixer.test.ts → src/sim/world.ts
-- `run()` --indirect_call--> `reduce()`  [INFERRED]
-  tests/ui/flow.test.ts → src/ui/screens/flow.ts
-- `open()` --calls--> `openProgress()`  [EXTRACTED]
-  tests/ui/progress.test.ts → src/ui/screens/progress.ts
+- `feedbackForFrame()` --indirect_call--> `e()`  [INFERRED]
+  src/ui/feedback.ts → tests/storage/ranking.test.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (67 total, 17 thin omitted)
+## Communities (70 total, 16 thin omitted)
 
 ### Community 0 - "world.ts"
-Cohesion: 0.08
-Nodes (89): BALANCE, Role, AiMemory, initialAiMemory(), dropBomb(), stepBombs(), CarState, cornering() (+81 more)
+Cohesion: 0.07
+Nodes (92): BALANCE, Role, IntentName, KEYMAP, AiMemory, initialAiMemory(), dropBomb(), stepBombs() (+84 more)
 
-### Community 1 - "ai.ts"
-Cohesion: 0.11
-Nodes (26): Car, errors, Snap, snapshot(), waitSim(), aiStep(), bumpCovers(), considerBombs() (+18 more)
+### Community 1 - "profile.ts"
+Cohesion: 0.17
+Nodes (18): applyMatch(), emptyProfile(), isCount(), isObject(), parseProfile(), Profile, PROFILE_VERSION, ProfileStats (+10 more)
 
 ### Community 2 - "carFactory.ts"
-Cohesion: 0.06
-Nodes (53): addLamps(), addWheels(), buildCivilian(), buildPolice(), buildThief(), CHROME, CIVILIAN_LAMPS, CIVILIANS (+45 more)
+Cohesion: 0.13
+Nodes (30): addLamps(), addWheels(), buildCivilian(), buildPolice(), buildThief(), CHROME, CIVILIAN_LAMPS, CIVILIANS (+22 more)
 
-### Community 3 - "app.ts"
-Cohesion: 0.07
-Nodes (66): startApp(), grantWelcome(), MatchStats, better(), Board, emptyBoard(), Entry, insert() (+58 more)
+### Community 3 - "screens.ts"
+Cohesion: 0.15
+Nodes (28): renderChoose(), roleCard(), ROLES, btn(), Disposable, h(), mount(), openModal() (+20 more)
 
 ### Community 4 - "strategy.ts"
 Cohesion: 0.06
@@ -140,8 +143,8 @@ Cohesion: 0.13
 Nodes (15): app, debug, escapeParam, ITEMS, mute, params, q, seedParam (+7 more)
 
 ### Community 8 - "game.ts"
-Cohesion: 0.25
-Nodes (12): createDebug(), anyOf(), lerpCar(), startGame(), createKeyboardInput(), createChaseCamera(), flashGunner(), createRearview() (+4 more)
+Cohesion: 0.22
+Nodes (12): createDebug(), anyOf(), lerpCar(), startGame(), createKeyboardInput(), createChaseCamera(), createRearview(), isBehind() (+4 more)
 
 ### Community 9 - "Review Focus"
 Cohesion: 0.13
@@ -171,6 +174,10 @@ Nodes (27): DOM, DOM.Iterable, e2e, ES2022, node, playwright.config.ts, src, tes
 Cohesion: 0.13
 Nodes (15): eslint, eslint-plugin-security, globals, jsdom, devDependencies, eslint, eslint-plugin-security, globals (+7 more)
 
+### Community 16 - "gunner.ts"
+Cohesion: 0.16
+Nodes (14): createCarModel(), updateCarModel(), createCarPreview(), attachGunner(), BODY_MAT, box(), FLASH_GEO, FLASH_MAT (+6 more)
+
 ### Community 17 - "session.ts"
 Cohesion: 0.24
 Nodes (8): createAudioSession(), UNLOCK_EVENTS, createWebAudioBackend(), ICONS, createSoundToggle(), readSoundPref(), writeSoundPref(), broken
@@ -180,8 +187,8 @@ Cohesion: 0.20
 Nodes (9): dependencies, three, engines, node, name, private, type, version (+1 more)
 
 ### Community 19 - "heli.ts"
-Cohesion: 0.32
-Nodes (9): createCombatFx(), dotTexture(), tracerHeight(), box(), createHeli(), HELI_EXIT, HELI_Y, heliPose (+1 more)
+Cohesion: 0.22
+Nodes (11): createCombatFx(), dotTexture(), tracerHeight(), box(), createHeli(), HELI_EXIT, HELI_Y, heliPose (+3 more)
 
 ### Community 20 - "scene.ts"
 Cohesion: 0.43
@@ -244,8 +251,8 @@ Cohesion: 0.40
 Nodes (4): Backlog — ideias para próximas versões, Fases (anotado em 2026-10-05), Progressão e retenção (anotado em 2026-10-04), Reforço da polícia: bloqueio de via (anotado em 2026-10-05)
 
 ### Community 42 - "feedback.ts"
-Cohesion: 0.70
-Nodes (3): Feedback, feedbackFor(), feedbackForFrame()
+Cohesion: 0.53
+Nodes (4): Feedback, feedbackFor(), feedbackForFrame(), e()
 
 ### Community 43 - "2. Refresh"
 Cohesion: 0.25
@@ -263,13 +270,13 @@ Nodes (6): Note, SoundName, createNullBackend(), NullBackend, shot, world()
 Cohesion: 0.33
 Nodes (4): errors, Game, Snap, Visuals
 
-### Community 48 - "curves.ts"
-Cohesion: 0.11
-Nodes (27): buildingsForChunk(), BuildingSpec, PALETTE, smoothTexture(), CHUNK_LENGTH, createRoad(), renderOrigin(), Slot (+19 more)
+### Community 48 - "ai.ts"
+Cohesion: 0.06
+Nodes (55): Car, errors, Snap, snapshot(), waitSim(), buildingsForChunk(), BuildingSpec, PALETTE (+47 more)
 
-### Community 49 - "profile.ts"
-Cohesion: 0.07
-Nodes (41): RFC-4648, errors, G, BACKUP_ERROR_TEXT, BackupError, BackupResult, blocks(), crc32() (+33 more)
+### Community 49 - "backup.ts"
+Cohesion: 0.11
+Nodes (24): RFC-4648, errors, G, BACKUP_ERROR_TEXT, BackupError, BackupResult, blocks(), crc32() (+16 more)
 
 ### Community 53 - "Polícia × Ladrão: V2, Parte 1: perfil e moedas (design)"
 Cohesion: 0.17
@@ -287,25 +294,37 @@ Nodes (3): ends, OnEnd, rafs
 Cohesion: 0.48
 Nodes (5): computeRenderSize(), createQualityGovernor(), createRenderer(), ORDER, QUALITY
 
+### Community 67 - "app.ts"
+Cohesion: 0.23
+Nodes (17): startApp(), grantWelcome(), better(), Board, emptyBoard(), Entry, insert(), loadBoard() (+9 more)
+
+### Community 68 - "end.ts"
+Cohesion: 0.18
+Nodes (17): MatchStats, formatTime(), countUp(), endReason(), initialsPad(), padBtn(), reducedMotion(), resultCard() (+9 more)
+
+### Community 69 - "createCar"
+Cohesion: 0.29
+Nodes (8): createTrafficModel(), bumpSignTexture(), chevronTexture(), createWorldProps(), stripeTexture(), baseUpgrades(), createCar(), atSpeed()
+
 ## Knowledge Gaps
 - **331 isolated node(s):** `root`, `skillsDir`, `rulesDir`, `skills`, `usingSuperpowers` (+326 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **17 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **16 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Role` connect `world.ts` to `ai.ts`, `carFactory.ts`, `app.ts`, `opponentMarker.ts`, `main.ts`, `game.ts`, `feedback.ts`, `profile.ts`, `touchButtons.ts`?**
+- **Why does `Role` connect `world.ts` to `profile.ts`, `carFactory.ts`, `app.ts`, `opponentMarker.ts`, `screens.ts`, `end.ts`, `main.ts`, `game.ts`, `feedback.ts`, `gunner.ts`, `ai.ts`, `touchButtons.ts`?**
   _High betweenness centrality (0.030) - this node is a cross-community bridge._
-- **Why does `BALANCE` connect `world.ts` to `ai.ts`, `carFactory.ts`, `app.ts`, `game.ts`, `feedback.ts`, `curves.ts`, `profile.ts`, `heli.ts`, `fixedStepper.ts`?**
-  _High betweenness centrality (0.023) - this node is a cross-community bridge._
-- **Why does `WorldState` connect `world.ts` to `ai.ts`, `carFactory.ts`, `game.ts`, `music.ts`, `mixer.test.ts`, `profile.ts`, `heli.ts`, `Mixer`?**
+- **Why does `BALANCE` connect `world.ts` to `profile.ts`, `screens.ts`, `end.ts`, `createCar`, `game.ts`, `feedback.ts`, `ai.ts`, `heli.ts`, `fixedStepper.ts`?**
+  _High betweenness centrality (0.024) - this node is a cross-community bridge._
+- **Why does `WorldState` connect `world.ts` to `createCar`, `game.ts`, `music.ts`, `mixer.test.ts`, `ai.ts`, `heli.ts`, `Mixer`?**
   _High betweenness centrality (0.016) - this node is a cross-community bridge._
 - **What connects `root`, `skillsDir`, `rulesDir` to the rest of the system?**
   _331 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `world.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.07631785995279308 - nodes in this community are weakly interconnected._
-- **Should `ai.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.11428571428571428 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07224096987876516 - nodes in this community are weakly interconnected._
 - **Should `carFactory.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.06340326340326341 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected._
+- **Should `screens.ts` be split into smaller, more focused modules?**
+  _Cohesion score 0.145748987854251 - nodes in this community are weakly interconnected._
