@@ -1,5 +1,5 @@
 // Screen flow (spec §7) as a pure state machine: title -> choice -> countdown -> game <-> pause -> end -> ranking.
-import type { Role } from '../../config/balance';
+import type { Difficulty, Role } from '../../config/balance';
 import type { MatchStats, Reward } from '../../meta/rewards';
 
 export const COUNTDOWN = 3; // s
@@ -24,9 +24,9 @@ export type FlowState =
   | { screen: 'playing'; role: Role }
   | { screen: 'paused'; role: Role }
   | EndState
-  | { screen: 'ranking'; tab: Role; from: 'title' }
+  | { screen: 'ranking'; tab: Role; difficulty: Difficulty; from: 'title' }
   /** opened from the end screen: Back returns to the same end screen (an unsaved record is still there) */
-  | { screen: 'ranking'; tab: Role; from: 'end'; end: EndState };
+  | { screen: 'ranking'; tab: Role; difficulty: Difficulty; from: 'end'; end: EndState };
 
 export type EndState = {
   screen: 'end';
@@ -47,7 +47,9 @@ export type FlowAction =
   | { type: 'restart' }
   | { type: 'quit' }
   | { type: 'ended'; result: MatchResult; qualifies?: boolean; reward?: Reward }
-  | { type: 'openRanking' }
+  /** opens on this difficulty (the app's current one); default Médio */
+  | { type: 'openRanking'; difficulty?: Difficulty }
+  | { type: 'difficultyTab'; difficulty: Difficulty }
   /** end screen: play again choosing the side */
   | { type: 'changeSide' }
   /** initials saved on the end screen */
@@ -63,7 +65,7 @@ export function reduce(s: FlowState, a: FlowAction): FlowState {
   switch (s.screen) {
     case 'title':
       if (a.type === 'play') return { screen: 'choose' };
-      if (a.type === 'openRanking') return { screen: 'ranking', tab: 'police', from: 'title' };
+      if (a.type === 'openRanking') return { screen: 'ranking', tab: 'police', difficulty: a.difficulty ?? 'normal', from: 'title' };
       return s;
     case 'choose':
       if (a.type === 'choose') return countdown(a.role);
@@ -89,11 +91,12 @@ export function reduce(s: FlowState, a: FlowAction): FlowState {
       if (a.type === 'restart') return countdown(s.role);
       if (a.type === 'quit' || a.type === 'back') return initialState();
       if (a.type === 'changeSide') return { screen: 'choose' };
-      if (a.type === 'openRanking') return { screen: 'ranking', tab: s.role, from: 'end', end: s };
+      if (a.type === 'openRanking') return { screen: 'ranking', tab: s.role, difficulty: a.difficulty ?? 'normal', from: 'end', end: s };
       if (a.type === 'saved') return s.saved ? s : { ...s, saved: true };
       return s;
     case 'ranking':
       if (a.type === 'tab') return { ...s, tab: a.tab };
+      if (a.type === 'difficultyTab') return { ...s, difficulty: a.difficulty };
       if (a.type === 'back' && s.from === 'end') return s.end;
       if (a.type === 'back' || a.type === 'quit') return initialState();
       return s;

@@ -1,6 +1,7 @@
 // App screens (spec §7). Thin DOM components: they only draw and call callbacks; the flow lives in flow.ts.
-import type { Role } from '../../config/balance';
-import type { Board } from '../../storage/ranking';
+import type { Difficulty, Role } from '../../config/balance';
+import type { Boards } from '../../storage/ranking';
+import { difficultyPicker } from './difficultyPicker';
 import { formatTime } from '../hud';
 import { btn, h, mount, type Disposable } from './dom';
 import { openHowTo } from './howto';
@@ -128,7 +129,16 @@ const shortDate = (iso: string) => {
 
 export function renderRanking(
   root: HTMLElement,
-  p: { board: Board; tab: Role; highlight?: { role: Role; rank: number }; focusTab?: boolean; onTab(tab: Role): void; onBack(): void },
+  p: {
+    boards: Boards;
+    difficulty: Difficulty;
+    onDifficulty(d: Difficulty): void;
+    tab: Role;
+    highlight?: { difficulty: Difficulty; role: Role; rank: number };
+    focusTab?: boolean;
+    onTab(tab: Role): void;
+    onBack(): void;
+  },
 ): Disposable {
   const s = h('section', 'screen screen-ranking');
   const card = h('div', 'screen-card is-wide');
@@ -146,11 +156,12 @@ export function renderRanking(
   const list = h('ol', 'ranking-list');
   list.id = 'ranking-list';
   list.setAttribute('role', 'tabpanel');
-  const entries = p.board[p.tab];
+  const entries = p.boards[p.difficulty][p.tab];
   if (entries.length === 0) list.append(h('li', 'ranking-empty', 'Nenhum recorde ainda — jogue uma partida!'));
   entries.forEach((e, i) => {
     const row = h('li', 'ranking-row');
-    if (p.highlight && p.highlight.role === p.tab && p.highlight.rank === i + 1) row.classList.add('is-new');
+    const hl = p.highlight;
+    if (hl && hl.difficulty === p.difficulty && hl.role === p.tab && hl.rank === i + 1) row.classList.add('is-new');
     const how = e.how === 'kill' ? '💥' : e.how === 'escape' ? `🏁 ♥${Math.round(e.hp ?? 0)}` : '';
     const time = h('span', 'ranking-time', formatTime(e.time));
     if (how) {
@@ -167,7 +178,7 @@ export function renderRanking(
     list.append(row);
   });
   const back = btn('Voltar', 'is-quiet', p.onBack);
-  card.append(h('h2', 'screen-heading', 'Ranking'), tabs, list, back);
+  card.append(h('h2', 'screen-heading', 'Ranking'), difficultyPicker(p.difficulty, p.onDifficulty), tabs, list, back);
   s.append(card);
   return mount(root, s, p.focusTab ? selected : back);
 }
