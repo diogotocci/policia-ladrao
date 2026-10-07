@@ -63,11 +63,23 @@ describe('title', () => {
 });
 
 describe('choose', () => {
-  const cb = () => ({ onChoose: vi.fn(), onBack: vi.fn(), onHowToSeen: vi.fn() });
+  const cb = () => ({ onChoose: vi.fn(), onBack: vi.fn(), onHowToSeen: vi.fn(), difficulty: 'normal' as const, onDifficulty: vi.fn() });
   // each screen installs a document-level focus trap: dispose it so tests do not leak into each other
   const open: { dispose(): void }[] = [];
   const show = (p: Parameters<typeof renderChoose>[1]) => open.push(renderChoose(root, p));
   afterEach(() => open.splice(0).forEach((v) => v.dispose()));
+
+  it('the difficulty picker sits on top with the coins multipliers; changing it calls back; focus stays on the first card', () => {
+    const p = cb();
+    show({ ...p, difficulty: 'hard' });
+    const picker = root.querySelector('.screen-choose [role="radiogroup"]')!;
+    expect(picker.querySelector('[aria-checked="true"]')!.textContent).toContain('Difícil');
+    expect(picker.textContent).toContain('moedas ×1,5');
+    expect(root.textContent).toContain('Escolha seu lado');
+    expect(document.activeElement).toBe(root.querySelector('.choose-card'));
+    (picker.querySelectorAll('[role="radio"]')[0] as HTMLElement).click();
+    expect(p.onDifficulty).toHaveBeenCalledWith('easy');
+  });
 
   it('two cards with the goal, the box color and a "Jogar de…" call; choosing calls back with the side; Voltar', () => {
     const p = cb();

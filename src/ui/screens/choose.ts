@@ -1,5 +1,6 @@
 // Side choice: two role cards; the "Como jogar" tips open by themselves on the first visit.
-import type { Role } from '../../config/balance';
+import type { Difficulty, Role } from '../../config/balance';
+import { difficultyPicker } from './difficultyPicker';
 import { btn, h, mount, type Disposable } from './dom';
 import { ESCAPE, openHowTo } from './howto';
 import { SCREEN_ICONS } from './icons';
@@ -35,7 +36,15 @@ function roleCard(role: Role, onClick: () => void): HTMLButtonElement {
 
 export function renderChoose(
   root: HTMLElement,
-  p: { onChoose(role: Role): void; onBack(): void; showHowTo?: boolean; onHowToSeen?(): void },
+  p: {
+    onChoose(role: Role): void;
+    onBack(): void;
+    showHowTo?: boolean;
+    onHowToSeen?(): void;
+    /** V2 part 2: Fácil / Médio / Difícil, chosen here */
+    difficulty?: Difficulty;
+    onDifficulty?(d: Difficulty): void;
+  },
 ): Disposable & { previews: Record<Role, HTMLElement> } {
   const s = h('section', 'screen screen-choose');
   const top = h('div', 'choose-top');
@@ -46,7 +55,11 @@ export function renderChoose(
     el.focus();
   };
   const help = btn('Como jogar', 'choose-help', () => openHowTo(s, closedTo(help)), SCREEN_ICONS.help);
-  top.append(back, h('h2', 'screen-heading', 'Escolha seu lado'), help);
+  top.append(
+    back,
+    difficultyPicker(p.difficulty ?? 'normal', (d) => p.onDifficulty?.(d), { showCoins: true }),
+    help,
+  );
   const cards = h('div', 'choose-cards');
   const previews = {} as Record<Role, HTMLElement>;
   for (const role of ['police', 'thief'] as Role[]) {
@@ -54,7 +67,7 @@ export function renderChoose(
     previews[role] = card.querySelector<HTMLElement>('.choose-preview')!;
     cards.append(card);
   }
-  s.append(top, cards);
+  s.append(top, h('h2', 'screen-heading choose-heading', 'Escolha seu lado'), cards);
   const firstCard = cards.querySelector<HTMLElement>('.choose-card')!;
   const m = mount(root, s, firstCard);
   if (p.showHowTo) openHowTo(s, closedTo(firstCard));
