@@ -46,8 +46,8 @@ export function createWorld(opts: {
 }): WorldState {
   const mode: Mode = opts.mode && MODES.includes(opts.mode) ? opts.mode : 'pursuit';
   const difficulty: Difficulty = opts.difficulty && DIFFICULTIES.includes(opts.difficulty) ? opts.difficulty : 'normal';
-  // Sobrevivência: 200 of life for both (V2 part 3); Perseguição 100
-  const maxHp = opts.mode === 'survival' ? BALANCE.survival.hp : BALANCE.hp;
+  // Sobrevivência: 200 / 250 / 300 of life for both by difficulty; Perseguição 100
+  const maxHp = mode === 'survival' ? BALANCE.survival.hp[difficulty] : BALANCE.hp;
   const police: CarState = { ...createCar('police', 1, 0), hasGun: true, maxHp, hp: Math.min(maxHp, opts.debugHp?.police ?? maxHp) };
   const thief: CarState = { ...createCar('thief', 2, 40), maxHp, hp: Math.min(maxHp, opts.debugHp?.thief ?? maxHp) };
   let player = opts.playerRole === 'police' ? police : thief;
@@ -60,7 +60,7 @@ export function createWorld(opts: {
     difficulty,
     mode,
     chaos: 1,
-    worksFromS: null,
+    worksFrom: {},
     works: [],
     chaosEvery: opts.chaosEvery ?? BALANCE.survival.chaosEvery,
     playerRole: opts.playerRole,

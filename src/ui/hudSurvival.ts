@@ -4,8 +4,8 @@ import { BALANCE } from '../config/balance';
 const RISE: Record<number, string> = {
   2: 'Caos 2: mais dano e mais tráfego',
   3: 'Caos 3: obras na pista!',
-  4: 'Caos 4: tudo mais forte',
-  5: 'Caos máximo!',
+  4: 'Caos 4: mais obras e tudo mais forte',
+  5: 'Caos máximo: obras por todo lado!',
 };
 
 /** Returns the meter element; `update` returns the notice text when the chaos level just rose. */

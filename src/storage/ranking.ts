@@ -5,7 +5,7 @@ import { BALANCE, DIFFICULTIES, MODES, type Difficulty, type Mode, type Role } f
 export const RANKING_KEY = 'pl.ranking.v2';
 const MAX = 10;
 /** highest life a car can have (Sobrevivência) */
-const MAX_HP = BALANCE.survival.hp;
+const MAX_HP = Math.max(...Object.values(BALANCE.survival.hp));
 
 export interface Entry {
   initials: string;

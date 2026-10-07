@@ -5,7 +5,7 @@ import type { WorldState } from '../sim/types';
 import { worksLaneX } from '../sim/works';
 import { trackPos } from './trackFrame';
 
-const MAX_WORKS = 4;
+const MAX_WORKS = 8; // the list runs ~80 m behind to ~500 m ahead: up to 6 at chaos 5
 const LANE_HALF = 1.5;
 /** cones along both edges of the closed lane, every 6 m, plus a diagonal taper at the entry */
 const ALONG = 11;

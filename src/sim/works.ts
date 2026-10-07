@@ -1,4 +1,5 @@
-// Roadworks (V2 part 3, Sobrevivência chaos 3+): a lane closed by cones for 60 m, every 500-700 m, from the seed.
+// Roadworks (V2 part 3, Sobrevivência chaos 3+): a lane closed by cones for 60 m, from the seed.
+// More of them at each chaos level: about every 300 m at chaos 3, 220 m at 4 and 180 m at 5.
 // Never on a speed bump or a sharp curve. Driving into the cones costs like the curb.
 import { BALANCE } from '../config/balance';
 import type { CarState } from './car';
@@ -10,59 +11,90 @@ import type { GameEvent, WorldState } from './types';
 import { policeOf, thiefOf, withCar } from './world';
 
 const S = BALANCE.survival;
-const BLOCK = (S.worksEvery[0] + S.worksEvery[1]) / 2;
+/**
+ * One candidate per block; the densest level (chaos 5) uses all of them. About 4 in 10 blocks have no room
+ * (speed bumps and sharp curves), so 110 m blocks give works about every 180 m.
+ */
+const BLOCK = 110;
+const DENSEST = S.worksEvery[S.worksEvery.length - 1]!;
 const CLEARANCE = 20; // m from bumps and sharp curves
+/** m kept free at the end of a block, so two works never touch */
+const GAP = 20;
 const LANE_HALF = 1.5;
 /** m into the works that still count as a front hit */
 const FRONT = 4;
 const HOLD_SPEED = 0.35;
+/** m ahead kept in the list: past the farthest traffic car (they always see the cones in time) */
+const AHEAD = BALANCE.traffic.spawnAheadMax + 260;
 
 export interface Works {
   s: number;
   lane: 0 | 1 | 2 | 3;
   length: number;
+  /** first chaos level where these works are on the road */
+  chaos: number;
 }
 
 export const worksLaneX = (wk: Works): number => BALANCE.road.laneCenters[wk.lane];
 
+/** Chaos level a candidate with roll r (0..1) belongs to: a share DENSEST / every of the candidates at each level. */
+function levelOf(r: number): number {
+  for (let i = 0; i < S.worksEvery.length; i++) if (r < DENSEST / S.worksEvery[i]!) return S.worksFromChaos + i;
+  return Infinity;
+}
+
+const clear = (seed: number, s: number) =>
+  bumpsBetween(seed, s - CLEARANCE, s + S.worksLength + CLEARANCE).length === 0 &&
+  !curvesBetween(seed, s - CLEARANCE, s + S.worksLength + CLEARANCE).some((c) => c.sharp);
+
 function worksInBlock(seed: number, k: number): Works | undefined {
   const rng = createRng((Math.imul(seed ^ 0x5bd1e995, 2246822519) + Math.imul(k + 1, 3266489917)) >>> 0);
-  const half = (S.worksEvery[1] - S.worksEvery[0]) / 2;
-  let s = (k + 1) * BLOCK + rng.range(-half / 2, half / 2);
+  const chaos = levelOf(rng.next());
   const lane = rng.int(0, 3) as Works['lane'];
-  // pushed forward past a speed bump or a sharp curve in the way (a few tries; otherwise this block has none)
-  for (let tries = 0; tries < 4; tries++) {
-    const to = s + S.worksLength + CLEARANCE;
-    const bump = bumpsBetween(seed, s - CLEARANCE, to)[0];
-    const curve = curvesBetween(seed, s - CLEARANCE, to).find((c) => c.sharp);
-    if (!bump && !curve) return s < (k + 2) * BLOCK - half ? { s, lane, length: S.worksLength } : undefined;
-    s = Math.max(bump ? bump.s : 0, curve ? curve.start + curve.length : 0) + CLEARANCE + 1;
+  const room = BLOCK - S.worksLength - GAP;
+  // a few spots in the block away from speed bumps and sharp curves; otherwise this block has none
+  for (let tries = 0; tries < 6; tries++) {
+    const s = (k + 1) * BLOCK + rng.range(0, room);
+    if (clear(seed, s)) return { s, lane, length: S.worksLength, chaos };
   }
   return undefined;
 }
 
-/** Works starting in [s0, s1), in order. */
-export function worksBetween(seed: number, s0: number, s1: number): Works[] {
+/** Works starting in [s0, s1), in order, up to the given chaos level (all of them by default). */
+export function worksBetween(seed: number, s0: number, s1: number, chaos = Infinity): Works[] {
   const out: Works[] = [];
-  for (let k = Math.max(0, Math.floor(s0 / BLOCK) - 2); (k + 1) * BLOCK < s1 + BLOCK; k++) {
+  for (let k = Math.max(0, Math.floor(s0 / BLOCK) - 2); (k + 1) * BLOCK < s1; k++) {
     const wk = worksInBlock(seed, k);
-    if (wk && wk.s >= s0 && wk.s < s1) out.push(wk);
+    if (wk && wk.chaos <= chaos && wk.s >= s0 && wk.s < s1) out.push(wk);
   }
   return out;
 }
 
 /**
- * Turns roadworks on the first time chaos reaches 3 (from 150 m ahead of the leading car, never on top of it)
- * and keeps the list of works near the cars.
+ * Each chaos level from 3 turns its roadworks on the first time it is reached, from 150 m ahead of the
+ * leading car and past the traffic already there (never on top of them), and keeps the list of works near the cars.
  */
 export function stepWorks(w: WorldState): WorldState {
-  let { worksFromS } = w;
+  let { worksFrom } = w;
   const back = Math.min(policeOf(w).s, thiefOf(w).s);
   const front = Math.max(policeOf(w).s, thiefOf(w).s);
-  if (worksFromS === null && w.mode === 'survival' && w.chaos >= S.worksFromChaos) worksFromS = front + 150;
-  if (worksFromS === null) return w.works.length ? { ...w, works: [] } : w;
-  const works = worksBetween(w.seed, Math.max(worksFromS, back - 80), front + 400);
-  return { ...w, worksFromS, works };
+  if (w.mode === 'survival') {
+    // past every traffic car already on the road, so the cones never appear on top of one
+    const from = Math.max(
+      front + 150,
+      w.traffic.reduce((m, t) => Math.max(m, t.s + 10), 0),
+    );
+    for (let level = S.worksFromChaos; level <= w.chaos; level++) {
+      if (worksFrom[level] === undefined) worksFrom = { ...worksFrom, [level]: from };
+    }
+  }
+  const levels = Object.keys(worksFrom).map(Number);
+  if (levels.length === 0) return w.works.length ? { ...w, works: [] } : w;
+  const first = Math.min(...levels.map((l) => worksFrom[l]!));
+  const works = worksBetween(w.seed, Math.max(first, back - 80), front + AHEAD, Math.max(...levels)).filter(
+    (wk) => wk.s >= (worksFrom[wk.chaos] ?? Infinity),
+  );
+  return { ...w, worksFrom, works };
 }
 
 const inside = (car: CarState, wk: Works) =>

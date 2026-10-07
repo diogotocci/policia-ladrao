@@ -1,5 +1,5 @@
 // Traffic: a few slow cars (50–70% of cruise) that sometimes change lanes, recycled ahead.
-import { BALANCE, type Difficulty } from '../config/balance';
+import { BALANCE, type Difficulty, type Mode } from '../config/balance';
 import { createRngFromState } from './rng';
 import type { TrafficCar, WorldState } from './types';
 import { policeOf, thiefOf } from './world';
@@ -7,7 +7,7 @@ import { policeOf, thiefOf } from './world';
 const LANES = BALANCE.road.laneCenters;
 
 /** How many traffic cars to keep at the level: 3 at level 1, +8% per level. */
-export function trafficTarget(level: number, difficulty: Difficulty = 'normal', chaos = 1): number {
+export function trafficTarget(level: number, difficulty: Difficulty = 'normal', chaos = 1, mode: Mode = 'pursuit'): number {
   const t = BALANCE.traffic;
   return Math.max(
     1,
@@ -15,6 +15,7 @@ export function trafficTarget(level: number, difficulty: Difficulty = 'normal', 
       t.baseCount *
         (1 + t.perLevel * (level - 1)) *
         BALANCE.difficulties[difficulty].traffic *
+        (mode === 'survival' ? BALANCE.survival.trafficBase : 1) *
         (1 + BALANCE.survival.trafficPerChaos * (chaos - 1)),
     ),
   );
@@ -25,6 +26,15 @@ const sameLane = (ax: number, bx: number) => Math.abs(ax - bx) < 2 * BALANCE.car
 /** Roadworks closing lane `x` between s - 20 and s + `ahead` (V2 part 3). */
 const closedAhead = (w: WorldState, x: number, s: number, ahead: number) =>
   w.works.find((wk) => sameLane(BALANCE.road.laneCenters[wk.lane], x) && wk.s + wk.length > s - 20 && wk.s - s < ahead);
+
+/** Is a traffic car at (s, x) touching a closed lane? */
+const besideWorks = (w: WorldState, s: number, x: number) =>
+  w.works.some(
+    (wk) =>
+      s > wk.s - BALANCE.car.length / 2 &&
+      s < wk.s + wk.length + BALANCE.car.length / 2 &&
+      Math.abs(x - BALANCE.road.laneCenters[wk.lane]) < 1.45,
+  );
 
 export function stepTraffic(w: WorldState, dt: number): WorldState {
   const T = BALANCE.traffic;
@@ -45,8 +55,10 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
     // roadworks ahead in its lane: moves over (towards the center) in time
     const closed = closedAhead(w, targetX, t.s, 70);
     if (closed) {
+      // the next lane towards the center, or the other side when that one is closed too (works close together)
       const lane = LANES.indexOf(targetX as (typeof LANES)[number]);
-      targetX = LANES[lane <= 1 ? lane + 1 : lane - 1]!;
+      const sides = (lane <= 1 ? [lane + 1, lane - 1] : [lane - 1, lane + 1]).filter((l) => l >= 0 && l < LANES.length);
+      targetX = LANES[sides.find((l) => !closedAhead(w, LANES[l]!, t.s, 70)) ?? sides[0]!]!;
     }
     if (Math.abs(t.x - targetX) < 0.01 && rng.next() < T.laneChangePerSecond * dt) {
       const lane = LANES.indexOf(targetX as (typeof LANES)[number]);
@@ -68,6 +80,8 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
       ).some((o) => Math.abs(o.s - t.s) < L0 && Math.abs(o.x - x) < 2 * BALANCE.car.halfWidth && Math.abs(o.x - t.x) >= Math.abs(o.x - x))
     )
       x = t.x;
+    // never slides sideways into a closed lane alongside (cones of works next to it)
+    if (dx !== 0 && besideWorks(w, t.s, x) && !besideWorks(w, t.s, t.x)) x = t.x;
     // the one ahead in the same lane (already moved this step) — including stopped/braking police and thief (end scenes)
     let leader: { s: number; speed: number } | undefined;
     for (const o of moved) if ((overlapsLane(o, x) || overlapsLane(o, targetX)) && o.s >= t.s && (!leader || o.s < leader.s)) leader = o;
@@ -92,7 +106,7 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
 
   // fill up to the level's density
   let nextId = w.nextTrafficId;
-  const target = w.trafficOn ? trafficTarget(w.level, w.difficulty, w.chaos) : 0;
+  const target = w.trafficOn ? trafficTarget(w.level, w.difficulty, w.chaos, w.mode) : 0;
   let attempts = 0;
   while (cars.length < target && attempts < 20) {
     attempts++;
