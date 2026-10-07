@@ -1,6 +1,5 @@
 // Player profile (V2 part 1): coin balance and lifetime stats, versioned so later parts can migrate it.
-import { BALANCE, type Role } from '../config/balance';
-import type { Board } from '../storage/ranking';
+import { BALANCE, type Difficulty, type Role } from '../config/balance';
 import { emptyStats, rewardFor, type MatchStats, type Reward } from './rewards';
 
 export const PROFILE_VERSION = 1;
@@ -64,10 +63,10 @@ export function applyMatch(
   };
 }
 
-/** One-time welcome for players from before V2: coins for each record already in the local ranking. */
-export function grantWelcome(p: Profile, board: Board): Profile {
+/** One-time welcome for players from before V2: coins for each record already in the local rankings. */
+export function grantWelcome(p: Profile, records: number): Profile {
   if (p.welcomeGranted) return p;
-  const coins = (board.police.length + board.thief.length) * BALANCE.rewards.welcomePerRecord;
+  const coins = Math.max(0, Math.floor(records)) * BALANCE.rewards.welcomePerRecord;
   return { ...p, coins: p.coins + coins, welcomeGranted: true };
 }
 
@@ -76,7 +75,8 @@ export function settleMatch(
   p: Profile,
   result: { winner: Role; time: number; reason?: 'escape' | 'policeDown' | 'thiefDown'; stats?: MatchStats },
   player: Role,
+  difficulty: Difficulty = 'normal',
 ): { profile: Profile; reward: Reward } {
-  const reward = rewardFor({ time: result.time, won: result.winner === player }, result.stats ?? emptyStats());
+  const reward = rewardFor({ time: result.time, won: result.winner === player }, result.stats ?? emptyStats(), difficulty);
   return { profile: applyMatch(p, result, player, reward), reward };
 }

@@ -1,5 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { RANKING_KEY, emptyBoard, insert, loadBoard, qualifies, sanitizeInitials, saveBoard, type Board } from '../../src/storage/ranking';
+import {
+  RANKING_KEY,
+  emptyBoard,
+  insert,
+  loadBoard,
+  qualifies,
+  sanitizeInitials,
+  saveBoard,
+  type Board,
+  countRecords,
+  emptyBoards,
+  loadBoards,
+  RANKING_V3_KEY,
+  saveBoards,
+} from '../../src/storage/ranking';
 
 const memory = (init?: string) => {
   const m = new Map<string, string>();
@@ -128,5 +142,58 @@ describe('sanitizeInitials', () => {
     expect(sanitizeInitials('d1o!z')).toBe('DOZ');
     expect(sanitizeInitials('')).toBe('AAA');
     expect(sanitizeInitials('j')).toBe('JAA');
+  });
+});
+
+describe('one ranking per difficulty (v3)', () => {
+  const mem = (): Storage => {
+    const m = new Map<string, string>();
+    return {
+      get length() {
+        return m.size;
+      },
+      clear: () => m.clear(),
+      getItem: (k) => m.get(k) ?? null,
+      key: (i) => [...m.keys()][i] ?? null,
+      removeItem: (k) => void m.delete(k),
+      setItem: (k, v) => void m.set(k, String(v)),
+    };
+  };
+  const v2 = { police: [e('AAA', 50), e('BBB', 60)], thief: [] };
+
+  it('first load: the old ranking becomes Médio; Fácil and Difícil start empty; v2 is kept', () => {
+    const s = mem();
+    s.setItem(RANKING_KEY, JSON.stringify(v2));
+    const b = loadBoards(s);
+    expect(b.normal.police.map((x) => x.initials)).toEqual(['AAA', 'BBB']);
+    expect(b.easy).toEqual(emptyBoard());
+    expect(b.hard).toEqual(emptyBoard());
+    expect(s.getItem(RANKING_KEY)).toBe(JSON.stringify(v2));
+    expect(countRecords(b)).toBe(2);
+  });
+
+  it('with v3 saved, v2 is ignored (no second migration)', () => {
+    const s = mem();
+    s.setItem(RANKING_KEY, JSON.stringify(v2));
+    const b = emptyBoards();
+    b.hard.thief = [t('NEW', 70, 10, 'kill')];
+    saveBoards(s, b);
+    const back = loadBoards(s);
+    expect(back.normal).toEqual(emptyBoard());
+    expect(back.hard.thief[0]!.initials).toBe('NEW');
+    expect(s.getItem(RANKING_V3_KEY)).not.toBeNull();
+  });
+
+  it('unreadable v3 starts empty and keeps v2; invalid entries are dropped', () => {
+    const s = mem();
+    s.setItem(RANKING_KEY, JSON.stringify(v2));
+    s.setItem(RANKING_V3_KEY, '{oops');
+    expect(loadBoards(s)).toEqual(emptyBoards());
+    expect(s.getItem(RANKING_KEY)).toBe(JSON.stringify(v2));
+    s.setItem(RANKING_V3_KEY, JSON.stringify({ easy: { police: [e('OKK', 40), { initials: 5 }], thief: 'x' } }));
+    const b = loadBoards(s);
+    expect(b.easy.police.map((x) => x.initials)).toEqual(['OKK']);
+    expect(b.easy.thief).toEqual([]);
+    expect(b.normal).toEqual(emptyBoard());
   });
 });

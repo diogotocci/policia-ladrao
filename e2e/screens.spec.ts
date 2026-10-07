@@ -161,3 +161,22 @@ test('coins: a finished match pays, the balance survives a reload, a backup code
   await page.reload();
   await expect(page.locator('.title-wallet')).toHaveText('500');
 });
+
+test('difficulty: Difícil is remembered, pays x1,5 and has its own ranking', async ({ page }) => {
+  await page.goto('/?app&quality=low&mute&debug&traffic=0&escape=4');
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await page.getByRole('radio', { name: /Difícil/ }).click();
+  await page.locator('[data-role="thief"]').click();
+  await expect(page.locator('.screen-end')).toBeVisible({ timeout: 150_000 });
+  await expect(page.locator('.end-difficulty')).toHaveText('Difícil');
+  await expect(page.locator('.end-reward')).toContainText('×1,5');
+  await page.locator('.initials').press('Enter');
+  await page.getByRole('button', { name: 'Ranking' }).click();
+  await expect(page.locator('.screen-ranking [role="radio"][aria-checked="true"]')).toHaveText('Difícil');
+  await expect(page.locator('.ranking-row').first()).toHaveClass(/is-new/);
+  await page.locator('.screen-ranking').getByRole('radio', { name: 'Médio' }).click();
+  await expect(page.locator('.ranking-row')).toHaveCount(0);
+  await page.reload();
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await expect(page.locator('.screen-choose [role="radio"][aria-checked="true"]')).toContainText('Difícil');
+});

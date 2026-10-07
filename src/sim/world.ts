@@ -1,4 +1,4 @@
-import { BALANCE, type Role } from '../config/balance';
+import { BALANCE, DIFFICULTIES, type Difficulty, type Role } from '../config/balance';
 import { aiStep } from './ai';
 import { createCar, stepCar, type CarState } from './car';
 import { resolveCollisions } from './collisions';
@@ -35,7 +35,10 @@ export function createWorld(opts: {
   curves?: boolean;
   /** escape time (s); default BALANCE.match.escapeTime — lower only in debug/e2e (?escape=N) */
   escapeTime?: number;
+  /** V2 part 2: the computer's start level and pace, traffic and its helicopter; default Médio */
+  difficulty?: Difficulty;
 }): WorldState {
+  const difficulty: Difficulty = opts.difficulty && DIFFICULTIES.includes(opts.difficulty) ? opts.difficulty : 'normal';
   const police: CarState = { ...createCar('police', 1, 0), hasGun: true, hp: opts.debugHp?.police ?? BALANCE.hp };
   const thief: CarState = { ...createCar('thief', 2, 40), hp: opts.debugHp?.thief ?? BALANCE.hp };
   let player = opts.playerRole === 'police' ? police : thief;
@@ -44,7 +47,8 @@ export function createWorld(opts: {
   return {
     seed: opts.seed,
     time: 0,
-    level: 1,
+    level: BALANCE.difficulties[difficulty].startLevel,
+    difficulty,
     playerRole: opts.playerRole,
     player,
     opponent,
@@ -158,7 +162,7 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
     out = stepProjectiles(out, dt);
   }
   const time = out.time + dt;
-  out = { ...out, time, level: levelAt(time) };
+  out = { ...out, time, level: levelAt(time, out.difficulty) };
 
   const policeDead = policeOf(out).hp <= 0;
   const thiefDead = thiefOf(out).hp <= 0;

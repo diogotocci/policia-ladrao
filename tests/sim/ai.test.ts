@@ -224,12 +224,12 @@ describe('AI and curves (Entrega 6)', () => {
         if (tried >= n) break;
         tried++;
         const w0 = createWorld({ seed, playerRole: 'police', traffic: false });
-        let w: WorldState = { ...w0, time: (level - 1) * BALANCE.difficulty.levelEvery, level };
+        let w: WorldState = { ...w0, time: (level - 1) * BALANCE.difficulties.normal.levelEvery, level };
         w = withCar(w, 'thief', { ...thiefOf(w), s: c.start - 150, speed: 34, x: BALANCE.road.laneCenters[1 + (seed % 2)]! });
         w = withCar(w, 'police', { ...policeOf(w), s: c.start - 400, speed: 34, hasGun: false });
         let hit = false;
         for (let i = 0; i < 60 * 15 && thiefOf(w).s < c.start + c.length; i++) {
-          w = stepWorld({ ...w, time: (level - 1) * BALANCE.difficulty.levelEvery + i / 60 }, 'ai', 1 / 60);
+          w = stepWorld({ ...w, time: (level - 1) * BALANCE.difficulties.normal.levelEvery + i / 60 }, 'ai', 1 / 60);
           if (w.events.some((e) => e.type === 'crash' && e.a === 'thief' && e.b === 'scenery')) hit = true;
         }
         if (hit) hits++;

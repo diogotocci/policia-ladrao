@@ -3,6 +3,27 @@ import { COUNTDOWN, initialState, reduce, type FlowState } from '../../src/ui/sc
 
 const run = (s: FlowState, ...actions: Parameters<typeof reduce>[1][]) => actions.reduce(reduce, s);
 
+describe('ranking per difficulty', () => {
+  it('opening the ranking keeps the difficulty; difficultyTab changes only it', () => {
+    let s = reduce(initialState(), { type: 'openRanking', difficulty: 'hard' });
+    expect(s).toMatchObject({ screen: 'ranking', tab: 'police', from: 'title', difficulty: 'hard' });
+    s = reduce(s, { type: 'difficultyTab', difficulty: 'easy' });
+    expect(s).toMatchObject({ screen: 'ranking', tab: 'police', difficulty: 'easy' });
+    expect(reduce(initialState(), { type: 'openRanking' })).toMatchObject({ difficulty: 'normal' });
+  });
+
+  it('from the end screen, switching difficulty and coming back returns the same end screen (pending record kept)', () => {
+    const end = reduce(
+      { screen: 'playing', role: 'thief' },
+      { type: 'ended', result: { winner: 'thief', time: 90, reason: 'escape' }, qualifies: true },
+    );
+    let s = reduce(end, { type: 'openRanking', difficulty: 'hard' });
+    expect(s).toMatchObject({ screen: 'ranking', tab: 'thief', from: 'end', difficulty: 'hard' });
+    s = reduce(s, { type: 'difficultyTab', difficulty: 'easy' });
+    expect(reduce(s, { type: 'back' })).toEqual(end);
+  });
+});
+
 describe('screen flow', () => {
   it('happy path: title → choose → countdown → playing → end → ranking → title', () => {
     let s = run(initialState(), { type: 'play' });

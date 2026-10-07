@@ -9,6 +9,7 @@ describe('rewardFor', () => {
       damage: 25,
       boxes: 8,
       won: true,
+      difficulty: 'normal',
       total: 112,
     });
   });
@@ -26,6 +27,7 @@ describe('rewardFor', () => {
       damage: 2,
       boxes: 0,
       won: false,
+      difficulty: 'normal',
       total: 12,
     });
   });
@@ -44,5 +46,23 @@ describe('match stats from events', () => {
 
   it('as the thief, hits on the police count', () => {
     expect(addEvents(emptyStats(), [hit('police', 15), pickup('thief', 'bomb')], 'thief')).toEqual({ damageDealt: 15, rightBoxes: 1 });
+  });
+});
+
+describe('difficulty multiplier', () => {
+  it('Difícil x1.5: the spec example pays 168', () => {
+    const r = rewardFor({ time: 69.9, won: true }, { damageDealt: 100, rightBoxes: 4 }, 'hard');
+    expect(r.total).toBe(168);
+    expect(r.difficulty).toBe('hard');
+  });
+
+  it('Fácil x0.75 rounds down (12 -> 9); totals are always whole', () => {
+    expect(rewardFor({ time: 30, won: false }, { damageDealt: 10, rightBoxes: 0 }, 'easy').total).toBe(9);
+    for (let t = 0; t < 100; t += 7)
+      expect(Number.isInteger(rewardFor({ time: t, won: t % 2 === 0 }, { damageDealt: t, rightBoxes: 1 }, 'easy').total)).toBe(true);
+  });
+
+  it('Médio is the default and unchanged', () => {
+    expect(rewardFor({ time: 69.9, won: true }, { damageDealt: 100, rightBoxes: 4 })).toMatchObject({ total: 112, difficulty: 'normal' });
   });
 });

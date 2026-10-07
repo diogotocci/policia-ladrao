@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { applyMatch, emptyProfile, grantWelcome, parseProfile, settleMatch, type Profile } from '../../src/meta/profile';
-import { emptyBoard, insert } from '../../src/storage/ranking';
 import type { Reward } from '../../src/meta/rewards';
 
-const reward = (total: number, won = true): Reward => ({ time: 0, damage: 0, boxes: 0, won, total });
+const reward = (total: number, won = true): Reward => ({ time: 0, damage: 0, boxes: 0, won, difficulty: 'normal', total });
 
 describe('parseProfile', () => {
   it('round-trips an empty profile', () => {
@@ -53,18 +52,15 @@ describe('applyMatch', () => {
 });
 
 describe('grantWelcome', () => {
-  it('50 coins per record already in the ranking, only once', () => {
-    let board = insert(emptyBoard(), 'police', { initials: 'AAA', time: 50, date: '2026-10-07' }).board;
-    board = insert(board, 'police', { initials: 'BBB', time: 60, date: '2026-10-07' }).board;
-    board = insert(board, 'thief', { initials: 'CCC', time: 90, hp: 10, how: 'escape', date: '2026-10-07' }).board;
-    const p = grantWelcome(emptyProfile(), board);
+  it('50 coins per record already in the rankings, only once', () => {
+    const p = grantWelcome(emptyProfile(), 3);
     expect(p.coins).toBe(150);
     expect(p.welcomeGranted).toBe(true);
-    expect(grantWelcome(p, board).coins).toBe(150);
+    expect(grantWelcome(p, 3).coins).toBe(150);
   });
 
   it('an empty ranking grants 0 and is still marked as granted', () => {
-    const p = grantWelcome(emptyProfile(), emptyBoard());
+    const p = grantWelcome(emptyProfile(), 0);
     expect(p).toMatchObject({ coins: 0, welcomeGranted: true });
   });
 });
@@ -83,6 +79,18 @@ describe('settleMatch', () => {
 
   it('a result without stats still pays for the time', () => {
     const r = settleMatch(emptyProfile(), { winner: 'police', time: 30 }, 'thief');
-    expect(r.reward).toEqual({ time: 10, damage: 0, boxes: 0, won: false, total: 10 });
+    expect(r.reward).toEqual({ time: 10, damage: 0, boxes: 0, won: false, difficulty: 'normal', total: 10 });
+  });
+});
+
+describe('settleMatch with a difficulty', () => {
+  it('credits the multiplied coins', () => {
+    const r = settleMatch(
+      emptyProfile(),
+      { winner: 'thief', time: 69.9, reason: 'policeDown', stats: { damageDealt: 100, rightBoxes: 4 } },
+      'thief',
+      'hard',
+    );
+    expect(r.profile.coins).toBe(168);
   });
 });

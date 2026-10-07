@@ -948,3 +948,94 @@
   outline: 3px solid #fff;
   outline-offset: 2px;
 }
+
+/* difficulty picker (V2 part 2) */
+.difficulty-picker {
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--asphalt-2);
+}
+.difficulty-option {
+  min-width: 84px;
+  min-height: 40px;
+  padding: 4px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #cfd3da;
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+.difficulty-name {
+  font:
+    800 16px/1 system-ui,
+    sans-serif;
+}
+.difficulty-coins {
+  font:
+    600 10px/1.1 system-ui,
+    sans-serif;
+  opacity: 0.8;
+}
+.difficulty-option[aria-checked='true'] {
+  background: #fff;
+  color: #16181c;
+}
+.difficulty-option:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+.choose-heading.screen-heading {
+  font-size: 22px;
+}
+.end-reason-line {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.end-difficulty {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font:
+    800 13px/1 system-ui,
+    sans-serif;
+  background: var(--asphalt-3);
+  color: #fff;
+}
+.end-difficulty.is-easy {
+  background: var(--win);
+  color: #0d2a15;
+}
+.end-difficulty.is-hard {
+  background: var(--thief);
+}
+.screen-ranking .difficulty-picker {
+  align-self: center;
+}
+
+/* short screens: the ranking with its difficulty picker must still show Voltar without scrolling */
+@media (max-height: 420px) {
+  .screen-ranking .screen-heading {
+    display: none;
+  }
+  .screen-ranking .difficulty-option {
+    min-height: 32px;
+  }
+  .screen-ranking .ranking-tab {
+    min-height: 34px;
+  }
+  .screen-ranking .screen-btn.is-quiet {
+    min-height: 36px;
+  }
+}

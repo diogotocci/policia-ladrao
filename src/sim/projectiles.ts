@@ -86,7 +86,10 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
       });
       events.push({ type: 'shot', from: 'police', s: police.s, x: police.x, air: true });
       const P = BALANCE.items.police;
-      police = { ...police, heliCooldown: w.playerRole === 'police' ? P.heliFireInterval : P.heliFireIntervalAi };
+      police = {
+        ...police,
+        heliCooldown: w.playerRole === 'police' ? P.heliFireInterval : BALANCE.difficulties[w.difficulty].heliFireIntervalAi,
+      };
     }
     out = withCar(out, 'police', police);
   } else if (police.heliCooldown !== 0) out = withCar(out, 'police', { ...police, heliCooldown: 0 });

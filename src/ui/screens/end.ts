@@ -1,5 +1,6 @@
 // End of match: result and time on the left, the record plate on the right, actions below.
-import { BALANCE, type Role } from '../../config/balance';
+import { BALANCE, type Difficulty, type Role } from '../../config/balance';
+import { coinsLabel, DIFFICULTY_LABEL } from './difficultyPicker';
 import type { MatchStats, Reward } from '../../meta/rewards';
 import { formatTime } from '../hud';
 import { btn, h, mount, type Disposable } from './dom';
@@ -25,6 +26,7 @@ function rewardBox(reward: Reward, stats: MatchStats | undefined, animate: boole
   line(`Dano causado (${Math.round(stats?.damageDealt ?? 0)})`, `+${reward.damage}`);
   line(`Caixas da sua cor (${stats?.rightBoxes ?? 0})`, `+${reward.boxes}`);
   if (reward.won) line('Vitória', `×${BALANCE.rewards.winMultiplier}`);
+  if (reward.difficulty !== 'normal') line(DIFFICULTY_LABEL[reward.difficulty], coinsLabel(reward.difficulty).replace('moedas ', ''));
   const total = h('p', 'end-reward-total');
   const label = `+${reward.total} moedas`;
   total.setAttribute('aria-label', label);
@@ -48,11 +50,20 @@ function countUp(el: HTMLElement, total: number): () => void {
   return () => clearInterval(tick);
 }
 
-function resultCard(r: MatchResult, role: Role, coins: { reward?: Reward; animate: boolean }): { card: HTMLElement; stop(): void } {
+function resultCard(
+  r: MatchResult,
+  role: Role,
+  coins: { reward?: Reward; animate: boolean; difficulty: Difficulty },
+): { card: HTMLElement; stop(): void } {
   const won = r.winner === role;
   const card = h('div', `end-result is-${won ? 'won' : 'lost'}`);
   const reason = r.level === undefined ? endReason(r, role) : `${endReason(r, role)} · Nível ${r.level}`;
-  card.append(h('h2', 'screen-heading', won ? 'Você venceu!' : 'Você perdeu'), h('p', 'end-reason', reason));
+  const reasonLine = h('p', 'end-reason-line');
+  reasonLine.append(
+    h('span', `end-difficulty is-${coins.difficulty}`, DIFFICULTY_LABEL[coins.difficulty]),
+    h('span', 'end-reason', reason),
+  );
+  card.append(h('h2', 'screen-heading', won ? 'Você venceu!' : 'Você perdeu'), reasonLine);
   const hp = Math.round(r.hp ?? 0);
   if (hp > 0) card.append(h('p', 'end-stats', `Vida restante ${hp}`));
   const time = h('p', 'end-time');
@@ -159,6 +170,8 @@ export function renderEnd(
     saved?: boolean;
     /** coins credited for this match */
     reward?: Reward;
+    /** V2 part 2: shown as a badge; Médio when absent */
+    difficulty?: Difficulty;
     /** count the total up from 0 (only the first time the screen shows this match) */
     animateReward?: boolean;
     onSave(initials: string): void;
@@ -174,7 +187,11 @@ export function renderEnd(
   s.setAttribute('aria-modal', 'true');
   s.setAttribute('aria-label', won ? 'Você venceu!' : 'Você perdeu');
   const layout = h('div', 'end-layout');
-  const result = resultCard(p.result, p.role, { reward: p.reward, animate: p.animateReward !== false });
+  const result = resultCard(p.result, p.role, {
+    reward: p.reward,
+    animate: p.animateReward !== false,
+    difficulty: p.difficulty ?? 'normal',
+  });
   layout.append(result.card);
   const again = btn('Jogar de novo', 'is-primary', p.onAgain, SCREEN_ICONS.replay);
   const actions = h('div', 'end-actions');

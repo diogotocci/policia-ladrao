@@ -1,5 +1,5 @@
 // Traffic: a few slow cars (50–70% of cruise) that sometimes change lanes, recycled ahead.
-import { BALANCE } from '../config/balance';
+import { BALANCE, type Difficulty } from '../config/balance';
 import { createRngFromState } from './rng';
 import type { TrafficCar, WorldState } from './types';
 import { policeOf, thiefOf } from './world';
@@ -7,9 +7,9 @@ import { policeOf, thiefOf } from './world';
 const LANES = BALANCE.road.laneCenters;
 
 /** How many traffic cars to keep at the level: 3 at level 1, +8% per level. */
-export function trafficTarget(level: number): number {
+export function trafficTarget(level: number, difficulty: Difficulty = 'normal'): number {
   const t = BALANCE.traffic;
-  return Math.round(t.baseCount * (1 + t.perLevel * (level - 1)));
+  return Math.max(1, Math.round(t.baseCount * (1 + t.perLevel * (level - 1)) * BALANCE.difficulties[difficulty].traffic));
 }
 
 const sameLane = (ax: number, bx: number) => Math.abs(ax - bx) < 2 * BALANCE.car.halfWidth;
@@ -71,7 +71,7 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
 
   // fill up to the level's density
   let nextId = w.nextTrafficId;
-  const target = w.trafficOn ? trafficTarget(w.level) : 0;
+  const target = w.trafficOn ? trafficTarget(w.level, w.difficulty) : 0;
   let attempts = 0;
   while (cars.length < target && attempts < 20) {
     attempts++;

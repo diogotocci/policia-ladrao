@@ -1,13 +1,14 @@
 // Full app (spec §7): screens + matches + ranking. The flow is the pure state machine in screens/flow.ts;
 // here we only wire each state to what appears on screen (and to the game).
-import type { Role } from './config/balance';
+import type { Difficulty, Role } from './config/balance';
 import { createAudioSession } from './audio/session';
 import { startGame, type GameHandle } from './game';
 import { createCarPreview } from './render/carPreview';
 import type { QualityTier } from './render/renderer';
 import { grantWelcome, settleMatch } from './meta/profile';
 import { loadProfile, saveProfile } from './storage/profileStore';
-import { emptyBoard, insert, loadBoard, qualifies, saveBoard, type Board } from './storage/ranking';
+import { loadDifficulty, saveDifficulty } from './storage/difficulty';
+import { countRecords, insert, loadBoards, qualifies, saveBoards, type Boards } from './storage/ranking';
 import { initialState, reduce, type FlowAction, type FlowState } from './ui/screens/flow';
 import { openProgress } from './ui/screens/progress';
 import { renderChoose, renderCountdown, renderEnd, renderPause, renderRanking, renderTitle } from './ui/screens/screens';
@@ -43,10 +44,12 @@ export function startApp(
   container.append(layer);
 
   let state: FlowState = initialState();
-  let board: Board = storage ? loadBoard(storage) : emptyBoard();
+  let boards: Boards = loadBoards(storage);
+  // V2 part 2: the last difficulty chosen on the side choice; every match, reward and record uses it
+  let difficulty = loadDifficulty(storage);
   // coins and stats (V2 part 1); the welcome bonus is credited once, from the records already in the ranking
   const loaded = loadProfile(storage);
-  let profile = grantWelcome(loaded.profile, board);
+  let profile = grantWelcome(loaded.profile, countRecords(boards));
   // false once any save fails (full or blocked storage): the Progresso dialog then warns that nothing is kept
   let persistent = loaded.persistent;
   const persist = () => (persistent = saveProfile(storage, profile) && persistent);
@@ -81,7 +84,7 @@ export function startApp(
       onClose: () => host.querySelector<HTMLElement>('.title-progress')?.focus(),
     });
   };
-  let highlight: { role: Role; rank: number } | undefined;
+  let highlight: { difficulty: Difficulty; role: Role; rank: number } | undefined;
   /** the reward of the last match already counted up on screen once */
   let rewardShown = false;
   let game: GameHandle | undefined;
@@ -118,22 +121,29 @@ export function startApp(
       traffic: opts.traffic,
       curves: opts.curves,
       escapeTime: opts.escapeTime,
+      difficulty,
       audio,
       startPaused: true,
       onPauseRequest: () => dispatch({ type: 'pause' }),
       onEnd: (r) => {
         // credited and saved before the end screen shows: a reload right after cannot lose or repeat it
-        const settled = settleMatch(profile, r, role);
+        const settled = settleMatch(profile, r, role, difficulty);
         profile = settled.profile;
         persist();
         rewardShown = false;
-        dispatch({ type: 'ended', result: r, qualifies: qualifies(board, role, r.time, r.winner === role, r.hp), reward: settled.reward });
+        dispatch({
+          type: 'ended',
+          result: r,
+          qualifies: qualifies(boards[difficulty], role, r.time, r.winner === role, r.hp),
+          reward: settled.reward,
+        });
       },
     });
     container.append(layer); // screens always above the canvas and the game HUD
   };
 
   let tabSwitch = false;
+  let difficultySwitch = false;
   function trap() {
     history.pushState({ pl: true }, '');
   }
@@ -146,7 +156,7 @@ export function startApp(
         highlight = undefined;
         const t = renderTitle(layer, {
           onPlay: () => press({ type: 'play' }),
-          onRanking: () => press({ type: 'openRanking' }),
+          onRanking: () => press({ type: 'openRanking', difficulty }),
           onHowToSeen: markHowToSeen,
           coins: profile.coins,
           onProgress: openProgressDialog,
@@ -163,6 +173,11 @@ export function startApp(
           onChoose: (role) => press({ type: 'choose', role }),
           onBack: () => press({ type: 'back' }),
           showHowTo: !howToSeen(),
+          difficulty,
+          onDifficulty: (d) => {
+            difficulty = d;
+            saveDifficulty(storage, d);
+          },
           onHowToSeen: markHowToSeen,
         });
         const preview = createCarPreview(c.previews);
@@ -196,6 +211,7 @@ export function startApp(
           qualifies: s.qualifies,
           saved: s.saved,
           reward: s.reward,
+          difficulty,
           animateReward: !rewardShown, // count up only the first time, not when coming back from the ranking
           onSave: (initials) => {
             const thief =
@@ -205,22 +221,25 @@ export function startApp(
                     how: s.result.reason === 'escape' ? ('escape' as const) : ('kill' as const),
                   }
                 : {};
-            const r = insert(board, s.role, { initials, time: s.result.time, date: new Date().toISOString(), ...thief });
-            board = r.board;
-            if (storage) saveBoard(storage, board);
-            if (r.rank > 0) highlight = { role: s.role, rank: r.rank };
+            const r = insert(boards[difficulty], s.role, { initials, time: s.result.time, date: new Date().toISOString(), ...thief });
+            boards = { ...boards, [difficulty]: r.board };
+            saveBoards(storage, boards);
+            if (r.rank > 0) highlight = { difficulty, role: s.role, rank: r.rank };
             state = reduce(state, { type: 'saved' }); // no redraw: the screen already shows "Recorde salvo!"
           },
           onAgain: () => press({ type: 'restart' }),
           onChangeSide: () => press({ type: 'changeSide' }),
-          onRanking: () => press({ type: 'openRanking' }),
+          onRanking: () => press({ type: 'openRanking', difficulty }),
           onHome: () => press({ type: 'quit' }),
         });
         rewardShown = true;
         break;
       case 'ranking':
         view = renderRanking(layer, {
-          board,
+          boards,
+          difficulty: s.difficulty,
+          onDifficulty: (d) => ((difficultySwitch = true), press({ type: 'difficultyTab', difficulty: d })),
+          focusDifficulty: difficultySwitch,
           tab: s.tab,
           highlight,
           focusTab: tabSwitch,
@@ -228,6 +247,7 @@ export function startApp(
           onBack: () => press({ type: 'back' }),
         });
         tabSwitch = false;
+        difficultySwitch = false;
         break;
     }
   };
