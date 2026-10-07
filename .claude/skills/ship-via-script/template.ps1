@@ -77,7 +77,15 @@ $left = git status --porcelain -- src tests e2e docs public scripts eslint-rules
 if ($left) { Write-Host "STOPPED: files left out of the commits:`n$left" -ForegroundColor Red; exit 1 }
 
 git push -u origin $branch; Check 'push'
-gh pr create --base main --head $branch --title "<type(scope): title>" --body "<What changes for players and developers, and how it was validated.>"; Check 'open PR'
+# The body goes through a file: Windows PowerShell 5 breaks double quotes inside arguments to native programs (gh).
+# Keep double quotes out of the title for the same reason.
+$body = @'
+<What changes for players and developers, and how it was validated.>
+'@
+$bodyFile = Join-Path $env:TEMP ("pr-body-" + ($branch -replace '/', '-') + ".md")
+[IO.File]::WriteAllText($bodyFile, $body, (New-Object Text.UTF8Encoding $false))
+gh pr create --base main --head $branch --title "<type(scope): title>" --body-file $bodyFile
+if ($LASTEXITCODE -ne 0) { Write-Host "STOPPED: open PR failed. The branch is already pushed. Send me the output." -ForegroundColor Red; exit 1 }
 
 Write-Host ""
 Write-Host "SUCCESS PR opened" -ForegroundColor Green
