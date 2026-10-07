@@ -113,8 +113,8 @@ describe('effects in combat', () => {
   });
 
   it('helicopter adds its own full-damage shot (no distance falloff) to the officer’s, while active', () => {
-    expect(shoot(duel({ upgrades: { ...police().upgrades, heliUntil: 5 } }, {}, 95, 1))).toBeCloseTo(0.5 + 1, 10);
-    expect(shoot(duel({ upgrades: { ...police().upgrades, heliUntil: 5 } }, {}, 95, 6))).toBeCloseTo(0.5, 10);
+    expect(shoot(duel({ upgrades: { ...police().upgrades, heliUntil: 5 } }, {}, 55, 1))).toBeCloseTo(0.5 + 1, 10);
+    expect(shoot(duel({ upgrades: { ...police().upgrades, heliUntil: 5 } }, {}, 55, 6))).toBeCloseTo(0.5, 10);
   });
 
   it('nitro adds +40% to the police speed bonus while active', () => {

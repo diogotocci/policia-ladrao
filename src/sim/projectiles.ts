@@ -76,13 +76,13 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
     out = withCar(out, role, car);
   }
 
-  // helicopter: extra police weapon, shoots on its own from above (full damage across the whole range, no cone)
+  // helicopter: extra police weapon, shoots on its own from above (full damage up to 70 m ahead, no cone)
   let police = carOf(out, 'police');
   if (w.time < police.upgrades.heliUntil) {
     police = { ...police, heliCooldown: Math.max(0, police.heliCooldown - dt) };
     const target = carOf(out, 'thief');
     const ahead = target.s - police.s;
-    if (police.heliCooldown <= 0 && ahead > 0 && ahead < c.range && !smoke) {
+    if (police.heliCooldown <= 0 && ahead > 0 && ahead < c.falloffEnd && !smoke) {
       const dist = Math.hypot(ahead, target.x - police.x);
       const speed = c.policeProjectileSpeed;
       const aimS = target.s + target.speed * (dist / speed);
@@ -135,6 +135,7 @@ export function stepProjectiles(w: WorldState, dt: number): WorldState {
       events.push({ type: 'blocked', s, x });
       continue;
     }
+    if (hit && p.damage <= 0) continue; // fired from 70 m or more: the shot reaches but does no harm (no hit)
     if (hit) {
       out = withCar(out, target.role, hurt(target, p.damage, w));
       events.push({ type: 'hit', target: target.role, amount: scaledDamage(p.damage, w, target.role), s, x });

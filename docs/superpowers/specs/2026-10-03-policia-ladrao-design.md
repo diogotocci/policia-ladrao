@@ -60,7 +60,7 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 
 ### 4.3 Distância e compensação
 - `d` = distância em `s` entre os dois carros.
-- **Fator de distância do tiro**: 1,0 até 40 m; cai linearmente até 0 em 150 m. Com Helicóptero ativo, além do tiro do policial (que segue com esse fator), o helicóptero atira sozinho a cada 0,7 s com dano cheio (1,0 × potência) em todo o alcance (*revisado em 2026-10-06: antes o helicóptero substituía o tiro do policial*).
+- **Fator de distância do tiro**: 1,0 até 40 m; cai linearmente até 0 em 70 m (*revisado no playtest de 2026-10-07: antes ia até 150 m e a polícia ainda acertava o ladrão a mais de 100 m*). Os dois ainda atiram de até 150 m, mas a partir de 70 m de distância entre os carros o tiro não faz dano. Com Helicóptero ativo, além do tiro do policial (que segue com esse fator), o helicóptero atira sozinho a cada 0,7 s com dano cheio (1,0 × potência) até 70 m à frente (*revisado em 2026-10-06: antes o helicóptero substituía o tiro do policial*).
 - **Turbo de compensação**: quando `d > 20 m`, a polícia ganha velocidade extra que cresce linearmente até +35% em `d = 150 m`. Desliga quando `d ≤ 20 m` (*revisado em 2026-10-04: antes 60 m*).
 - **Batida polícia × ladrão** (*revisado em 2026-10-04, playtest: encostar ficou fácil demais*): só a polícia perde velocidade (−50%; o ladrão mantém a dele) e fica **4 s sem turbo de compensação**. O ladrão abre ~15–20 m e a polícia volta a encostar depois. Batida com cenário e tráfego continua −30% para quem bate.
 - **A polícia nunca ultrapassa o ladrão.** Vale para a IA e para o jogador de polícia. A dianteira da viatura nunca passa da dianteira do ladrão (`s_polícia ≤ s_ladrão`). Ao encostar, a velocidade da polícia fica limitada à do ladrão:

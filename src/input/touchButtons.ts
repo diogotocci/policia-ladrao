@@ -85,6 +85,36 @@ export function createTouchButtons(
   };
   document.addEventListener('pointerup', release);
   document.addEventListener('pointercancel', release);
+  // Safety net (playtest 2026-10-07: rarely an arrow stayed pressed and could not be released). Some system gestures
+  // (iOS edges, notifications) end a touch without pointerup/pointercancel. With no finger left on the screen nothing
+  // can be held: drop every pressed button. Same when the page loses focus or gets hidden.
+  const releaseAll = () => {
+    active.clear(); // quick taps already stored (tapped) still count once on the next read
+    for (const [name, held] of pointers) {
+      held.clear();
+      buttons.get(name)?.classList.remove('is-down');
+    }
+  };
+  // Also with fingers still down (two thumbs: one on fire or brake): a held button with no finger on it is released.
+  const onTouchEnd = (e: Event) => {
+    const touches = [...((e as TouchEvent).touches ?? [])];
+    if (touches.length === 0) return releaseAll();
+    if (typeof document.elementFromPoint !== 'function') return;
+    const under = new Set(touches.map((t) => document.elementFromPoint(t.clientX, t.clientY)?.closest('.touch-btn')));
+    for (const [name, held] of pointers) {
+      const b = buttons.get(name);
+      if (held.size === 0 || !b || under.has(b)) continue;
+      held.clear();
+      b.classList.remove('is-down');
+    }
+  };
+  const onHidden = () => {
+    if (document.visibilityState !== 'visible') releaseAll();
+  };
+  document.addEventListener('touchend', onTouchEnd, { passive: true });
+  document.addEventListener('touchcancel', onTouchEnd, { passive: true });
+  document.addEventListener('visibilitychange', onHidden);
+  window.addEventListener('blur', releaseAll);
   const buttons = new Map<IntentName, HTMLButtonElement>();
   const container = document.createElement('div');
   container.className = 'touch-controls';
@@ -198,6 +228,10 @@ export function createTouchButtons(
       clearTimeout(noTargetTimer);
       document.removeEventListener('pointerup', release);
       document.removeEventListener('pointercancel', release);
+      document.removeEventListener('touchend', onTouchEnd);
+      document.removeEventListener('touchcancel', onTouchEnd);
+      document.removeEventListener('visibilitychange', onHidden);
+      window.removeEventListener('blur', releaseAll);
       active.clear();
       container.remove();
       for (const held of pointers.values()) held.clear();
