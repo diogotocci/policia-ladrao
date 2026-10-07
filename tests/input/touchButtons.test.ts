@@ -193,3 +193,44 @@ describe('special button (V2 part 3)', () => {
     expect(btn('brake').classList.contains('locked')).toBe(false);
   });
 });
+
+describe('stuck button safety net (playtest 2026-10-07)', () => {
+  const touchEnd = (type: 'touchend' | 'touchcancel', touches: number) => {
+    const ev = new Event(type, { bubbles: true }) as Event & { touches: unknown[] };
+    Object.defineProperty(ev, 'touches', { value: Array.from({ length: touches }, (_, i) => ({ clientX: i, clientY: i })) });
+    document.dispatchEvent(ev);
+  };
+
+  it('a touch that ended without pointerup (system gesture) is released when no finger is left on the screen', () => {
+    ptr(btn('right'), 'pointerdown', 1);
+    tb.read();
+    expect(tb.read().right).toBe(true); // still held
+    const under = (el: Element | null) => Object.defineProperty(document, 'elementFromPoint', { value: () => el, configurable: true });
+    under(btn('right'));
+    touchEnd('touchend', 1); // a finger is still on this arrow: keeps it
+    expect(tb.read().right).toBe(true);
+    under(btn('fire'));
+    ptr(btn('right'), 'pointerdown', 9);
+    tb.read();
+    touchEnd('touchend', 1); // the other thumb is on another button, none on the arrow: released
+    expect(tb.read().right).toBe(false);
+    ptr(btn('right'), 'pointerdown', 1);
+    tb.read();
+    under(btn('right'));
+    touchEnd('touchend', 0); // no pointerup ever came, but no finger is on the screen
+    expect(tb.read().right).toBe(false);
+    expect(btn('right').classList.contains('is-down')).toBe(false);
+    delete (document as unknown as { elementFromPoint?: unknown }).elementFromPoint;
+  });
+
+  it('touchcancel with no fingers and losing focus also release everything; a quick tap still counts once', () => {
+    ptr(btn('left'), 'pointerdown', 2);
+    touchEnd('touchcancel', 0);
+    expect(tb.read().left).toBe(true); // the tap made before still counts once
+    expect(tb.read().left).toBe(false);
+    ptr(btn('left'), 'pointerdown', 3);
+    tb.read();
+    window.dispatchEvent(new Event('blur'));
+    expect(tb.read().left).toBe(false);
+  });
+});

@@ -3,7 +3,7 @@ import { BALANCE, type Difficulty } from '../config/balance';
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
-/** Shot damage factor by distance: 1 up to 40 m, linear down to 0 at 150 m. */
+/** Shot damage factor by distance: 1 up to 40 m, linear down to 0 at 70 m. */
 export function distanceFactor(d: number): number {
   const { falloffStart, falloffEnd } = BALANCE.combat;
   return 1 - clamp01((Math.abs(d) - falloffStart) / (falloffEnd - falloffStart));

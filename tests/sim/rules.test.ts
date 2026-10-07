@@ -2,11 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { armorFactor, catchUpBonus, distanceFactor, inFireCone, levelAt } from '../../src/sim/rules';
 
 describe('distanceFactor', () => {
-  it('is 1 up to 40 m, linear to 0 at 150 m', () => {
+  it('is 1 up to 40 m, linear to 0 at 70 m (playtest 2026-10-07: no more hits from 100 m)', () => {
     expect(distanceFactor(0)).toBe(1);
     expect(distanceFactor(40)).toBe(1);
-    expect(distanceFactor(95)).toBeCloseTo(0.5, 10);
-    expect(distanceFactor(150)).toBe(0);
+    expect(distanceFactor(55)).toBeCloseTo(0.5, 10);
+    expect(distanceFactor(70)).toBe(0);
+    expect(distanceFactor(100)).toBe(0);
     expect(distanceFactor(300)).toBe(0);
   });
 });

@@ -70,8 +70,17 @@ describe('fireWeapons', () => {
     expect(w.events.some((e) => e.type === 'hit' && e.target === 'thief')).toBe(true);
   });
 
-  it('a hit at 95 m removes 0.5 hp (distance falloff)', () => {
-    let w = fireWeapons(setup({ s: 195, x: 1.5, speed: 0 }, { speed: 0 }), both(FIRE, NO_INTENTS), DT);
+  it('a hit at 55 m removes 0.5 hp (distance falloff); from 70 m on nobody is hit', () => {
+    let far = fireWeapons(setup({ s: 190, x: 1.5, speed: 0 }, { speed: 0 }), both(FIRE, NO_INTENTS), DT);
+    expect(far.projectiles).toHaveLength(1); // it can still fire (up to 150 m)...
+    let hits = 0;
+    for (let i = 0; i < 120 && far.projectiles.length > 0; i++) {
+      far = stepProjectiles({ ...far, events: [] }, DT);
+      hits += far.events.filter((e) => e.type === 'hit').length;
+    }
+    expect(thiefOf(far).hp).toBe(100); // ...but from 70 m on the shot does no harm
+    expect(hits).toBe(0);
+    let w = fireWeapons(setup({ s: 155, x: 1.5, speed: 0 }, { speed: 0 }), both(FIRE, NO_INTENTS), DT);
     w = flyUntilDone(w);
     expect(thiefOf(w).hp).toBeCloseTo(99.5, 10);
   });
@@ -110,7 +119,7 @@ describe('stepProjectiles', () => {
     let w = fireWeapons(setup({ s: 160, x: 1.5, speed: 0 }, { speed: 0 }), both(FIRE, NO_INTENTS), DT);
     w = withCar(w, 'thief', { ...thiefOf(w), x: 4.5 });
     const perStep = BALANCE.combat.policeProjectileSpeed * DT;
-    const steps = Math.ceil(150 / perStep);
+    const steps = Math.ceil(BALANCE.combat.range / perStep);
     for (let i = 0; i < steps - 1; i++) w = stepProjectiles(w, DT);
     expect(w.projectiles).toHaveLength(1); // still flying before 150 m
     w = stepProjectiles(w, DT);
@@ -162,7 +171,7 @@ describe('helicopter = extra gun (playtest 2026-10-06: the officer keeps shootin
   });
 
   it('helicopter shots hit hard from anywhere in range (no distance falloff); the officer keeps the normal falloff', () => {
-    const w = fireWeapons(withHeli(setup({ s: 195, x: 1.5 })), both(FIRE, NO_INTENTS), DT);
+    const w = fireWeapons(withHeli(setup({ s: 155, x: 1.5 })), both(FIRE, NO_INTENTS), DT);
     const air = w.projectiles.find((p) => p.air !== undefined)!;
     const ground = w.projectiles.find((p) => p.air === undefined)!;
     expect(air.damage).toBeCloseTo(BALANCE.combat.policeDamage, 6);

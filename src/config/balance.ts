@@ -27,11 +27,14 @@ export const BALANCE = {
     projectileSpeed: 300, // m/s (thief's shot)
     // slower police shot: the thief's zigzag dodges it from afar (playtest 2026-10-04); up close there is no time
     policeProjectileSpeed: 150, // m/s
-    range: 150, // m
+    range: 150, // m: aim and shot travel
     frontConeDeg: 35,
     sideConeDeg: 90, // front ±35° + sides up to 90° = half-plane ahead within range
     falloffStart: 40, // m
-    falloffEnd: 150, // m
+    // playtest 2026-10-07: from 100 m the police still hit the thief. Both can still fire from far, but the damage
+    // fades with the gap between the cars at the shot and is 0 from 70 m: farther than that nobody is hit
+    // (the helicopter only fires within 70 m too).
+    falloffEnd: 70, // m
   },
   collision: {
     carCarThief: 5,
