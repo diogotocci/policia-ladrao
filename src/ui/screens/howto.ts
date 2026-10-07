@@ -42,6 +42,23 @@ const PAGES: { tips: Tip[] }[] = [
       },
     ],
   },
+  {
+    // V2 part 3: the Sobrevivência page (the new items join it in the next releases)
+    tips: [
+      { icon: 'skull', title: 'Sobrevivência', text: 'Sem relógio: ganha quem zerar a vida do outro primeiro.' },
+      {
+        icon: 'clock',
+        title: 'O caos sobe',
+        text: `A cada ${BALANCE.survival.chaosEvery} s, até ${BALANCE.survival.chaosMax}: mais tráfego, mais caixas e todo dano ${Math.round(BALANCE.survival.damagePerChaos * 100)}% maior por nível.`,
+      },
+      {
+        icon: 'cone',
+        title: 'Obras na pista',
+        text: `A partir do caos ${BALANCE.survival.worksFromChaos}, uma faixa fechada por cones. Bater tira vida como a calçada.`,
+      },
+      { icon: 'flag', title: 'Ranking', text: 'Polícia: a vitória mais rápida. Ladrão: o maior tempo vivo, mesmo perdendo.' },
+    ],
+  },
 ];
 
 function tipEl(t: Tip): HTMLElement {

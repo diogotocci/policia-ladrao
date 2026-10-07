@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   RANKING_KEY,
+  RANKING_V4_KEY,
+  countModeRecords,
+  loadModeBoards,
+  saveModeBoards,
   emptyBoard,
   insert,
   loadBoard,
@@ -195,5 +199,40 @@ describe('one ranking per difficulty (v3)', () => {
     expect(b.easy.police.map((x) => x.initials)).toEqual(['OKK']);
     expect(b.easy.thief).toEqual([]);
     expect(b.normal).toEqual(emptyBoard());
+  });
+});
+
+describe('one ranking per mode (v4)', () => {
+  const mem = (): Storage => {
+    const m = new Map<string, string>();
+    return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v) } as unknown as Storage;
+  };
+
+  it('first load: v3 becomes Perseguição; Sobrevivência starts empty; v3 is kept', () => {
+    const s = mem();
+    const v3 = emptyBoards();
+    v3.hard.police = [e('OLD', 50)];
+    saveBoards(s, v3);
+    const b = loadModeBoards(s);
+    expect(b.pursuit.hard.police[0]!.initials).toBe('OLD');
+    expect(b.survival).toEqual(emptyBoards());
+    expect(s.getItem(RANKING_V3_KEY)).toBe(JSON.stringify(v3));
+    saveModeBoards(s, { ...b, survival: { ...b.survival, easy: { police: [e('NEW', 30)], thief: [] } } });
+    const again = loadModeBoards(s);
+    expect(again.survival.easy.police[0]!.initials).toBe('NEW');
+    expect(s.getItem(RANKING_V4_KEY)).not.toBeNull();
+    expect(countModeRecords(again)).toBe(2);
+  });
+
+  it('Sobrevivência thief: longest time alive first, losses count ("caught"); police: fastest win', () => {
+    let board = emptyBoard();
+    expect(qualifies(board, 'thief', 150, false, 0, 'survival')).toBe(true); // a loss still counts
+    board = insert(board, 'thief', { initials: 'WIN', time: 150, hp: 30, how: 'kill', date: 'x' }, 'survival').board;
+    board = insert(board, 'thief', { initials: 'LOS', time: 200, hp: 0, how: 'caught', date: 'x' }, 'survival').board;
+    expect(board.thief.map((x) => x.initials)).toEqual(['LOS', 'WIN']);
+    expect(qualifies(board, 'police', 100, false, undefined, 'survival')).toBe(false);
+    board = insert(board, 'police', { initials: 'SLO', time: 300, date: 'x' }, 'survival').board;
+    board = insert(board, 'police', { initials: 'FST', time: 120, date: 'x' }, 'survival').board;
+    expect(board.police.map((x) => x.initials)).toEqual(['FST', 'SLO']);
   });
 });

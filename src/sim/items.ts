@@ -1,6 +1,7 @@
 // Item boxes and items (spec §5): spaced spawn, color tending toward whoever is losing, pickup on the ground, effects with caps.
 import { BALANCE, type Role } from '../config/balance';
 import type { CarState } from './car';
+import { hurt, scaledDamage } from './chaos';
 import { createRngFromState, type Rng } from './rng';
 import { bumpsBetween } from './track';
 import type { Box, GameEvent, ItemId, WorldState } from './types';
@@ -115,7 +116,9 @@ export function stepBoxes(w: WorldState): WorldState {
     }
     const color = rng.next() < colorChance(police.hp, thief.hp) ? 'blue' : 'red';
     boxes.push({ id: nextBoxId++, s, x, color });
-    nextBoxAt = s + rng.range(I.boxEvery - I.boxJitter, I.boxEvery + I.boxJitter);
+    // Sobrevivência: boxes come closer together as chaos rises
+    const every = I.boxEvery * BALANCE.survival.boxEveryPerChaos ** (w.chaos - 1);
+    nextBoxAt = s + rng.range(every - I.boxJitter, every + I.boxJitter);
   } else if (nextBoxAt < front + I.spawnAhead) {
     nextBoxAt = front + I.spawnAhead; // 2 on the road: postpone
   }
@@ -132,8 +135,8 @@ export function stepBoxes(w: WorldState): WorldState {
     const own: Role = box.color === 'blue' ? 'police' : 'thief';
     if (own !== car.role) {
       events.push({ type: 'pickup', role: car.role, item: 'wrong' });
-      events.push({ type: 'hit', target: car.role, amount: I.wrongBoxDamage, s: box.s, x: box.x });
-      return { ...car, hp: Math.max(0, car.hp - I.wrongBoxDamage) };
+      events.push({ type: 'hit', target: car.role, amount: scaledDamage(I.wrongBoxDamage, w, car.role), s: box.s, x: box.x });
+      return hurt(car, I.wrongBoxDamage, w);
     }
     const item = rollItem(car, rng);
     events.push({ type: 'pickup', role: car.role, item: item ?? 'none' });

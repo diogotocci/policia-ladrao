@@ -7,12 +7,24 @@ import { policeOf, thiefOf } from './world';
 const LANES = BALANCE.road.laneCenters;
 
 /** How many traffic cars to keep at the level: 3 at level 1, +8% per level. */
-export function trafficTarget(level: number, difficulty: Difficulty = 'normal'): number {
+export function trafficTarget(level: number, difficulty: Difficulty = 'normal', chaos = 1): number {
   const t = BALANCE.traffic;
-  return Math.max(1, Math.round(t.baseCount * (1 + t.perLevel * (level - 1)) * BALANCE.difficulties[difficulty].traffic));
+  return Math.max(
+    1,
+    Math.round(
+      t.baseCount *
+        (1 + t.perLevel * (level - 1)) *
+        BALANCE.difficulties[difficulty].traffic *
+        (1 + BALANCE.survival.trafficPerChaos * (chaos - 1)),
+    ),
+  );
 }
 
 const sameLane = (ax: number, bx: number) => Math.abs(ax - bx) < 2 * BALANCE.car.halfWidth;
+
+/** Roadworks closing lane `x` between s - 20 and s + `ahead` (V2 part 3). */
+const closedAhead = (w: WorldState, x: number, s: number, ahead: number) =>
+  w.works.find((wk) => sameLane(BALANCE.road.laneCenters[wk.lane], x) && wk.s + wk.length > s - 20 && wk.s - s < ahead);
 
 export function stepTraffic(w: WorldState, dt: number): WorldState {
   const T = BALANCE.traffic;
@@ -30,6 +42,12 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
   const moved: TrafficCar[] = [];
   for (const t of order) {
     let targetX = t.targetX;
+    // roadworks ahead in its lane: moves over (towards the center) in time
+    const closed = closedAhead(w, targetX, t.s, 70);
+    if (closed) {
+      const lane = LANES.indexOf(targetX as (typeof LANES)[number]);
+      targetX = LANES[lane <= 1 ? lane + 1 : lane - 1]!;
+    }
     if (Math.abs(t.x - targetX) < 0.01 && rng.next() < T.laneChangePerSecond * dt) {
       const lane = LANES.indexOf(targetX as (typeof LANES)[number]);
       const options = [lane - 1, lane + 1].filter((l) => l >= 0 && l < LANES.length);
@@ -37,7 +55,7 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
       const free =
         ![...moved, ...order].some((o) => o.id !== t.id && overlapsLane(o, pick) && Math.abs(o.s - t.s) < T.minGap) &&
         ![police, thief].some((g) => sameLane(g.x, pick) && Math.abs(g.s - t.s) < T.minGap);
-      if (free) targetX = pick;
+      if (free && !closedAhead(w, pick, t.s, 90)) targetX = pick;
     }
     const dx = targetX - t.x;
     let x = t.x + Math.sign(dx) * Math.min(Math.abs(dx), T.laneChangeSpeed * dt);
@@ -56,6 +74,9 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
     for (const g of [police, thief])
       if ((sameLane(g.x, x) || sameLane(g.x, targetX)) && g.s >= t.s && (!leader || g.s < leader.s)) leader = g;
     let s = t.s + t.speed * dt;
+    // could not move over yet: waits before the cones instead of driving into them
+    const blockedBy = w.works.find((wk) => sameLane(BALANCE.road.laneCenters[wk.lane], x) && wk.s + wk.length > t.s && wk.s >= t.s - 1);
+    if (blockedBy) s = Math.max(t.s, Math.min(s, blockedBy.s - L / 2 - 1));
     if (leader) {
       const gap = leader.s - t.s;
       if (gap < T.minGap) s = Math.min(s, t.s + Math.min(t.speed, leader.speed) * dt); // keeps pace with the one ahead
@@ -71,7 +92,7 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
 
   // fill up to the level's density
   let nextId = w.nextTrafficId;
-  const target = w.trafficOn ? trafficTarget(w.level, w.difficulty) : 0;
+  const target = w.trafficOn ? trafficTarget(w.level, w.difficulty, w.chaos) : 0;
   let attempts = 0;
   while (cars.length < target && attempts < 20) {
     attempts++;
@@ -80,7 +101,8 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
     const tooClose =
       cars.some((o) => sameLane(o.x, x) && Math.abs(o.s - s) < T.minGap) ||
       [police, thief].some((g) => sameLane(g.x, x) && Math.abs(g.s - s) < T.minGapToGameCar) ||
-      [...w.boxes, ...w.bombs].some((o) => sameLane(o.x, x) && Math.abs(o.s - s) < T.minGapToItem);
+      [...w.boxes, ...w.bombs].some((o) => sameLane(o.x, x) && Math.abs(o.s - s) < T.minGapToItem) ||
+      closedAhead(w, x, s, 120) !== undefined;
     if (tooClose) continue;
     const speed = BALANCE.movement.cruise.police * rng.range(T.speedMin, T.speedMax);
     cars.push({ id: nextId++, s, x, speed, targetX: x, model: rng.int(0, 3) });

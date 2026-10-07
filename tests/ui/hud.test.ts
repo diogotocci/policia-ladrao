@@ -227,3 +227,35 @@ describe('item HUD', () => {
     hud.dispose();
   });
 });
+
+describe('Sobrevivência HUD', () => {
+  it('the time counts up, with "Caos N" and 5 marks; a big notice when chaos rises', () => {
+    const hud = createHud(root, 'thief', { showEnd: false });
+    const w = createWorld({ seed: 1, playerRole: 'thief', mode: 'survival' });
+    hud.update({ ...w, time: 30, chaos: 1 });
+    expect(root.querySelector('.hud-time-label')!.textContent).toBe('Tempo');
+    expect(root.querySelector('.hud-time')!.textContent).toBe('00:30.0');
+    const chaos = root.querySelector('.hud-chaos') as HTMLElement;
+    expect(chaos.hidden).toBe(false);
+    expect(chaos.textContent).toContain('Caos 1');
+    hud.update({ ...w, time: 192, chaos: 3 });
+    expect(root.querySelector('.hud-time')!.textContent).toBe('03:12.0');
+    expect(chaos.textContent).toContain('Caos 3');
+    expect(chaos.querySelectorAll('.hud-chaos-mark.is-on')).toHaveLength(3);
+    expect(chaos.querySelectorAll('.hud-chaos-mark')).toHaveLength(5);
+    const toast = root.querySelector('.hud-toast') as HTMLElement;
+    expect(toast.hidden).toBe(false);
+    expect(toast.textContent).toBe('Caos 3: obras na pista!');
+    expect(toast.classList.contains('is-big')).toBe(true);
+    hud.dispose();
+  });
+
+  it('Perseguição keeps the countdown and hides the chaos meter', () => {
+    const hud = createHud(root, 'thief', { showEnd: false });
+    hud.update({ ...createWorld({ seed: 1, playerRole: 'thief' }), time: 30 });
+    expect(root.querySelector('.hud-time-label')!.textContent).toBe('Fuga em');
+    expect(root.querySelector('.hud-time')!.textContent).toBe('01:00.0');
+    expect((root.querySelector('.hud-chaos') as HTMLElement).hidden).toBe(true);
+    hud.dispose();
+  });
+});

@@ -107,7 +107,7 @@ describe('choose', () => {
     const dialog = root.querySelector('.howto')!;
     expect(dialog.getAttribute('role')).toBe('dialog');
     const page = () => dialog.querySelector('.howto-tips:not([inert])')!.textContent!;
-    expect(dialog.querySelectorAll('.howto-tips')).toHaveLength(2);
+    expect(dialog.querySelectorAll('.howto-tips')).toHaveLength(3); // page 3: Sobrevivência
     expect(page()).toContain('O carro acelera sozinho');
     expect(page()).toContain('Freie nas curvas fechadas');
     expect(page()).toContain('sobe na calçada e perde 5 de vida'); // BALANCE.collision.scenery
@@ -136,16 +136,17 @@ describe('choose', () => {
     expect(current()).toBe(0);
     expect(prev.hidden).toBe(true);
     expect(next.hidden).toBe(false);
-    (dialog.querySelector('[aria-label="Página 2 de 2"]') as HTMLButtonElement).click();
-    expect(current()).toBe(1);
+    (dialog.querySelector('[aria-label="Página 3 de 3"]') as HTMLButtonElement).click();
+    expect(current()).toBe(2);
     expect(prev.hidden).toBe(false);
     expect(next.hidden).toBe(true);
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); // already last: stays
+    expect(current()).toBe(2);
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
-    expect(current()).toBe(0);
+    expect(current()).toBe(1);
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true })); // already first: stays
     expect(current()).toBe(0);
-    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
-    expect(current()).toBe(1);
   });
 
   it('carousel: dragging the cards to the side turns the page; a tiny drag snaps back', () => {
@@ -164,10 +165,11 @@ describe('choose', () => {
     expect(current()).toBe(0);
     drag(400, 250); // drag left: next page
     expect(current()).toBe(1);
-    drag(250, 200); // already the last page
-    expect(current()).toBe(1);
+    drag(400, 250);
+    drag(250, 100); // already the last page
+    expect(current()).toBe(2);
     drag(200, 400); // drag right: back
-    expect(current()).toBe(0);
+    expect(current()).toBe(1);
   });
 
   it('carousel on a phone held upright (the game is drawn rotated -90°): a drag along the screen height turns the page', () => {
@@ -201,11 +203,12 @@ describe('choose', () => {
     const next = button('Próximo');
     next.focus(); // keyboard user on the pager button
     next.click();
+    next.click();
     expect(document.activeElement).toBe(button('Anterior')); // Próximo is hidden on the last page
     button('Entendi').focus();
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
     // wraps to the first control of the dialog (the first page dot), not to the inert Voltar
-    expect(document.activeElement).toBe(root.querySelector('[aria-label="Página 1 de 2"]'));
+    expect(document.activeElement).toBe(root.querySelector('[aria-label="Página 1 de 3"]'));
   });
 
   it('first time: opens by itself; Esc closes it too', () => {
@@ -461,27 +464,80 @@ describe('end', () => {
 
 describe('ranking', () => {
   // one board in Médio, the other difficulties empty
-  const R = (board: Board) => ({ boards: { ...emptyBoards(), normal: board }, difficulty: 'normal' as const, onDifficulty: vi.fn() });
+  const R = (board: Board) => ({
+    boards: { pursuit: { ...emptyBoards(), normal: board }, survival: emptyBoards() },
+    mode: 'pursuit' as const,
+    onMode: vi.fn(),
+    difficulty: 'normal' as const,
+    onDifficulty: vi.fn(),
+  });
+
+  it('a mode picker above the difficulty; Sobrevivência thief rows show "preso" when caught', () => {
+    const survival = emptyBoards();
+    survival.normal = insert(
+      emptyBoard(),
+      'thief',
+      { initials: 'LOS', time: 200, hp: 0, how: 'caught', date: '2026-10-07' },
+      'survival',
+    ).board;
+    const onMode = vi.fn();
+    renderRanking(root, {
+      boards: { pursuit: emptyBoards(), survival },
+      mode: 'survival',
+      onMode,
+      difficulty: 'normal',
+      onDifficulty: vi.fn(),
+      tab: 'thief',
+      onTab: vi.fn(),
+      onBack: vi.fn(),
+    });
+    const groups = [...root.querySelectorAll('[role="radiogroup"]')];
+    expect(groups.map((g) => g.getAttribute('aria-label'))).toEqual(['Modo', 'Dificuldade']);
+    expect(groups[0]!.querySelector('[aria-checked="true"]')!.textContent).toBe('Sobrevivência');
+    expect(root.querySelector('.ranking-row')!.textContent).toContain('LOS');
+    expect(root.querySelector('.ranking-row')!.textContent).toContain('preso');
+    (groups[0]!.querySelectorAll('[role="radio"]')[0] as HTMLElement).click();
+    expect(onMode).toHaveBeenCalledWith('pursuit');
+    root.innerHTML = '';
+    // redrawn after a mode switch from the keyboard: focus stays on the mode picker
+    const won = insert(emptyBoard(), 'thief', { initials: 'KIL', time: 150, hp: 42, how: 'kill', date: 'x' }, 'survival').board;
+    renderRanking(root, {
+      boards: { pursuit: emptyBoards(), survival: { ...emptyBoards(), normal: won } },
+      mode: 'survival',
+      onMode,
+      focusMode: true,
+      difficulty: 'normal',
+      onDifficulty: vi.fn(),
+      tab: 'thief',
+      onTab: vi.fn(),
+      onBack: vi.fn(),
+    });
+    expect(document.activeElement).toBe(root.querySelector('[aria-label="Modo"] [aria-checked="true"]'));
+    expect(root.querySelector('.ranking-row')!.textContent).toContain('♥42'); // survival win shows the life left
+  });
 
   it("a difficulty picker on top shows that difficulty's list; the new-record highlight only where it was made", () => {
-    const boards = emptyBoards();
-    boards.hard = insert(emptyBoard(), 'police', { initials: 'HRD', time: 40, date: '2026-10-07' }).board;
-    boards.normal = insert(emptyBoard(), 'police', { initials: 'MED', time: 50, date: '2026-10-07' }).board;
+    const byDiff = emptyBoards();
+    byDiff.hard = insert(emptyBoard(), 'police', { initials: 'HRD', time: 40, date: '2026-10-07' }).board;
+    byDiff.normal = insert(emptyBoard(), 'police', { initials: 'MED', time: 50, date: '2026-10-07' }).board;
+    const boards = { pursuit: byDiff, survival: emptyBoards() };
+    const m = { mode: 'pursuit' as const, onMode: vi.fn() };
     const onDifficulty = vi.fn();
-    const highlight = { difficulty: 'hard' as const, role: 'police' as const, rank: 1 };
-    renderRanking(root, { boards, difficulty: 'hard', onDifficulty, tab: 'police', highlight, onTab: vi.fn(), onBack: vi.fn() });
-    expect(root.querySelector('[role="radiogroup"] [aria-checked="true"]')!.textContent).toBe('Difícil');
+    const highlight = { mode: 'pursuit' as const, difficulty: 'hard' as const, role: 'police' as const, rank: 1 };
+    renderRanking(root, { ...m, boards, difficulty: 'hard', onDifficulty, tab: 'police', highlight, onTab: vi.fn(), onBack: vi.fn() });
+    expect(root.querySelector('[aria-label="Dificuldade"] [aria-checked="true"]')!.textContent).toBe('Difícil');
     expect(root.querySelector('.ranking-row')!.textContent).toContain('HRD');
     expect(root.querySelector('.ranking-row')!.classList.contains('is-new')).toBe(true);
-    (root.querySelectorAll('[role="radio"]')[1] as HTMLElement).click();
+    (root.querySelectorAll('[aria-label="Dificuldade"] [role="radio"]')[1] as HTMLElement).click();
     expect(onDifficulty).toHaveBeenCalledWith('normal');
     root.innerHTML = '';
-    renderRanking(root, { boards, difficulty: 'normal', onDifficulty, tab: 'police', highlight, onTab: vi.fn(), onBack: vi.fn() });
+    renderRanking(root, { ...m, boards, difficulty: 'normal', onDifficulty, tab: 'police', highlight, onTab: vi.fn(), onBack: vi.fn() });
     expect(root.querySelector('.ranking-row')!.textContent).toContain('MED');
     expect(root.querySelector('.ranking-row')!.classList.contains('is-new')).toBe(false);
     root.innerHTML = '';
     // after switching difficulty with the keyboard the screen is redrawn: focus stays on the picker
     renderRanking(root, {
+      ...m,
       boards,
       difficulty: 'easy',
       onDifficulty,
@@ -490,7 +546,7 @@ describe('ranking', () => {
       onTab: vi.fn(),
       onBack: vi.fn(),
     });
-    expect(document.activeElement).toBe(root.querySelector('[role="radio"][aria-checked="true"]'));
+    expect(document.activeElement).toBe(root.querySelector('[aria-label="Dificuldade"] [role="radio"][aria-checked="true"]'));
   });
 
   it('tabs, rows with rank, initials, time and date; highlight of the new record; empty state', () => {
@@ -500,7 +556,7 @@ describe('ranking', () => {
     renderRanking(root, {
       ...R(board),
       tab: 'police',
-      highlight: { difficulty: 'normal', role: 'police', rank: 1 },
+      highlight: { mode: 'pursuit', difficulty: 'normal', role: 'police', rank: 1 },
       onTab,
       onBack: vi.fn(),
     });

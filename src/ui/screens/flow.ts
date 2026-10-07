@@ -1,5 +1,5 @@
 // Screen flow (spec §7) as a pure state machine: title -> choice -> countdown -> game <-> pause -> end -> ranking.
-import type { Difficulty, Role } from '../../config/balance';
+import type { Difficulty, Mode, Role } from '../../config/balance';
 import type { MatchStats, Reward } from '../../meta/rewards';
 
 export const COUNTDOWN = 3; // s
@@ -19,14 +19,15 @@ export interface MatchResult {
 
 export type FlowState =
   | { screen: 'title' }
+  | { screen: 'mode' }
   | { screen: 'choose' }
   | { screen: 'countdown'; role: Role; left: number }
   | { screen: 'playing'; role: Role }
   | { screen: 'paused'; role: Role }
   | EndState
-  | { screen: 'ranking'; tab: Role; difficulty: Difficulty; from: 'title' }
+  | { screen: 'ranking'; tab: Role; mode: Mode; difficulty: Difficulty; from: 'title' }
   /** opened from the end screen: Back returns to the same end screen (an unsaved record is still there) */
-  | { screen: 'ranking'; tab: Role; difficulty: Difficulty; from: 'end'; end: EndState };
+  | { screen: 'ranking'; tab: Role; mode: Mode; difficulty: Difficulty; from: 'end'; end: EndState };
 
 export type EndState = {
   screen: 'end';
@@ -40,6 +41,8 @@ export type EndState = {
 
 export type FlowAction =
   | { type: 'play' }
+  /** mode screen: a mode was picked (the app keeps which) */
+  | { type: 'pickMode' }
   | { type: 'choose'; role: Role }
   | { type: 'tick'; dt: number }
   | { type: 'pause' }
@@ -48,7 +51,8 @@ export type FlowAction =
   | { type: 'quit' }
   | { type: 'ended'; result: MatchResult; qualifies?: boolean; reward?: Reward }
   /** opens on this difficulty (the app's current one); default Médio */
-  | { type: 'openRanking'; difficulty?: Difficulty }
+  | { type: 'openRanking'; difficulty?: Difficulty; mode?: Mode }
+  | { type: 'modeTab'; mode: Mode }
   | { type: 'difficultyTab'; difficulty: Difficulty }
   /** end screen: play again choosing the side */
   | { type: 'changeSide' }
@@ -64,12 +68,18 @@ const countdown = (role: Role): FlowState => ({ screen: 'countdown', role, left:
 export function reduce(s: FlowState, a: FlowAction): FlowState {
   switch (s.screen) {
     case 'title':
-      if (a.type === 'play') return { screen: 'choose' };
-      if (a.type === 'openRanking') return { screen: 'ranking', tab: 'police', difficulty: a.difficulty ?? 'normal', from: 'title' };
+      if (a.type === 'play') return { screen: 'mode' };
+      if (a.type === 'openRanking')
+        return { screen: 'ranking', tab: 'police', mode: a.mode ?? 'pursuit', difficulty: a.difficulty ?? 'normal', from: 'title' };
+      return s;
+    case 'mode':
+      if (a.type === 'pickMode') return { screen: 'choose' };
+      if (a.type === 'back' || a.type === 'quit') return initialState();
       return s;
     case 'choose':
       if (a.type === 'choose') return countdown(a.role);
-      if (a.type === 'back' || a.type === 'quit') return initialState();
+      if (a.type === 'back') return { screen: 'mode' };
+      if (a.type === 'quit') return initialState();
       return s;
     case 'countdown':
       if (a.type === 'tick') {
@@ -91,12 +101,14 @@ export function reduce(s: FlowState, a: FlowAction): FlowState {
       if (a.type === 'restart') return countdown(s.role);
       if (a.type === 'quit' || a.type === 'back') return initialState();
       if (a.type === 'changeSide') return { screen: 'choose' };
-      if (a.type === 'openRanking') return { screen: 'ranking', tab: s.role, difficulty: a.difficulty ?? 'normal', from: 'end', end: s };
+      if (a.type === 'openRanking')
+        return { screen: 'ranking', tab: s.role, mode: a.mode ?? 'pursuit', difficulty: a.difficulty ?? 'normal', from: 'end', end: s };
       if (a.type === 'saved') return s.saved ? s : { ...s, saved: true };
       return s;
     case 'ranking':
       if (a.type === 'tab') return { ...s, tab: a.tab };
       if (a.type === 'difficultyTab') return { ...s, difficulty: a.difficulty };
+      if (a.type === 'modeTab') return { ...s, mode: a.mode };
       if (a.type === 'back' && s.from === 'end') return s.end;
       if (a.type === 'back' || a.type === 'quit') return initialState();
       return s;

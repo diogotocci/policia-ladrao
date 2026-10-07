@@ -1,5 +1,6 @@
 // World objects with fixed pools: traffic, item boxes, bombs, speed bumps and warning signs.
 import * as THREE from 'three';
+import { createWorksView } from './hazardsView';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { BALANCE } from '../config/balance';
 import { curvesBetween } from '../sim/curves';
@@ -87,6 +88,7 @@ export function createWorldProps(
   scene: THREE.Scene,
   reflections: THREE.Texture | null,
 ): { update(w: WorldState, originS: number, time: number, prev?: WorldState, alpha?: number): void } {
+  const works = createWorksView(scene); // V2 part 3: roadworks cones and sign
   const withEnv = (o: THREE.Object3D) =>
     o.traverse((c) => {
       if (!reflections || c.name === 'contact-shadow') return;
@@ -219,6 +221,7 @@ export function createWorldProps(
 
   return {
     update(w, originS, time, prev, alpha = 1) {
+      works.update(w, originS);
       /** places in the world following the curve and rotates with the road */
       const put = (o: THREE.Object3D, s: number, x: number, y: number) => {
         const p = trackPos(s, x, originS);

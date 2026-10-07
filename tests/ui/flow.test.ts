@@ -3,6 +3,24 @@ import { COUNTDOWN, initialState, reduce, type FlowState } from '../../src/ui/sc
 
 const run = (s: FlowState, ...actions: Parameters<typeof reduce>[1][]) => actions.reduce(reduce, s);
 
+describe('ranking per mode', () => {
+  it('opening keeps the mode; modeTab changes only it; default Perseguição', () => {
+    let s = reduce(initialState(), { type: 'openRanking', difficulty: 'hard', mode: 'survival' });
+    expect(s).toMatchObject({ screen: 'ranking', mode: 'survival', difficulty: 'hard' });
+    s = reduce(s, { type: 'modeTab', mode: 'pursuit' });
+    expect(s).toMatchObject({ mode: 'pursuit', difficulty: 'hard' });
+    expect(reduce(initialState(), { type: 'openRanking' })).toMatchObject({ mode: 'pursuit' });
+  });
+});
+
+describe('mode screen', () => {
+  it('Voltar from the side choice goes back to the modes; from the modes, to the title', () => {
+    const choose = run(initialState(), { type: 'play' }, { type: 'pickMode' });
+    expect(reduce(choose, { type: 'back' })).toEqual({ screen: 'mode' });
+    expect(reduce({ screen: 'mode' }, { type: 'back' })).toEqual({ screen: 'title' });
+  });
+});
+
 describe('ranking per difficulty', () => {
   it('opening the ranking keeps the difficulty; difficultyTab changes only it', () => {
     let s = reduce(initialState(), { type: 'openRanking', difficulty: 'hard' });
@@ -27,6 +45,8 @@ describe('ranking per difficulty', () => {
 describe('screen flow', () => {
   it('happy path: title → choose → countdown → playing → end → ranking → title', () => {
     let s = run(initialState(), { type: 'play' });
+    expect(s.screen).toBe('mode'); // V2 part 3: Jogar -> Escolha o modo -> Escolha seu lado
+    s = reduce(s, { type: 'pickMode' });
     expect(s.screen).toBe('choose');
     s = reduce(s, { type: 'choose', role: 'thief' });
     expect(s).toEqual({ screen: 'countdown', role: 'thief', left: COUNTDOWN });
@@ -68,7 +88,7 @@ describe('screen flow', () => {
   });
 
   it('the countdown goes 3 → 0 in 3 s and cannot be paused', () => {
-    let s = run(initialState(), { type: 'play' }, { type: 'choose', role: 'police' });
+    let s = run(initialState(), { type: 'play' }, { type: 'pickMode' }, { type: 'choose', role: 'police' });
     s = reduce(s, { type: 'tick', dt: 1 });
     expect(s).toMatchObject({ screen: 'countdown', left: 2 });
     expect(reduce(s, { type: 'pause' })).toBe(s);

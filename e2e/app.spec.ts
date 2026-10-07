@@ -94,6 +94,7 @@ test('the picture never stretches: a size change without a resize event (iOS sta
 test('first visit: "Como jogar" opens by itself on the side choice; after Entendi it stays closed', async ({ page }) => {
   await page.goto('/?app&quality=low&mute');
   await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await page.getByRole('button', { name: 'Jogar Perseguição' }).click();
   const howTo = page.getByRole('dialog', { name: 'Como jogar' });
   await expect(howTo).toBeVisible();
   await expect(howTo).toContainText('O carro acelera sozinho');
@@ -101,8 +102,8 @@ test('first visit: "Como jogar" opens by itself on the side choice; after Entend
   await expect(howTo).toContainText('Quem vence');
   await howTo.getByRole('button', { name: 'Entendi' }).click();
   await expect(howTo).toHaveCount(0);
-  await page.getByRole('button', { name: 'Voltar' }).click();
-  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await page.getByRole('button', { name: 'Voltar' }).click(); // back to the modes
+  await page.getByRole('button', { name: 'Jogar Perseguição' }).click();
   await expect(page.locator('.choose-card')).toHaveCount(2);
   await expect(page.locator('.howto')).toHaveCount(0);
   await page.getByRole('button', { name: 'Como jogar' }).click();
@@ -114,7 +115,7 @@ test('Como jogar: a real finger swipe turns the page and back (mobile)', async (
   await page.goto('/?app&quality=low&mute');
   await page.getByRole('button', { name: 'Como jogar' }).click();
   const current = page.locator('.howto-dot[aria-current="true"]');
-  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 2');
+  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 3');
   const cdp = await page.context().newCDPSession(page);
   const swipe = async (x0: number, x1: number) => {
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: x0, y: 200 }] });
@@ -123,10 +124,10 @@ test('Como jogar: a real finger swipe turns the page and back (mobile)', async (
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   };
   await swipe(600, 250);
-  await expect(current).toHaveAttribute('aria-label', 'Página 2 de 2');
-  await expect(page.getByRole('button', { name: 'Próximo' })).toBeHidden();
+  await expect(current).toHaveAttribute('aria-label', 'Página 2 de 3');
+  await expect(page.getByRole('button', { name: 'Anterior' })).toBeVisible();
   await swipe(250, 600);
-  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 2');
+  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 3');
   await expect(page.getByRole('button', { name: 'Anterior' })).toBeHidden();
 });
 
@@ -141,7 +142,7 @@ test('Como jogar: with the phone upright (game drawn rotated) a finger swipe alo
   expect(await page.evaluate(() => matchMedia('(orientation: portrait) and (pointer: coarse)').matches)).toBe(true);
   await page.getByRole('button', { name: 'Como jogar' }).click();
   const current = page.locator('.howto-dot[aria-current="true"]');
-  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 2');
+  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 3');
   const cdp = await ctx.newCDPSession(page);
   const swipe = async (y0: number, y1: number) => {
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 200, y: y0 }] });
@@ -150,8 +151,20 @@ test('Como jogar: with the phone upright (game drawn rotated) a finger swipe alo
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   };
   await swipe(250, 600); // down the screen = towards the game's left: next page
-  await expect(current).toHaveAttribute('aria-label', 'Página 2 de 2');
+  await expect(current).toHaveAttribute('aria-label', 'Página 2 de 3');
   await swipe(600, 250);
-  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 2');
+  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 3');
   await ctx.close();
+});
+
+test('mode screen after Jogar; the chosen mode is remembered after a reload', async ({ page }) => {
+  await page.goto('/?app&quality=low&mute');
+  await page.evaluate(() => localStorage.setItem('pl.howto.v1', '1'));
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Escolha o modo' })).toBeVisible();
+  await page.getByRole('button', { name: 'Jogar Sobrevivência' }).click();
+  await expect(page.locator('.screen-choose')).toBeVisible();
+  await page.reload();
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Jogar Sobrevivência' })).toBeFocused();
 });

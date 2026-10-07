@@ -1,4 +1,6 @@
-import { BALANCE, DIFFICULTIES, type Difficulty, type Role } from '../config/balance';
+import { BALANCE, DIFFICULTIES, MODES, type Difficulty, type Mode, type Role } from '../config/balance';
+import { chaosAt } from './chaos';
+import { hitWorks, stepWorks } from './works';
 import { aiStep } from './ai';
 import { createCar, stepCar, type CarState } from './car';
 import { resolveCollisions } from './collisions';
@@ -37,7 +39,12 @@ export function createWorld(opts: {
   escapeTime?: number;
   /** V2 part 2: the computer's start level and pace, traffic and its helicopter; default Médio */
   difficulty?: Difficulty;
+  /** V2 part 3: default Perseguição */
+  mode?: Mode;
+  /** seconds per chaos level; only debug/e2e shorten it */
+  chaosEvery?: number;
 }): WorldState {
+  const mode: Mode = opts.mode && MODES.includes(opts.mode) ? opts.mode : 'pursuit';
   const difficulty: Difficulty = opts.difficulty && DIFFICULTIES.includes(opts.difficulty) ? opts.difficulty : 'normal';
   const police: CarState = { ...createCar('police', 1, 0), hasGun: true, hp: opts.debugHp?.police ?? BALANCE.hp };
   const thief: CarState = { ...createCar('thief', 2, 40), hp: opts.debugHp?.thief ?? BALANCE.hp };
@@ -49,6 +56,11 @@ export function createWorld(opts: {
     time: 0,
     level: BALANCE.difficulties[difficulty].startLevel,
     difficulty,
+    mode,
+    chaos: 1,
+    worksFromS: null,
+    works: [],
+    chaosEvery: opts.chaosEvery ?? BALANCE.survival.chaosEvery,
     playerRole: opts.playerRole,
     player,
     opponent,
@@ -60,7 +72,7 @@ export function createWorld(opts: {
     traffic: [],
     trafficOn: opts.traffic ?? true,
     curvesOn: opts.curves ?? true,
-    escapeTime: opts.escapeTime ?? BALANCE.match.escapeTime,
+    escapeTime: mode === 'survival' ? Infinity : (opts.escapeTime ?? BALANCE.match.escapeTime), // no clock in Sobrevivência
     boxes: [],
     bombs: [],
     nextBombId: 1,
@@ -152,6 +164,7 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
     if (now.skidding && !before.skidding) out = { ...out, events: [...out.events, { type: 'skid', role: now.role, s: now.s, x: now.x }] };
   out = stepTraffic(out, dt);
   out = resolveCollisions(out, dt);
+  out = hitWorks(stepWorks(out));
   out = enforceNoOvertake(out);
   out = stepBoxes(out);
   out = dropBomb(out, intents.thief);
@@ -162,7 +175,7 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
     out = stepProjectiles(out, dt);
   }
   const time = out.time + dt;
-  out = { ...out, time, level: levelAt(time, out.difficulty) };
+  out = { ...out, time, level: levelAt(time, out.difficulty), chaos: chaosAt(time, out.mode, out.chaosEvery) };
 
   const policeDead = policeOf(out).hp <= 0;
   const thiefDead = thiefOf(out).hp <= 0;

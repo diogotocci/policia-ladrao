@@ -1,7 +1,7 @@
 // App screens (spec §7). Thin DOM components: they only draw and call callbacks; the flow lives in flow.ts.
-import type { Difficulty, Role } from '../../config/balance';
-import type { Boards } from '../../storage/ranking';
-import { difficultyPicker } from './difficultyPicker';
+import type { Difficulty, Mode, Role } from '../../config/balance';
+import type { ModeBoards } from '../../storage/ranking';
+import { difficultyPicker, modePicker } from './difficultyPicker';
 import { formatTime } from '../hud';
 import { btn, h, mount, type Disposable } from './dom';
 import { openHowTo } from './howto';
@@ -130,14 +130,17 @@ const shortDate = (iso: string) => {
 export function renderRanking(
   root: HTMLElement,
   p: {
-    boards: Boards;
+    boards: ModeBoards;
+    mode: Mode;
+    onMode(m: Mode): void;
     difficulty: Difficulty;
     onDifficulty(d: Difficulty): void;
     tab: Role;
-    highlight?: { difficulty: Difficulty; role: Role; rank: number };
+    highlight?: { mode: Mode; difficulty: Difficulty; role: Role; rank: number };
     focusTab?: boolean;
-    /** redrawn after a difficulty switch: keep the keyboard on the picker */
+    /** redrawn after a difficulty or mode switch: keep the keyboard on that picker */
     focusDifficulty?: boolean;
+    focusMode?: boolean;
     onTab(tab: Role): void;
     onBack(): void;
   },
@@ -159,17 +162,21 @@ export function renderRanking(
   const list = h('ol', 'ranking-list');
   list.id = 'ranking-list';
   list.setAttribute('role', 'tabpanel');
-  const entries = p.boards[p.difficulty][p.tab];
+  const entries = p.boards[p.mode][p.difficulty][p.tab];
   if (entries.length === 0) list.append(h('li', 'ranking-empty', 'Nenhum recorde ainda — jogue uma partida!'));
   entries.forEach((e, i) => {
     const row = h('li', 'ranking-row');
     const hl = p.highlight;
-    if (hl && hl.difficulty === p.difficulty && hl.role === p.tab && hl.rank === i + 1) row.classList.add('is-new');
-    const how = e.how === 'kill' ? '💥' : e.how === 'escape' ? `🏁 ♥${Math.round(e.hp ?? 0)}` : '';
+    if (hl && hl.mode === p.mode && hl.difficulty === p.difficulty && hl.role === p.tab && hl.rank === i + 1) row.classList.add('is-new');
+    const life = `♥${Math.round(e.hp ?? 0)}`;
+    // Sobrevivência thief: the life left also when he destroyed the police (spec §6)
+    const kill = p.mode === 'survival' ? `💥 ${life}` : '💥';
+    const how = e.how === 'kill' ? kill : e.how === 'escape' ? `🏁 ${life}` : e.how === 'caught' ? 'preso' : '';
     const time = h('span', 'ranking-time', formatTime(e.time));
     if (how) {
       const tag = h('span', 'ranking-how', ` ${how}`);
-      tag.setAttribute('aria-label', e.how === 'kill' ? 'destruiu a viatura' : `fugiu, vida ${Math.round(e.hp ?? 0)}`);
+      const said = { kill: 'destruiu a viatura', escape: `fugiu, vida ${Math.round(e.hp ?? 0)}`, caught: 'foi preso' };
+      tag.setAttribute('aria-label', said[e.how!]);
       time.append(tag);
     }
     row.append(
@@ -182,8 +189,10 @@ export function renderRanking(
   });
   const back = btn('Voltar', 'is-quiet', p.onBack);
   const picker = difficultyPicker(p.difficulty, p.onDifficulty);
-  card.append(h('h2', 'screen-heading', 'Ranking'), picker, tabs, list, back);
+  const modes = modePicker(p.mode, p.onMode);
+  card.append(h('h2', 'screen-heading', 'Ranking'), modes, picker, tabs, list, back);
   s.append(card);
-  const checked = picker.querySelector<HTMLElement>('[aria-checked="true"]') ?? undefined;
-  return mount(root, s, p.focusDifficulty ? checked : p.focusTab ? selected : back);
+  const checkedIn = (g: HTMLElement) => g.querySelector<HTMLElement>('[aria-checked="true"]') ?? undefined;
+  const focus = p.focusMode ? checkedIn(modes) : p.focusDifficulty ? checkedIn(picker) : p.focusTab ? selected : back;
+  return mount(root, s, focus);
 }
