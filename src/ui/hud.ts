@@ -43,6 +43,11 @@ export const ITEM_LABEL: Record<string, string> = {
   oil: 'Óleo',
   spikes: 'Miguelito',
   smoke: 'Fumaça',
+  roadblock: 'Bloqueio',
+  machineGun: 'Metralhadora',
+  wingman: 'Reforço',
+  spotlight: 'Holofote',
+  fxSpot: 'Holofote em você',
   // effects on the car (V2 part 3)
   fxSkid: 'Derrapando no óleo',
   fxFlat: 'Pneu furado',
@@ -68,9 +73,13 @@ export const ITEM_ICON: Record<string, string> = {
   fxDouble: '💔',
   fxMud: '🟫',
   fxNoBrake: '🚫',
+  machineGun: '🔫',
+  wingman: '🚓',
+  spotlight: '🔦',
+  fxSpot: '🔦',
 };
 /** bad effects: red chip (yellow box, oil, spikes) */
-const BAD = new Set(['fxSkid', 'fxFlat', 'fxSlow', 'fxDouble', 'fxMud', 'fxNoBrake']);
+const BAD = new Set(['fxSkid', 'fxFlat', 'fxSlow', 'fxDouble', 'fxMud', 'fxNoBrake', 'fxSpot']);
 /** short text next to the icon of an effect chip */
 const FX_TEXT: Record<string, string> = {
   fxSkid: 'Óleo',
@@ -80,6 +89,7 @@ const FX_TEXT: Record<string, string> = {
   fxDouble: '×2',
   fxMud: 'Lama',
   fxNoBrake: 'Freio',
+  fxSpot: 'Holofote',
 };
 
 interface HudItem {
@@ -104,6 +114,10 @@ function playerItems(w: WorldState, role: Role): HudItem[] {
     timed('nitro', u.nitroUntil, P.nitroTime);
     timed('heli', u.heliUntil, P.heliTime);
     timed('pierce', u.pierceUntil, P.pierceTime);
+    // V2 part 3 police items (times up to the strong ones; the ring starts a bit short of full when not strong)
+    timed('machineGun', u.mgUntil, BALANCE.items.machineGun.timeStrong);
+    timed('wingman', u.wingmanUntil, BALANCE.items.wingman.timeStrong);
+    timed('spotlight', u.spotUntil, BALANCE.items.spotlight.timeStrong);
   } else {
     if (u.plates > 0) out.push({ id: 'plate', count: String(u.plates) });
     if (car.hasGun) {
@@ -123,6 +137,7 @@ function playerItems(w: WorldState, role: Role): HudItem[] {
   timed('fxDouble', fx.doubleUntil, M.double.time);
   timed('fxMud', fx.mudUntil, M.mud.time);
   timed('fxNoBrake', fx.noBrakeUntil, M.noBrake.time);
+  if (role === 'thief') timed('fxSpot', policeOf(w).upgrades.spotUntil, BALANCE.items.spotlight.timeStrong);
   return out;
 }
 

@@ -7,12 +7,16 @@ export interface Upgrades {
   fireInterval: number;
   power: number;
   plates: number;
-  /** the thief's special (V2 part 3): one kind, up to 3 charges */
+  /** the special (V2 part 3): the thief's kind, or the police roadblock; up to 3 charges */
   special: { kind: SpecialKind; charges: number } | null;
   ramCharges: number;
   nitroUntil: number;
   heliUntil: number;
   pierceUntil: number;
+  /** V2 part 3 police items */
+  mgUntil: number;
+  wingmanUntil: number;
+  spotUntil: number;
 }
 
 export function baseUpgrades(role: Role): Upgrades {
@@ -25,6 +29,9 @@ export function baseUpgrades(role: Role): Upgrades {
     nitroUntil: 0,
     heliUntil: 0,
     pierceUntil: 0,
+    mgUntil: 0,
+    wingmanUntil: 0,
+    spotUntil: 0,
   };
 }
 

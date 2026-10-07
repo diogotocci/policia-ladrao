@@ -42,5 +42,11 @@ describe('yellow box roulette', () => {
     expect(itemToast({ type: 'tirePop', role: 'police', s: 0, x: 0 }, 'police')).toBe('Pneu furado!');
     expect(itemToast({ type: 'special', role: 'thief', kind: 'smoke', s: 0, x: 0 }, 'police')).toBe('Fumaça!');
     expect(itemToast({ type: 'special', role: 'thief', kind: 'oil', s: 0, x: 0 }, 'police')).toBeUndefined();
+    expect(itemToast({ type: 'special', role: 'police', kind: 'roadblock', s: 0, x: 0 }, 'thief')).toBe('Bloqueio à frente!');
+    expect(itemToast({ type: 'policeItem', item: 'machineGun' }, 'thief')).toBe('Metralhadora!');
+    expect(itemToast({ type: 'policeItem', item: 'wingman' }, 'police')).toBe('Reforço chegando!');
+    expect(itemToast({ type: 'policeItem', item: 'spotlight' }, 'thief')).toBe('Holofote!');
+    expect(itemToast({ type: 'tirePop', role: 'thief', s: 0, x: 0 }, 'police')).toBe('Pneu furado no ladrão!');
+    expect(itemToast({ type: 'roadblockNoRoom' }, 'police')).toBe('Sem lugar para o bloqueio agora');
   });
 });

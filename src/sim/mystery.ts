@@ -38,7 +38,9 @@ export function stepMystery(w: WorldState): WorldState {
     const { outcome } = car.mystery;
     let next: CarState = { ...car, mystery: null };
     if (outcome.good) {
-      if (outcome.item) next = applyItem(next, outcome.item, w.time);
+      if (outcome.item) next = applyItem(next, outcome.item, w.time, w);
+      const it = outcome.item;
+      if (it === 'machineGun' || it === 'wingman' || it === 'spotlight') events.push({ type: 'policeItem', item: it });
     } else next = applyBad(next, outcome.effect, w.time);
     events.push({ type: 'mysteryReveal', role, outcome });
     out = withCar(out, role, next);

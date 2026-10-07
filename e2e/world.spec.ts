@@ -121,6 +121,21 @@ test('yellow box (V2 part 3): only yellow boxes with ?mystery=1, and picking one
   await expect(roulette).toHaveClass(/is-good|is-bad/, { timeout: 5_000 });
 });
 
+test('police with a roadblock (V2 part 3): B places it ahead of the thief and the button shows the charges', async ({ page }) => {
+  await page.goto('/?debug&seed=3&role=police&quality=low&traffic=0&give=roadblock,roadblock');
+  await page.waitForFunction(() => '__game' in window);
+  await waitSim(page, 2);
+  const special = page.locator('button[data-intent="bomb"]');
+  await expect(special).toHaveAttribute('aria-label', 'Especial: bloqueio (2)');
+  await page.keyboard.press('KeyB');
+  await waitSim(page, 0.3);
+  const s = await snapshot(page);
+  const block = (s.hazards as unknown as { kind: string; s: number }[]).find((h) => h.kind === 'roadblock');
+  expect(block).toBeDefined();
+  expect(block!.s).toBeGreaterThan(s.opponent.s + 100);
+  await expect(special).toHaveAttribute('aria-label', 'Especial: bloqueio (1)');
+});
+
 test('thief with the rear gun hits the police', async ({ page }) => {
   await page.goto('/?debug&seed=4&role=thief&quality=low&traffic=0&give=gun');
   await page.waitForFunction(() => '__game' in window);

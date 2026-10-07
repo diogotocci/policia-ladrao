@@ -144,15 +144,19 @@ export function createMixer(initial: AudioBackend): Mixer {
     song: () => current,
     events(events) {
       for (const e of events) {
-        if (e.type === 'shot') play(e.from === 'police' ? 'shot-police' : 'shot-thief');
+        if (e.type === 'shot') play(e.rapid ? 'shot-mg' : e.from === 'police' ? 'shot-police' : 'shot-thief');
         else if (e.type === 'hit') play('hit');
         else if (e.type === 'crash') play('crash');
         else if (e.type === 'explosion') play('explosion');
         else if (e.type === 'bombDropped') play('bomb-drop');
         else if (e.type === 'oilSkid') play('oil-splash');
         else if (e.type === 'tirePop') play('tire-pop');
+        else if (e.type === 'special' && e.kind === 'roadblock') play('roadblock');
+        else if (e.type === 'roadblockHit') play('crash');
+        else if (e.type === 'policeItem') play(e.item === 'wingman' ? 'wingman' : e.item === 'spotlight' ? 'spotlight' : 'pickup');
+        else if (e.type === 'wingmanHit') play('crash');
         else if (e.type === 'special' && e.kind === 'smoke') play('smoke');
-        else if (e.type === 'special' && e.kind !== 'bomb') play(e.kind === 'oil' ? 'oil-splash' : 'spikes');
+        else if (e.type === 'special' && (e.kind === 'oil' || e.kind === 'spikes')) play(e.kind === 'oil' ? 'oil-splash' : 'spikes');
         else if (e.type === 'mystery' && e.role === playerRole) play('mystery-spin');
         else if (e.type === 'mysteryReveal' && e.role === playerRole) play(e.outcome.good ? 'mystery-good' : 'mystery-bad');
         else if (e.type === 'escape') play('escape');
@@ -160,7 +164,8 @@ export function createMixer(initial: AudioBackend): Mixer {
           if (clock - lastSkid[e.role] < SKID_GAP || Math.abs(e.s - meS) > SKID_RANGE) continue;
           lastSkid[e.role] = clock;
           play('skid');
-        } else if (e.type === 'pickup' && e.role === playerRole) play(e.item === 'wrong' || e.item === 'none' ? 'wrong' : 'pickup');
+        } else if (e.type === 'pickup' && e.role === playerRole && !['machineGun', 'wingman', 'spotlight'].includes(e.item))
+          play(e.item === 'wrong' || e.item === 'none' ? 'wrong' : 'pickup');
         else if (e.type === 'end') play(e.winner === playerRole ? 'win' : 'lose');
       }
     },

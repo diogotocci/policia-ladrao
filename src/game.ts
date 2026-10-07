@@ -27,7 +27,7 @@ import { feedbackForFrame } from './ui/feedback';
 import { ICONS } from './ui/icons';
 import { onTap } from './ui/mobileShell';
 import { createHud, pickupToast } from './ui/hud';
-import { createItemsFx } from './itemsFx';
+import { createItemsFx, INSTANT_POLICE } from './itemsFx';
 
 const lerpCar = (a: CarState, b: CarState, t: number): CarState => ({
   ...b,
@@ -270,7 +270,7 @@ export function startGame(
   const onEvents = (events: GameEvent[]) => {
     for (const e of events) {
       if (e.type === 'noTarget' && e.from === opts.role) touch.flashNoTarget();
-      else if (e.type === 'pickup' && e.role === opts.role) hud.toast(pickupToast(e.item));
+      else if (e.type === 'pickup' && e.role === opts.role && !INSTANT_POLICE.has(e.item)) hud.toast(pickupToast(e.item));
     }
     const f = feedbackForFrame(events, opts.role);
     if (f.flash) flash(f.flash);

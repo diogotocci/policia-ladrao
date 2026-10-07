@@ -4,13 +4,14 @@ import * as THREE from 'three';
 import type { QualityTier } from './renderer';
 import { trackPos } from './trackFrame';
 
-type Kind = 'white' | 'black' | 'fire' | 'dust';
+type Kind = 'white' | 'black' | 'fire' | 'dust' | 'cloud';
 
 const COLORS: Record<Kind, THREE.Color> = {
   white: new THREE.Color(0xdcdcdc),
   black: new THREE.Color(0x26262a),
   fire: new THREE.Color(0xff8a2a),
   dust: new THREE.Color(0x9a948a),
+  cloud: new THREE.Color(0x4a4c52),
 };
 
 function puffTexture(): THREE.DataTexture {
@@ -30,6 +31,8 @@ function puffTexture(): THREE.DataTexture {
 export interface Particles {
   emitSmoke(x: number, y: number, s: number, color: 'white' | 'black'): void;
   emitBurst(x: number, s: number, kind: 'explosion' | 'crash'): void;
+  /** the thief's smoke screen: big dark puffs low over the road, left behind the car */
+  emitCloud(x: number, s: number): void;
   update(dt: number, originS: number, camera: THREE.Camera): void;
   setQuality(q: QualityTier): void;
   /** factor for each emitter's smoke rate (0.5 on low) */
@@ -89,6 +92,20 @@ export function createParticles(scene: THREE.Scene, max = 160): Particles {
         1.0,
         0.3,
         color === 'black' ? 1.3 : 1.0,
+      );
+    },
+    emitCloud(x, s) {
+      // hangs where it was released (a wall the police drives into); no forward speed, so a slow device whose
+      // simulation lags behind real time never sees the cloud run ahead of the car
+      spawn(
+        'cloud',
+        x + (rand() - 0.5) * 2.4,
+        0.6 + rand() * 0.8,
+        s - rand() * 2,
+        [(rand() - 0.5) * 2, 0.2 + rand() * 0.3, (rand() - 0.5) * 1.5],
+        2.4,
+        2.4,
+        6,
       );
     },
     emitBurst(x, s, k) {
