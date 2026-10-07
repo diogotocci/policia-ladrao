@@ -81,7 +81,7 @@ Um único registro versionado no aparelho, chave `pl.profile.v1`:
 ## 5. Backup por código
 
 - O botão **Progresso** da tela inicial abre um diálogo. Ele mostra moedas, partidas, vitórias e fugas, o código do progresso e os botões "Copiar código", "Restaurar" e "Fechar".
-- **Formato do código:** prefixo `PL1-`, depois o perfil em JSON codificado em base32 (só letras maiúsculas e algarismos, sem confusão entre maiúsculas e minúsculas ao digitar) e um verificador CRC32, em blocos de 4 caracteres separados por hífen.
+- **Formato do código:** prefixo `PL1-`, depois o perfil em JSON compacto (uma lista de números, para o código ficar curto) codificado em base32 (só letras maiúsculas e algarismos, sem confusão entre maiúsculas e minúsculas ao digitar) e um verificador CRC32, em blocos de 4 caracteres separados por hífen.
 - O verificador pega código colado incompleto ou editado à mão sem querer. Não impede trapaça proposital, o que é aceitável sem conta.
 - **Restaurar** abre um campo para colar o código, valida e pede confirmação: "Isso substitui o progresso deste aparelho (X moedas) pelo do código (Y moedas)."
 - **Código inválido:** a mensagem diz o que fazer ("Código incompleto ou com erro. Copie de novo no outro aparelho.").

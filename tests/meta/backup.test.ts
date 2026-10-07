@@ -28,6 +28,15 @@ describe('backup code', () => {
     ).toBe(true);
   });
 
+  it('stays short: under 100 characters even for a big profile (the object form was ~200)', () => {
+    const big: Profile = {
+      ...sample,
+      coins: 999_999,
+      stats: { matches: 9999, wins: 9999, escapes: 9999, arrests: 9999, coinsEarned: 9_999_999 },
+    };
+    expect(encodeBackup(big).length).toBeLessThan(100);
+  });
+
   it('accepts spaces, line breaks and lowercase pasted in', () => {
     const code = encodeBackup(sample);
     const messy = ` ${code.slice(0, 10)}\n ${code.slice(10).toLowerCase()} `;

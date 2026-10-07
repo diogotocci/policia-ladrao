@@ -1,4 +1,4 @@
-// Progress backup code (V2 part 1): "PL1-" + base32 (RFC 4648, no padding) of the profile JSON + CRC32,
+// Progress backup code (V2 part 1): "PL1-" + base32 (RFC 4648, no padding) of the profile as a compact JSON array + CRC32,
 // in blocks of 4. The CRC catches a code pasted incomplete or mistyped; it does not stop deliberate edits.
 import { parseProfile, type Profile } from './profile';
 
@@ -63,8 +63,26 @@ function fromBase32(text: string): Uint8Array | undefined {
 
 const blocks = (s: string) => s.match(/.{1,4}/g)?.join('-') ?? '';
 
+// compact payload: a JSON array instead of the object keeps the code short enough to read and paste
+const pack = (p: Profile) => [
+  p.v,
+  p.coins,
+  p.stats.matches,
+  p.stats.wins,
+  p.stats.escapes,
+  p.stats.arrests,
+  p.stats.coinsEarned,
+  p.welcomeGranted ? 1 : 0,
+];
+function unpack(a: unknown): unknown {
+  if (!Array.isArray(a) || a.length !== 8) return undefined;
+  const [v, coins, matches, wins, escapes, arrests, coinsEarned, welcome] = a as unknown[];
+  if (welcome !== 0 && welcome !== 1) return undefined;
+  return { v, coins, stats: { matches, wins, escapes, arrests, coinsEarned }, welcomeGranted: welcome === 1 };
+}
+
 export function encodeBackup(profile: Profile): string {
-  const bytes = new TextEncoder().encode(JSON.stringify(profile));
+  const bytes = new TextEncoder().encode(JSON.stringify(pack(profile)));
   return PREFIX + blocks(toBase32(bytes) + crc32(bytes));
 }
 
@@ -82,6 +100,6 @@ export function decodeBackup(code: string): BackupResult {
   } catch {
     return { ok: false, error: 'invalid' };
   }
-  const profile = parseProfile(raw);
+  const profile = parseProfile(unpack(raw));
   return profile ? { ok: true, profile } : { ok: false, error: 'invalid' };
 }
