@@ -947,8 +947,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "package_devdependencies_playwright_test",
-      "community": 15,
-      "community_name": "devDependencies",
+      "community": 74,
+      "community_name": "@playwright/test",
       "norm_label": "@playwright/test"
     },
     {
@@ -958,8 +958,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "playwright_test",
-      "community": 15,
-      "community_name": "devDependencies",
+      "community": 74,
+      "community_name": "@playwright/test",
       "norm_label": "@playwright/test"
     },
     {
@@ -1013,8 +1013,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "package_devdependencies_eslint",
-      "community": 72,
-      "community_name": "eslint",
+      "community": 15,
+      "community_name": "devDependencies",
       "norm_label": "eslint"
     },
     {
@@ -1024,8 +1024,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "eslint",
-      "community": 72,
-      "community_name": "eslint",
+      "community": 15,
+      "community_name": "devDependencies",
       "norm_label": "eslint"
     },
     {
@@ -2367,7 +2367,7 @@
       "_origin": "ast",
       "id": "src_input_touchbuttons",
       "community": 28,
-      "community_name": "itemsFx.ts",
+      "community_name": "touchButtons.ts",
       "norm_label": "touchbuttons.ts"
     },
     {
@@ -2380,7 +2380,7 @@
       "_origin": "ast",
       "id": "src_input_touchbuttons_intentname",
       "community": 28,
-      "community_name": "itemsFx.ts",
+      "community_name": "touchButtons.ts",
       "norm_label": "intentname"
     },
     {
@@ -2392,7 +2392,7 @@
       "_origin": "ast",
       "id": "src_input_touchbuttons_svg",
       "community": 28,
-      "community_name": "itemsFx.ts",
+      "community_name": "touchButtons.ts",
       "norm_label": "svg()"
     },
     {
@@ -2403,7 +2403,7 @@
       "_origin": "ast",
       "id": "src_input_touchbuttons_icons",
       "community": 28,
-      "community_name": "itemsFx.ts",
+      "community_name": "touchButtons.ts",
       "norm_label": "icons"
     },
     {
@@ -2414,7 +2414,7 @@
       "_origin": "ast",
       "id": "src_input_touchbuttons_special_icons",
       "community": 28,
-      "community_name": "itemsFx.ts",
+      "community_name": "touchButtons.ts",
       "norm_label": "special_icons"
     },
     {
@@ -2425,7 +2425,7 @@
       "_origin": "ast",
       "id": "src_input_touchbuttons_special_names",
       "community": 28,
-      "community_name": "itemsFx.ts",
+      "community_name": "touchButtons.ts",
       "norm_label": "special_names"
     },
     {
@@ -2436,7 +2436,7 @@
       "_origin": "ast",
       "id": "src_input_touchbuttons_buttons",
       "community": 28,
-      "community_name": "itemsFx.ts",
+      "community_name": "touchButtons.ts",
       "norm_label": "buttons"
     },
     {
@@ -2448,7 +2448,7 @@
       "_origin": "ast",
       "id": "src_input_touchbuttons_buzz",
       "community": 28,
-      "community_name": "itemsFx.ts",
+      "community_name": "touchButtons.ts",
       "norm_label": "buzz()"
     },
     {
@@ -2460,7 +2460,7 @@
       "_origin": "ast",
       "id": "src_input_touchbuttons_createtouchbuttons",
       "community": 28,
-      "community_name": "itemsFx.ts",
+      "community_name": "touchButtons.ts",
       "norm_label": "createtouchbuttons()"
     },
     {
@@ -2470,7 +2470,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_itemsfx",
-      "community": 28,
+      "community": 51,
       "community_name": "itemsFx.ts",
       "norm_label": "itemsfx.ts"
     },
@@ -2482,7 +2482,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_itemsfx_itemtoast",
-      "community": 28,
+      "community": 51,
       "community_name": "itemsFx.ts",
       "norm_label": "itemtoast()"
     },
@@ -2494,7 +2494,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_itemsfx_createitemsfx",
-      "community": 28,
+      "community": 51,
       "community_name": "itemsFx.ts",
       "norm_label": "createitemsfx()"
     },
@@ -3243,8 +3243,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_buildings",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "buildings.ts"
     },
     {
@@ -3256,8 +3256,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_buildings_buildingspec",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "buildingspec"
     },
     {
@@ -3267,8 +3267,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_render_buildings_palette",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "palette"
     },
     {
@@ -3279,8 +3279,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_buildings_buildingsforchunk",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "buildingsforchunk()"
     },
     {
@@ -3290,8 +3290,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_cameras",
-      "community": 35,
-      "community_name": "trackPos",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "cameras.ts"
     },
     {
@@ -3302,8 +3302,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_cameras_createchasecamera",
-      "community": 35,
-      "community_name": "trackPos",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "createchasecamera()"
     },
     {
@@ -3676,8 +3676,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_carfactory_createtrafficmodel",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "createtrafficmodel()"
     },
     {
@@ -3735,7 +3735,7 @@
       "_origin": "ast",
       "id": "src_render_combatfx",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "combatfx.ts"
     },
     {
@@ -3747,7 +3747,7 @@
       "_origin": "ast",
       "id": "src_render_combatfx_dottexture",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "dottexture()"
     },
     {
@@ -3759,7 +3759,7 @@
       "_origin": "ast",
       "id": "src_render_combatfx_tracerheight",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "tracerheight()"
     },
     {
@@ -3771,7 +3771,7 @@
       "_origin": "ast",
       "id": "src_render_combatfx_createcombatfx",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "createcombatfx()"
     },
     {
@@ -4109,8 +4109,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_hazardsview",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "hazardsview.ts"
     },
     {
@@ -4120,8 +4120,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_render_hazardsview_cones_per_works",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "cones_per_works"
     },
     {
@@ -4132,8 +4132,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_hazardsview_signtexture",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "signtexture()"
     },
     {
@@ -4144,8 +4144,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_hazardsview_createworksview",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "createworksview()"
     },
     {
@@ -4156,7 +4156,7 @@
       "_origin": "ast",
       "id": "src_render_heli",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "heli.ts"
     },
     {
@@ -4167,7 +4167,7 @@
       "_origin": "ast",
       "id": "src_render_heli_heli_y",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "heli_y"
     },
     {
@@ -4178,7 +4178,7 @@
       "_origin": "ast",
       "id": "src_render_heli_heli_exit",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "heli_exit"
     },
     {
@@ -4191,7 +4191,7 @@
       "_origin": "ast",
       "id": "src_render_heli_helipose",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "helipose"
     },
     {
@@ -4203,7 +4203,7 @@
       "_origin": "ast",
       "id": "src_render_heli_box",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "box()"
     },
     {
@@ -4215,7 +4215,7 @@
       "_origin": "ast",
       "id": "src_render_heli_createheli",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "createheli()"
     },
     {
@@ -4225,8 +4225,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_mysterybox",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "mysterybox.ts"
     },
     {
@@ -4236,8 +4236,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_render_mysterybox_glyph",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "glyph"
     },
     {
@@ -4248,8 +4248,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_mysterybox_facetexture",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "facetexture()"
     },
     {
@@ -4260,8 +4260,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_mysterybox_halotexture",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "halotexture()"
     },
     {
@@ -4272,8 +4272,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_mysterybox_createmysterybox",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "createmysterybox()"
     },
     {
@@ -4284,8 +4284,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_mysterybox_pulsemysteryhalo",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "pulsemysteryhalo()"
     },
     {
@@ -4296,7 +4296,7 @@
       "_origin": "ast",
       "id": "src_render_opponentmarker",
       "community": 35,
-      "community_name": "trackPos",
+      "community_name": "opponentMarker.ts",
       "norm_label": "opponentmarker.ts"
     },
     {
@@ -4307,7 +4307,7 @@
       "_origin": "ast",
       "id": "src_render_opponentmarker_colors",
       "community": 35,
-      "community_name": "trackPos",
+      "community_name": "opponentMarker.ts",
       "norm_label": "colors"
     },
     {
@@ -4319,7 +4319,7 @@
       "_origin": "ast",
       "id": "src_render_opponentmarker_markertexture",
       "community": 35,
-      "community_name": "trackPos",
+      "community_name": "opponentMarker.ts",
       "norm_label": "markertexture()"
     },
     {
@@ -4331,7 +4331,7 @@
       "_origin": "ast",
       "id": "src_render_opponentmarker_createopponentmarker",
       "community": 35,
-      "community_name": "trackPos",
+      "community_name": "opponentMarker.ts",
       "norm_label": "createopponentmarker()"
     },
     {
@@ -4614,8 +4614,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_renderer_smoothtexture",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "smoothtexture()"
     },
     {
@@ -4637,8 +4637,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_roadchunks",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "roadchunks.ts"
     },
     {
@@ -4648,8 +4648,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_render_roadchunks_chunk_length",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "chunk_length"
     },
     {
@@ -4660,8 +4660,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_visiblechunkrange",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "visiblechunkrange()"
     },
     {
@@ -4672,8 +4672,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_renderorigin",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "renderorigin()"
     },
     {
@@ -4685,8 +4685,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_slot",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "slot"
     },
     {
@@ -4697,8 +4697,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_createroad",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "createroad()"
     },
     {
@@ -4777,7 +4777,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_specialsview",
-      "community": 28,
+      "community": 51,
       "community_name": "itemsFx.ts",
       "norm_label": "specialsview.ts"
     },
@@ -4789,7 +4789,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_specialsview_nailsgeometry",
-      "community": 28,
+      "community": 51,
       "community_name": "itemsFx.ts",
       "norm_label": "nailsgeometry()"
     },
@@ -4801,7 +4801,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_specialsview_createspecialsview",
-      "community": 28,
+      "community": 51,
       "community_name": "itemsFx.ts",
       "norm_label": "createspecialsview()"
     },
@@ -4812,8 +4812,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_textures",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "textures.ts"
     },
     {
@@ -4823,8 +4823,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_render_textures_ground_ppm",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "ground_ppm"
     },
     {
@@ -4834,8 +4834,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_render_textures_ground_half_width",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "ground_half_width"
     },
     {
@@ -4845,8 +4845,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_render_textures_facade_tile_meters",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "facade_tile_meters"
     },
     {
@@ -4857,8 +4857,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_canvas",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "canvas()"
     },
     {
@@ -4869,8 +4869,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_makegroundtexture",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "makegroundtexture()"
     },
     {
@@ -4881,8 +4881,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_makefacadetexture",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "makefacadetexture()"
     },
     {
@@ -4904,7 +4904,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_trackframe",
-      "community": 51,
+      "community": 19,
       "community_name": "trackFrame.ts",
       "norm_label": "trackframe.ts"
     },
@@ -4917,8 +4917,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe",
-      "community": 35,
-      "community_name": "trackPos",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "trackframe"
     },
     {
@@ -4929,8 +4929,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe_toworld",
-      "community": 35,
-      "community_name": "trackPos",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": ".toworld()"
     },
     {
@@ -4941,8 +4941,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe_headingat",
-      "community": 35,
-      "community_name": "trackPos",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": ".headingat()"
     },
     {
@@ -4964,7 +4964,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "src_render_trackframe_active",
-      "community": 51,
+      "community": 19,
       "community_name": "trackFrame.ts",
       "norm_label": "active"
     },
@@ -4988,8 +4988,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackpos",
-      "community": 35,
-      "community_name": "trackPos",
+      "community": 19,
+      "community_name": "trackFrame.ts",
       "norm_label": "trackpos()"
     },
     {
@@ -4999,56 +4999,56 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_worldprops",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "worldprops.ts"
     },
     {
       "label": "stripeTexture()",
       "file_type": "code",
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L22",
+      "source_location": "L23",
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_worldprops_stripetexture",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "stripetexture()"
     },
     {
       "label": "bumpSignTexture()",
       "file_type": "code",
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L40",
+      "source_location": "L41",
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_worldprops_bumpsigntexture",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "bumpsigntexture()"
     },
     {
       "label": "chevronTexture()",
       "file_type": "code",
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L64",
+      "source_location": "L65",
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_worldprops_chevrontexture",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "chevrontexture()"
     },
     {
       "label": "createWorldProps()",
       "file_type": "code",
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L88",
+      "source_location": "L89",
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_worldprops_createworldprops",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "createworldprops()"
     },
     {
@@ -5609,8 +5609,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_fixedstepper",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 72,
+      "community_name": "fixedStepper.ts",
       "norm_label": "fixedstepper.ts"
     },
     {
@@ -5622,8 +5622,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_fixedstepper_fixedstepper",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 72,
+      "community_name": "fixedStepper.ts",
       "norm_label": "fixedstepper"
     },
     {
@@ -5634,8 +5634,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_fixedstepper_fixedstepper_constructor",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 72,
+      "community_name": "fixedStepper.ts",
       "norm_label": ".constructor()"
     },
     {
@@ -5646,8 +5646,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_fixedstepper_fixedstepper_advance",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 72,
+      "community_name": "fixedStepper.ts",
       "norm_label": ".advance()"
     },
     {
@@ -6401,7 +6401,7 @@
       "label": "sameLane()",
       "file_type": "code",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L24",
+      "source_location": "L25",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_traffic_samelane",
@@ -6413,7 +6413,7 @@
       "label": "closedAhead()",
       "file_type": "code",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L27",
+      "source_location": "L28",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_traffic_closedahead",
@@ -6425,7 +6425,7 @@
       "label": "besideWorks()",
       "file_type": "code",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L31",
+      "source_location": "L32",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_traffic_besideworks",
@@ -6437,7 +6437,7 @@
       "label": "stepTraffic()",
       "file_type": "code",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L39",
+      "source_location": "L40",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_traffic_steptraffic",
@@ -6580,7 +6580,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_types_hazard",
-      "community": 28,
+      "community": 51,
       "community_name": "itemsFx.ts",
       "norm_label": "hazard"
     },
@@ -7773,7 +7773,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_mysteryhud_mysterytext",
-      "community": 28,
+      "community": 51,
       "community_name": "itemsFx.ts",
       "norm_label": "mysterytext()"
     },
@@ -7797,7 +7797,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_mysteryhud_createmysteryhud",
-      "community": 28,
+      "community": 51,
       "community_name": "itemsFx.ts",
       "norm_label": "createmysteryhud()"
     },
@@ -8774,7 +8774,7 @@
       "_origin": "ast",
       "id": "tests_input_touchbuttons_test",
       "community": 28,
-      "community_name": "itemsFx.ts",
+      "community_name": "touchButtons.ts",
       "norm_label": "touchbuttons.test.ts"
     },
     {
@@ -8786,7 +8786,7 @@
       "_origin": "ast",
       "id": "tests_input_touchbuttons_test_ptr",
       "community": 28,
-      "community_name": "itemsFx.ts",
+      "community_name": "touchButtons.ts",
       "norm_label": "ptr()"
     },
     {
@@ -8798,7 +8798,7 @@
       "_origin": "ast",
       "id": "tests_input_touchbuttons_test_btn",
       "community": 28,
-      "community_name": "itemsFx.ts",
+      "community_name": "touchButtons.ts",
       "norm_label": "btn()"
     },
     {
@@ -8875,8 +8875,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_buildings_test",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "buildings.test.ts"
     },
     {
@@ -8886,8 +8886,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_cameras_test",
-      "community": 35,
-      "community_name": "trackPos",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "cameras.test.ts"
     },
     {
@@ -9096,8 +9096,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_hazardsview_test",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "hazardsview.test.ts"
     },
     {
@@ -9108,7 +9108,7 @@
       "_origin": "ast",
       "id": "tests_render_heli_test",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "heli.test.ts"
     },
     {
@@ -9119,7 +9119,7 @@
       "_origin": "ast",
       "id": "tests_render_opponentmarker_test",
       "community": 35,
-      "community_name": "trackPos",
+      "community_name": "opponentMarker.ts",
       "norm_label": "opponentmarker.test.ts"
     },
     {
@@ -9174,8 +9174,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_roadchunks_test",
-      "community": 51,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "roadchunks.test.ts"
     },
     {
@@ -9196,7 +9196,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_specialsview_test",
-      "community": 28,
+      "community": 51,
       "community_name": "itemsFx.ts",
       "norm_label": "specialsview.test.ts"
     },
@@ -9218,32 +9218,32 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_worldprops_test",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "worldprops.test.ts"
     },
     {
       "label": "traffic()",
       "file_type": "code",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L10",
+      "source_location": "L11",
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_worldprops_test_traffic",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "traffic()"
     },
     {
       "label": "visibleNamed()",
       "file_type": "code",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L19",
+      "source_location": "L20",
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_worldprops_test_visiblenamed",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 2,
+      "community_name": "carFactory.ts",
       "norm_label": "visiblenamed()"
     },
     {
@@ -9599,8 +9599,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_fixedstepper_test",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 72,
+      "community_name": "fixedStepper.ts",
       "norm_label": "fixedstepper.test.ts"
     },
     {
@@ -10175,7 +10175,7 @@
       "_origin": "ast",
       "id": "tests_storage_ranking_test_t",
       "community": 28,
-      "community_name": "itemsFx.ts",
+      "community_name": "touchButtons.ts",
       "norm_label": "t()"
     },
     {
@@ -10532,7 +10532,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_mysteryhud_test",
-      "community": 28,
+      "community": 51,
       "community_name": "itemsFx.ts",
       "norm_label": "mysteryhud.test.ts"
     },
@@ -18289,6 +18289,18 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "tests/render/worldProps.test.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_render_worldprops_test",
+      "target": "src_config_balance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "tests/sanity.test.ts",
       "source_location": "L2",
       "weight": 1.0,
@@ -19986,6 +19998,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_heli_test",
+      "target": "src_config_balance_balance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/render/worldProps.test.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_render_worldprops_test",
       "target": "src_config_balance_balance",
       "confidence_score": 1.0
     },
@@ -24871,7 +24895,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -25328,7 +25352,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L105",
+      "source_location": "L106",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_worldprops_createworldprops",
@@ -25339,7 +25363,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -25423,7 +25447,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -25507,7 +25531,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -26543,7 +26567,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L92",
+      "source_location": "L93",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_worldprops_createworldprops",
@@ -26857,7 +26881,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L145",
+      "source_location": "L146",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_worldprops_createworldprops",
@@ -28484,7 +28508,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_worldprops",
@@ -28495,7 +28519,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L64",
+      "source_location": "L65",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_worldprops",
@@ -28506,7 +28530,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L88",
+      "source_location": "L89",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_worldprops",
@@ -28517,7 +28541,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_worldprops",
@@ -28637,7 +28661,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -28649,7 +28673,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L184",
+      "source_location": "L185",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_worldprops_createworldprops",
@@ -28661,7 +28685,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L189",
+      "source_location": "L190",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_worldprops_createworldprops",
@@ -28673,7 +28697,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L217",
+      "source_location": "L218",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_worldprops_createworldprops",
@@ -28686,7 +28710,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/worldProps.ts",
-      "source_location": "L114",
+      "source_location": "L115",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_worldprops_createworldprops",
@@ -28697,7 +28721,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -30125,7 +30149,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -30581,7 +30605,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -31933,7 +31957,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -32125,7 +32149,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -35118,7 +35142,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L41",
+      "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_steptraffic",
@@ -36270,7 +36294,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -36390,7 +36414,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -36641,7 +36665,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic",
@@ -36652,7 +36676,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic",
@@ -36663,7 +36687,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic",
@@ -36674,7 +36698,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic",
@@ -36805,7 +36829,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L109",
+      "source_location": "L110",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_steptraffic",
@@ -36853,7 +36877,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L28",
+      "source_location": "L29",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_closedahead",
@@ -36865,7 +36889,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_steptraffic",
@@ -36877,7 +36901,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L56",
+      "source_location": "L57",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_steptraffic",
@@ -36889,7 +36913,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L84",
+      "source_location": "L85",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_steptraffic",
@@ -36902,7 +36926,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L42",
+      "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_steptraffic",
@@ -36914,7 +36938,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_steptraffic",
@@ -37284,7 +37308,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -37536,7 +37560,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -38264,7 +38288,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -39920,7 +39944,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -45523,7 +45547,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -45534,7 +45558,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/render/worldProps.test.ts",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_render_worldprops_test",
@@ -49280,5 +49304,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "85f26ca4c24d429c24a6920338bbef9b10ce986c"
+  "built_at_commit": "8da4b72bf44cf43e0e14a0a94980fd29e875e81f"
 }

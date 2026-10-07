@@ -9,7 +9,7 @@ const LANES = BALANCE.road.laneCenters;
 /** How many traffic cars to keep at the level: 3 at level 1, +8% per level. */
 export function trafficTarget(level: number, difficulty: Difficulty = 'normal', chaos = 1, mode: Mode = 'pursuit'): number {
   const t = BALANCE.traffic;
-  return Math.max(
+  const n = Math.max(
     1,
     Math.round(
       t.baseCount *
@@ -19,6 +19,7 @@ export function trafficTarget(level: number, difficulty: Difficulty = 'normal', 
         (1 + BALANCE.survival.trafficPerChaos * (chaos - 1)),
     ),
   );
+  return Math.min(t.maxCount, n);
 }
 
 const sameLane = (ax: number, bx: number) => Math.abs(ax - bx) < 2 * BALANCE.car.halfWidth;
