@@ -66,3 +66,10 @@ describe('difficulty multiplier', () => {
     expect(rewardFor({ time: 69.9, won: true }, { damageDealt: 100, rightBoxes: 4 })).toMatchObject({ total: 112, difficulty: 'normal' });
   });
 });
+
+describe('Sobrevivência coins', () => {
+  it('the time part goes up to 60 (1 per 3 s)', () => {
+    expect(rewardFor({ time: 300, won: false }, { damageDealt: 0, rightBoxes: 0 }, 'normal', 'survival').time).toBe(60);
+    expect(rewardFor({ time: 300, won: false }, { damageDealt: 0, rightBoxes: 0 }, 'normal', 'pursuit').time).toBe(30);
+  });
+});

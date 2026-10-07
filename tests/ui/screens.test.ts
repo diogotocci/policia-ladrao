@@ -464,27 +464,64 @@ describe('end', () => {
 
 describe('ranking', () => {
   // one board in Médio, the other difficulties empty
-  const R = (board: Board) => ({ boards: { ...emptyBoards(), normal: board }, difficulty: 'normal' as const, onDifficulty: vi.fn() });
+  const R = (board: Board) => ({
+    boards: { pursuit: { ...emptyBoards(), normal: board }, survival: emptyBoards() },
+    mode: 'pursuit' as const,
+    onMode: vi.fn(),
+    difficulty: 'normal' as const,
+    onDifficulty: vi.fn(),
+  });
+
+  it('a mode picker above the difficulty; Sobrevivência thief rows show "preso" when caught', () => {
+    const survival = emptyBoards();
+    survival.normal = insert(
+      emptyBoard(),
+      'thief',
+      { initials: 'LOS', time: 200, hp: 0, how: 'caught', date: '2026-10-07' },
+      'survival',
+    ).board;
+    const onMode = vi.fn();
+    renderRanking(root, {
+      boards: { pursuit: emptyBoards(), survival },
+      mode: 'survival',
+      onMode,
+      difficulty: 'normal',
+      onDifficulty: vi.fn(),
+      tab: 'thief',
+      onTab: vi.fn(),
+      onBack: vi.fn(),
+    });
+    const groups = [...root.querySelectorAll('[role="radiogroup"]')];
+    expect(groups.map((g) => g.getAttribute('aria-label'))).toEqual(['Modo', 'Dificuldade']);
+    expect(groups[0]!.querySelector('[aria-checked="true"]')!.textContent).toBe('Sobrevivência');
+    expect(root.querySelector('.ranking-row')!.textContent).toContain('LOS');
+    expect(root.querySelector('.ranking-row')!.textContent).toContain('preso');
+    (groups[0]!.querySelectorAll('[role="radio"]')[0] as HTMLElement).click();
+    expect(onMode).toHaveBeenCalledWith('pursuit');
+  });
 
   it("a difficulty picker on top shows that difficulty's list; the new-record highlight only where it was made", () => {
-    const boards = emptyBoards();
-    boards.hard = insert(emptyBoard(), 'police', { initials: 'HRD', time: 40, date: '2026-10-07' }).board;
-    boards.normal = insert(emptyBoard(), 'police', { initials: 'MED', time: 50, date: '2026-10-07' }).board;
+    const byDiff = emptyBoards();
+    byDiff.hard = insert(emptyBoard(), 'police', { initials: 'HRD', time: 40, date: '2026-10-07' }).board;
+    byDiff.normal = insert(emptyBoard(), 'police', { initials: 'MED', time: 50, date: '2026-10-07' }).board;
+    const boards = { pursuit: byDiff, survival: emptyBoards() };
+    const m = { mode: 'pursuit' as const, onMode: vi.fn() };
     const onDifficulty = vi.fn();
-    const highlight = { difficulty: 'hard' as const, role: 'police' as const, rank: 1 };
-    renderRanking(root, { boards, difficulty: 'hard', onDifficulty, tab: 'police', highlight, onTab: vi.fn(), onBack: vi.fn() });
-    expect(root.querySelector('[role="radiogroup"] [aria-checked="true"]')!.textContent).toBe('Difícil');
+    const highlight = { mode: 'pursuit' as const, difficulty: 'hard' as const, role: 'police' as const, rank: 1 };
+    renderRanking(root, { ...m, boards, difficulty: 'hard', onDifficulty, tab: 'police', highlight, onTab: vi.fn(), onBack: vi.fn() });
+    expect(root.querySelector('[aria-label="Dificuldade"] [aria-checked="true"]')!.textContent).toBe('Difícil');
     expect(root.querySelector('.ranking-row')!.textContent).toContain('HRD');
     expect(root.querySelector('.ranking-row')!.classList.contains('is-new')).toBe(true);
-    (root.querySelectorAll('[role="radio"]')[1] as HTMLElement).click();
+    (root.querySelectorAll('[aria-label="Dificuldade"] [role="radio"]')[1] as HTMLElement).click();
     expect(onDifficulty).toHaveBeenCalledWith('normal');
     root.innerHTML = '';
-    renderRanking(root, { boards, difficulty: 'normal', onDifficulty, tab: 'police', highlight, onTab: vi.fn(), onBack: vi.fn() });
+    renderRanking(root, { ...m, boards, difficulty: 'normal', onDifficulty, tab: 'police', highlight, onTab: vi.fn(), onBack: vi.fn() });
     expect(root.querySelector('.ranking-row')!.textContent).toContain('MED');
     expect(root.querySelector('.ranking-row')!.classList.contains('is-new')).toBe(false);
     root.innerHTML = '';
     // after switching difficulty with the keyboard the screen is redrawn: focus stays on the picker
     renderRanking(root, {
+      ...m,
       boards,
       difficulty: 'easy',
       onDifficulty,
@@ -493,7 +530,7 @@ describe('ranking', () => {
       onTab: vi.fn(),
       onBack: vi.fn(),
     });
-    expect(document.activeElement).toBe(root.querySelector('[role="radio"][aria-checked="true"]'));
+    expect(document.activeElement).toBe(root.querySelector('[aria-label="Dificuldade"] [role="radio"][aria-checked="true"]'));
   });
 
   it('tabs, rows with rank, initials, time and date; highlight of the new record; empty state', () => {
@@ -503,7 +540,7 @@ describe('ranking', () => {
     renderRanking(root, {
       ...R(board),
       tab: 'police',
-      highlight: { difficulty: 'normal', role: 'police', rank: 1 },
+      highlight: { mode: 'pursuit', difficulty: 'normal', role: 'police', rank: 1 },
       onTab,
       onBack: vi.fn(),
     });

@@ -2,6 +2,7 @@
 import type { Role } from '../config/balance';
 import { BALANCE } from '../config/balance';
 import type { WorldState } from '../sim/types';
+import { createChaosMeter } from './hudSurvival';
 import { policeOf, thiefOf } from '../sim/world';
 import './hud.css';
 
@@ -137,6 +138,8 @@ export function createHud(
   const timeLabel = el('span', 'hud-time-label', playerRole === 'thief' ? 'Fuga em' : 'Prenda em');
   const time = el('div', 'hud-time', '00:00.0');
   timeBox.append(timeLabel, time);
+  const chaosMeter = createChaosMeter();
+  timeBox.append(chaosMeter.el);
   const dist = el('div', 'hud-distance', '0 m');
   const level = el('div', 'hud-level', 'Nv 1');
   center.append(timeBox, dist, level);
@@ -171,8 +174,13 @@ export function createHud(
       setBar(policeBar, police.hp);
       setBar(thiefBar, thief.hp);
       const at = w.match.escapeAt ?? w.match.arrestAt ?? (w.match.over ? (w.match.endTime ?? w.time) : w.time);
-      const left = Math.max(0, w.escapeTime - at);
-      time.textContent = formatTime(left);
+      // Sobrevivência: no clock to beat, the time counts up next to the chaos level
+      const survival = w.mode === 'survival';
+      const left = survival ? Infinity : Math.max(0, w.escapeTime - at);
+      timeLabel.textContent = survival ? 'Tempo' : playerRole === 'thief' ? 'Fuga em' : 'Prenda em';
+      time.textContent = formatTime(survival ? at : left);
+      const rose = chaosMeter.update(w.mode, w.chaos);
+      if (rose) this.toast(rose, { big: true });
       const scene = w.match.escapeAt !== undefined || w.match.arrestAt !== undefined;
       const alert = left > 0 && left <= ALERT_LEFT && !w.match.over && !scene;
       time.classList.toggle('is-alert', alert);

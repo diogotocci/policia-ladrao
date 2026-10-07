@@ -2,11 +2,11 @@
 // The coins of a match are credited once, saved before the end screen shows, and survive a reload.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-type Opts = { onEnd: OnEnd; difficulty?: string };
+type Opts = { onEnd: OnEnd; difficulty?: string; mode?: string };
 type OnEnd = (r: {
   winner: 'police' | 'thief';
   time: number;
-  reason?: 'escape';
+  reason?: 'escape' | 'thiefDown';
   hp: number;
   level: number;
   stats: { damageDealt: number; rightBoxes: number };
@@ -121,11 +121,11 @@ describe('difficulty', () => {
     // (30 + 5 + 4) x 2 x 1.5 = 117
     expect(saved()).toBe(117);
     (container.querySelector('.initials') as HTMLElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-    const v3 = JSON.parse(localStorage.getItem('pl.ranking.v3')!);
-    expect(v3.hard.thief).toHaveLength(1);
-    expect(v3.normal.thief).toHaveLength(0);
+    const v4 = JSON.parse(localStorage.getItem('pl.ranking.v4')!);
+    expect(v4.pursuit.hard.thief).toHaveLength(1);
+    expect(v4.pursuit.normal.thief).toHaveLength(0);
     click('Ranking');
-    expect(container.querySelector('.screen-ranking [role="radio"][aria-checked="true"]')!.textContent).toBe('Difícil');
+    expect(container.querySelector('.screen-ranking [aria-label="Dificuldade"] [aria-checked="true"]')!.textContent).toBe('Difícil');
     app.stop();
   });
 
@@ -135,6 +135,26 @@ describe('difficulty', () => {
     click('Jogar Perseguição');
     (container.querySelectorAll('.screen-choose [role="radio"]')[0] as HTMLElement).click();
     expect(localStorage.getItem('pl.difficulty')).toBe('easy');
+    app.stop();
+  });
+});
+
+describe('Sobrevivência', () => {
+  it('the match runs in survival, pays up to 60 for time and a lost thief still enters the survival ranking', () => {
+    const app = startApp(container, { mute: true });
+    click('Jogar');
+    click('Jogar Sobrevivência');
+    (container.querySelector('[data-role="thief"]') as HTMLButtonElement).click();
+    expect(gameOpts[0]!.mode).toBe('survival');
+    frames(60);
+    ends[0]!({ winner: 'police', time: 300, reason: 'thiefDown', hp: 0, level: 7, stats: { damageDealt: 0, rightBoxes: 0 } });
+    expect(saved()).toBe(60); // 300 s -> 60 (survival cap), a loss: x1
+    expect(container.querySelector('.initials')).not.toBeNull(); // the survival thief ranks even when caught
+    (container.querySelector('.initials') as HTMLElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    const v4 = JSON.parse(localStorage.getItem('pl.ranking.v4')!);
+    expect(v4.survival.normal.thief[0]).toMatchObject({ time: 300, how: 'caught' });
+    click('Ranking');
+    expect(container.querySelector('.screen-ranking [aria-label="Modo"] [aria-checked="true"]')!.textContent).toBe('Sobrevivência');
     app.stop();
   });
 });

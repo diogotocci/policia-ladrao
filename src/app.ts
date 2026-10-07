@@ -10,7 +10,7 @@ import { loadProfile, saveProfile } from './storage/profileStore';
 import { loadDifficulty, saveDifficulty } from './storage/difficulty';
 import { loadMode, saveMode } from './storage/mode';
 import { renderMode } from './ui/screens/mode';
-import { countRecords, insert, loadBoards, qualifies, saveBoards, type Boards } from './storage/ranking';
+import { countModeRecords, insert, loadModeBoards, qualifies, recordEntry, saveModeBoards, type ModeBoards } from './storage/ranking';
 import { initialState, reduce, type FlowAction, type FlowState } from './ui/screens/flow';
 import { openProgress } from './ui/screens/progress';
 import { renderChoose, renderCountdown, renderEnd, renderPause, renderRanking, renderTitle } from './ui/screens/screens';
@@ -49,14 +49,14 @@ export function startApp(
   container.append(layer);
 
   let state: FlowState = initialState();
-  let boards: Boards = loadBoards(storage);
+  let boards: ModeBoards = loadModeBoards(storage);
   // V2 part 2: the last difficulty chosen on the side choice; every match, reward and record uses it
   let difficulty = loadDifficulty(storage);
   // V2 part 3: last mode chosen (the debug ?mode= overrides it for e2e)
   let mode: Mode = opts.mode ?? loadMode(storage);
   // coins and stats (V2 part 1); the welcome bonus is credited once, from the records already in the ranking
   const loaded = loadProfile(storage);
-  let profile = grantWelcome(loaded.profile, countRecords(boards));
+  let profile = grantWelcome(loaded.profile, countModeRecords(boards));
   // false once any save fails (full or blocked storage): the Progresso dialog then warns that nothing is kept
   let persistent = loaded.persistent;
   const persist = () => (persistent = saveProfile(storage, profile) && persistent);
@@ -91,7 +91,7 @@ export function startApp(
       onClose: () => host.querySelector<HTMLElement>('.title-progress')?.focus(),
     });
   };
-  let highlight: { difficulty: Difficulty; role: Role; rank: number } | undefined;
+  let highlight: { mode: Mode; difficulty: Difficulty; role: Role; rank: number } | undefined;
   /** the reward of the last match already counted up on screen once */
   let rewardShown = false;
   let game: GameHandle | undefined;
@@ -136,14 +136,14 @@ export function startApp(
       onPauseRequest: () => dispatch({ type: 'pause' }),
       onEnd: (r) => {
         // credited and saved before the end screen shows: a reload right after cannot lose or repeat it
-        const settled = settleMatch(profile, r, role, difficulty);
+        const settled = settleMatch(profile, r, role, difficulty, mode);
         profile = settled.profile;
         persist();
         rewardShown = false;
         dispatch({
           type: 'ended',
           result: r,
-          qualifies: qualifies(boards[difficulty], role, r.time, r.winner === role, r.hp),
+          qualifies: qualifies(boards[mode][difficulty], role, r.time, r.winner === role, r.hp, mode),
           reward: settled.reward,
         });
       },
@@ -165,7 +165,7 @@ export function startApp(
         highlight = undefined;
         const t = renderTitle(layer, {
           onPlay: () => press({ type: 'play' }),
-          onRanking: () => press({ type: 'openRanking', difficulty }),
+          onRanking: () => press({ type: 'openRanking', difficulty, mode }),
           onHowToSeen: markHowToSeen,
           coins: profile.coins,
           onProgress: openProgressDialog,
@@ -235,22 +235,16 @@ export function startApp(
           difficulty,
           animateReward: !rewardShown, // count up only the first time, not when coming back from the ranking
           onSave: (initials) => {
-            const thief =
-              s.role === 'thief'
-                ? {
-                    hp: Math.max(0, Math.min(100, s.result.hp ?? 0)),
-                    how: s.result.reason === 'escape' ? ('escape' as const) : ('kill' as const),
-                  }
-                : {};
-            const r = insert(boards[difficulty], s.role, { initials, time: s.result.time, date: new Date().toISOString(), ...thief });
-            boards = { ...boards, [difficulty]: r.board };
-            saveBoards(storage, boards);
-            if (r.rank > 0) highlight = { difficulty, role: s.role, rank: r.rank };
+            const entry = recordEntry(s.role, s.result, initials, new Date().toISOString());
+            const r = insert(boards[mode][difficulty], s.role, entry, mode);
+            boards = { ...boards, [mode]: { ...boards[mode], [difficulty]: r.board } };
+            saveModeBoards(storage, boards);
+            if (r.rank > 0) highlight = { mode, difficulty, role: s.role, rank: r.rank };
             state = reduce(state, { type: 'saved' }); // no redraw: the screen already shows "Recorde salvo!"
           },
           onAgain: () => press({ type: 'restart' }),
           onChangeSide: () => press({ type: 'changeSide' }),
-          onRanking: () => press({ type: 'openRanking', difficulty }),
+          onRanking: () => press({ type: 'openRanking', difficulty, mode }),
           onHome: () => press({ type: 'quit' }),
         });
         rewardShown = true;
@@ -258,6 +252,8 @@ export function startApp(
       case 'ranking':
         view = renderRanking(layer, {
           boards,
+          mode: s.mode,
+          onMode: (m) => press({ type: 'modeTab', mode: m }),
           difficulty: s.difficulty,
           onDifficulty: (d) => ((difficultySwitch = true), press({ type: 'difficultyTab', difficulty: d })),
           focusDifficulty: difficultySwitch,

@@ -3,6 +3,16 @@ import { COUNTDOWN, initialState, reduce, type FlowState } from '../../src/ui/sc
 
 const run = (s: FlowState, ...actions: Parameters<typeof reduce>[1][]) => actions.reduce(reduce, s);
 
+describe('ranking per mode', () => {
+  it('opening keeps the mode; modeTab changes only it; default Perseguição', () => {
+    let s = reduce(initialState(), { type: 'openRanking', difficulty: 'hard', mode: 'survival' });
+    expect(s).toMatchObject({ screen: 'ranking', mode: 'survival', difficulty: 'hard' });
+    s = reduce(s, { type: 'modeTab', mode: 'pursuit' });
+    expect(s).toMatchObject({ mode: 'pursuit', difficulty: 'hard' });
+    expect(reduce(initialState(), { type: 'openRanking' })).toMatchObject({ mode: 'pursuit' });
+  });
+});
+
 describe('mode screen', () => {
   it('Voltar from the side choice goes back to the modes; from the modes, to the title', () => {
     const choose = run(initialState(), { type: 'play' }, { type: 'pickMode' });
