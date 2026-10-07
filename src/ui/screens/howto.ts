@@ -8,9 +8,8 @@ const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2,
 export const ESCAPE = clock(BALANCE.match.escapeTime);
 
 type Tip = { icon: keyof typeof SCREEN_ICONS; title: string; text: string };
-const PAGES: { tips: Tip[]; next?: string }[] = [
+const PAGES: { tips: Tip[] }[] = [
   {
-    next: 'Próximo: tráfego e tiros',
     tips: [
       { icon: 'auto', title: 'O carro acelera sozinho', text: 'Use ◀ ▶ para trocar de faixa e o freio quando precisar.' },
       {
@@ -52,27 +51,82 @@ function tipEl(t: Tip): HTMLElement {
   return el;
 }
 
-/** "Como jogar" dialog over the choice screen; the content behind it is inert while it is open. */
+/** Page dots: tapping one goes to that page. */
+function pageDots(go: (i: number) => void): HTMLButtonElement[] {
+  return PAGES.map((_, i) => {
+    const d = btn('', 'howto-dot', () => go(i));
+    d.setAttribute('aria-label', `Página ${i + 1} de ${PAGES.length}`);
+    return d;
+  });
+}
+
+/** Horizontal drag on `view` turns the page: past ~15% of the width (at least 40 px) it moves, otherwise it snaps back. */
+function dragToTurn(view: HTMLElement, strip: HTMLElement, page: () => number, go: (i: number) => void): void {
+  let startX: number | undefined;
+  let dx = 0;
+  view.addEventListener('pointerdown', (e) => {
+    startX = e.clientX;
+    dx = 0;
+    strip.style.transition = 'none';
+    if ('pointerId' in e) view.setPointerCapture?.((e as PointerEvent).pointerId);
+  });
+  view.addEventListener('pointermove', (e) => {
+    if (startX === undefined) return;
+    dx = e.clientX - startX;
+    strip.style.transform = `translateX(calc(${-page() * 100}% + ${dx}px))`;
+  });
+  const end = () => {
+    if (startX === undefined) return;
+    startX = undefined;
+    strip.style.transition = '';
+    const threshold = Math.max(40, view.clientWidth * 0.15);
+    go(dx < -threshold ? page() + 1 : dx > threshold ? page() - 1 : page());
+  };
+  view.addEventListener('pointerup', end);
+  view.addEventListener('pointercancel', end);
+}
+
+/** "Como jogar" dialog: a carousel of tip pages (drag, Anterior/Próximo, dots, arrow keys). */
 export function openHowTo(host: HTMLElement, onClose: () => void): void {
   const dialog = h('div', 'howto');
-  const tips = h('div', 'howto-tips');
-  const dots = h('div', 'howto-dots');
-  dots.setAttribute('aria-hidden', 'true');
-  const pager = h('div', 'howto-pager');
+  const view = h('div', 'howto-view');
+  const strip = h('div', 'howto-strip');
+  const pages = PAGES.map((pg) => {
+    const el = h('div', 'howto-tips');
+    el.append(...pg.tips.map(tipEl));
+    return el;
+  });
+  strip.append(...pages);
+  view.append(strip);
+  let current = 0;
+  const prev = btn('Anterior', 'howto-prev', () => go(current - 1), SCREEN_ICONS.back);
+  const next = btn('Próximo', 'howto-next', () => go(current + 1));
+  next.insertAdjacentHTML('beforeend', SCREEN_ICONS.forward);
   const done = btn('Entendi', 'is-primary', () => close());
-  const show = (i: number) => {
-    tips.replaceChildren(...PAGES[i]!.tips.map(tipEl));
-    dots.replaceChildren(...PAGES.map((_, k) => h('i', k === i ? 'is-on' : '')));
-    const next = PAGES[i]!.next;
-    const turn = next ? btn(next, 'is-quiet', () => show(i + 1)) : btn('Anterior', 'is-quiet', () => show(i - 1));
-    const hadFocus = pager.contains(document.activeElement);
-    pager.replaceChildren(turn);
-    if (hadFocus) turn.focus(); // the pressed button is gone: keep the keyboard inside the dialog
-  };
+  const dots = pageDots((i) => go(i));
+  function go(i: number) {
+    current = Math.max(0, Math.min(PAGES.length - 1, i));
+    strip.style.transform = `translateX(${-current * 100}%)`;
+    pages.forEach((pg, k) => pg.toggleAttribute('inert', k !== current));
+    dots.forEach((d, k) => d.setAttribute('aria-current', String(k === current)));
+    const lost = document.activeElement;
+    prev.hidden = current === 0;
+    next.hidden = current === PAGES.length - 1;
+    // the pressed button may have just been hidden: keep the keyboard inside the dialog
+    if (lost === prev && prev.hidden) next.focus();
+    if (lost === next && next.hidden) prev.focus();
+  }
+  dragToTurn(view, strip, () => current, go);
+  dialog.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') go(current - 1);
+    else if (e.key === 'ArrowRight') go(current + 1);
+  });
+  const dotsRow = h('div', 'howto-dots');
+  dotsRow.append(...dots);
   const foot = h('div', 'howto-foot');
-  foot.append(dots, pager, done);
-  dialog.append(h('h2', 'screen-heading', 'Como jogar'), tips, foot);
-  show(0);
+  foot.append(dotsRow, prev, next, done);
+  dialog.append(h('h2', 'screen-heading', 'Como jogar'), view, foot);
+  go(0);
   const close = openModal(host, dialog, 'Como jogar', onClose);
   done.focus();
 }

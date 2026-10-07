@@ -94,34 +94,81 @@ describe('choose', () => {
     button('Como jogar').click();
     const dialog = root.querySelector('.howto')!;
     expect(dialog.getAttribute('role')).toBe('dialog');
-    expect(dialog.querySelectorAll('.howto-tip')).toHaveLength(4);
-    expect(dialog.textContent).toContain('O carro acelera sozinho');
-    expect(dialog.textContent).toContain('Freie nas curvas fechadas');
-    expect(dialog.textContent).toContain('sobe na calçada e perde 5 de vida'); // BALANCE.collision.scenery
+    const page = () => dialog.querySelector('.howto-tips:not([inert])')!.textContent!;
+    expect(dialog.querySelectorAll('.howto-tips')).toHaveLength(2);
+    expect(page()).toContain('O carro acelera sozinho');
+    expect(page()).toContain('Freie nas curvas fechadas');
+    expect(page()).toContain('sobe na calçada e perde 5 de vida'); // BALANCE.collision.scenery
     expect(dialog.textContent).not.toContain('muro'); // there is no wall, it is the curb
-    expect(dialog.textContent).toContain('tira 2 de vida'); // BALANCE.items.wrongBoxDamage
-    expect(dialog.textContent).toContain('Quebra-molas');
-    button('Próximo: tráfego e tiros').click();
-    expect(dialog.textContent).toContain('tiram 15 de vida'); // BALANCE.items.bomb.damage
-    expect(dialog.textContent).toContain('Quem vence');
+    expect(page()).toContain('tira 2 de vida'); // BALANCE.items.wrongBoxDamage
+    expect(page()).toContain('Quebra-molas');
+    expect(page()).not.toContain('Quem vence');
+    button('Próximo').click();
+    expect(page()).toContain('tiram 15 de vida'); // BALANCE.items.bomb.damage
+    expect(page()).toContain('Quem vence');
     button('Anterior').click();
-    expect(dialog.textContent).toContain('O carro acelera sozinho');
+    expect(page()).toContain('O carro acelera sozinho');
     button('Entendi').click();
     expect(root.querySelector('.howto')).toBeNull();
     expect(p.onHowToSeen).toHaveBeenCalledOnce();
     expect(document.activeElement).toBe(button('Como jogar'));
   });
 
+  it('carousel: Anterior hidden on the first page, Próximo hidden on the last; dots and arrow keys change page', () => {
+    show(cb());
+    button('Como jogar').click();
+    const dialog = root.querySelector('.howto') as HTMLElement;
+    const current = () => [...dialog.querySelectorAll('.howto-dot')].findIndex((d) => d.getAttribute('aria-current') === 'true');
+    const prev = dialog.querySelector('.howto-prev') as HTMLButtonElement;
+    const next = dialog.querySelector('.howto-next') as HTMLButtonElement;
+    expect(current()).toBe(0);
+    expect(prev.hidden).toBe(true);
+    expect(next.hidden).toBe(false);
+    (dialog.querySelector('[aria-label="Página 2 de 2"]') as HTMLButtonElement).click();
+    expect(current()).toBe(1);
+    expect(prev.hidden).toBe(false);
+    expect(next.hidden).toBe(true);
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
+    expect(current()).toBe(0);
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true })); // already first: stays
+    expect(current()).toBe(0);
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    expect(current()).toBe(1);
+  });
+
+  it('carousel: dragging the cards to the side turns the page; a tiny drag snaps back', () => {
+    show(cb());
+    button('Como jogar').click();
+    const dialog = root.querySelector('.howto') as HTMLElement;
+    const view = dialog.querySelector('.howto-view') as HTMLElement;
+    const current = () => [...dialog.querySelectorAll('.howto-dot')].findIndex((d) => d.getAttribute('aria-current') === 'true');
+    const drag = (from: number, to: number) => {
+      view.dispatchEvent(new MouseEvent('pointerdown', { clientX: from, clientY: 100, bubbles: true }));
+      view.dispatchEvent(new MouseEvent('pointermove', { clientX: (from + to) / 2, clientY: 100, bubbles: true }));
+      view.dispatchEvent(new MouseEvent('pointermove', { clientX: to, clientY: 100, bubbles: true }));
+      view.dispatchEvent(new MouseEvent('pointerup', { clientX: to, clientY: 100, bubbles: true }));
+    };
+    drag(400, 380); // 20 px: not enough
+    expect(current()).toBe(0);
+    drag(400, 250); // drag left: next page
+    expect(current()).toBe(1);
+    drag(250, 200); // already the last page
+    expect(current()).toBe(1);
+    drag(200, 400); // drag right: back
+    expect(current()).toBe(0);
+  });
+
   it('keyboard: changing page keeps the focus in the dialog; Tab cycles only inside it (cards behind are inert)', () => {
     show(cb());
     button('Como jogar').click();
-    const next = button('Próximo: tráfego e tiros');
+    const next = button('Próximo');
     next.focus(); // keyboard user on the pager button
     next.click();
-    expect(document.activeElement).toBe(button('Anterior'));
+    expect(document.activeElement).toBe(button('Anterior')); // Próximo is hidden on the last page
     button('Entendi').focus();
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
-    expect(document.activeElement).toBe(button('Anterior')); // wraps to the first control of the dialog, not to the inert Voltar
+    // wraps to the first control of the dialog (the first page dot), not to the inert Voltar
+    expect(document.activeElement).toBe(root.querySelector('[aria-label="Página 1 de 2"]'));
   });
 
   it('first time: opens by itself; Esc closes it too', () => {
