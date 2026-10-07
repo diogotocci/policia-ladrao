@@ -1,5 +1,6 @@
 // Screen flow (spec §7) as a pure state machine: title -> choice -> countdown -> game <-> pause -> end -> ranking.
 import type { Role } from '../../config/balance';
+import type { MatchStats, Reward } from '../../meta/rewards';
 
 export const COUNTDOWN = 3; // s
 
@@ -12,6 +13,8 @@ export interface MatchResult {
   hp?: number;
   /** difficulty level reached */
   level?: number;
+  /** damage dealt and boxes of the player's color (coins, V2 part 1) */
+  stats?: MatchStats;
 }
 
 export type FlowState =
@@ -25,7 +28,15 @@ export type FlowState =
   /** opened from the end screen: Back returns to the same end screen (an unsaved record is still there) */
   | { screen: 'ranking'; tab: Role; from: 'end'; end: EndState };
 
-export type EndState = { screen: 'end'; role: Role; result: MatchResult; qualifies: boolean; saved?: boolean };
+export type EndState = {
+  screen: 'end';
+  role: Role;
+  result: MatchResult;
+  qualifies: boolean;
+  saved?: boolean;
+  /** coins credited for this match (already in the profile) */
+  reward?: Reward;
+};
 
 export type FlowAction =
   | { type: 'play' }
@@ -35,7 +46,7 @@ export type FlowAction =
   | { type: 'resume' }
   | { type: 'restart' }
   | { type: 'quit' }
-  | { type: 'ended'; result: MatchResult; qualifies?: boolean }
+  | { type: 'ended'; result: MatchResult; qualifies?: boolean; reward?: Reward }
   | { type: 'openRanking' }
   /** end screen: play again choosing the side */
   | { type: 'changeSide' }
@@ -67,7 +78,7 @@ export function reduce(s: FlowState, a: FlowAction): FlowState {
       return s;
     case 'playing':
       if (a.type === 'pause') return { screen: 'paused', role: s.role };
-      if (a.type === 'ended') return { screen: 'end', role: s.role, result: a.result, qualifies: a.qualifies === true };
+      if (a.type === 'ended') return { screen: 'end', role: s.role, result: a.result, qualifies: a.qualifies === true, reward: a.reward };
       return s;
     case 'paused':
       if (a.type === 'resume') return { screen: 'playing', role: s.role };

@@ -29,9 +29,26 @@ function titleHero(): { hero: HTMLElement; previews: Record<Role, HTMLElement> }
   return { hero, previews };
 }
 
+const walletChip = (coins: number) => {
+  const chip = h('p', 'title-wallet');
+  chip.setAttribute('aria-label', `${coins.toLocaleString('pt-BR')} moedas`);
+  chip.insertAdjacentHTML('afterbegin', SCREEN_ICONS.coin);
+  chip.append(coins.toLocaleString('pt-BR'));
+  return chip;
+};
+
 export function renderTitle(
   root: HTMLElement,
-  p: { onPlay(): void; onRanking(): void; onHowToSeen?(): void; mountToggle(parent: HTMLElement): Disposable; version?: string },
+  p: {
+    onPlay(): void;
+    onRanking(): void;
+    onHowToSeen?(): void;
+    /** opens the Progresso dialog (stats and backup code) */
+    onProgress?(): void;
+    coins?: number;
+    mountToggle(parent: HTMLElement): Disposable;
+    version?: string;
+  },
 ): Disposable & { previews: Record<Role, HTMLElement> } {
   const s = h('section', 'screen screen-title');
   s.setAttribute('aria-label', 'Polícia × Ladrão');
@@ -41,8 +58,14 @@ export function renderTitle(
   const menu = h('div', 'title-menu');
   menu.append(play, help, btn('Ranking', '', p.onRanking, SCREEN_ICONS.trophy));
   const sound = h('div', 'title-sound');
+  if (p.onProgress) {
+    const progress = btn('', 'title-progress', p.onProgress, SCREEN_ICONS.profile);
+    progress.setAttribute('aria-label', 'Progresso');
+    sound.append(progress);
+  }
   const toggle = p.mountToggle(sound);
   s.append(hero, menu, sound);
+  if (p.coins !== undefined) s.append(walletChip(p.coins));
   if (p.version) s.append(h('p', 'title-version', `v${p.version}`));
   const m = mount(root, s, play);
   return { dispose: () => (toggle.dispose(), m.dispose()), previews };

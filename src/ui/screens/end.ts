@@ -1,5 +1,6 @@
 // End of match: result and time on the left, the record plate on the right, actions below.
-import type { Role } from '../../config/balance';
+import { BALANCE, type Role } from '../../config/balance';
+import type { MatchStats, Reward } from '../../meta/rewards';
 import { formatTime } from '../hud';
 import { btn, h, mount, type Disposable } from './dom';
 import type { MatchResult } from './flow';
@@ -12,16 +13,59 @@ function endReason(r: MatchResult, me: Role): string {
   return r.winner === 'police' ? 'O ladrão foi detido' : 'A viatura foi destruída';
 }
 
-function resultCard(r: MatchResult, won: boolean, role: Role): HTMLElement {
+const COUNT_UP_MS = 800;
+const reducedMotion = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** Coins earned, line by line; the total counts up from 0 (final at once with reduced motion). */
+function rewardBox(reward: Reward, stats: MatchStats | undefined, animate: boolean): { box: HTMLElement; stop(): void } {
+  const box = h('div', 'end-reward');
+  const list = h('dl', 'end-reward-lines');
+  const line = (label: string, value: string) => list.append(h('dt', '', label), h('dd', '', value));
+  line('Tempo de perseguição', `+${reward.time}`);
+  line(`Dano causado (${Math.round(stats?.damageDealt ?? 0)})`, `+${reward.damage}`);
+  line(`Caixas da sua cor (${stats?.rightBoxes ?? 0})`, `+${reward.boxes}`);
+  if (reward.won) line('Vitória', `×${BALANCE.rewards.winMultiplier}`);
+  const total = h('p', 'end-reward-total');
+  const label = `+${reward.total} moedas`;
+  total.setAttribute('aria-label', label);
+  const counting = animate && !reducedMotion();
+  const value = h('span', '', counting ? '+0 moedas' : label);
+  value.setAttribute('aria-hidden', 'true');
+  total.insertAdjacentHTML('afterbegin', SCREEN_ICONS.coin);
+  total.append(value);
+  box.append(list, total);
+  return { box, stop: counting ? countUp(value, reward.total) : () => {} };
+}
+
+/** Counts "+N moedas" up from 0 in COUNT_UP_MS; returns a function that stops it early. */
+function countUp(el: HTMLElement, total: number): () => void {
+  const start = Date.now();
+  const tick = setInterval(() => {
+    const k = Math.min(1, (Date.now() - start) / COUNT_UP_MS);
+    el.textContent = `+${Math.round(total * k)} moedas`;
+    if (k >= 1) clearInterval(tick);
+  }, 40);
+  return () => clearInterval(tick);
+}
+
+function resultCard(r: MatchResult, role: Role, coins: { reward?: Reward; animate: boolean }): { card: HTMLElement; stop(): void } {
+  const won = r.winner === role;
   const card = h('div', `end-result is-${won ? 'won' : 'lost'}`);
-  const stats = h('p', 'end-stats');
+  const reason = r.level === undefined ? endReason(r, role) : `${endReason(r, role)} · Nível ${r.level}`;
+  card.append(h('h2', 'screen-heading', won ? 'Você venceu!' : 'Você perdeu'), h('p', 'end-reason', reason));
   const hp = Math.round(r.hp ?? 0);
-  if (hp > 0) stats.append(h('span', '', `Vida restante ${hp}`));
-  if (r.level !== undefined) stats.append(h('span', '', `Nível ${r.level}`));
+  if (hp > 0) card.append(h('p', 'end-stats', `Vida restante ${hp}`));
   const time = h('p', 'end-time');
   time.append(h('small', '', 'Tempo'), formatTime(r.time));
-  card.append(h('h2', 'screen-heading', won ? 'Você venceu!' : 'Você perdeu'), h('p', 'end-reason', endReason(r, role)), stats, time);
-  return card;
+  card.append(time);
+  let stop = () => {};
+  if (coins.reward) {
+    card.classList.add('has-reward');
+    const rb = rewardBox(coins.reward, r.stats, coins.animate);
+    card.append(rb.box);
+    stop = rb.stop;
+  }
+  return { card, stop };
 }
 
 const savedNote = () => {
@@ -113,6 +157,10 @@ export function renderEnd(
     qualifies: boolean;
     /** record already saved (coming back from the ranking): shows "Recorde salvo!" instead of the initials */
     saved?: boolean;
+    /** coins credited for this match */
+    reward?: Reward;
+    /** count the total up from 0 (only the first time the screen shows this match) */
+    animateReward?: boolean;
     onSave(initials: string): void;
     onAgain(): void;
     onChangeSide(): void;
@@ -126,7 +174,8 @@ export function renderEnd(
   s.setAttribute('aria-modal', 'true');
   s.setAttribute('aria-label', won ? 'Você venceu!' : 'Você perdeu');
   const layout = h('div', 'end-layout');
-  layout.append(resultCard(p.result, won, p.role));
+  const result = resultCard(p.result, p.role, { reward: p.reward, animate: p.animateReward !== false });
+  layout.append(result.card);
   const again = btn('Jogar de novo', 'is-primary', p.onAgain, SCREEN_ICONS.replay);
   const actions = h('div', 'end-actions');
   actions.append(
@@ -144,5 +193,6 @@ export function renderEnd(
   }
   layout.classList.toggle('has-record', p.saved === true || p.qualifies);
   s.append(layout, actions);
-  return mount(root, s, focus);
+  const m = mount(root, s, focus);
+  return { dispose: () => (result.stop(), m.dispose()) };
 }

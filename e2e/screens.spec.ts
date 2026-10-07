@@ -1,4 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
+import { encodeBackup } from '../src/meta/backup';
+import { emptyProfile } from '../src/meta/profile';
 
 type G = { snapshot(): { time: number; match: { over: boolean } }; drawCalls(): number };
 const simTime = (page: Page) => page.evaluate(() => (window as unknown as { __game: G }).__game.snapshot().time);
@@ -133,4 +135,29 @@ test('pressing Back on the title first does not disarm the trap: Back during a m
   await page.waitForFunction(() => '__game' in window && !document.querySelector('.screen-countdown'), null, { timeout: 60_000 });
   await page.goBack();
   await expect(page.locator('.screen-pause')).toBeVisible();
+});
+
+test('coins: a finished match pays, the balance survives a reload, a backup code restores another progress', async ({ page }) => {
+  await page.goto('/?app&quality=low&mute&debug&traffic=0&escape=4');
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await page.locator('[data-role="thief"]').click();
+  await expect(page.locator('.screen-end')).toBeVisible({ timeout: 150_000 });
+  const total = page.locator('.end-reward-total');
+  await expect(total).toHaveAttribute('aria-label', /^\+\d+ moedas$/);
+  const earned = Number((await total.getAttribute('aria-label'))!.match(/\d+/)![0]);
+  expect(earned).toBeGreaterThan(0);
+  await page.getByRole('button', { name: 'Início' }).click();
+  await expect(page.locator('.title-wallet')).toHaveText(String(earned));
+  await page.reload();
+  await expect(page.locator('.title-wallet')).toHaveText(String(earned));
+  // restore a progress with 500 coins
+  await page.getByRole('button', { name: 'Progresso' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Seu progresso' });
+  await dialog.getByRole('button', { name: 'Restaurar' }).click();
+  await dialog.getByLabel('Cole o código do outro aparelho').fill(encodeBackup({ ...emptyProfile(), coins: 500, welcomeGranted: true }));
+  await dialog.getByRole('button', { name: 'Conferir' }).click();
+  await dialog.getByRole('button', { name: 'Substituir' }).click();
+  await expect(page.locator('.title-wallet')).toHaveText('500');
+  await page.reload();
+  await expect(page.locator('.title-wallet')).toHaveText('500');
 });

@@ -1,6 +1,6 @@
 // "Como jogar": two pages of tips drawn as yellow road signs, with the numbers from BALANCE.
 import { BALANCE } from '../../config/balance';
-import { btn, h } from './dom';
+import { btn, h, openModal } from './dom';
 import { SCREEN_ICONS } from './icons';
 
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
@@ -54,22 +54,12 @@ function tipEl(t: Tip): HTMLElement {
 
 /** "Como jogar" dialog over the choice screen; the content behind it is inert while it is open. */
 export function openHowTo(host: HTMLElement, onClose: () => void): void {
-  const behind = [...host.children] as HTMLElement[];
-  for (const el of behind) el.setAttribute('inert', '');
   const dialog = h('div', 'howto');
-  dialog.setAttribute('role', 'dialog');
-  dialog.setAttribute('aria-modal', 'true');
-  dialog.setAttribute('aria-label', 'Como jogar');
   const tips = h('div', 'howto-tips');
   const dots = h('div', 'howto-dots');
   dots.setAttribute('aria-hidden', 'true');
   const pager = h('div', 'howto-pager');
-  const close = () => {
-    dialog.remove();
-    for (const el of behind) el.removeAttribute('inert');
-    onClose();
-  };
-  const done = btn('Entendi', 'is-primary', close);
+  const done = btn('Entendi', 'is-primary', () => close());
   const show = (i: number) => {
     tips.replaceChildren(...PAGES[i]!.tips.map(tipEl));
     dots.replaceChildren(...PAGES.map((_, k) => h('i', k === i ? 'is-on' : '')));
@@ -79,16 +69,10 @@ export function openHowTo(host: HTMLElement, onClose: () => void): void {
     pager.replaceChildren(turn);
     if (hadFocus) turn.focus(); // the pressed button is gone: keep the keyboard inside the dialog
   };
-  dialog.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    e.preventDefault();
-    e.stopPropagation();
-    close();
-  });
   const foot = h('div', 'howto-foot');
   foot.append(dots, pager, done);
   dialog.append(h('h2', 'screen-heading', 'Como jogar'), tips, foot);
   show(0);
-  host.append(dialog);
+  const close = openModal(host, dialog, 'Como jogar', onClose);
   done.focus();
 }

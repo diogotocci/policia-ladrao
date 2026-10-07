@@ -131,5 +131,15 @@ export const BALANCE = {
     skidGain: 1.5, // extra drift above grip
     skidSteer: 0.5, // fraction of ◀ ▶ left while skidding
   },
+  // V2 part 1: coins earned per finished match (spec 2026-10-07-v2-parte1-perfil-moedas-design.md §3)
+  rewards: {
+    secondsPerCoin: 3,
+    timeMax: 30,
+    damagePerCoin: 4,
+    damageMax: 25,
+    perBox: 2,
+    winMultiplier: 2,
+    welcomePerRecord: 50, // one-time credit per record already in the local ranking
+  },
   track: { bumpEvery: 400, bumpJitter: 80, bumpLanes: 2, jumpTime: 0.6, jumpHeight: 0.9, bumpSpeedLoss: 0.25, firstBumpAfter: 150 },
 } as const;

@@ -4,6 +4,10 @@ const svg = (body: string, fill = false) =>
 
 export const SCREEN_ICONS = {
   play: svg('<path d="M7 4l13 8-13 8z"/>', true),
+  coin: svg(
+    '<circle cx="12" cy="12" r="9" fill="#ffcf4a" stroke="#b07a10"/><path d="M12 7v10M14.5 9.2c-.6-.8-1.5-1.2-2.5-1.2-1.4 0-2.5.8-2.5 1.9s1.1 1.7 2.5 2.1 2.5 1 2.5 2.1-1.1 1.9-2.5 1.9c-1 0-1.9-.4-2.5-1.2" stroke="#6b4300" stroke-width="1.6"/>',
+  ),
+  profile: svg('<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>'),
   back: svg('<path d="M15 5l-7 7 7 7"/>'),
   forward: svg('<path d="M9 5l7 7-7 7"/>'),
   up: svg('<path d="M12 6l7 11H5z"/>', true),
