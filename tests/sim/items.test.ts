@@ -3,12 +3,12 @@ import { BALANCE } from '../../src/config/balance';
 import { createCar, type CarState } from '../../src/sim/car';
 import { resolveCollisions } from '../../src/sim/collisions';
 import { NO_INTENTS } from '../../src/sim/intents';
-import { applyItem, colorChance, rollItem, stepBoxes } from '../../src/sim/items';
+import { applyItem, boxSpot, colorChance, rollItem, stepBoxes } from '../../src/sim/items';
 import { fireWeapons, stepProjectiles } from '../../src/sim/projectiles';
 import { pursuitBonus } from '../../src/sim/pursuit';
 import { createRng } from '../../src/sim/rng';
 import { bumpsBetween } from '../../src/sim/track';
-import { createWorld, policeOf, thiefOf, withCar, type WorldState } from '../../src/sim/world';
+import { createWorld, policeOf, stepWorld, thiefOf, withCar, type WorldState } from '../../src/sim/world';
 
 const DT = 1 / 60;
 const police = (): CarState => ({ ...createCar('police', 1), hasGun: true });
@@ -199,4 +199,48 @@ describe('boxes', () => {
     expect(w.boxes).toHaveLength(1);
     expect(policeOf(w).hp).toBe(100);
   });
+});
+
+describe('boxes and speed bumps (playtest 2026-10-07: boxes right after a bump could not be picked up)', () => {
+  it('a box planned on a bump or where the cars are still in the air goes just before the bump, or past the jump', () => {
+    for (const seed of [1, 7, 42]) {
+      for (const b of bumpsBetween(seed, 500, 6000)) {
+        for (const d of [-10, 0, 5, 15, 30, 44]) {
+          const s = boxSpot(seed, b.s + d, b.s - 200);
+          expect(s).toBe(b.s - 12);
+        }
+        // too close to the cars to move back: past the jump
+        expect(boxSpot(seed, b.s + 10, b.s)).toBe(b.s + 45);
+        // far from bumps: unchanged
+        expect(boxSpot(seed, b.s + 100, 0)).toBe(b.s + 100);
+      }
+    }
+  });
+
+  it('no box in a lane closed by roadworks (Sobrevivência chaos 5, AI x AI)', () => {
+    for (let seed = 1; seed <= 5; seed++) {
+      let w = createWorld({ seed, playerRole: 'thief', mode: 'survival', chaosEvery: 2 });
+      w = withCar(withCar(w, 'thief', { ...thiefOf(w), hp: 1e6 }), 'police', { ...policeOf(w), hp: 1e6 });
+      const seen = new Set<number>();
+      for (let i = 0; i < 90 * 60; i++) {
+        w = stepWorld(w, 'ai', 1 / 60);
+        for (const box of w.boxes) {
+          if (seen.has(box.id)) continue;
+          seen.add(box.id);
+          const closed = w.works.some((wk) => BALANCE.road.laneCenters[wk.lane] === box.x && box.s > wk.s - 12 && box.s < wk.s + wk.length);
+          expect(closed, `seed ${seed} box ${box.id}`).toBe(false);
+        }
+      }
+    }
+  }, 120_000);
+
+  it('no box is ever spawned in the air zone after a bump (AI x AI, 10 seeds)', () => {
+    for (let seed = 1; seed <= 10; seed++) {
+      let w = createWorld({ seed, playerRole: 'thief', traffic: false });
+      for (let i = 0; i < 60 * 60 && !w.match.over; i++) {
+        w = stepWorld(w, 'ai', 1 / 60);
+        for (const box of w.boxes) expect(bumpsBetween(seed, box.s - 44, box.s + 11)).toHaveLength(0);
+      }
+    }
+  }, 120_000);
 });

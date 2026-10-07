@@ -3,28 +3,52 @@ import { BALANCE } from '../../src/config/balance';
 import { NO_INTENTS } from '../../src/sim/intents';
 import { bumpsBetween } from '../../src/sim/track';
 import { curvesBetween } from '../../src/sim/curves';
-import { worksBetween, worksLaneX } from '../../src/sim/works';
+import { stepWorks, worksBetween, worksLaneX } from '../../src/sim/works';
 import { createWorld, policeOf, stepWorld, thiefOf, withCar, type WorldState } from '../../src/sim/world';
 
 const DT = 1 / 60;
 const S = BALANCE.survival;
 
 describe('roadworks (Sobrevivência, chaos 3+)', () => {
-  it('deterministic, about 500-700 m apart (pushed past bumps and sharp curves), never on them', () => {
+  it('deterministic, never on bumps or sharp curves, never touching; more of them at each chaos level', () => {
     for (const seed of [1, 7, 42, 999]) {
       const a = worksBetween(seed, 0, 20_000);
       expect(worksBetween(seed, 0, 20_000)).toEqual(a);
-      expect(a.length).toBeGreaterThan(20);
-      for (let i = 1; i < a.length; i++) expect(a[i]!.s - a[i - 1]!.s).toBeGreaterThanOrEqual(S.worksLength + 100);
+      for (let i = 1; i < a.length; i++) expect(a[i]!.s - a[i - 1]!.s).toBeGreaterThanOrEqual(S.worksLength + 20);
       for (const wk of a) {
         expect(wk.length).toBe(S.worksLength);
         expect(bumpsBetween(seed, wk.s - 20, wk.s + wk.length + 20)).toHaveLength(0);
         expect(curvesBetween(seed, wk.s - 20, wk.s + wk.length + 20).some((c) => c.sharp)).toBe(false);
       }
+      // playtest 2026-10-07: at 500-700 m they almost never came. Now ~300 m at chaos 3, ~220 at 4, ~180 at 5
+      // (a few fewer: some spots are taken by bumps and sharp curves)
+      const per = (chaos: number) => 20_000 / worksBetween(seed, 0, 20_000, chaos).length;
+      expect(per(3)).toBeLessThan(S.worksEvery[0] * 1.35);
+      expect(per(4)).toBeLessThan(S.worksEvery[1] * 1.35);
+      expect(per(5)).toBeLessThan(S.worksEvery[2] * 1.35);
+      expect(per(3)).toBeGreaterThan(per(4));
+      expect(per(4)).toBeGreaterThan(per(5));
+      // a lower level's works are still there at a higher one
+      for (const wk of worksBetween(seed, 0, 20_000, 3)) expect(a).toContainEqual(wk);
     }
-    // gaps stay bounded (a block can be skipped when bumps and curves leave no room)
-    const a = worksBetween(3, 0, 20_000);
-    for (let i = 1; i < a.length; i++) expect(a[i]!.s - a[i - 1]!.s).toBeLessThan(2 * S.worksEvery[1] + 400);
+  });
+
+  it('a new chaos level adds its works only from 150 m ahead (no cones popping up next to the cars)', () => {
+    let w = createWorld({ seed: 4, playerRole: 'thief', mode: 'survival', chaosEvery: 3, traffic: false, curves: false });
+    for (let i = 0; i < 7 * 60; i++) w = stepWorld(w, NO_INTENTS, DT);
+    expect(w.chaos).toBe(3);
+    for (let i = 0; i < 3 * 60; i++) w = stepWorld(w, NO_INTENTS, DT);
+    expect(w.chaos).toBe(4);
+    const front = Math.max(policeOf(w).s, thiefOf(w).s);
+    expect(w.worksFrom[4]).toBeGreaterThan(front);
+    expect(w.worksFrom[3]).toBeLessThan(w.worksFrom[4]!);
+    for (const wk of w.works) expect(wk.chaos <= 3 || wk.s >= w.worksFrom[4]!).toBe(true);
+  });
+
+  it('a chaos level skipped in one step still gets its works', () => {
+    let w = createWorld({ seed: 4, playerRole: 'thief', mode: 'survival', traffic: false, curves: false });
+    w = stepWorks({ ...w, chaos: 5 });
+    expect(Object.keys(w.worksFrom).map(Number)).toEqual([3, 4, 5]);
   });
 
   it('only appear in Sobrevivência from chaos 3, starting ahead of the cars (never on top of them)', () => {
@@ -35,7 +59,7 @@ describe('roadworks (Sobrevivência, chaos 3+)', () => {
     for (let i = 0; i < 2 * 60; i++) w = stepWorld(w, NO_INTENTS, DT);
     expect(w.chaos).toBe(3);
     const front = Math.max(policeOf(w).s, thiefOf(w).s);
-    expect(w.worksFromS).toBeGreaterThan(front);
+    expect(w.worksFrom[3]).toBeGreaterThan(front);
     let p = createWorld({ seed: 4, playerRole: 'thief', traffic: false, curves: false });
     for (let i = 0; i < 60 * 60; i++) p = stepWorld(p, NO_INTENTS, DT);
     expect(p.works).toHaveLength(0); // Perseguição
@@ -43,24 +67,24 @@ describe('roadworks (Sobrevivência, chaos 3+)', () => {
 
   it('driving into the cones costs like the curb, slows down and pushes the car out of the lane', () => {
     let w: WorldState = createWorld({ seed: 4, playerRole: 'thief', mode: 'survival', traffic: false, curves: false });
-    const wk = worksBetween(4, 2000, 5000)[0]!;
+    const wk = worksBetween(4, 2000, 5000, 3)[0]!;
     const x = worksLaneX(wk);
-    w = { ...w, chaos: 3, worksFromS: 0 };
+    w = { ...w, chaos: 3, worksFrom: { 3: 0 } };
     w = withCar(w, 'thief', { ...thiefOf(w), s: wk.s + 5, x, speed: 30 });
     w = withCar(w, 'police', { ...policeOf(w), s: wk.s - 200 });
     const next = stepWorld(w, NO_INTENTS, DT);
     const t = thiefOf(next);
     expect(next.events.some((e) => e.type === 'crash' && e.b === 'works')).toBe(true);
-    expect(BALANCE.survival.hp - t.hp).toBeCloseTo(BALANCE.collision.scenery * 1.3 * BALANCE.survival.thiefDamageTaken);
+    expect(BALANCE.survival.hp.normal - t.hp).toBeCloseTo(BALANCE.collision.scenery * 1.3 * BALANCE.survival.thiefDamageTaken);
     expect(t.speed).toBeLessThan(30);
     expect(Math.abs(t.x - x)).toBeGreaterThan(1.5);
   });
 
   it('steering into the closed lane from the side pushes the car back out on that side (no jump across the lane)', () => {
     let w: WorldState = createWorld({ seed: 4, playerRole: 'thief', mode: 'survival', traffic: false, curves: false });
-    const wk = worksBetween(4, 2000, 5000).find((x) => x.lane === 0 || x.lane === 1)!;
+    const wk = worksBetween(4, 2000, 5000, 3).find((x) => x.lane === 0 || x.lane === 1)!;
     const lx = worksLaneX(wk);
-    w = { ...w, chaos: 3, worksFromS: 0 };
+    w = { ...w, chaos: 3, worksFrom: { 3: 0 } };
     // coming from the lane on the right of the works, already alongside the cones
     const from = lx + 2.2;
     w = withCar(w, 'thief', { ...thiefOf(w), s: wk.s + 20, x: from, speed: 30 });
@@ -72,9 +96,9 @@ describe('roadworks (Sobrevivência, chaos 3+)', () => {
 
   it('driving straight into the start of the works stops the car at the cones (held, not teleported sideways)', () => {
     let w: WorldState = createWorld({ seed: 4, playerRole: 'thief', mode: 'survival', traffic: false, curves: false });
-    const wk = worksBetween(4, 2000, 5000).find((x) => x.lane === 0)!;
+    const wk = worksBetween(4, 2000, 5000, 3).find((x) => x.lane === 0)!;
     const lx = worksLaneX(wk);
-    w = { ...w, chaos: 3, worksFromS: 0 };
+    w = { ...w, chaos: 3, worksFrom: { 3: 0 } };
     w = withCar(w, 'thief', { ...thiefOf(w), s: wk.s + 0.2, x: lx - 0.5, speed: 30 });
     w = withCar(w, 'police', { ...policeOf(w), s: wk.s - 200 });
     let next = stepWorld(w, NO_INTENTS, DT);
@@ -89,9 +113,9 @@ describe('roadworks (Sobrevivência, chaos 3+)', () => {
 
   it('the computer changes lane before the works', () => {
     let w: WorldState = createWorld({ seed: 4, playerRole: 'police', mode: 'survival', traffic: false, curves: false });
-    const wk = worksBetween(4, 2000, 5000)[0]!;
+    const wk = worksBetween(4, 2000, 5000, 3)[0]!;
     const x = worksLaneX(wk);
-    w = { ...w, chaos: 3, worksFromS: 0, level: 10 };
+    w = { ...w, chaos: 3, worksFrom: { 3: 0 }, level: 10 };
     w = withCar(w, 'thief', { ...thiefOf(w), s: wk.s - 120, x, speed: 34 });
     w = withCar(w, 'police', { ...policeOf(w), s: wk.s - 300, speed: 34 });
     let hit = false;

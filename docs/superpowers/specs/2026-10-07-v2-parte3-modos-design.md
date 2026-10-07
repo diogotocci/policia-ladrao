@@ -39,12 +39,12 @@ Dois modos de jogo e oito itens novos.
 | Regra | Valor |
 |---|---|
 | Fim | quem chega a 0 de vida perde; não existe fuga por tempo |
-| Vida | 200 para os dois (playtest 2026-10-07: com 100 as partidas acabavam rápido demais); entre computadores a partida dura ~2 min e o ladrão vence ~50% |
+| Vida | para os dois, por dificuldade: Fácil 200, Médio 250, Difícil 300 (playtest 2026-10-07: com 100 as partidas acabavam rápido demais); entre computadores a partida dura 2 a 2,5 min e o ladrão vence 40–57% |
 | Caos | começa em 1 e sobe 1 a cada 45 s, até 5 |
-| Tráfego | +15% por nível de caos acima de 1, multiplicado pelo tráfego da dificuldade |
-| Caixas | intervalo entre caixas ×0,9 por nível acima de 1 |
-| Dano | todo dano ×(1 + 0,15 × (caos − 1)): tiros, batidas, bombas, itens, caixa errada. O ladrão leva ×0,9 (sem a fuga de 1:30 a polícia vencia mais) |
-| Obras | a partir do caos 3, um trecho de 60 m com uma faixa fechada por cones a cada ~500–700 m (empurrado para depois de quebra-molas e curvas fechadas), com placa 80 m antes; bater nos cones conta como calçada; o tráfego muda de faixa antes |
+| Tráfego | ×1,3 desde o início e +25% por nível de caos acima de 1, multiplicado pelo tráfego da dificuldade (playtest 2026-10-07: pedia mais tráfego) |
+| Caixas | intervalo entre caixas ×0,9 por nível acima de 1. Em todos os modos, uma caixa nunca nasce em cima de um quebra-mola nem logo depois dele, onde o carro ainda está no ar: vai para 12 m antes do quebra-mola (playtest 2026-10-07) |
+| Dano | todo dano ×(1 + 0,15 × (caos − 1)): tiros, batidas, bombas, itens, caixa errada. O ladrão leva ×1,05 (ajustado para ~50% entre computadores com mais tráfego e obras) |
+| Obras | a partir do caos 3, trechos de 60 m com uma faixa fechada por cones, cada vez mais frequentes: em média a cada ~300 m no caos 3, ~220 m no 4 e ~180 m no 5 (playtest 2026-10-07: a cada 500–700 m quase não apareciam). Nunca em quebra-molas e curvas fechadas; as obras de um nível novo só começam 150 m à frente e depois do tráfego. Placa 80 m antes; bater nos cones conta como calçada; o tráfego muda de faixa antes e nunca atravessa os cones |
 | Computador | nível e ritmo da dificuldade escolhida, como na Perseguição |
 
 - **Cenas de fim:** a prisão (polícia vence) e a viatura destruída (ladrão vence) continuam iguais.

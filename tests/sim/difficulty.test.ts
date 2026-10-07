@@ -78,10 +78,10 @@ describe("difficulty: the computer's helicopter", () => {
 });
 
 describe('difficulty: AI vs AI', () => {
-  it("the computer's police wins less on easy than on hard (same seeds)", () => {
+  it("the computer's police wins less on easy than on hard (same 40 seeds)", () => {
     const policeWins = (difficulty: Difficulty) => {
       let n = 0;
-      for (let seed = 1; seed <= 20; seed++) {
+      for (let seed = 1; seed <= 40; seed++) {
         let w = createWorld({ seed, playerRole: 'thief', difficulty });
         for (let i = 0; i < 95 * 60 && !w.match.over; i++) w = stepWorld(w, 'ai', DT);
         if (w.match.winner === 'police') n++;
@@ -89,5 +89,5 @@ describe('difficulty: AI vs AI', () => {
       return n;
     };
     expect(policeWins('easy')).toBeLessThan(policeWins('hard'));
-  }, 120_000);
+  }, 240_000);
 });

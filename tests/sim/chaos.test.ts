@@ -27,11 +27,11 @@ describe('chaos (Sobrevivência)', () => {
     expect(damageScale(w)).toBe(1);
     expect(damageScale({ ...w, chaos: 3 })).toBeCloseTo(1.3);
     const car = policeOf(w);
-    expect(hurt(car, 10, { ...w, chaos: 3 }).hp).toBeCloseTo(BALANCE.survival.hp - 13);
+    expect(hurt(car, 10, { ...w, chaos: 3 }).hp).toBeCloseTo(BALANCE.survival.hp.normal - 13);
     expect(hurt({ ...car, hp: 3 }, 10, w).hp).toBe(0);
-    // Sobrevivência: the thief takes x0.9 (no escape at 1:30); the police takes it all
-    expect(hurt(thiefOf(w), 10, w).hp).toBeCloseTo(BALANCE.survival.hp - 10 * BALANCE.survival.thiefDamageTaken);
-    expect(hurt(policeOf(w), 10, w).hp).toBeCloseTo(BALANCE.survival.hp - 10);
+    // Sobrevivência: the thief takes x1.05 (tuned for ~50%); the police takes it all
+    expect(hurt(thiefOf(w), 10, w).hp).toBeCloseTo(BALANCE.survival.hp.normal - 10 * BALANCE.survival.thiefDamageTaken);
+    expect(hurt(policeOf(w), 10, w).hp).toBeCloseTo(BALANCE.survival.hp.normal - 10);
     expect(damageScale(createWorld({ seed: 1, playerRole: 'thief' }))).toBe(1); // Perseguição
   });
 
@@ -65,9 +65,10 @@ describe('chaos (Sobrevivência)', () => {
     expect(before - thiefOf(next).hp).toBeCloseTo(cost);
   });
 
-  it('traffic +15% per chaos level above 1', () => {
-    expect(trafficTarget(1, 'normal', 1)).toBe(3);
-    expect(trafficTarget(1, 'normal', 3)).toBe(Math.round(3 * 1.3));
-    expect(trafficTarget(5, 'hard', 5)).toBe(Math.round(3 * (1 + 0.08 * 4) * 1.3 * 1.6));
+  it('Sobrevivência traffic: x1.3 from the start and +25% per chaos level above 1 (playtest 2026-10-07)', () => {
+    expect(trafficTarget(1, 'normal', 1)).toBe(3); // Perseguição
+    expect(trafficTarget(1, 'normal', 1, 'survival')).toBe(Math.round(3 * 1.3));
+    expect(trafficTarget(1, 'normal', 3, 'survival')).toBe(Math.round(3 * 1.3 * 1.5));
+    expect(trafficTarget(5, 'hard', 5, 'survival')).toBe(Math.round(3 * (1 + 0.08 * 4) * 1.3 * 1.3 * 2));
   });
 });

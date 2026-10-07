@@ -92,7 +92,21 @@ export function applyItem(car: CarState, item: ItemId, time: number): CarState {
   return { ...car, hp, hasGun, upgrades: u };
 }
 
-const onBump = (seed: number, s: number) => bumpsBetween(seed, s - 6, s + 6).length > 0;
+/** m after a speed bump where a car is still in the air (jump at top speed, plus margin) */
+const AIR_REACH = 45;
+const BEFORE_BUMP = 12;
+
+/**
+ * Where a box planned at s goes: never on a speed bump nor where the cars are still in the air after it
+ * (playtest 2026-10-07: boxes right after a bump could not be picked up). It moves to just before the bump,
+ * or past the jump when that would put it too close to the cars.
+ */
+export function boxSpot(seed: number, s: number, minS: number): number {
+  const bump = bumpsBetween(seed, s - AIR_REACH, s + BEFORE_BUMP)[0];
+  if (!bump) return s;
+  const before = bump.s - BEFORE_BUMP;
+  return before >= minS ? before : bump.s + AIR_REACH;
+}
 
 /** Spawn, cleanup and pickup of item boxes. */
 export function stepBoxes(w: WorldState): WorldState {
@@ -105,11 +119,13 @@ export function stepBoxes(w: WorldState): WorldState {
   let boxes: Box[] = w.boxes.filter((b) => b.s > back - 20);
   let { nextBoxAt, nextBoxId } = w;
 
-  // spawn: up to 2 visible, ahead, away from speed bumps and traffic
+  // spawn: up to 2 visible, ahead, away from speed bumps, roadworks and traffic
   if (nextBoxAt < front + I.spawnAhead && boxes.length < I.maxVisible) {
-    let s = Math.max(nextBoxAt, front + 60);
-    while (onBump(w.seed, s)) s += 8;
-    const lanes = BALANCE.road.laneCenters;
+    const s = boxSpot(w.seed, Math.max(nextBoxAt, front + 60), front + 60);
+    // never in a lane closed by roadworks (works never overlap, so at least 3 lanes are open)
+    const lanes = BALANCE.road.laneCenters.filter(
+      (_, i) => !w.works.some((wk) => wk.lane === i && s > wk.s - 12 && s < wk.s + wk.length + 2),
+    );
     let x = lanes[rng.int(0, lanes.length - 1)]!;
     for (let k = 0; k < 4 && w.traffic.some((t) => Math.abs(t.x - x) < 1.5 && Math.abs(t.s - s) < 10); k++) {
       x = lanes[rng.int(0, lanes.length - 1)]!;

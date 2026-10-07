@@ -85,7 +85,7 @@ export interface WorldState {
   /** seconds per chaos level (debug can shorten it) */
   chaosEvery: number;
   /** roadworks start here (set when chaos first reaches 3); null = none yet */
-  worksFromS: number | null;
+  worksFrom: Record<number, number>;
   /** roadworks near the cars */
   works: Works[];
   playerRole: Role;

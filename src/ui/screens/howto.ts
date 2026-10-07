@@ -48,7 +48,7 @@ const PAGES: { tips: Tip[] }[] = [
       {
         icon: 'skull',
         title: 'Sobrevivência',
-        text: `Sem relógio e ${BALANCE.survival.hp} de vida para cada um: ganha quem zerar a vida do outro primeiro.`,
+        text: `Sem relógio e mais vida (${BALANCE.survival.hp.easy} no Fácil, ${BALANCE.survival.hp.normal} no Médio, ${BALANCE.survival.hp.hard} no Difícil): ganha quem zerar a vida do outro primeiro.`,
       },
       {
         icon: 'clock',
