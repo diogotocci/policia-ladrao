@@ -2,19 +2,17 @@
 import type { Difficulty, Role } from '../../config/balance';
 import { difficultyPicker } from './difficultyPicker';
 import { btn, h, mount, type Disposable } from './dom';
-import { ESCAPE, openHowTo } from './howto';
+import { openHowTo } from './howto';
 import { SCREEN_ICONS } from './icons';
 
-const ROLES: Record<Role, { title: string; goal: string; boxes: string }> = {
+const ROLES: Record<Role, { title: string; boxes: string }> = {
   police: {
     title: 'Polícia',
-    goal: `Destrua o carro do ladrão antes de ${ESCAPE}`,
-    boxes: 'Pegue as caixas azuis: tiro, nitro, helicóptero',
+    boxes: 'Pegue as caixas azuis',
   },
   thief: {
     title: 'Ladrão',
-    goal: `Aguente ${ESCAPE} vivo e suma no horizonte`,
-    boxes: 'Pegue as caixas vermelhas: bombas, blindagem',
+    boxes: 'Pegue as caixas vermelhas',
   },
 };
 
@@ -29,7 +27,7 @@ function roleCard(role: Role, onClick: () => void): HTMLButtonElement {
   prev.dataset.preview = role; // 3D car slot (carPreview)
   const boxes = h('p', 'choose-boxes');
   boxes.append(h('span', `box-swatch is-${role}`), r.boxes);
-  card.append(prev, h('h3', 'choose-title', r.title), h('p', 'choose-goal', r.goal), boxes, h('span', 'choose-cta', label));
+  card.append(prev, h('h3', 'choose-title', r.title), boxes, h('span', 'choose-cta', label));
   card.addEventListener('click', onClick);
   return card;
 }

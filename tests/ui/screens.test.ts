@@ -86,11 +86,11 @@ describe('choose', () => {
     show(p);
     const cards = [...root.querySelectorAll('.choose-card')];
     expect(cards).toHaveLength(2);
-    expect(cards[0]!.textContent).toContain('Destrua o carro do ladrão antes de 1:30');
-    expect(cards[0]!.textContent).toContain('caixas azuis');
+    // only the colored chip under the car (playtest 2026-10-07: longer lines wrapped and looked odd)
+    expect(cards[0]!.querySelector('.choose-boxes')!.textContent).toBe('Pegue as caixas azuis');
+    expect(cards[0]!.querySelector('.choose-goal')).toBeNull();
     expect(cards[0]!.textContent).toContain('Jogar de polícia');
-    expect(cards[1]!.textContent).toContain('Aguente 1:30');
-    expect(cards[1]!.textContent).toContain('caixas vermelhas');
+    expect(cards[1]!.querySelector('.choose-boxes')!.textContent).toBe('Pegue as caixas vermelhas');
     expect(cards[1]!.textContent).toContain('Jogar de ladrão');
     (root.querySelector('[data-role="thief"]') as HTMLButtonElement).click();
     expect(p.onChoose).toHaveBeenCalledWith('thief');
@@ -168,6 +168,31 @@ describe('choose', () => {
     expect(current()).toBe(1);
     drag(200, 400); // drag right: back
     expect(current()).toBe(0);
+  });
+
+  it('carousel on a phone held upright (the game is drawn rotated -90°): a drag along the screen height turns the page', () => {
+    const real = window.matchMedia;
+    window.matchMedia = ((q: string) => ({ matches: q.includes('orientation: portrait'), media: q })) as typeof window.matchMedia;
+    try {
+      show(cb());
+      button('Como jogar').click();
+      const dialog = root.querySelector('.howto') as HTMLElement;
+      const view = dialog.querySelector('.howto-view') as HTMLElement;
+      const current = () => [...dialog.querySelectorAll('.howto-dot')].findIndex((d) => d.getAttribute('aria-current') === 'true');
+      const drag = (x0: number, y0: number, x1: number, y1: number) => {
+        view.dispatchEvent(new MouseEvent('pointerdown', { clientX: x0, clientY: y0, bubbles: true }));
+        view.dispatchEvent(new MouseEvent('pointermove', { clientX: x1, clientY: y1, bubbles: true }));
+        view.dispatchEvent(new MouseEvent('pointerup', { clientX: x1, clientY: y1, bubbles: true }));
+      };
+      drag(200, 300, 50, 300); // sideways on the screen = along the game's height: no page turn
+      expect(current()).toBe(0);
+      drag(200, 200, 200, 400); // finger down the screen = towards the game's left: next page
+      expect(current()).toBe(1);
+      drag(200, 400, 200, 200); // back up: previous page
+      expect(current()).toBe(0);
+    } finally {
+      window.matchMedia = real;
+    }
   });
 
   it('keyboard: changing page keeps the focus in the dialog; Tab cycles only inside it (cards behind are inert)', () => {

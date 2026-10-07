@@ -129,3 +129,29 @@ test('Como jogar: a real finger swipe turns the page and back (mobile)', async (
   await expect(current).toHaveAttribute('aria-label', 'Página 1 de 2');
   await expect(page.getByRole('button', { name: 'Anterior' })).toBeHidden();
 });
+
+test('Como jogar: with the phone upright (game drawn rotated) a finger swipe along the screen height turns the page', async ({
+  browser,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'touch only');
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+  const page = await ctx.newPage();
+  await page.goto('/?app&quality=low&mute');
+  expect(await page.evaluate(() => matchMedia('(orientation: portrait) and (pointer: coarse)').matches)).toBe(true);
+  await page.getByRole('button', { name: 'Como jogar' }).click();
+  const current = page.locator('.howto-dot[aria-current="true"]');
+  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 2');
+  const cdp = await ctx.newCDPSession(page);
+  const swipe = async (y0: number, y1: number) => {
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 200, y: y0 }] });
+    for (let i = 1; i <= 8; i++)
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 200, y: y0 + ((y1 - y0) * i) / 8 }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  };
+  await swipe(250, 600); // down the screen = towards the game's left: next page
+  await expect(current).toHaveAttribute('aria-label', 'Página 2 de 2');
+  await swipe(600, 250);
+  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 2');
+  await ctx.close();
+});

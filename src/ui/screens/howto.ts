@@ -1,5 +1,6 @@
 // "Como jogar": two pages of tips drawn as yellow road signs, with the numbers from BALANCE.
 import { BALANCE } from '../../config/balance';
+import { gameDelta } from '../mobileShell';
 import { btn, h, openModal } from './dom';
 import { SCREEN_ICONS } from './icons';
 
@@ -62,22 +63,23 @@ function pageDots(go: (i: number) => void): HTMLButtonElement[] {
 
 /** Horizontal drag on `view` turns the page: past ~15% of the width (at least 40 px) it moves, otherwise it snaps back. */
 function dragToTurn(view: HTMLElement, strip: HTMLElement, page: () => number, go: (i: number) => void): void {
-  let startX: number | undefined;
+  let start: { x: number; y: number } | undefined;
   let dx = 0;
   view.addEventListener('pointerdown', (e) => {
-    startX = e.clientX;
+    start = { x: e.clientX, y: e.clientY };
     dx = 0;
     strip.style.transition = 'none';
     if ('pointerId' in e) view.setPointerCapture?.((e as PointerEvent).pointerId);
   });
   view.addEventListener('pointermove', (e) => {
-    if (startX === undefined) return;
-    dx = e.clientX - startX;
+    if (!start) return;
+    // in the game's axes: with the phone upright the game is rotated and "sideways" is up/down the screen
+    dx = gameDelta(e.clientX - start.x, e.clientY - start.y).dx;
     strip.style.transform = `translateX(calc(${-page() * 100}% + ${dx}px))`;
   });
   const end = () => {
-    if (startX === undefined) return;
-    startX = undefined;
+    if (!start) return;
+    start = undefined;
     strip.style.transition = '';
     const threshold = Math.max(40, view.clientWidth * 0.15);
     go(dx < -threshold ? page() + 1 : dx > threshold ? page() - 1 : page());
