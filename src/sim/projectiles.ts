@@ -1,6 +1,7 @@
 // Auto-aimed shots: aim at the target's predicted position (forward motion only, not lateral drift) and can miss.
 // The police's flies at 150 m/s: a thief zigzagging from afar escapes.
 import { BALANCE, type Role } from '../config/balance';
+import { hurt, scaledDamage } from './chaos';
 import type { CarState } from './car';
 import type { Intents } from './intents';
 import { armorFactor, distanceFactor, inFireCone } from './rules';
@@ -122,8 +123,8 @@ export function stepProjectiles(w: WorldState, dt: number): WorldState {
       continue;
     }
     if (hit) {
-      out = withCar(out, target.role, { ...target, hp: Math.max(0, target.hp - p.damage) });
-      events.push({ type: 'hit', target: target.role, amount: p.damage, s, x });
+      out = withCar(out, target.role, hurt(target, p.damage, w));
+      events.push({ type: 'hit', target: target.role, amount: scaledDamage(p.damage, w), s, x });
       continue;
     }
     const travelled = p.travelled + dist;

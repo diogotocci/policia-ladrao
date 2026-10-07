@@ -7,9 +7,17 @@ import { policeOf, thiefOf } from './world';
 const LANES = BALANCE.road.laneCenters;
 
 /** How many traffic cars to keep at the level: 3 at level 1, +8% per level. */
-export function trafficTarget(level: number, difficulty: Difficulty = 'normal'): number {
+export function trafficTarget(level: number, difficulty: Difficulty = 'normal', chaos = 1): number {
   const t = BALANCE.traffic;
-  return Math.max(1, Math.round(t.baseCount * (1 + t.perLevel * (level - 1)) * BALANCE.difficulties[difficulty].traffic));
+  return Math.max(
+    1,
+    Math.round(
+      t.baseCount *
+        (1 + t.perLevel * (level - 1)) *
+        BALANCE.difficulties[difficulty].traffic *
+        (1 + BALANCE.survival.trafficPerChaos * (chaos - 1)),
+    ),
+  );
 }
 
 const sameLane = (ax: number, bx: number) => Math.abs(ax - bx) < 2 * BALANCE.car.halfWidth;
@@ -71,7 +79,7 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
 
   // fill up to the level's density
   let nextId = w.nextTrafficId;
-  const target = w.trafficOn ? trafficTarget(w.level, w.difficulty) : 0;
+  const target = w.trafficOn ? trafficTarget(w.level, w.difficulty, w.chaos) : 0;
   let attempts = 0;
   while (cars.length < target && attempts < 20) {
     attempts++;

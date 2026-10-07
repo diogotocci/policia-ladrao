@@ -1,4 +1,4 @@
-import type { Difficulty, Role } from '../config/balance';
+import type { Difficulty, Mode, Role } from '../config/balance';
 import type { AiMemory } from './ai';
 import type { CarState } from './car';
 
@@ -77,6 +77,12 @@ export interface WorldState {
   time: number;
   level: number;
   difficulty: Difficulty;
+  /** V2 part 3: Perseguição or Sobrevivência */
+  mode: Mode;
+  /** Sobrevivência chaos level (1 in Perseguição) */
+  chaos: number;
+  /** seconds per chaos level (debug can shorten it) */
+  chaosEvery: number;
   playerRole: Role;
   player: CarState;
   opponent: CarState;

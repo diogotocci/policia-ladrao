@@ -1,5 +1,6 @@
 // Thief bombs: dropped behind him when pressing 💣 (rising edge), last 20 s, −10 to the police on the ground.
 import { BALANCE } from '../config/balance';
+import { hurt, scaledDamage } from './chaos';
 import type { Intents } from './intents';
 import type { Bomb, GameEvent, WorldState } from './types';
 import { policeOf, thiefOf, withCar } from './world';
@@ -32,9 +33,9 @@ export function stepBombs(w: WorldState): WorldState {
       Math.abs(police.s - b.s) < BALANCE.car.length / 2 + B.radiusS &&
       Math.abs(police.x - b.x) < BALANCE.car.halfWidth + B.radiusX;
     if (over) {
-      police = { ...police, hp: Math.max(0, police.hp - B.damage) };
+      police = hurt(police, B.damage, w);
       events.push({ type: 'explosion', s: b.s, x: b.x });
-      events.push({ type: 'hit', target: 'police', amount: B.damage, s: b.s, x: b.x });
+      events.push({ type: 'hit', target: 'police', amount: scaledDamage(B.damage, w), s: b.s, x: b.x });
       continue;
     }
     bombs.push(b);

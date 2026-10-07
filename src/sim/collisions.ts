@@ -1,6 +1,7 @@
 // Collisions with the scenery (road edges) and between police and thief, with 1 s immunity per pair.
 import { BALANCE, type Role } from '../config/balance';
 import type { CarState } from './car';
+import { hurt, scaledDamage } from './chaos';
 import { armorFactor } from './rules';
 import type { GameEvent, WorldState } from './types';
 import { policeOf, thiefOf, withCar } from './world';
@@ -9,7 +10,6 @@ const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
 const EPS = 1e-9;
 const SEPARATION_SLACK = 0.02; // m
 
-const hurt = (car: CarState, amount: number): CarState => ({ ...car, hp: Math.max(0, car.hp - amount) });
 const slow = (car: CarState): CarState => ({ ...car, speed: car.speed * (1 - BALANCE.collision.speedLoss) });
 
 export function resolveCollisions(w: WorldState, dt: number): WorldState {
@@ -24,10 +24,10 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
     const key = `edge:${role}`;
     if (!car.touchingEdge || (immunity[key] ?? 0) > EPS) continue;
     const side = Math.sign(car.x) || 1;
-    const hit = slow(hurt({ ...car, x: side * (EDGE - BALANCE.collision.pushBack), touchingEdge: false }, BALANCE.collision.scenery));
+    const hit = slow(hurt({ ...car, x: side * (EDGE - BALANCE.collision.pushBack), touchingEdge: false }, BALANCE.collision.scenery, w));
     immunity[key] = BALANCE.collision.immunity;
     events.push({ type: 'crash', a: role, b: 'scenery', s: car.s, x: side * BALANCE.road.halfWidth });
-    events.push({ type: 'hit', target: role, amount: BALANCE.collision.scenery, s: car.s, x: car.x });
+    events.push({ type: 'hit', target: role, amount: scaledDamage(BALANCE.collision.scenery, w), s: car.s, x: car.x });
     out = withCar(out, role, hit);
   }
 
@@ -44,10 +44,10 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
       if (Math.abs(ds) >= Lh || Math.abs(dx) >= 2 * Wh) continue;
       const key = `traffic:${role}`;
       if ((immunity[key] ?? 0) <= EPS) {
-        car = slow(hurt(car, BALANCE.collision.scenery));
+        car = slow(hurt(car, BALANCE.collision.scenery, w));
         immunity[key] = BALANCE.collision.immunity;
         events.push({ type: 'crash', a: role, b: 'traffic', s: (car.s + t.s) / 2, x: (car.x + t.x) / 2 });
-        events.push({ type: 'hit', target: role, amount: BALANCE.collision.scenery, s: car.s, x: car.x });
+        events.push({ type: 'hit', target: role, amount: scaledDamage(BALANCE.collision.scenery, w), s: car.s, x: car.x });
         traffic[i] = { ...t, speed: t.speed * 0.9 };
       }
       if (Math.abs(dx) < Wh) {
@@ -77,15 +77,15 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
       const policeDmg = ram ? BALANCE.items.police.ramPolice : BALANCE.collision.carCarPolice;
       if (ram) police = { ...police, upgrades: { ...police.upgrades, ramCharges: police.upgrades.ramCharges - 1 } };
       const C = BALANCE.collision;
-      thief = { ...hurt(thief, thiefDmg), speed: thief.speed * (1 - C.carCarThiefSpeedLoss) };
-      police = { ...hurt(police, policeDmg), speed: police.speed * (1 - C.carCarPoliceSpeedLoss) };
+      thief = { ...hurt(thief, thiefDmg, w), speed: thief.speed * (1 - C.carCarThiefSpeedLoss) };
+      police = { ...hurt(police, policeDmg, w), speed: police.speed * (1 - C.carCarPoliceSpeedLoss) };
       out = { ...out, policeTurboOffUntil: w.time + C.policeTurboOff };
       immunity.cars = C.immunity;
       const s = (thief.s + police.s) / 2;
       const x = (thief.x + police.x) / 2;
       events.push({ type: 'crash', a: 'police', b: 'thief', s, x });
-      events.push({ type: 'hit', target: 'thief', amount: thiefDmg, s, x });
-      events.push({ type: 'hit', target: 'police', amount: policeDmg, s, x });
+      events.push({ type: 'hit', target: 'thief', amount: scaledDamage(thiefDmg, w), s, x });
+      events.push({ type: 'hit', target: 'police', amount: scaledDamage(policeDmg, w), s, x });
     }
     if (Math.abs(dx) < W) {
       // same lane: the police ends up 1 car length behind
