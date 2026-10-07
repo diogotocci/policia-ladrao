@@ -9,6 +9,7 @@ import { grantWelcome, settleMatch } from './meta/profile';
 import { loadProfile, saveProfile } from './storage/profileStore';
 import { emptyBoard, insert, loadBoard, qualifies, saveBoard, type Board } from './storage/ranking';
 import { initialState, reduce, type FlowAction, type FlowState } from './ui/screens/flow';
+import { openProgress } from './ui/screens/progress';
 import { renderChoose, renderCountdown, renderEnd, renderPause, renderRanking, renderTitle } from './ui/screens/screens';
 
 declare const __APP_VERSION__: string | undefined;
@@ -61,6 +62,21 @@ export function startApp(
     } catch {
       // storage full or blocked: the tips just open again next time
     }
+  };
+  // "Seu progresso" over the title screen; restoring a code replaces the profile and redraws the balance
+  const openProgressDialog = () => {
+    const host = layer.querySelector<HTMLElement>('.screen-title');
+    if (!host) return;
+    openProgress(host, {
+      profile,
+      persistent: loaded.persistent,
+      onRestore: (next) => {
+        profile = next;
+        saveProfile(storage, profile);
+        show(state);
+      },
+      onClose: () => host.querySelector<HTMLElement>('.title-progress')?.focus(),
+    });
   };
   let highlight: { role: Role; rank: number } | undefined;
   let game: GameHandle | undefined;
@@ -127,6 +143,7 @@ export function startApp(
           onRanking: () => press({ type: 'openRanking' }),
           onHowToSeen: markHowToSeen,
           coins: profile.coins,
+          onProgress: openProgressDialog,
           mountToggle: (p) => audio.mountToggle(p),
           version: APP_VERSION,
         });

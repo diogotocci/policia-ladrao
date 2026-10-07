@@ -58,3 +58,31 @@ export const mount = (root: HTMLElement, el: HTMLElement, focus?: HTMLElement): 
     },
   };
 };
+
+/**
+ * Shows `dialog` over `host`: everything already in `host` turns inert and Esc closes it.
+ * Returns `close`, which removes the dialog, restores the page behind and calls `onClose`.
+ */
+export function openModal(host: HTMLElement, dialog: HTMLElement, label: string, onClose: () => void): () => void {
+  const behind = [...host.children] as HTMLElement[];
+  for (const el of behind) el.setAttribute('inert', '');
+  dialog.setAttribute('role', 'dialog');
+  dialog.setAttribute('aria-modal', 'true');
+  dialog.setAttribute('aria-label', label);
+  let open = true;
+  const close = () => {
+    if (!open) return;
+    open = false;
+    dialog.remove();
+    for (const el of behind) el.removeAttribute('inert');
+    onClose();
+  };
+  dialog.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    e.preventDefault();
+    e.stopPropagation();
+    close();
+  });
+  host.append(dialog);
+  return close;
+}
