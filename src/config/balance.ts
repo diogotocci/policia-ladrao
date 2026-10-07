@@ -97,6 +97,9 @@ export const BALANCE = {
   },
   traffic: {
     baseCount: 3,
+    // never more cars than this (the scene draws all of them: playtest 2026-10-07, with more cars than the 8 drawn,
+    // the extra ones were invisible and seemed to appear out of nowhere)
+    maxCount: 12,
     perLevel: 0.08,
     speedMin: 0.5,
     speedMax: 0.7,

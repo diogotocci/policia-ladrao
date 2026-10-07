@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
+import { BALANCE } from '../../src/config/balance';
 import { createCarModel, createTrafficModel, updateCarModel } from '../../src/render/carFactory';
 import { createWorldProps } from '../../src/render/worldProps';
 import { createCar } from '../../src/sim/car';
@@ -30,12 +31,27 @@ describe('createWorldProps', () => {
   };
   const world = (patch: Partial<WorldState>): WorldState => ({ ...createWorld({ seed: 7, playerRole: 'police' }), ...patch });
 
-  it('shows one traffic car per traffic entry, up to 8', () => {
+  it('shows every traffic car (playtest 2026-10-07: past 8 the extra cars were invisible), nearest first', () => {
     const { scene, props } = setup();
     props.update(world({ traffic: traffic(5) }), 0, 0);
     expect(visibleNamed(scene, 'traffic-')).toBe(5);
     props.update(world({ traffic: traffic(12) }), 0, 0);
-    expect(visibleNamed(scene, 'traffic-')).toBe(8);
+    expect(visibleNamed(scene, 'traffic-')).toBe(12);
+    // all of the same model: still all drawn
+    const same = traffic(BALANCE.traffic.maxCount).map((t) => ({ ...t, model: 2 }));
+    props.update(world({ traffic: same }), 0, 0);
+    expect(visibleNamed(scene, 'traffic-')).toBe(BALANCE.traffic.maxCount);
+    // more than the cap (never happens in the sim): the farthest are left out, whatever their ids
+    const many = traffic(BALANCE.traffic.maxCount + 3).map((t, i, all) => ({ ...t, s: 60 + (all.length - 1 - i) * 15, model: 0 }));
+    props.update(world({ traffic: many }), 0, 0);
+    expect(visibleNamed(scene, 'traffic-')).toBe(BALANCE.traffic.maxCount);
+    const shown = (s: number) =>
+      scene.children.some((o) => o.name.startsWith('traffic-') && o.visible && Math.abs(-o.position.z - s) < 0.5);
+    expect(shown(60)).toBe(true); // nearest (highest id) drawn
+    expect(shown(60 + (many.length - 1) * 15)).toBe(false); // farthest (id 1) left out
+    // beyond the fog: not drawn
+    props.update(world({ traffic: [{ ...traffic(1)[0]!, s: 400 }] }), 0, 0);
+    expect(visibleNamed(scene, 'traffic-')).toBe(0);
     props.update(world({ traffic: [] }), 0, 0);
     expect(visibleNamed(scene, 'traffic-')).toBe(0);
   });

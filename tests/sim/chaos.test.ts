@@ -69,6 +69,8 @@ describe('chaos (Sobrevivência)', () => {
     expect(trafficTarget(1, 'normal', 1)).toBe(3); // Perseguição
     expect(trafficTarget(1, 'normal', 1, 'survival')).toBe(Math.round(3 * 1.3));
     expect(trafficTarget(1, 'normal', 3, 'survival')).toBe(Math.round(3 * 1.3 * 1.5));
-    expect(trafficTarget(5, 'hard', 5, 'survival')).toBe(Math.round(3 * (1 + 0.08 * 4) * 1.3 * 1.3 * 2));
+    expect(trafficTarget(3, 'normal', 5, 'survival')).toBe(Math.round(3 * (1 + 0.08 * 2) * 1.3 * 2));
+    // capped: every car is drawn (playtest 2026-10-07)
+    expect(trafficTarget(10, 'hard', 5, 'survival')).toBe(BALANCE.traffic.maxCount);
   });
 });

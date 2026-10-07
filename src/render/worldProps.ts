@@ -11,7 +11,8 @@ import { trackPos } from './trackFrame';
 import { createCar } from '../sim/car';
 import { createMysteryBox, pulseMysteryHalo } from './mysteryBox';
 
-const TRAFFIC_SLOTS = 8;
+const TRAFFIC_SLOTS = BALANCE.traffic.maxCount; // every traffic car is drawn (never an invisible one)
+const FOG_FAR = 300; // m: scene.ts fog far
 const MODELS = 4;
 const BOXES = 2;
 const BOMBS = 6; // up to 3 in stock + those still on the road (last 20 s)
@@ -97,7 +98,7 @@ export function createWorldProps(
       for (const m of Array.isArray(mat) ? mat : mat ? [mat] : []) if ('envMap' in m) m.envMap = reflections;
     });
 
-  // traffic: 8 of each model (the worst case), all created now
+  // traffic: a full set of each model (the worst case: every car of the same model), all created now
   const traffic: THREE.Group[][] = [];
   for (let m = 0; m < MODELS; m++) {
     const list: THREE.Group[] = [];
@@ -239,7 +240,13 @@ export function createWorldProps(
 
       for (const list of traffic) for (const g of list) g.visible = false;
       const used = new Array(MODELS).fill(0) as number[];
-      for (const t of w.traffic.slice(0, TRAFFIC_SLOTS)) {
+      // nearest to the camera first (if there were ever more cars than slots, only far ones would be left out)
+      // past the fog (300 m) a car is invisible anyway: not drawn
+      const nearCars = w.traffic
+        .filter((t) => Math.abs(t.s - originS) < FOG_FAR)
+        .sort((a, b) => Math.abs(a.s - originS) - Math.abs(b.s - originS))
+        .slice(0, TRAFFIC_SLOTS);
+      for (const t of nearCars) {
         const m = ((t.model % MODELS) + MODELS) % MODELS;
         const g = traffic[m]![used[m]!++]!;
         g.visible = true;
