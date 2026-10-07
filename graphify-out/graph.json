@@ -1013,8 +1013,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "package_devdependencies_eslint",
-      "community": 51,
-      "community_name": "eslint",
+      "community": 15,
+      "community_name": "devDependencies",
       "norm_label": "eslint"
     },
     {
@@ -1024,8 +1024,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "eslint",
-      "community": 51,
-      "community_name": "eslint",
+      "community": 15,
+      "community_name": "devDependencies",
       "norm_label": "eslint"
     },
     {
@@ -1233,8 +1233,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "package_devdependencies_vitest",
-      "community": 15,
-      "community_name": "devDependencies",
+      "community": 73,
+      "community_name": "vitest",
       "norm_label": "vitest"
     },
     {
@@ -1244,8 +1244,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "vitest",
-      "community": 15,
-      "community_name": "devDependencies",
+      "community": 73,
+      "community_name": "vitest",
       "norm_label": "vitest"
     },
     {
@@ -1343,7 +1343,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app",
-      "community": 3,
+      "community": 58,
       "community_name": "app.ts",
       "norm_label": "app.ts"
     },
@@ -1356,7 +1356,7 @@
       "_origin": "ast",
       "id": "src_app_startapp",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "startapp()"
     },
     {
@@ -2131,8 +2131,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_config_balance_difficulty",
-      "community": 49,
-      "community_name": "profile.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "difficulty"
     },
     {
@@ -2142,8 +2142,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_config_balance_difficulties",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 72,
+      "community_name": "DIFFICULTIES",
       "norm_label": "difficulties"
     },
     {
@@ -2155,8 +2155,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_config_balance_mode",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "mode"
     },
     {
@@ -2166,7 +2166,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_config_balance_modes",
-      "community": 3,
+      "community": 58,
       "community_name": "app.ts",
       "norm_label": "modes"
     },
@@ -2892,8 +2892,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_rewards_matchstats",
-      "community": 49,
-      "community_name": "profile.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "matchstats"
     },
     {
@@ -3186,8 +3186,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_buildings",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "buildings.ts"
     },
     {
@@ -3199,8 +3199,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_buildings_buildingspec",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "buildingspec"
     },
     {
@@ -3210,8 +3210,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_render_buildings_palette",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "palette"
     },
     {
@@ -3222,8 +3222,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_buildings_buildingsforchunk",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "buildingsforchunk()"
     },
     {
@@ -3584,8 +3584,8 @@
       "source_location": "L403",
       "_origin": "ast",
       "id": "src_render_carfactory_deformable",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "deformable"
     },
     {
@@ -3619,8 +3619,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_carfactory_createtrafficmodel",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "createtrafficmodel()"
     },
     {
@@ -3631,8 +3631,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_carfactory_createcarmodel",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "createcarmodel()"
     },
     {
@@ -3643,8 +3643,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_carfactory_updatecarmodel",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "updatecarmodel()"
     },
     {
@@ -3654,8 +3654,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_carpreview",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "carpreview.ts"
     },
     {
@@ -3666,8 +3666,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_carpreview_createcarpreview",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "createcarpreview()"
     },
     {
@@ -3926,8 +3926,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_gunner",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "gunner.ts"
     },
     {
@@ -3938,8 +3938,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_box",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "box()"
     },
     {
@@ -3949,8 +3949,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_render_gunner_style",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "style"
     },
     {
@@ -3960,8 +3960,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_render_gunner_geocache",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "geocache"
     },
     {
@@ -3972,8 +3972,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_gunnergeometry",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "gunnergeometry()"
     },
     {
@@ -3983,8 +3983,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "src_render_gunner_body_mat",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "body_mat"
     },
     {
@@ -3994,8 +3994,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "src_render_gunner_flash_mat",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "flash_mat"
     },
     {
@@ -4005,8 +4005,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "src_render_gunner_flash_geo",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "flash_geo"
     },
     {
@@ -4017,8 +4017,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_attachgunner",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "attachgunner()"
     },
     {
@@ -4041,8 +4041,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_updategunner",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "updategunner()"
     },
     {
@@ -4052,8 +4052,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_hazardsview",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "hazardsview.ts"
     },
     {
@@ -4063,8 +4063,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_render_hazardsview_cones_per_works",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "cones_per_works"
     },
     {
@@ -4075,8 +4075,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_hazardsview_signtexture",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "signtexture()"
     },
     {
@@ -4087,8 +4087,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_hazardsview_createworksview",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "createworksview()"
     },
     {
@@ -4416,7 +4416,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_renderer",
-      "community": 42,
+      "community": 20,
       "community_name": "renderer.ts",
       "norm_label": "renderer.ts"
     },
@@ -4440,7 +4440,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_render_renderer_quality",
-      "community": 42,
+      "community": 20,
       "community_name": "renderer.ts",
       "norm_label": "quality"
     },
@@ -4451,7 +4451,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_render_renderer_order",
-      "community": 42,
+      "community": 20,
       "community_name": "renderer.ts",
       "norm_label": "order"
     },
@@ -4463,7 +4463,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_renderer_computerendersize",
-      "community": 42,
+      "community": 20,
       "community_name": "renderer.ts",
       "norm_label": "computerendersize()"
     },
@@ -4475,7 +4475,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_renderer_createqualitygovernor",
-      "community": 42,
+      "community": 20,
       "community_name": "renderer.ts",
       "norm_label": "createqualitygovernor()"
     },
@@ -4487,8 +4487,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_renderer_smoothtexture",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "smoothtexture()"
     },
     {
@@ -4499,7 +4499,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_renderer_createrenderer",
-      "community": 42,
+      "community": 20,
       "community_name": "renderer.ts",
       "norm_label": "createrenderer()"
     },
@@ -4510,8 +4510,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_roadchunks",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "roadchunks.ts"
     },
     {
@@ -4521,8 +4521,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_render_roadchunks_chunk_length",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "chunk_length"
     },
     {
@@ -4533,8 +4533,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_visiblechunkrange",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "visiblechunkrange()"
     },
     {
@@ -4545,8 +4545,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_renderorigin",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "renderorigin()"
     },
     {
@@ -4558,8 +4558,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_slot",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "slot"
     },
     {
@@ -4570,8 +4570,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_createroad",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "createroad()"
     },
     {
@@ -4582,7 +4582,7 @@
       "_origin": "ast",
       "id": "src_render_scene",
       "community": 20,
-      "community_name": "scene.ts",
+      "community_name": "renderer.ts",
       "norm_label": "scene.ts"
     },
     {
@@ -4594,7 +4594,7 @@
       "_origin": "ast",
       "id": "src_render_scene_createlighting",
       "community": 20,
-      "community_name": "scene.ts",
+      "community_name": "renderer.ts",
       "norm_label": "createlighting()"
     },
     {
@@ -4605,7 +4605,7 @@
       "_origin": "ast",
       "id": "src_render_scene_shadow_box",
       "community": 20,
-      "community_name": "scene.ts",
+      "community_name": "renderer.ts",
       "norm_label": "shadow_box"
     },
     {
@@ -4616,7 +4616,7 @@
       "_origin": "ast",
       "id": "src_render_scene_sun_dir",
       "community": 20,
-      "community_name": "scene.ts",
+      "community_name": "renderer.ts",
       "norm_label": "sun_dir"
     },
     {
@@ -4628,7 +4628,7 @@
       "_origin": "ast",
       "id": "src_render_scene_snaptogrid",
       "community": 20,
-      "community_name": "scene.ts",
+      "community_name": "renderer.ts",
       "norm_label": "snaptogrid()"
     },
     {
@@ -4640,7 +4640,7 @@
       "_origin": "ast",
       "id": "src_render_scene_makestreetenvironment",
       "community": 20,
-      "community_name": "scene.ts",
+      "community_name": "renderer.ts",
       "norm_label": "makestreetenvironment()"
     },
     {
@@ -4650,8 +4650,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_textures",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "textures.ts"
     },
     {
@@ -4661,8 +4661,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_render_textures_ground_ppm",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "ground_ppm"
     },
     {
@@ -4672,8 +4672,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_render_textures_ground_half_width",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "ground_half_width"
     },
     {
@@ -4683,8 +4683,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_render_textures_facade_tile_meters",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "facade_tile_meters"
     },
     {
@@ -4695,8 +4695,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_canvas",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "canvas()"
     },
     {
@@ -4707,8 +4707,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_makegroundtexture",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "makegroundtexture()"
     },
     {
@@ -4719,8 +4719,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_makefacadetexture",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "makefacadetexture()"
     },
     {
@@ -4732,7 +4732,7 @@
       "_origin": "ast",
       "id": "src_render_textures_makeskytexture",
       "community": 20,
-      "community_name": "scene.ts",
+      "community_name": "renderer.ts",
       "norm_label": "makeskytexture()"
     },
     {
@@ -4755,8 +4755,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe",
-      "community": 19,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "trackframe"
     },
     {
@@ -4767,8 +4767,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe_toworld",
-      "community": 19,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": ".toworld()"
     },
     {
@@ -4779,8 +4779,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe_headingat",
-      "community": 19,
-      "community_name": "trackFrame.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": ".headingat()"
     },
     {
@@ -4837,8 +4837,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_worldprops",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "worldprops.ts"
     },
     {
@@ -4849,8 +4849,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_worldprops_stripetexture",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "stripetexture()"
     },
     {
@@ -4861,8 +4861,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_worldprops_bumpsigntexture",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "bumpsigntexture()"
     },
     {
@@ -4873,8 +4873,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_worldprops_chevrontexture",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "chevrontexture()"
     },
     {
@@ -4885,8 +4885,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_worldprops_createworldprops",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "createworldprops()"
     },
     {
@@ -5124,8 +5124,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_car_baseupgrades",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "baseupgrades()"
     },
     {
@@ -5149,8 +5149,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_car_createcar",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "createcar()"
     },
     {
@@ -5559,22 +5559,22 @@
       "norm_label": "applyitem()"
     },
     {
-      "label": "onBump()",
+      "label": "boxSpot()",
       "file_type": "code",
       "source_file": "src/sim/items.ts",
-      "source_location": "L95",
+      "source_location": "L104",
       "_callable": true,
       "_origin": "ast",
-      "id": "src_sim_items_onbump",
+      "id": "src_sim_items_boxspot",
       "community": 0,
       "community_name": "world.ts",
-      "norm_label": "onbump()"
+      "norm_label": "boxspot()"
     },
     {
       "label": "stepBoxes()",
       "file_type": "code",
       "source_file": "src/sim/items.ts",
-      "source_location": "L98",
+      "source_location": "L112",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_items_stepboxes",
@@ -5695,8 +5695,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_rng",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "rng.ts"
     },
     {
@@ -5792,8 +5792,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_rng_makerng",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "makerng()"
     },
     {
@@ -6002,7 +6002,7 @@
       "label": "sameLane()",
       "file_type": "code",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L23",
+      "source_location": "L24",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_traffic_samelane",
@@ -6014,7 +6014,7 @@
       "label": "closedAhead()",
       "file_type": "code",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L26",
+      "source_location": "L27",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_traffic_closedahead",
@@ -6023,10 +6023,22 @@
       "norm_label": "closedahead()"
     },
     {
+      "label": "besideWorks()",
+      "file_type": "code",
+      "source_file": "src/sim/traffic.ts",
+      "source_location": "L31",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_sim_traffic_besideworks",
+      "community": 0,
+      "community_name": "world.ts",
+      "norm_label": "besideworks()"
+    },
+    {
       "label": "stepTraffic()",
       "file_type": "code",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L29",
+      "source_location": "L39",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_traffic_steptraffic",
@@ -6164,7 +6176,7 @@
       "label": "Works",
       "file_type": "code",
       "source_file": "src/sim/works.ts",
-      "source_location": "L20",
+      "source_location": "L30",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -6177,7 +6189,7 @@
       "label": "worksLaneX()",
       "file_type": "code",
       "source_file": "src/sim/works.ts",
-      "source_location": "L26",
+      "source_location": "L38",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_workslanex",
@@ -6186,10 +6198,34 @@
       "norm_label": "workslanex()"
     },
     {
+      "label": "levelOf()",
+      "file_type": "code",
+      "source_file": "src/sim/works.ts",
+      "source_location": "L41",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_sim_works_levelof",
+      "community": 67,
+      "community_name": "ai.ts",
+      "norm_label": "levelof()"
+    },
+    {
+      "label": "clear()",
+      "file_type": "code",
+      "source_file": "src/sim/works.ts",
+      "source_location": "L46",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_sim_works_clear",
+      "community": 67,
+      "community_name": "ai.ts",
+      "norm_label": "clear()"
+    },
+    {
       "label": "worksInBlock()",
       "file_type": "code",
       "source_file": "src/sim/works.ts",
-      "source_location": "L28",
+      "source_location": "L50",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_worksinblock",
@@ -6201,7 +6237,7 @@
       "label": "worksBetween()",
       "file_type": "code",
       "source_file": "src/sim/works.ts",
-      "source_location": "L45",
+      "source_location": "L64",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_worksbetween",
@@ -6213,7 +6249,7 @@
       "label": "stepWorks()",
       "file_type": "code",
       "source_file": "src/sim/works.ts",
-      "source_location": "L58",
+      "source_location": "L77",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_stepworks",
@@ -6225,7 +6261,7 @@
       "label": "inside()",
       "file_type": "code",
       "source_file": "src/sim/works.ts",
-      "source_location": "L68",
+      "source_location": "L100",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_inside",
@@ -6237,7 +6273,7 @@
       "label": "hitWorks()",
       "file_type": "code",
       "source_file": "src/sim/works.ts",
-      "source_location": "L72",
+      "source_location": "L104",
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_hitworks",
@@ -6347,8 +6383,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_storage_difficulty",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 72,
+      "community_name": "DIFFICULTIES",
       "norm_label": "difficulty.ts"
     },
     {
@@ -6358,8 +6394,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_storage_difficulty_difficulty_key",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 72,
+      "community_name": "DIFFICULTIES",
       "norm_label": "difficulty_key"
     },
     {
@@ -6370,8 +6406,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_difficulty_loaddifficulty",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 72,
+      "community_name": "DIFFICULTIES",
       "norm_label": "loaddifficulty()"
     },
     {
@@ -6382,8 +6418,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_difficulty_savedifficulty",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 72,
+      "community_name": "DIFFICULTIES",
       "norm_label": "savedifficulty()"
     },
     {
@@ -6393,7 +6429,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_storage_mode",
-      "community": 3,
+      "community": 58,
       "community_name": "app.ts",
       "norm_label": "storage/mode.ts"
     },
@@ -6404,7 +6440,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_storage_mode_mode_key",
-      "community": 3,
+      "community": 58,
       "community_name": "app.ts",
       "norm_label": "mode_key"
     },
@@ -6416,7 +6452,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_mode_loadmode",
-      "community": 3,
+      "community": 58,
       "community_name": "app.ts",
       "norm_label": "loadmode()"
     },
@@ -6428,7 +6464,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_mode_savemode",
-      "community": 3,
+      "community": 58,
       "community_name": "app.ts",
       "norm_label": "savemode()"
     },
@@ -6497,7 +6533,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "ranking.ts"
     },
     {
@@ -6508,8 +6544,19 @@
       "_origin": "ast",
       "id": "src_storage_ranking_ranking_key",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "ranking_key"
+    },
+    {
+      "label": "MAX_HP",
+      "file_type": "code",
+      "source_file": "src/storage/ranking.ts",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "src_storage_ranking_max_hp",
+      "community": 3,
+      "community_name": "ranking.ts",
+      "norm_label": "max_hp"
     },
     {
       "label": "Entry",
@@ -6521,7 +6568,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_entry",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "entry"
     },
     {
@@ -6534,7 +6581,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_board",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "board"
     },
     {
@@ -6546,7 +6593,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_emptyboard",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "emptyboard()"
     },
     {
@@ -6557,7 +6604,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_ranking_v3_key",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "ranking_v3_key"
     },
     {
@@ -6570,7 +6617,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_boards",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "boards"
     },
     {
@@ -6582,7 +6629,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_emptyboards",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "emptyboards()"
     },
     {
@@ -6594,7 +6641,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_countrecords",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "countrecords()"
     },
     {
@@ -6607,7 +6654,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_result",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "result"
     },
     {
@@ -6619,7 +6666,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_better",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "better()"
     },
     {
@@ -6631,7 +6678,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_same",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "same()"
     },
     {
@@ -6643,7 +6690,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_valid",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "valid()"
     },
     {
@@ -6655,7 +6702,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_normalize",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "normalize()"
     },
     {
@@ -6667,7 +6714,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_qualifies",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "qualifies()"
     },
     {
@@ -6679,7 +6726,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_insert",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "insert()"
     },
     {
@@ -6691,7 +6738,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_parseboard",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "parseboard()"
     },
     {
@@ -6703,7 +6750,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_loadboard",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "loadboard()"
     },
     {
@@ -6715,7 +6762,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_saveboard",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "saveboard()"
     },
     {
@@ -6727,7 +6774,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_sanitizeinitials",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "sanitizeinitials()"
     },
     {
@@ -6739,7 +6786,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_loadboards",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "loadboards()"
     },
     {
@@ -6751,7 +6798,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_saveboards",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "saveboards()"
     },
     {
@@ -6762,7 +6809,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_ranking_v4_key",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "ranking_v4_key"
     },
     {
@@ -6774,7 +6821,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_storage_ranking_modeboards",
-      "community": 3,
+      "community": 58,
       "community_name": "app.ts",
       "norm_label": "modeboards"
     },
@@ -6787,7 +6834,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_emptymodeboards",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "emptymodeboards()"
     },
     {
@@ -6799,7 +6846,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_countmoderecords",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "countmoderecords()"
     },
     {
@@ -6811,7 +6858,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_parseboards",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "parseboards()"
     },
     {
@@ -6823,7 +6870,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_loadmodeboards",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "loadmodeboards()"
     },
     {
@@ -6835,7 +6882,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_savemodeboards",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "savemodeboards()"
     },
     {
@@ -6847,7 +6894,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_recordentry",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "recordentry()"
     },
     {
@@ -6917,8 +6964,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_hud_formattime",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 71,
+      "community_name": "end.ts",
       "norm_label": "formattime()"
     },
     {
@@ -7138,8 +7185,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_mobileshell_gamedelta",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "gamedelta()"
     },
     {
@@ -7197,8 +7244,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_choose",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "choose.ts"
     },
     {
@@ -7208,8 +7255,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_ui_screens_choose_roles",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "roles"
     },
     {
@@ -7220,8 +7267,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_choose_rolecard",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "rolecard()"
     },
     {
@@ -7232,8 +7279,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_choose_renderchoose",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "renderchoose()"
     },
     {
@@ -7243,8 +7290,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "difficultypicker.ts"
     },
     {
@@ -7254,8 +7301,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_difficulty_label",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "difficulty_label"
     },
     {
@@ -7266,8 +7313,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_coinslabel",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "coinslabel()"
     },
     {
@@ -7278,8 +7325,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_choicepicker",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "choicepicker()"
     },
     {
@@ -7290,8 +7337,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_difficultypicker",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "difficultypicker()"
     },
     {
@@ -7301,8 +7348,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_mode_label",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "mode_label"
     },
     {
@@ -7313,8 +7360,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_modepicker",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "modepicker()"
     },
     {
@@ -7324,8 +7371,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_dom",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "dom.ts"
     },
     {
@@ -7337,8 +7384,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_dom_disposable",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "disposable"
     },
     {
@@ -7349,8 +7396,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_dom_disposable_dispose",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": ".dispose()"
     },
     {
@@ -7361,8 +7408,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_dom_h",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 71,
+      "community_name": "end.ts",
       "norm_label": "h()"
     },
     {
@@ -7373,8 +7420,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_dom_btn",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "btn()"
     },
     {
@@ -7385,8 +7432,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_dom_trapfocus",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "trapfocus()"
     },
     {
@@ -7397,8 +7444,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_dom_mount",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "mount()"
     },
     {
@@ -7409,8 +7456,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_dom_openmodal",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "openmodal()"
     },
     {
@@ -7420,8 +7467,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_end",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 71,
+      "community_name": "end.ts",
       "norm_label": "end.ts"
     },
     {
@@ -7432,8 +7479,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_endreason",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 71,
+      "community_name": "end.ts",
       "norm_label": "endreason()"
     },
     {
@@ -7444,8 +7491,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_reducedmotion",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 71,
+      "community_name": "end.ts",
       "norm_label": "reducedmotion()"
     },
     {
@@ -7456,8 +7503,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_rewardbox",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 71,
+      "community_name": "end.ts",
       "norm_label": "rewardbox()"
     },
     {
@@ -7468,8 +7515,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_countup",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 71,
+      "community_name": "end.ts",
       "norm_label": "countup()"
     },
     {
@@ -7480,8 +7527,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_resultcard",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 71,
+      "community_name": "end.ts",
       "norm_label": "resultcard()"
     },
     {
@@ -7492,8 +7539,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_savednote",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 71,
+      "community_name": "end.ts",
       "norm_label": "savednote()"
     },
     {
@@ -7504,8 +7551,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_padbtn",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 71,
+      "community_name": "end.ts",
       "norm_label": "padbtn()"
     },
     {
@@ -7516,8 +7563,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_initialspad",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 71,
+      "community_name": "end.ts",
       "norm_label": "initialspad()"
     },
     {
@@ -7528,8 +7575,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_recordpanel",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 71,
+      "community_name": "end.ts",
       "norm_label": "recordpanel()"
     },
     {
@@ -7540,8 +7587,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_renderend",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 71,
+      "community_name": "end.ts",
       "norm_label": "renderend()"
     },
     {
@@ -7551,8 +7598,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_flow",
-      "community": 49,
-      "community_name": "profile.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "flow.ts"
     },
     {
@@ -7563,8 +7610,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_countdown",
-      "community": 49,
-      "community_name": "profile.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "countdown"
     },
     {
@@ -7576,8 +7623,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_matchresult",
-      "community": 49,
-      "community_name": "profile.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "matchresult"
     },
     {
@@ -7589,8 +7636,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_flowstate",
-      "community": 49,
-      "community_name": "profile.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "flowstate"
     },
     {
@@ -7602,8 +7649,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_endstate",
-      "community": 49,
-      "community_name": "profile.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "endstate"
     },
     {
@@ -7615,8 +7662,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_flowaction",
-      "community": 49,
-      "community_name": "profile.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "flowaction"
     },
     {
@@ -7627,8 +7674,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_initialstate",
-      "community": 49,
-      "community_name": "profile.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "initialstate()"
     },
     {
@@ -7639,8 +7686,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_reduce",
-      "community": 49,
-      "community_name": "profile.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "reduce()"
     },
     {
@@ -7650,8 +7697,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_howto",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "howto.ts"
     },
     {
@@ -7662,8 +7709,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_howto_clock",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "clock()"
     },
     {
@@ -7673,8 +7720,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_ui_screens_howto_escape",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "escape"
     },
     {
@@ -7686,8 +7733,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_howto_tip",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "tip"
     },
     {
@@ -7697,8 +7744,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_ui_screens_howto_pages",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "pages"
     },
     {
@@ -7709,8 +7756,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_howto_tipel",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "tipel()"
     },
     {
@@ -7721,8 +7768,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_howto_pagedots",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "pagedots()"
     },
     {
@@ -7733,8 +7780,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_howto_dragtoturn",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "dragtoturn()"
     },
     {
@@ -7745,8 +7792,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_howto_openhowto",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "openhowto()"
     },
     {
@@ -7756,8 +7803,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_icons",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "screens/icons.ts"
     },
     {
@@ -7768,8 +7815,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_icons_svg",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "svg()"
     },
     {
@@ -7779,8 +7826,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_ui_screens_icons_screen_icons",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "screen_icons"
     },
     {
@@ -7790,8 +7837,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_mode",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "screens/mode.ts"
     },
     {
@@ -7801,8 +7848,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_ui_screens_mode_mode_info",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "mode_info"
     },
     {
@@ -7813,8 +7860,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_mode_rendermode",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "rendermode()"
     },
     {
@@ -7824,8 +7871,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_progress",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "progress.ts"
     },
     {
@@ -7836,8 +7883,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_progress_n",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "n()"
     },
     {
@@ -7848,8 +7895,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_progress_statsgrid",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "statsgrid()"
     },
     {
@@ -7860,8 +7907,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_progress_copycode",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "copycode()"
     },
     {
@@ -7872,8 +7919,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_progress_restorepanel",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "restorepanel()"
     },
     {
@@ -7884,8 +7931,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_progress_openprogress",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "openprogress()"
     },
     {
@@ -7895,8 +7942,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_screens",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "screens.ts"
     },
     {
@@ -7907,8 +7954,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_screens_titlehero",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "titlehero()"
     },
     {
@@ -7919,8 +7966,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_screens_walletchip",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "walletchip()"
     },
     {
@@ -7931,8 +7978,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_screens_rendertitle",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "rendertitle()"
     },
     {
@@ -7943,8 +7990,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_screens_rendercountdown",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "rendercountdown()"
     },
     {
@@ -7955,8 +8002,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_screens_renderpause",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "renderpause()"
     },
     {
@@ -7966,8 +8013,8 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "src_ui_screens_screens_tab_label",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "tab_label"
     },
     {
@@ -7978,8 +8025,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_screens_shortdate",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "shortdate()"
     },
     {
@@ -7990,8 +8037,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_screens_renderranking",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "renderranking()"
     },
     {
@@ -8264,8 +8311,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_buildings_test",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "buildings.test.ts"
     },
     {
@@ -8286,8 +8333,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_carfactory_test",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "carfactory.test.ts"
     },
     {
@@ -8298,8 +8345,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_carfactory_test_emissive",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "emissive()"
     },
     {
@@ -8310,8 +8357,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_carfactory_test_body",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "body()"
     },
     {
@@ -8438,8 +8485,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_gunner_test",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "gunner.test.ts"
     },
     {
@@ -8450,8 +8497,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_gunner_test_setup",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "setup()"
     },
     {
@@ -8462,8 +8509,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_gunner_test_aimx",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "aimx()"
     },
     {
@@ -8474,8 +8521,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_gunner_test_visiblemeshes",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "gunner.ts",
       "norm_label": "visiblemeshes()"
     },
     {
@@ -8485,8 +8532,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_hazardsview_test",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "hazardsview.test.ts"
     },
     {
@@ -8552,7 +8599,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_renderer_test",
-      "community": 42,
+      "community": 20,
       "community_name": "renderer.ts",
       "norm_label": "renderer.test.ts"
     },
@@ -8563,8 +8610,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_roadchunks_test",
-      "community": 48,
-      "community_name": "roadChunks.ts",
+      "community": 67,
+      "community_name": "ai.ts",
       "norm_label": "roadchunks.test.ts"
     },
     {
@@ -8575,7 +8622,7 @@
       "_origin": "ast",
       "id": "tests_render_scene_test",
       "community": 20,
-      "community_name": "scene.ts",
+      "community_name": "renderer.ts",
       "norm_label": "scene.test.ts"
     },
     {
@@ -8596,8 +8643,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_worldprops_test",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "worldprops.test.ts"
     },
     {
@@ -8608,8 +8655,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_worldprops_test_traffic",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "traffic()"
     },
     {
@@ -8620,8 +8667,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_worldprops_test_visiblenamed",
-      "community": 67,
-      "community_name": "ai.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "visiblenamed()"
     },
     {
@@ -8909,8 +8956,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_curvesphysics_test_atspeed",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "atspeed()"
     },
     {
@@ -9000,8 +9047,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_items_test_police",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "police()"
     },
     {
@@ -9012,8 +9059,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_items_test_thief",
-      "community": 2,
-      "community_name": "carFactory.ts",
+      "community": 51,
+      "community_name": "worldProps.ts",
       "norm_label": "thief()"
     },
     {
@@ -9391,8 +9438,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_storage_difficulty_test",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 72,
+      "community_name": "DIFFICULTIES",
       "norm_label": "storage/difficulty.test.ts"
     },
     {
@@ -9403,8 +9450,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_storage_difficulty_test_mem",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 72,
+      "community_name": "DIFFICULTIES",
       "norm_label": "mem()"
     },
     {
@@ -9414,7 +9461,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_storage_mode_test",
-      "community": 3,
+      "community": 58,
       "community_name": "app.ts",
       "norm_label": "storage/mode.test.ts"
     },
@@ -9426,7 +9473,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_storage_mode_test_mem",
-      "community": 3,
+      "community": 58,
       "community_name": "app.ts",
       "norm_label": "mem()"
     },
@@ -9461,7 +9508,7 @@
       "_origin": "ast",
       "id": "tests_storage_ranking_test",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "ranking.test.ts"
     },
     {
@@ -9473,7 +9520,7 @@
       "_origin": "ast",
       "id": "tests_storage_ranking_test_memory",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "memory()"
     },
     {
@@ -9484,7 +9531,7 @@
       "_origin": "ast",
       "id": "tests_storage_ranking_test_broken",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "broken"
     },
     {
@@ -9520,7 +9567,7 @@
       "_origin": "ast",
       "id": "tests_storage_ranking_test_length",
       "community": 3,
-      "community_name": "app.ts",
+      "community_name": "ranking.ts",
       "norm_label": "length()"
     },
     {
@@ -9728,8 +9775,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_difficultypicker_test",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "difficultypicker.test.ts"
     },
     {
@@ -9740,8 +9787,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_difficultypicker_test_mount",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "mount()"
     },
     {
@@ -9762,8 +9809,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_flow_test",
-      "community": 49,
-      "community_name": "profile.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "flow.test.ts"
     },
     {
@@ -9774,8 +9821,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_flow_test_run",
-      "community": 49,
-      "community_name": "profile.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "run()"
     },
     {
@@ -9842,8 +9889,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_mode_test",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "ui/mode.test.ts"
     },
     {
@@ -9854,8 +9901,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_mode_test_button",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 48,
+      "community_name": "howto.ts",
       "norm_label": "button()"
     },
     {
@@ -9922,8 +9969,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_screens_test",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "screens.test.ts"
     },
     {
@@ -9934,8 +9981,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_screens_test_button",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "button()"
     },
     {
@@ -9946,8 +9993,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_screens_test_dispose",
-      "community": 3,
-      "community_name": "app.ts",
+      "community": 42,
+      "community_name": "screens.ts",
       "norm_label": "dispose()"
     },
     {
@@ -17362,7 +17409,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -18585,6 +18632,18 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "src/sim/traffic.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_sim_traffic",
+      "target": "src_config_balance_mode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "src/sim/types.ts",
       "source_location": "L1",
       "weight": 1.0,
@@ -19042,7 +19101,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -28610,7 +28669,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -28910,7 +28969,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -29379,7 +29438,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/items.ts",
-      "source_location": "L117",
+      "source_location": "L133",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items_stepboxes",
@@ -29540,7 +29599,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -29697,7 +29756,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/items.ts",
-      "source_location": "L138",
+      "source_location": "L154",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items_stepboxes",
@@ -29732,7 +29791,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -29745,7 +29804,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/works.ts",
-      "source_location": "L106",
+      "source_location": "L138",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works_hitworks",
@@ -29793,7 +29852,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/items.ts",
-      "source_location": "L139",
+      "source_location": "L155",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items_stepboxes",
@@ -29828,7 +29887,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -29841,7 +29900,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/works.ts",
-      "source_location": "L102",
+      "source_location": "L134",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works_hitworks",
@@ -30323,7 +30382,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -30515,7 +30574,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -30527,10 +30586,10 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L37",
+      "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "src_sim_works_worksinblock",
+      "source": "src_sim_works_clear",
       "target": "src_sim_curves_curvesbetween",
       "confidence_score": 1.0
     },
@@ -31299,22 +31358,22 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/items.ts",
-      "source_location": "L13",
+      "source_location": "L104",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items",
-      "target": "src_sim_items_colorchance",
+      "target": "src_sim_items_boxspot",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/items.ts",
-      "source_location": "L95",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items",
-      "target": "src_sim_items_onbump",
+      "target": "src_sim_items_colorchance",
       "confidence_score": 1.0
     },
     {
@@ -31343,7 +31402,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/items.ts",
-      "source_location": "L98",
+      "source_location": "L112",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items",
@@ -31547,7 +31606,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/items.ts",
-      "source_location": "L117",
+      "source_location": "L133",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items_stepboxes",
@@ -31595,7 +31654,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/items.ts",
-      "source_location": "L141",
+      "source_location": "L157",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items_stepboxes",
@@ -31619,7 +31678,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/items.ts",
-      "source_location": "L143",
+      "source_location": "L159",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items_stepboxes",
@@ -31678,24 +31737,36 @@
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
       "source_file": "src/sim/items.ts",
-      "source_location": "L95",
+      "source_location": "L105",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "src_sim_items_onbump",
-      "target": "src_sim_track_bumpsbetween",
-      "confidence_score": 1.0
+      "source": "src_sim_items_boxspot",
+      "target": "src_sim_track_bumpsbetween"
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/items.ts",
-      "source_location": "L111",
+      "source_location": "L124",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items_stepboxes",
-      "target": "src_sim_items_onbump",
+      "target": "src_sim_items_boxspot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/sim/items.test.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_sim_items_test",
+      "target": "src_sim_items_boxspot",
       "confidence_score": 1.0
     },
     {
@@ -31704,7 +31775,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/items.ts",
-      "source_location": "L99",
+      "source_location": "L113",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items_stepboxes",
@@ -31716,7 +31787,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/items.ts",
-      "source_location": "L153",
+      "source_location": "L169",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items_stepboxes",
@@ -31728,7 +31799,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/items.ts",
-      "source_location": "L101",
+      "source_location": "L115",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items_stepboxes",
@@ -31740,7 +31811,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/items.ts",
-      "source_location": "L102",
+      "source_location": "L116",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items_stepboxes",
@@ -31752,7 +31823,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/items.ts",
-      "source_location": "L149",
+      "source_location": "L165",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_items_stepboxes",
@@ -32736,7 +32807,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -32889,7 +32960,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L31",
+      "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_steptraffic",
@@ -32972,7 +33043,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -32984,7 +33055,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L29",
+      "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works_worksinblock",
@@ -33391,7 +33462,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -33511,7 +33582,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -33523,10 +33594,10 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L36",
+      "source_location": "L47",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "src_sim_works_worksinblock",
+      "source": "src_sim_works_clear",
       "target": "src_sim_track_bumpsbetween",
       "confidence_score": 1.0
     },
@@ -33786,7 +33857,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L26",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_sim_traffic",
+      "target": "src_sim_traffic_besideworks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sim/traffic.ts",
+      "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic",
@@ -33797,7 +33879,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic",
@@ -33808,7 +33890,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L29",
+      "source_location": "L39",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic",
@@ -33939,7 +34021,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L95",
+      "source_location": "L109",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_steptraffic",
@@ -33987,7 +34069,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_closedahead",
@@ -33999,7 +34081,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L40",
+      "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_steptraffic",
@@ -34011,7 +34093,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L46",
+      "source_location": "L56",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_steptraffic",
@@ -34022,9 +34104,21 @@
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
+      "source_file": "src/sim/traffic.ts",
+      "source_location": "L84",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_sim_traffic_steptraffic",
+      "target": "src_sim_traffic_besideworks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L32",
+      "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_steptraffic",
@@ -34036,7 +34130,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/traffic.ts",
-      "source_location": "L33",
+      "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_traffic_steptraffic",
@@ -34363,7 +34457,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L9",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -34459,7 +34553,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L9",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -34710,7 +34804,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L72",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_sim_works",
+      "target": "src_sim_works_clear",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sim/works.ts",
+      "source_location": "L104",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -34721,7 +34826,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L68",
+      "source_location": "L100",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -34732,7 +34837,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L58",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_sim_works",
+      "target": "src_sim_works_levelof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sim/works.ts",
+      "source_location": "L77",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -34743,7 +34859,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L20",
+      "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -34754,7 +34870,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L45",
+      "source_location": "L64",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -34765,7 +34881,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L28",
+      "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -34776,7 +34892,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L26",
+      "source_location": "L38",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -34788,7 +34904,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -34800,7 +34916,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -34812,7 +34928,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -34824,7 +34940,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works",
@@ -34848,7 +34964,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L82",
+      "source_location": "L114",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works_hitworks",
@@ -34860,7 +34976,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L69",
+      "source_location": "L101",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works_inside",
@@ -34884,7 +35000,31 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L48",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_sim_works_worksinblock",
+      "target": "src_sim_works_levelof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sim/works.ts",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_sim_works_worksinblock",
+      "target": "src_sim_works_clear",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sim/works.ts",
+      "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works_worksbetween",
@@ -34896,7 +35036,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L64",
+      "source_location": "L94",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works_stepworks",
@@ -34921,7 +35061,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/works.ts",
-      "source_location": "L60",
+      "source_location": "L79",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works_stepworks",
@@ -34933,7 +35073,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/works.ts",
-      "source_location": "L60",
+      "source_location": "L79",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works_stepworks",
@@ -34964,11 +35104,23 @@
       "target": "src_sim_works_stepworks"
     },
     {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/sim/works.test.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_sim_works_test",
+      "target": "src_sim_works_stepworks",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/sim/works.ts",
-      "source_location": "L79",
+      "source_location": "L111",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works_hitworks",
@@ -34981,7 +35133,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/works.ts",
-      "source_location": "L78",
+      "source_location": "L110",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works_hitworks",
@@ -34993,7 +35145,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/works.ts",
-      "source_location": "L78",
+      "source_location": "L110",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works_hitworks",
@@ -35005,7 +35157,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/works.ts",
-      "source_location": "L99",
+      "source_location": "L131",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_works_hitworks",
@@ -37168,6 +37320,18 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "tests/sim/items.test.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_sim_items_test",
+      "target": "src_sim_world_stepworld",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "tests/sim/match.test.ts",
       "source_location": "L4",
       "weight": 1.0,
@@ -37655,6 +37819,17 @@
       "_origin": "ast",
       "source": "src_storage_ranking",
       "target": "src_storage_ranking_loadmodeboards",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/storage/ranking.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_storage_ranking",
+      "target": "src_storage_ranking_max_hp",
       "confidence_score": 1.0
     },
     {
@@ -45762,5 +45937,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7b7fc946a5581ccd18c39e77fceff78ef3ef8fd8"
+  "built_at_commit": "b5319a2a14f808991bf044d4e8304d22fb556366"
 }
