@@ -58,6 +58,7 @@ describe('coins credit', () => {
   it('credits once when the match ends, saved before the end screen; replay does not credit again; reload keeps it', () => {
     const app = startApp(container, { mute: true });
     click('Jogar');
+    click('Jogar Perseguição');
     (container.querySelector('[data-role="thief"]') as HTMLButtonElement).click();
     expect(ends).toHaveLength(1);
     frames(60); // countdown over: playing
@@ -91,6 +92,7 @@ describe('storage that stops saving', () => {
   it('the Progresso dialog warns when saving the coins failed', () => {
     const app = startApp(container, { mute: true });
     click('Jogar');
+    click('Jogar Perseguição');
     (container.querySelector('[data-role="police"]') as HTMLButtonElement).click();
     frames(60);
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
@@ -110,6 +112,7 @@ describe('difficulty', () => {
     localStorage.setItem('pl.difficulty', 'hard');
     const app = startApp(container, { mute: true });
     click('Jogar');
+    click('Jogar Perseguição');
     expect(container.querySelector('[role="radio"][aria-checked="true"]')!.textContent).toContain('Difícil');
     (container.querySelector('[data-role="thief"]') as HTMLButtonElement).click();
     expect(gameOpts[0]!.difficulty).toBe('hard');
@@ -129,6 +132,7 @@ describe('difficulty', () => {
   it('changing it on the side choice is remembered', () => {
     const app = startApp(container, { mute: true });
     click('Jogar');
+    click('Jogar Perseguição');
     (container.querySelectorAll('.screen-choose [role="radio"]')[0] as HTMLElement).click();
     expect(localStorage.getItem('pl.difficulty')).toBe('easy');
     app.stop();

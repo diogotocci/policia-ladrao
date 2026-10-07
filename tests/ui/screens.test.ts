@@ -107,7 +107,7 @@ describe('choose', () => {
     const dialog = root.querySelector('.howto')!;
     expect(dialog.getAttribute('role')).toBe('dialog');
     const page = () => dialog.querySelector('.howto-tips:not([inert])')!.textContent!;
-    expect(dialog.querySelectorAll('.howto-tips')).toHaveLength(2);
+    expect(dialog.querySelectorAll('.howto-tips')).toHaveLength(3); // page 3: Sobrevivência
     expect(page()).toContain('O carro acelera sozinho');
     expect(page()).toContain('Freie nas curvas fechadas');
     expect(page()).toContain('sobe na calçada e perde 5 de vida'); // BALANCE.collision.scenery
@@ -136,16 +136,17 @@ describe('choose', () => {
     expect(current()).toBe(0);
     expect(prev.hidden).toBe(true);
     expect(next.hidden).toBe(false);
-    (dialog.querySelector('[aria-label="Página 2 de 2"]') as HTMLButtonElement).click();
-    expect(current()).toBe(1);
+    (dialog.querySelector('[aria-label="Página 3 de 3"]') as HTMLButtonElement).click();
+    expect(current()).toBe(2);
     expect(prev.hidden).toBe(false);
     expect(next.hidden).toBe(true);
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); // already last: stays
+    expect(current()).toBe(2);
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
-    expect(current()).toBe(0);
+    expect(current()).toBe(1);
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true })); // already first: stays
     expect(current()).toBe(0);
-    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
-    expect(current()).toBe(1);
   });
 
   it('carousel: dragging the cards to the side turns the page; a tiny drag snaps back', () => {
@@ -164,10 +165,11 @@ describe('choose', () => {
     expect(current()).toBe(0);
     drag(400, 250); // drag left: next page
     expect(current()).toBe(1);
-    drag(250, 200); // already the last page
-    expect(current()).toBe(1);
+    drag(400, 250);
+    drag(250, 100); // already the last page
+    expect(current()).toBe(2);
     drag(200, 400); // drag right: back
-    expect(current()).toBe(0);
+    expect(current()).toBe(1);
   });
 
   it('carousel on a phone held upright (the game is drawn rotated -90°): a drag along the screen height turns the page', () => {
@@ -201,11 +203,12 @@ describe('choose', () => {
     const next = button('Próximo');
     next.focus(); // keyboard user on the pager button
     next.click();
+    next.click();
     expect(document.activeElement).toBe(button('Anterior')); // Próximo is hidden on the last page
     button('Entendi').focus();
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
     // wraps to the first control of the dialog (the first page dot), not to the inert Voltar
-    expect(document.activeElement).toBe(root.querySelector('[aria-label="Página 1 de 2"]'));
+    expect(document.activeElement).toBe(root.querySelector('[aria-label="Página 1 de 3"]'));
   });
 
   it('first time: opens by itself; Esc closes it too', () => {

@@ -17,6 +17,11 @@ export const SCREEN_ICONS = {
   swap: svg('<path d="M4 8h14M14 4l4 4-4 4M20 16H6M10 12l-4 4 4 4"/>'),
   trophy: svg('<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v4M8 20h8"/>'),
   home: svg('<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'),
+  clock: svg('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 3h6"/>'),
+  skull: svg(
+    '<path d="M12 3a8 8 0 0 0-5 14v3h10v-3a8 8 0 0 0-5-14z"/><circle cx="9" cy="11" r="1.4"/><circle cx="15" cy="11" r="1.4"/><path d="M10 20v-2M14 20v-2"/>',
+  ),
+  cone: svg('<path d="M9 4h6l4 15H5z"/><path d="M7.5 10h9M6.5 14h11M3 19h18"/>'),
   // road-sign tips
   auto: svg('<path d="M12 20V5M6 11l6-6 6 6"/><path d="M4 20h4M16 20h4"/>'),
   curve: svg('<path d="M7 21v-6c0-4 2-6 6-6h2"/><path d="M13 5l4 4-4 4"/>'),

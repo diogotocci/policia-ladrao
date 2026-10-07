@@ -94,6 +94,7 @@ test('the picture never stretches: a size change without a resize event (iOS sta
 test('first visit: "Como jogar" opens by itself on the side choice; after Entendi it stays closed', async ({ page }) => {
   await page.goto('/?app&quality=low&mute');
   await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await page.getByRole('button', { name: 'Jogar Perseguição' }).click();
   const howTo = page.getByRole('dialog', { name: 'Como jogar' });
   await expect(howTo).toBeVisible();
   await expect(howTo).toContainText('O carro acelera sozinho');
@@ -101,8 +102,8 @@ test('first visit: "Como jogar" opens by itself on the side choice; after Entend
   await expect(howTo).toContainText('Quem vence');
   await howTo.getByRole('button', { name: 'Entendi' }).click();
   await expect(howTo).toHaveCount(0);
-  await page.getByRole('button', { name: 'Voltar' }).click();
-  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await page.getByRole('button', { name: 'Voltar' }).click(); // back to the modes
+  await page.getByRole('button', { name: 'Jogar Perseguição' }).click();
   await expect(page.locator('.choose-card')).toHaveCount(2);
   await expect(page.locator('.howto')).toHaveCount(0);
   await page.getByRole('button', { name: 'Como jogar' }).click();
@@ -154,4 +155,16 @@ test('Como jogar: with the phone upright (game drawn rotated) a finger swipe alo
   await swipe(600, 250);
   await expect(current).toHaveAttribute('aria-label', 'Página 1 de 2');
   await ctx.close();
+});
+
+test('mode screen after Jogar; the chosen mode is remembered after a reload', async ({ page }) => {
+  await page.goto('/?app&quality=low&mute');
+  await page.evaluate(() => localStorage.setItem('pl.howto.v1', '1'));
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Escolha o modo' })).toBeVisible();
+  await page.getByRole('button', { name: 'Jogar Sobrevivência' }).click();
+  await expect(page.locator('.screen-choose')).toBeVisible();
+  await page.reload();
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Jogar Sobrevivência' })).toBeFocused();
 });

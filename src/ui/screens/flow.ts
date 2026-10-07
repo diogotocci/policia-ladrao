@@ -19,6 +19,7 @@ export interface MatchResult {
 
 export type FlowState =
   | { screen: 'title' }
+  | { screen: 'mode' }
   | { screen: 'choose' }
   | { screen: 'countdown'; role: Role; left: number }
   | { screen: 'playing'; role: Role }
@@ -40,6 +41,8 @@ export type EndState = {
 
 export type FlowAction =
   | { type: 'play' }
+  /** mode screen: a mode was picked (the app keeps which) */
+  | { type: 'pickMode' }
   | { type: 'choose'; role: Role }
   | { type: 'tick'; dt: number }
   | { type: 'pause' }
@@ -64,12 +67,17 @@ const countdown = (role: Role): FlowState => ({ screen: 'countdown', role, left:
 export function reduce(s: FlowState, a: FlowAction): FlowState {
   switch (s.screen) {
     case 'title':
-      if (a.type === 'play') return { screen: 'choose' };
+      if (a.type === 'play') return { screen: 'mode' };
       if (a.type === 'openRanking') return { screen: 'ranking', tab: 'police', difficulty: a.difficulty ?? 'normal', from: 'title' };
+      return s;
+    case 'mode':
+      if (a.type === 'pickMode') return { screen: 'choose' };
+      if (a.type === 'back' || a.type === 'quit') return initialState();
       return s;
     case 'choose':
       if (a.type === 'choose') return countdown(a.role);
-      if (a.type === 'back' || a.type === 'quit') return initialState();
+      if (a.type === 'back') return { screen: 'mode' };
+      if (a.type === 'quit') return initialState();
       return s;
     case 'countdown':
       if (a.type === 'tick') {

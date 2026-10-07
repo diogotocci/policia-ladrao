@@ -1,6 +1,6 @@
 // Full app (spec §7): screens + matches + ranking. The flow is the pure state machine in screens/flow.ts;
 // here we only wire each state to what appears on screen (and to the game).
-import type { Difficulty, Role } from './config/balance';
+import type { Difficulty, Mode, Role } from './config/balance';
 import { createAudioSession } from './audio/session';
 import { startGame, type GameHandle } from './game';
 import { createCarPreview } from './render/carPreview';
@@ -8,6 +8,8 @@ import type { QualityTier } from './render/renderer';
 import { grantWelcome, settleMatch } from './meta/profile';
 import { loadProfile, saveProfile } from './storage/profileStore';
 import { loadDifficulty, saveDifficulty } from './storage/difficulty';
+import { loadMode, saveMode } from './storage/mode';
+import { renderMode } from './ui/screens/mode';
 import { countRecords, insert, loadBoards, qualifies, saveBoards, type Boards } from './storage/ranking';
 import { initialState, reduce, type FlowAction, type FlowState } from './ui/screens/flow';
 import { openProgress } from './ui/screens/progress';
@@ -29,6 +31,9 @@ export function startApp(
     mute?: boolean;
     curves?: boolean;
     escapeTime?: number;
+    /** debug/e2e only */
+    mode?: Mode;
+    chaosEvery?: number;
   } = {},
 ): { stop(): void } {
   const storage = (() => {
@@ -47,6 +52,8 @@ export function startApp(
   let boards: Boards = loadBoards(storage);
   // V2 part 2: the last difficulty chosen on the side choice; every match, reward and record uses it
   let difficulty = loadDifficulty(storage);
+  // V2 part 3: last mode chosen (the debug ?mode= overrides it for e2e)
+  let mode: Mode = opts.mode ?? loadMode(storage);
   // coins and stats (V2 part 1); the welcome bonus is credited once, from the records already in the ranking
   const loaded = loadProfile(storage);
   let profile = grantWelcome(loaded.profile, countRecords(boards));
@@ -122,6 +129,8 @@ export function startApp(
       curves: opts.curves,
       escapeTime: opts.escapeTime,
       difficulty,
+      mode,
+      chaosEvery: opts.chaosEvery,
       audio,
       startPaused: true,
       onPauseRequest: () => dispatch({ type: 'pause' }),
@@ -167,6 +176,18 @@ export function startApp(
         view = { dispose: () => (preview.dispose(), t.dispose()) };
         break;
       }
+      case 'mode':
+        stopGame();
+        view = renderMode(layer, {
+          mode,
+          onPick: (m) => {
+            mode = m;
+            saveMode(storage, m);
+            press({ type: 'pickMode' });
+          },
+          onBack: () => press({ type: 'back' }),
+        });
+        break;
       case 'choose': {
         stopGame(); // coming from the end screen ("Trocar de lado")
         const c = renderChoose(layer, {
