@@ -1,0 +1,70 @@
+import { describe, expect, it } from 'vitest';
+import { applyMatch, emptyProfile, grantWelcome, parseProfile, type Profile } from '../../src/meta/profile';
+import { emptyBoard, insert } from '../../src/storage/ranking';
+import type { Reward } from '../../src/meta/rewards';
+
+const reward = (total: number, won = true): Reward => ({ time: 0, damage: 0, boxes: 0, won, total });
+
+describe('parseProfile', () => {
+  it('round-trips an empty profile', () => {
+    const p = emptyProfile();
+    expect(parseProfile(JSON.parse(JSON.stringify(p)))).toEqual(p);
+  });
+
+  it('rejects other versions, bad numbers, missing fields and non-objects', () => {
+    const ok = emptyProfile() as unknown as Record<string, unknown>;
+    for (const bad of [
+      { ...ok, v: 2 },
+      { ...ok, coins: -1 },
+      { ...ok, coins: 1.5 },
+      { ...ok, coins: 2e9 },
+      { ...ok, coins: '10' },
+      { ...ok, stats: undefined },
+      { ...ok, stats: { ...(ok.stats as object), wins: -3 } },
+      { ...ok, welcomeGranted: 'yes' },
+      null,
+      'x',
+      42,
+    ])
+      expect(parseProfile(bad)).toBeUndefined();
+  });
+});
+
+describe('applyMatch', () => {
+  it('a thief escape adds coins, earned total, matches, wins and escapes', () => {
+    const p = applyMatch(emptyProfile(), { winner: 'thief', reason: 'escape' }, 'thief', reward(112));
+    expect(p.coins).toBe(112);
+    expect(p.stats).toEqual({ matches: 1, wins: 1, escapes: 1, arrests: 0, coinsEarned: 112 });
+  });
+
+  it('a police win counts as an arrest; a loss only adds the match and the coins', () => {
+    let p: Profile = applyMatch(emptyProfile(), { winner: 'police', reason: 'thiefDown' }, 'police', reward(40));
+    expect(p.stats).toMatchObject({ matches: 1, wins: 1, arrests: 1, escapes: 0 });
+    p = applyMatch(p, { winner: 'police', reason: 'escape' }, 'thief', reward(12, false));
+    expect(p.coins).toBe(52);
+    expect(p.stats).toMatchObject({ matches: 2, wins: 1, arrests: 1, escapes: 0, coinsEarned: 52 });
+  });
+
+  it('does not mutate the input profile', () => {
+    const p = emptyProfile();
+    applyMatch(p, { winner: 'thief' }, 'thief', reward(10));
+    expect(p).toEqual(emptyProfile());
+  });
+});
+
+describe('grantWelcome', () => {
+  it('50 coins per record already in the ranking, only once', () => {
+    let board = insert(emptyBoard(), 'police', { initials: 'AAA', time: 50, date: '2026-10-07' }).board;
+    board = insert(board, 'police', { initials: 'BBB', time: 60, date: '2026-10-07' }).board;
+    board = insert(board, 'thief', { initials: 'CCC', time: 90, hp: 10, how: 'escape', date: '2026-10-07' }).board;
+    const p = grantWelcome(emptyProfile(), board);
+    expect(p.coins).toBe(150);
+    expect(p.welcomeGranted).toBe(true);
+    expect(grantWelcome(p, board).coins).toBe(150);
+  });
+
+  it('an empty ranking grants 0 and is still marked as granted', () => {
+    const p = grantWelcome(emptyProfile(), emptyBoard());
+    expect(p).toMatchObject({ coins: 0, welcomeGranted: true });
+  });
+});
