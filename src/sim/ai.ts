@@ -24,6 +24,11 @@ export interface AiMemory {
   nextBombAt: number;
   /** bombs already evaluated by the police: id → will dodge? (rolled once per bomb) */
   bombDodge: Record<number, boolean>;
+  /** oil and spikes already evaluated by the police: id → will dodge? */
+  hazardDodge: Record<number, boolean>;
+  /** the thief's life last step and when it last dropped (uses the smoke when being hit) */
+  lastHp: number;
+  hurtAt: number;
   /** police ramming the thief until this instant (s); 0 = not ramming */
   ramUntil: number;
   /** sharp curve already evaluated (start in s), whether it will brake and how many meters late it starts */
@@ -52,6 +57,9 @@ export function initialAiMemory(role: Role, w: WorldState): AiMemory {
     dodgeBump: false,
     nextBombAt: 0,
     bombDodge: {},
+    hazardDodge: {},
+    lastHp: me.hp,
+    hurtAt: -1,
     curveS: -1,
     curveBrake: false,
     curveLate: 0,
@@ -77,7 +85,17 @@ const nearestLane = (x: number) => LANES.reduce((a, b) => (Math.abs(b - x) < Mat
 function laneBlocked(w: WorldState, role: Role, s: number, laneX: number, mem?: AiMemory): boolean {
   const inLane = (x: number) => Math.abs(x - laneX) < 2 * W;
   if (w.traffic.some((t) => inLane(t.x) && t.s > s - 3 && t.s - s < 35)) return true;
-  if (role === 'police' && w.bombs.some((b) => mem?.bombDodge[b.id] && inLane(b.x) && b.s > s && b.s - s < 60)) return true;
+  if (
+    role === 'police' &&
+    w.bombs.some((b) => mem?.bombDodge[b.id] && (inLane(b.x) || (b.x2 !== undefined && inLane(b.x2))) && b.s > s && b.s - s < 60)
+  )
+    return true;
+  // oil and spikes the police decided to avoid
+  if (
+    role === 'police' &&
+    w.hazards.some((h) => mem?.hazardDodge[h.id] && laneX + W > h.xFrom && laneX - W < h.xTo && h.s + h.length > s && h.s - s < 60)
+  )
+    return true;
   // roadworks: seen earlier the better the computer (20 m at level 1, 60 m at level 10)
   const sees = lerp(20, 60, skill(w.level));
   if (w.works.some((wk) => inLane(BALANCE.road.laneCenters[wk.lane]) && wk.s + wk.length > s && wk.s - s < sees)) return true;
@@ -125,6 +143,21 @@ function considerBombs(w: WorldState, s: number, rng: Rng, mem: AiMemory, k: num
   return { ...mem, bombDodge: next };
 }
 
+/** Same for oil and spikes (V2 part 3). */
+function considerHazards(w: WorldState, s: number, rng: Rng, mem: AiMemory, k: number): AiMemory {
+  let changed = false;
+  const next: Record<number, boolean> = {};
+  for (const h of w.hazards) {
+    if (h.id in mem.hazardDodge) next[h.id] = mem.hazardDodge[h.id]!;
+    else if (h.s > s && h.s - s < 60) {
+      next[h.id] = rng.next() < lerp(0.4, 0.92, k);
+      changed = true;
+    }
+  }
+  if (!changed && Object.keys(next).length === Object.keys(mem.hazardDodge).length) return mem;
+  return { ...mem, hazardDodge: next };
+}
+
 const CURVE_LOOKAHEAD = 70; // m
 
 /**
@@ -153,7 +186,7 @@ export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): {
   const foe = role === 'police' ? thiefOf(w) : policeOf(w);
   const k = skill(w.level);
   let mem = considerBump(w, me.s, rng, memory, k);
-  if (role === 'police') mem = considerBombs(w, me.s, rng, mem, k);
+  if (role === 'police') mem = considerHazards(w, me.s, rng, considerBombs(w, me.s, rng, mem, k), k);
 
   // danger in the current lane (or the target one): reacts now, without waiting for the next decision
   const myLane = nearestLane(mem.targetX);
@@ -206,9 +239,11 @@ export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): {
     const interval = lerp(1.6, 0.6, k) * rng.range(0.7, 1.3);
     let want = mem.targetX;
     const box = w.boxes.find((b) => b.color === 'red' && b.s > me.s + 10 && b.s - me.s < 120);
-    const hunting = me.upgrades.bombs > 0 && behind > 0 && behind < 110;
-    if (hunting)
-      want = foe.x; // with a bomb: moves into the police's lane to drop it in front of them
+    const sp = me.upgrades.special;
+    // with a bomb: moves into the police's lane to drop it in front of them (oil, spikes and smoke are used
+    // only when the police lines up by itself: hunting all the time would keep the thief in the line of fire)
+    const hunting = sp?.kind === 'bomb' && behind > 0 && behind < 110;
+    if (hunting) want = foe.x;
     else if (box && !dodge) want = box.x;
     else if (dodge || rng.next() < 0.25) {
       // goes to a lane far from the police (with a bit of randomness)
@@ -229,11 +264,24 @@ export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): {
     };
   }
 
-  // bomb: police lined up behind within 110 m (the bomb lasts 20 s)
+  // special: bomb with the police lined up behind within 110 m (it lasts 20 s), oil and spikes 30-80 m behind,
+  // smoke when it was hit in the last second
+  const hurtAt = me.hp < mem.lastHp ? w.time : mem.hurtAt;
+  mem = { ...mem, lastHp: me.hp, hurtAt };
   let bomb = false;
-  if (me.upgrades.bombs > 0 && Math.abs(foe.x - me.x) < 1.6 && behind > 4 && behind < 110 && w.time >= mem.nextBombAt) {
-    bomb = !w.bombHeld; // rising edge
-    if (bomb) mem = { ...mem, nextBombAt: w.time + lerp(4, 1.5, k) };
+  const sp = me.upgrades.special;
+  if (sp && w.time >= mem.nextBombAt) {
+    const reach = sp.kind === 'bomb' ? 110 : 80;
+    const lined = Math.abs(foe.x - me.x) < 1.6;
+    // oil and spikes 30-80 m behind: far enough for the police to see them coming (closer, the ram decides)
+    const use =
+      sp.kind === 'smoke'
+        ? (hurtAt >= 0 && w.time - hurtAt < 1 && behind > 0) || (lined && behind > 4 && behind < 50)
+        : lined && behind > (sp.kind === 'bomb' ? 4 : 30) && behind < reach;
+    if (use) {
+      bomb = !w.bombHeld; // rising edge
+      if (bomb) mem = { ...mem, nextBombAt: w.time + lerp(4, 1.5, k) };
+    }
   }
 
   const cb = curveBraking(w, me.s, me.speed, rng, mem, k);

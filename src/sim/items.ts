@@ -4,7 +4,9 @@ import { hpPct, type CarState } from './car';
 import { hurt, scaledDamage } from './chaos';
 import { createRngFromState, type Rng } from './rng';
 import { bumpsBetween } from './track';
-import type { Box, GameEvent, ItemId, WorldState } from './types';
+import { pickMystery } from './mystery';
+import { addSpecial, specialRoom } from './specials';
+import { SPECIALS, type Box, type GameEvent, type ItemId, type SpecialKind, type WorldState } from './types';
 import { policeOf, thiefOf, withCar } from './world';
 
 const I = BALANCE.items;
@@ -27,18 +29,15 @@ function available(car: CarState): ItemId[] {
   } else {
     const T = I.thief;
     if (u.plates < T.platesMax) out.push('plate');
-    if (u.bombs < T.bombsMax) out.push('bomb');
+    for (const k of SPECIALS) if (specialRoom(car, k)) out.push(k);
     if (car.hp < car.maxHp) out.push('heal');
     if (!car.hasGun || u.fireInterval > T.gunIntervalMin + 1e-9) out.push('gun');
   }
   return out;
 }
 
-/** Picks an item from the car's group, excluding those already at max. `null` if none fits. */
-export function rollItem(car: CarState, rng: Rng): ItemId | null {
-  const options = available(car);
-  if (options.length === 0) return null;
-  const weights = I.weights[car.role] as Record<string, number>;
+/** Weighted pick among `options`. */
+function pick<T extends string>(options: readonly T[], weights: Record<string, number>, rng: Rng): T {
   const total = options.reduce((a, id) => a + (weights[id] ?? 1), 0);
   let r = rng.next() * total;
   for (const id of options) {
@@ -46,6 +45,19 @@ export function rollItem(car: CarState, rng: Rng): ItemId | null {
     if (r < 0) return id;
   }
   return options[options.length - 1]!;
+}
+
+/**
+ * Picks an item from the car's group, excluding those already at max. `null` if none fits.
+ * The thief's specials count as one option (weight `special`) and then the kind is drawn by `specials`.
+ */
+export function rollItem(car: CarState, rng: Rng): ItemId | null {
+  const options = available(car);
+  if (options.length === 0) return null;
+  const specials = options.filter((id): id is SpecialKind => (SPECIALS as readonly string[]).includes(id));
+  const groups = [...options.filter((id) => !specials.includes(id as SpecialKind)), ...(specials.length ? ['special' as const] : [])];
+  const got = pick(groups, I.weights[car.role] as Record<string, number>, rng);
+  return got === 'special' ? pick(specials, I.weights.specials, rng) : got;
 }
 
 const round = (v: number) => Math.round(v * 1000) / 1000;
@@ -82,8 +94,10 @@ export function applyItem(car: CarState, item: ItemId, time: number): CarState {
       u.plates = Math.min(T.platesMax, u.plates + 1);
       break;
     case 'bomb':
-      u.bombs = Math.min(T.bombsMax, u.bombs + 1);
-      break;
+    case 'oil':
+    case 'spikes':
+    case 'smoke':
+      return addSpecial({ ...car, hp, hasGun, upgrades: u }, item);
     case 'gun':
       if (!hasGun) hasGun = true;
       else u.fireInterval = Math.max(T.gunIntervalMin, round(u.fireInterval - T.gunStep));
@@ -130,7 +144,9 @@ export function stepBoxes(w: WorldState): WorldState {
     for (let k = 0; k < 4 && w.traffic.some((t) => Math.abs(t.x - x) < 1.5 && Math.abs(t.s - s) < 10); k++) {
       x = lanes[rng.int(0, lanes.length - 1)]!;
     }
-    const color = rng.next() < colorChance(hpPct(police), hpPct(thief)) ? 'blue' : 'red';
+    // the yellow "?" box (V2 part 3, both modes); otherwise the color tends to whoever is losing
+    const color: Box['color'] =
+      rng.next() < w.mysteryShare ? 'yellow' : rng.next() < colorChance(hpPct(police), hpPct(thief)) ? 'blue' : 'red';
     boxes.push({ id: nextBoxId++, s, x, color });
     // Sobrevivência: boxes come closer together as chaos rises
     const every = I.boxEvery * BALANCE.survival.boxEveryPerChaos ** (w.chaos - 1);
@@ -148,6 +164,12 @@ export function stepBoxes(w: WorldState): WorldState {
     if (idx < 0) return car;
     const box = boxes[idx]!;
     boxes = boxes.filter((_, i) => i !== idx);
+    if (box.color === 'yellow') {
+      if (car.mystery) return car; // one roulette at a time: the box is gone, nothing more
+      const picked = pickMystery(car, w, rng);
+      events.push({ type: 'mystery', role: car.role, outcome: picked.mystery!.outcome, s: box.s, x: box.x });
+      return picked;
+    }
     const own: Role = box.color === 'blue' ? 'police' : 'thief';
     if (own !== car.role) {
       events.push({ type: 'pickup', role: car.role, item: 'wrong' });

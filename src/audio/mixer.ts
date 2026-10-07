@@ -149,6 +149,12 @@ export function createMixer(initial: AudioBackend): Mixer {
         else if (e.type === 'crash') play('crash');
         else if (e.type === 'explosion') play('explosion');
         else if (e.type === 'bombDropped') play('bomb-drop');
+        else if (e.type === 'oilSkid') play('oil-splash');
+        else if (e.type === 'tirePop') play('tire-pop');
+        else if (e.type === 'special' && e.kind === 'smoke') play('smoke');
+        else if (e.type === 'special' && e.kind !== 'bomb') play(e.kind === 'oil' ? 'oil-splash' : 'spikes');
+        else if (e.type === 'mystery' && e.role === playerRole) play('mystery-spin');
+        else if (e.type === 'mysteryReveal' && e.role === playerRole) play(e.outcome.good ? 'mystery-good' : 'mystery-bad');
         else if (e.type === 'escape') play('escape');
         else if (e.type === 'skid') {
           if (clock - lastSkid[e.role] < SKID_GAP || Math.abs(e.s - meS) > SKID_RANGE) continue;

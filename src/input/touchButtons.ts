@@ -1,5 +1,6 @@
 import type { Role } from '../config/balance';
 import type { Intents } from '../sim/intents';
+import type { SpecialKind } from '../sim/types';
 import './touchButtons.css';
 
 type IntentName = keyof Intents;
@@ -22,10 +23,26 @@ const ICONS: Record<IntentName, string> = {
   ),
 };
 
+/** The special button's icon and name for each kind kept (V2 part 3). */
+export const SPECIAL_ICONS: Record<SpecialKind, string> = {
+  bomb: ICONS.bomb,
+  // oil drop and a puddle
+  oil: svg(
+    '<path d="M24 6c6 9 10 14 10 19a10 10 0 0 1-20 0c0-5 4-10 10-19z" fill="currentColor" stroke="none"/><path d="M8 41h32" stroke-width="3"/>',
+  ),
+  // a row of nails
+  spikes: svg('<path d="M6 38h36"/><path d="M10 38l4-14 4 14M20 38l4-14 4 14M30 38l4-14 4 14" fill="currentColor" stroke-width="2.5"/>'),
+  // cloud of smoke
+  smoke: svg(
+    '<path d="M14 34a7 7 0 0 1 1-14 9 9 0 0 1 17-2 7 7 0 0 1 3 14z" fill="currentColor" stroke="none"/><path d="M10 40h10M26 40h12" stroke-width="3"/>',
+  ),
+};
+export const SPECIAL_NAMES: Record<SpecialKind, string> = { bomb: 'bomba', oil: 'óleo', spikes: 'miguelito', smoke: 'fumaça' };
+
 const BUTTONS: { name: IntentName; label: string; side: 'left' | 'right' }[] = [
   { name: 'left', label: 'Esquerda', side: 'left' },
   { name: 'right', label: 'Direita', side: 'left' },
-  { name: 'bomb', label: 'Bomba', side: 'right' },
+  { name: 'bomb', label: 'Especial', side: 'right' },
   { name: 'brake', label: 'Freio', side: 'right' },
   { name: 'fire', label: 'Atirar', side: 'right' },
 ];
@@ -49,10 +66,10 @@ export function createTouchButtons(
   setVisible(name: 'fire' | 'bomb', visible: boolean): void;
   /** flashes ATIRAR for 0.3 s when there is no target in the cone */
   flashNoTarget(): void;
-  /** bomb stock: the button only shows with 1 or more */
-  setBombs(n: number): void;
-  /** button visible but locked (e.g. thief's weapon below 8 m/s) */
-  setLocked(name: 'fire' | 'bomb', locked: boolean): void;
+  /** the special kept (V2 part 3): icon by kind and charges; hidden when there is none */
+  setSpecial(sp: { kind: SpecialKind; charges: number } | null): void;
+  /** button visible but locked (thief's weapon below 8 m/s; brake off by the yellow box) */
+  setLocked(name: 'fire' | 'bomb' | 'brake', locked: boolean): void;
 } {
   const pointers = new Map<IntentName, Set<number>>();
   /** quick taps (pointerdown + pointerup between two reads) count once */
@@ -146,18 +163,26 @@ export function createTouchButtons(
       b.hidden = !visible;
       if (!visible) pointers.get(name)?.clear();
     },
-    setBombs(n) {
+    setSpecial(sp) {
       const b = buttons.get('bomb');
       if (!b) return;
-      b.hidden = n <= 0;
-      if (n <= 0) pointers.get('bomb')?.clear();
+      b.hidden = !sp;
+      if (!sp) {
+        pointers.get('bomb')?.clear();
+        return;
+      }
+      if (b.dataset.kind !== sp.kind) {
+        b.dataset.kind = sp.kind;
+        b.innerHTML = SPECIAL_ICONS[sp.kind];
+      }
+      b.setAttribute('aria-label', `Especial: ${SPECIAL_NAMES[sp.kind]} (${sp.charges})`);
       let c = b.querySelector<HTMLElement>('.touch-count');
       if (!c) {
         c = document.createElement('span');
         c.className = 'touch-count';
         b.append(c);
       }
-      c.textContent = String(n);
+      c.textContent = String(sp.charges);
     },
     setLocked(name, locked) {
       buttons.get(name)?.classList.toggle('locked', locked);

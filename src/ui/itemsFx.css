@@ -1,0 +1,117 @@
+/* V2 part 3: yellow box roulette and the screen effects of the items (see src/ui/mysteryHud.ts, src/itemsFx.ts) */
+/* yellow box roulette (V2 part 3): compact, just below the time pill, never over the road */
+.hud-roulette {
+  position: absolute;
+  top: calc(max(10px, var(--safe-top)) + 44px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: rgba(10, 13, 18, 0.62);
+  border: 1px solid rgba(255, 207, 58, 0.7);
+  font:
+    800 13px/1 system-ui,
+    sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.hud-roulette[hidden] {
+  display: none;
+}
+.hud-roulette-slot {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 13px;
+}
+.hud-roulette-slot[hidden] {
+  display: none;
+}
+.hud-roulette.is-good {
+  border-color: rgba(56, 210, 122, 0.85);
+  background: rgba(5, 35, 18, 0.84);
+  color: #bff5d3;
+}
+.hud-roulette.is-bad {
+  border-color: rgba(255, 90, 74, 0.9);
+  background: rgba(45, 8, 6, 0.86);
+  color: #ffd2cc;
+}
+.hud-roulette.is-good .hud-roulette-slot {
+  outline: 2px solid #38d27a;
+}
+.hud-roulette.is-bad .hud-roulette-slot {
+  outline: 2px solid #ff5a4a;
+}
+/* yellow flash from the car at the pickup */
+.mystery-flash {
+  position: absolute;
+  left: 50%;
+  bottom: 4%;
+  width: 34vmin;
+  height: 34vmin;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(rgba(255, 214, 70, 0.75), rgba(255, 214, 70, 0) 62%);
+  opacity: 0;
+  pointer-events: none;
+}
+.mystery-flash.is-on {
+  animation: pl-mystery-flash 0.45s ease-out;
+}
+@keyframes pl-mystery-flash {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* yellow box effects on the player's screen */
+.fx-mud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s;
+  background:
+    radial-gradient(ellipse 15% 22% at 30% 45%, rgba(92, 62, 30, 0.93) 60%, transparent 62%),
+    radial-gradient(ellipse 9% 12% at 41% 62%, rgba(105, 72, 35, 0.9) 60%, transparent 62%),
+    radial-gradient(ellipse 13% 18% at 68% 38%, rgba(88, 58, 26, 0.93) 60%, transparent 62%),
+    radial-gradient(ellipse 6% 8% at 60% 70%, rgba(110, 76, 38, 0.9) 60%, transparent 62%),
+    radial-gradient(ellipse 5% 7% at 22% 70%, rgba(110, 76, 38, 0.85) 60%, transparent 62%),
+    radial-gradient(ellipse 7% 9% at 80% 62%, rgba(95, 64, 30, 0.9) 60%, transparent 62%);
+}
+.fx-mud.is-on {
+  opacity: 1;
+  transition: opacity 0.1s;
+}
+.fx-double {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: inset 0 0 60px 12px rgba(255, 40, 30, 0.55);
+}
+.fx-double.is-on {
+  opacity: 1;
+  animation: pl-double 0.8s ease-in-out infinite;
+}
+@keyframes pl-double {
+  50% {
+    opacity: 0.5;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fx-double.is-on,
+  .mystery-flash.is-on {
+    animation: none;
+  }
+}

@@ -27,6 +27,7 @@ import { feedbackForFrame } from './ui/feedback';
 import { ICONS } from './ui/icons';
 import { onTap } from './ui/mobileShell';
 import { createHud, pickupToast } from './ui/hud';
+import { createItemsFx } from './itemsFx';
 
 const lerpCar = (a: CarState, b: CarState, t: number): CarState => ({
   ...b,
@@ -69,6 +70,8 @@ export function startGame(
     /** V2 part 3: Perseguição (default) / Sobrevivência; chaosEvery only in debug */
     mode?: Mode;
     chaosEvery?: number;
+    /** debug/e2e only: share of yellow boxes (?mystery=1) */
+    mysteryShare?: number;
     /** starts muted (?mute), without touching the saved preference */
     mute?: boolean;
     /** app audio session (without it the game creates its own) */
@@ -159,6 +162,7 @@ export function startGame(
     difficulty: opts.difficulty,
     mode: opts.mode,
     chaosEvery: opts.chaosEvery,
+    mysteryShare: opts.mysteryShare,
   });
   let frameEvents: GameEvent[] = [];
   let prev = world;
@@ -201,6 +205,9 @@ export function startGame(
     },
   });
 
+  // V2 part 3 items: special button, yellow box roulette, screen effects, oil and spikes
+  const itemsFx = createItemsFx({ ui, scene, role: opts.role, touch, particles, fx, toast: (t, big) => hud.toast(t, { big }) });
+
   // pause: HUD button, Esc/P, hidden tab, portrait
   let paused = opts.startPaused === true;
   const setPaused = (p: boolean) => {
@@ -240,7 +247,6 @@ export function startGame(
   });
   hudCenter.append(pauseBtn);
   let fireVisible = false;
-  let lastBombs = -1;
   const syncFireButton = () => {
     const me = world.player;
     if (me.hasGun !== fireVisible) {
@@ -249,10 +255,6 @@ export function startGame(
     }
     if (me.role === 'thief') {
       touch.setLocked('fire', me.speed < BALANCE.combat.thiefMinSpeedToFire);
-      if (me.upgrades.bombs !== lastBombs) {
-        lastBombs = me.upgrades.bombs;
-        touch.setBombs(lastBombs);
-      }
     }
   };
   const buzz = (ms: number) => {
@@ -399,6 +401,7 @@ export function startGame(
       for (; acc.skid >= 1; acc.skid--) particles.emitSmoke(c.x + (acc.side = -acc.side) * 0.8, 0.25, c.s - 1.5, 'white');
     }
     props.update(world, origin, world.time, frozen ? undefined : prev, alpha);
+    itemsFx.frame(world, car, foe, frameEvents, origin, dt, frozen);
     fx.update(world, frameEvents, origin, dt);
     for (const e of frameEvents) {
       if (e.type === 'shot' && !e.air) flashGunner(gunners[e.from], clock);
@@ -465,6 +468,7 @@ export function startGame(
       keyboard.dispose();
       touch.dispose();
       hud.dispose();
+      itemsFx.dispose();
       soundToggle.dispose();
       mixer.reset();
       if (ownAudio) audioSession.dispose();

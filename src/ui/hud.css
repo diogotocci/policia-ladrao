@@ -294,6 +294,11 @@
     conic-gradient(#ffd25a calc(var(--left, 1) * 360deg), rgba(255, 255, 255, 0.12) 0) border-box;
   border: 2px solid transparent;
 }
+.hud-item--bad {
+  background:
+    linear-gradient(rgba(60, 8, 6, 0.78), rgba(60, 8, 6, 0.78)) padding-box,
+    conic-gradient(#ff5a4a calc(var(--left, 1) * 360deg), rgba(255, 255, 255, 0.12) 0) border-box;
+}
 .hud-toast {
   position: absolute;
   top: 25%;

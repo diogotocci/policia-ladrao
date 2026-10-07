@@ -31,4 +31,8 @@ export const SCREEN_ICONS = {
   shot: svg('<circle cx="12" cy="12" r="7"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/>'),
   bomb: svg('<circle cx="11" cy="14" r="6"/><path d="M15 9l2-2M17 7c1-2 3-2 4-1"/>'),
   flag: svg('<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>'),
+  // V2 part 3: the yellow "?" box, oil and smoke
+  mystery: svg('<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/>'),
+  oil: svg('<path d="M12 3c4 6 6 9 6 12a6 6 0 0 1-12 0c0-3 2-6 6-12z"/>'),
+  smoke: svg('<path d="M7 17a4 4 0 0 1 .5-8 5.5 5.5 0 0 1 10.5 1.5A3.5 3.5 0 0 1 17 17z"/><path d="M5 21h6M14 21h5"/>'),
 } as const;

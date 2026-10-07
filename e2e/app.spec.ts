@@ -115,7 +115,7 @@ test('Como jogar: a real finger swipe turns the page and back (mobile)', async (
   await page.goto('/?app&quality=low&mute');
   await page.getByRole('button', { name: 'Como jogar' }).click();
   const current = page.locator('.howto-dot[aria-current="true"]');
-  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 3');
+  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 4');
   const cdp = await page.context().newCDPSession(page);
   const swipe = async (x0: number, x1: number) => {
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: x0, y: 200 }] });
@@ -124,10 +124,10 @@ test('Como jogar: a real finger swipe turns the page and back (mobile)', async (
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   };
   await swipe(600, 250);
-  await expect(current).toHaveAttribute('aria-label', 'Página 2 de 3');
+  await expect(current).toHaveAttribute('aria-label', 'Página 2 de 4');
   await expect(page.getByRole('button', { name: 'Anterior' })).toBeVisible();
   await swipe(250, 600);
-  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 3');
+  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 4');
   await expect(page.getByRole('button', { name: 'Anterior' })).toBeHidden();
 });
 
@@ -142,7 +142,7 @@ test('Como jogar: with the phone upright (game drawn rotated) a finger swipe alo
   expect(await page.evaluate(() => matchMedia('(orientation: portrait) and (pointer: coarse)').matches)).toBe(true);
   await page.getByRole('button', { name: 'Como jogar' }).click();
   const current = page.locator('.howto-dot[aria-current="true"]');
-  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 3');
+  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 4');
   const cdp = await ctx.newCDPSession(page);
   const swipe = async (y0: number, y1: number) => {
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 200, y: y0 }] });
@@ -151,9 +151,9 @@ test('Como jogar: with the phone upright (game drawn rotated) a finger swipe alo
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   };
   await swipe(250, 600); // down the screen = towards the game's left: next page
-  await expect(current).toHaveAttribute('aria-label', 'Página 2 de 3');
+  await expect(current).toHaveAttribute('aria-label', 'Página 2 de 4');
   await swipe(600, 250);
-  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 3');
+  await expect(current).toHaveAttribute('aria-label', 'Página 1 de 4');
   await ctx.close();
 });
 

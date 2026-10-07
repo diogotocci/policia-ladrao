@@ -123,7 +123,7 @@ describe('item HUD', () => {
 
   it('shows icons for the player permanent upgrades with counters', () => {
     const hud = createHud(root, 'thief');
-    hud.update(withUpgrades('thief', { plates: 2, bombs: 1 }));
+    hud.update(withUpgrades('thief', { plates: 2, special: { kind: 'bomb', charges: 1 } }));
     expect(root.querySelector('.hud-item[data-item="plate"] .hud-item-count')!.textContent).toBe('2');
     expect(root.querySelector('.hud-item[data-item="bomb"]')).toBeNull(); // the bomb shows on the button
     hud.dispose();
@@ -267,6 +267,22 @@ describe('life bars with 200 of life', () => {
     hud.update(withCar(w, 'thief', { ...thiefOf(w), hp: 100 }));
     const fills = [...root.querySelectorAll<HTMLElement>('.hud-bar-fill')];
     expect(fills.map((f) => f.style.width)).toEqual(['100%', '50%']);
+    hud.dispose();
+  });
+});
+
+describe('effects on the car (V2 part 3)', () => {
+  it('a red chip with the time left for each bad effect; smoke is not red', () => {
+    const hud = createHud(root, 'thief');
+    const w = { ...createWorld({ seed: 1, playerRole: 'thief' }), time: 1 };
+    const t = thiefOf(w);
+    hud.update(withCar(w, 'thief', { ...t, effects: { ...t.effects, slowUntil: 3, doubleUntil: 4, smokeUntil: 2 } }));
+    const slow = root.querySelector<HTMLElement>('.hud-item[data-item="fxSlow"]')!;
+    expect(slow.classList.contains('hud-item--bad')).toBe(true);
+    expect(slow.textContent).toContain('Motor');
+    expect(Number(slow.style.getPropertyValue('--left'))).toBeCloseTo(0.5);
+    expect(root.querySelector('.hud-item[data-item="fxDouble"]')!.textContent).toContain('×2');
+    expect(root.querySelector('.hud-item[data-item="fxSmoke"]')!.classList.contains('hud-item--bad')).toBe(false);
     hud.dispose();
   });
 });

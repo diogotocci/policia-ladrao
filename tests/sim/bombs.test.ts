@@ -1,6 +1,7 @@
 import { BALANCE } from '../../src/config/balance';
 import { describe, expect, it } from 'vitest';
-import { dropBomb, stepBombs } from '../../src/sim/bombs';
+import { stepBombs } from '../../src/sim/bombs';
+import { useSpecial } from '../../src/sim/specials';
 import { NO_INTENTS, type Intents } from '../../src/sim/intents';
 import { createWorld, policeOf, thiefOf, withCar, type WorldState } from '../../src/sim/world';
 
@@ -9,20 +10,23 @@ const BOMB = { ...NO_INTENTS, bomb: true };
 
 const armed = (bombs = 2): WorldState => {
   const w = createWorld({ seed: 1, playerRole: 'thief' });
-  return withCar(w, 'thief', { ...thiefOf(w), upgrades: { ...thiefOf(w).upgrades, bombs } });
+  return withCar(w, 'thief', {
+    ...thiefOf(w),
+    upgrades: { ...thiefOf(w).upgrades, special: bombs > 0 ? { kind: 'bomb', charges: bombs } : null },
+  });
 };
 const press = (w: WorldState, intents: Intents, steps: number) => {
   let s = w;
-  for (let i = 0; i < steps; i++) s = dropBomb({ ...s, time: s.time + DT, events: [] }, intents);
+  for (let i = 0; i < steps; i++) s = useSpecial({ ...s, time: s.time + DT, events: [] }, intents);
   return s;
 };
 
-describe('dropBomb', () => {
+describe('special: bomb', () => {
   it('holding the button for 1 s drops exactly one bomb, 3 m behind the thief', () => {
     const w = press(armed(), BOMB, 60);
     expect(w.bombs).toHaveLength(1);
     expect(w.bombs[0]!.s).toBeCloseTo(thiefOf(w).s - 3, 5);
-    expect(thiefOf(w).upgrades.bombs).toBe(1);
+    expect(thiefOf(w).upgrades.special).toEqual({ kind: 'bomb', charges: 1 });
   });
 
   it('release and press again drops another', () => {

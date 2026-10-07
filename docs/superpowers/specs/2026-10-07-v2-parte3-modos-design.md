@@ -79,8 +79,31 @@ Todos os números ficam em `BALANCE.items`. "Caos N+" vale só no Sobrevivência
 - Cada lado guarda **um tipo** de especial, com até 3 cargas. Pegar o mesmo tipo soma uma carga; pegar outro tipo troca o guardado.
 - A polícia passa a ter o botão, para o bloqueio. Antes ela não tinha especial.
 - **Peso nas caixas:**
-  - ladrão: bomba 3, óleo 2, miguelito 2, fumaça 2; os itens de hoje mantêm os pesos;
+  - ladrão: os especiais juntos pesam 3 (o peso que a bomba tinha) e, dentro deles, bomba 3, óleo 2, miguelito 2, fumaça 2; os itens de hoje mantêm os pesos. Equilíbrio 0.14.0: com cada especial pesando sozinho, blindagem, vida e arma vinham bem menos e o ladrão do computador vencia só ~28%;
   - polícia: bloqueio 2, metralhadora 2, segunda viatura 1, holofote 2.
+
+### 4.3.1 Ajustes da implementação (0.14.0)
+
+- **Óleo:** além da derrapagem, a viatura perde 30% da velocidade na hora (como na calçada).
+- **Óleo, miguelito e motor falhando:** enquanto duram, a viatura fica sem o turbo de alcance (senão o turbo anulava o efeito). A investida do computador não muda.
+
+### 4.3.2 Caixa amarela "?" (playtest 2026-10-07)
+
+- Aparece nos **dois modos** e em todas as dificuldades: cerca de 1 em cada 7 caixas (15%; com 20% o ladrão do computador perdia demais). Qualquer lado pode pegar.
+- **Boa** (Fácil 70%, Médio 60%, Difícil 45%): sorteia um item normal do seu lado.
+- **Ruim** (sorteio igual entre os 4):
+
+| Efeito | O que faz | Tempo |
+|---|---|---|
+| Motor falhando | velocidade máxima ×0,7; fumaça cinza no capô | 4 s |
+| Dano dobrado | todo dano recebido ×2; borda da tela pulsando em vermelho | 6 s |
+| Para-brisa sujo | manchas de lama na tela do jogador (o HUD e o carro ficam à vista) | 4 s |
+| Sem freio | o freio não funciona; o botão fica apagado e riscado | 3 s |
+
+- **Ao pegar** (mockup 2B + 2C): um clarão amarelo no carro e uma roleta pequena logo abaixo do relógio, que gira 0,6 s e para no resultado, verde (bom) ou vermelha (ruim). O efeito só começa quando a roleta para. Não cobre a pista.
+- **Visual na pista** (mockup 1B): bloco amarelo sólido com "?" nas faces, borda laranja-escura, flutuando com um brilho pulsando.
+- **Selos no HUD:** cada efeito ruim aparece embaixo da barra de vida como selo vermelho com anel de tempo ("Motor", "×2", "Lama", "Freio"); óleo e pneu furado também. A fumaça do ladrão aparece como selo normal.
+- **Computador:** não procura nem evita a caixa amarela.
 
 ### 4.4 Computador
 
@@ -88,8 +111,9 @@ Todos os números ficam em `BALANCE.items`. "Caos N+" vale só no Sobrevivência
   - a polícia do computador desvia do óleo e do miguelito como desvia das bombas: avalia cada um uma vez, com chance que depende do nível;
   - o ladrão do computador desvia do bloqueio, do spike e das obras pela faixa livre, com chance que depende do nível.
 - **Usar:**
-  - o ladrão usa óleo e miguelito com a viatura alinhada atrás, a até 80 m;
-  - usa a fumaça quando está sendo atingido;
+  - o ladrão usa óleo e miguelito com a viatura alinhada atrás, entre 30 e 80 m (mais perto, quem decide é a investida);
+  - usa a fumaça quando está sendo atingido ou com a viatura alinhada a até 50 m;
+  - só vai para a faixa da viatura para soltar a bomba (com os outros especiais ficava sempre na mira);
   - a polícia usa o bloqueio quando o ladrão está 40–150 m à frente;
   - os itens "na hora" agem sozinhos.
 

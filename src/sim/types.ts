@@ -30,19 +30,44 @@ export interface TrafficCar {
   model: number;
 }
 
-export type ItemId = 'fireRate' | 'power' | 'heal' | 'nitro' | 'ram' | 'heli' | 'pierce' | 'plate' | 'bomb' | 'gun';
+export type ItemId =
+  'fireRate' | 'power' | 'heal' | 'nitro' | 'ram' | 'heli' | 'pierce' | 'plate' | 'bomb' | 'gun' | 'oil' | 'spikes' | 'smoke';
+
+/** the thief's specials (V2 part 3), used with the special button */
+export type SpecialKind = 'bomb' | 'oil' | 'spikes' | 'smoke';
+export const SPECIALS: readonly SpecialKind[] = ['bomb', 'oil', 'spikes', 'smoke'];
+
+/** bad outcomes of the yellow box */
+export type BadEffect = 'slow' | 'double' | 'mud' | 'noBrake';
+
+/** what a yellow box gives, known at pickup and applied when the roulette stops */
+export type MysteryOutcome = { good: true; item: ItemId | null } | { good: false; effect: BadEffect };
 
 export interface Box {
   id: number;
   s: number;
   x: number;
-  color: 'blue' | 'red';
+  /** yellow: the "?" box (good or bad, for anyone) */
+  color: 'blue' | 'red' | 'yellow';
 }
 
 export interface Bomb {
   id: number;
   s: number;
   x: number;
+  /** area bomb (Sobrevivência chaos 2+): also covers this lane center */
+  x2?: number;
+  expiresAt: number;
+}
+
+/** Things on the road from the thief's specials: oil (skid) and spikes (flat tire). Hit only the police. */
+export interface Hazard {
+  id: number;
+  kind: 'oil' | 'spikes';
+  s: number;
+  length: number;
+  xFrom: number;
+  xTo: number;
   expiresAt: number;
 }
 
@@ -56,6 +81,11 @@ export type GameEvent =
   | { type: 'shot'; from: Role; s: number; x: number; /** from the helicopter */ air?: true }
   | { type: 'noTarget'; from: Role }
   | { type: 'skid'; role: Role; s: number; x: number }
+  | { type: 'special'; role: Role; kind: SpecialKind; s: number; x: number }
+  | { type: 'oilSkid'; role: Role; s: number; x: number }
+  | { type: 'tirePop'; role: Role; s: number; x: number }
+  | { type: 'mystery'; role: Role; outcome: MysteryOutcome; s: number; x: number }
+  | { type: 'mysteryReveal'; role: Role; outcome: MysteryOutcome }
   | { type: 'end'; winner: Role }
   | { type: 'escape' }
   | { type: 'arrest' };
@@ -84,6 +114,8 @@ export interface WorldState {
   chaos: number;
   /** seconds per chaos level (debug can shorten it) */
   chaosEvery: number;
+  /** share of yellow "?" boxes (debug can change it) */
+  mysteryShare: number;
   /** roadworks start here (set when chaos first reaches 3); null = none yet */
   worksFrom: Record<number, number>;
   /** roadworks near the cars */
@@ -109,7 +141,10 @@ export interface WorldState {
   boxes: Box[];
   bombs: Bomb[];
   nextBombId: number;
-  /** the thief's bomb button was pressed in the previous step (rising edge) */
+  /** oil and spikes on the road (V2 part 3) */
+  hazards: Hazard[];
+  nextHazardId: number;
+  /** the thief's special button was pressed in the previous step (rising edge) */
   bombHeld: boolean;
   /** after hitting the thief, the police has no catch-up turbo until this instant */
   policeTurboOffUntil: number;

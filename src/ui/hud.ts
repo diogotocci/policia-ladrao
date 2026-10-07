@@ -1,6 +1,7 @@
 // Minimal match HUD (health, time, distance, level) and the end screen. Ranking and full screens: delivery 5.
 import type { Role } from '../config/balance';
 import { BALANCE } from '../config/balance';
+import { strong } from '../sim/specials';
 import type { WorldState } from '../sim/types';
 import { hpPct } from '../sim/car';
 import { createChaosMeter } from './hudSurvival';
@@ -39,8 +40,19 @@ export const ITEM_LABEL: Record<string, string> = {
   plate: 'Titânio',
   bomb: 'Bomba',
   gun: 'Arma traseira',
+  oil: 'Óleo',
+  spikes: 'Miguelito',
+  smoke: 'Fumaça',
+  // effects on the car (V2 part 3)
+  fxSkid: 'Derrapando no óleo',
+  fxFlat: 'Pneu furado',
+  fxSmoke: 'Fumaça',
+  fxSlow: 'Motor falhando',
+  fxDouble: 'Dano dobrado',
+  fxMud: 'Para-brisa sujo',
+  fxNoBrake: 'Sem freio',
 };
-const ITEM_ICON: Record<string, string> = {
+export const ITEM_ICON: Record<string, string> = {
   fireRate: '⚡',
   power: '💥',
   ram: '🛡️',
@@ -49,6 +61,25 @@ const ITEM_ICON: Record<string, string> = {
   pierce: '🎯',
   plate: '🛡️',
   gun: '🔫', // shield for both (each only sees their own side)
+  fxSkid: '🛢️',
+  fxFlat: '🛞',
+  fxSmoke: '💨',
+  fxSlow: '🔧',
+  fxDouble: '💔',
+  fxMud: '🟫',
+  fxNoBrake: '🚫',
+};
+/** bad effects: red chip (yellow box, oil, spikes) */
+const BAD = new Set(['fxSkid', 'fxFlat', 'fxSlow', 'fxDouble', 'fxMud', 'fxNoBrake']);
+/** short text next to the icon of an effect chip */
+const FX_TEXT: Record<string, string> = {
+  fxSkid: 'Óleo',
+  fxFlat: 'Pneu',
+  fxSmoke: 'Fumaça',
+  fxSlow: 'Motor',
+  fxDouble: '×2',
+  fxMud: 'Lama',
+  fxNoBrake: 'Freio',
 };
 
 interface HudItem {
@@ -63,7 +94,7 @@ function playerItems(w: WorldState, role: Role): HudItem[] {
   const out: HudItem[] = [];
   const P = BALANCE.items.police;
   const timed = (id: string, until: number, dur: number) => {
-    if (w.time < until) out.push({ id, left: Math.round(((until - w.time) / dur) * 100) / 100 });
+    if (w.time < until) out.push({ id, left: Math.min(1, Math.round(((until - w.time) / dur) * 100) / 100) });
   };
   if (role === 'police') {
     const rate = Math.round((BALANCE.combat.policeFireInterval - u.fireInterval) / P.fireRateStep);
@@ -80,6 +111,18 @@ function playerItems(w: WorldState, role: Role): HudItem[] {
       out.push({ id: 'gun', count: String(lvl) });
     }
   }
+  // effects on the car (V2 part 3): a timed chip each, red when bad
+  const fx = car.effects;
+  const I = BALANCE.items;
+  const M = I.mystery;
+  timed('fxSkid', fx.skidUntil, I.oil.skidTime);
+  const big = strong(w);
+  timed('fxFlat', fx.flatUntil, big ? I.spikes.flatTimeStrong : I.spikes.flatTime);
+  timed('fxSmoke', fx.smokeUntil, big ? I.smoke.timeStrong : I.smoke.time);
+  timed('fxSlow', fx.slowUntil, M.slow.time);
+  timed('fxDouble', fx.doubleUntil, M.double.time);
+  timed('fxMud', fx.mudUntil, M.mud.time);
+  timed('fxNoBrake', fx.noBrakeUntil, M.noBrake.time);
   return out;
 }
 
@@ -212,6 +255,8 @@ export function createHud(
             e.append(el('span', 'hud-item-icon', ITEM_ICON[i.id] ?? '•'));
             if (i.count) e.append(el('span', 'hud-item-count', i.count));
             if (i.left !== undefined) e.classList.add('hud-item--timed');
+            if (BAD.has(i.id)) e.classList.add('hud-item--bad');
+            if (FX_TEXT[i.id]) e.append(el('span', 'hud-item-count', FX_TEXT[i.id]!));
             return e;
           }),
         );

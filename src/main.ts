@@ -24,7 +24,7 @@ const hpParam = (name: string) => {
 };
 const debugHp = debug ? { police: hpParam('policeHp'), thief: hpParam('thiefHp') } : undefined;
 
-const ITEMS: ItemId[] = ['fireRate', 'power', 'heal', 'nitro', 'ram', 'heli', 'pierce', 'plate', 'bomb', 'gun'];
+const ITEMS: ItemId[] = ['fireRate', 'power', 'heal', 'nitro', 'ram', 'heli', 'pierce', 'plate', 'bomb', 'gun', 'oil', 'spikes', 'smoke'];
 const debugGive = debug ? (params.get('give') ?? '').split(',').filter((x): x is ItemId => (ITEMS as string[]).includes(x)) : undefined;
 const traffic = debug && params.get('traffic') === '0' ? false : undefined;
 const curves = params.get('curves') === '0' ? false : undefined;
@@ -35,6 +35,7 @@ const mute = params.has('mute');
 // V2 part 3 (debug only): ?mode=survival and ?chaosEvery=N for e2e
 const mode = debug && params.get('mode') === 'survival' ? ('survival' as const) : undefined;
 const chaosEvery = hpParam('chaosEvery'); // positive number, debug only
+const mysteryShare = debug && params.has('mystery') ? Math.min(1, Math.max(0, Number(params.get('mystery')) || 0)) : undefined;
 
 registerServiceWorker(window, { prod: import.meta.env.PROD, debug });
 installNoZoom(document);
@@ -43,7 +44,8 @@ installFullscreenOnFirstTap(document, window);
 // Test/debug parameters (?debug, ?role, ?seed) go straight to the match; without them (or with ?app), the app starts on the title screen.
 const direct = !params.has('app') && (debug || params.has('role') || params.has('seed'));
 if (app) {
-  if (direct) startGame(app, { role, seed, debug, quality, debugHp, debugGive, traffic, mute, curves, escapeTime, mode, chaosEvery });
+  if (direct)
+    startGame(app, { role, seed, debug, quality, debugHp, debugGive, traffic, mute, curves, escapeTime, mode, chaosEvery, mysteryShare });
   else startApp(app, { quality, debug, debugHp, traffic, mute, curves, escapeTime, mode, chaosEvery }); // ?app forces the screens (product e2e)
 }
 // first screen drawn (2 frames): the splash disappears. In test/debug (?debug) it goes away immediately.

@@ -135,6 +135,18 @@
   opacity: 0.4;
   filter: grayscale(1);
 }
+/* yellow box "sem freio": the brake is off and struck through */
+.touch-btn--brake.locked::after {
+  content: '';
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  top: 50%;
+  height: 4px;
+  border-radius: 2px;
+  background: #ff5a4a;
+  transform: rotate(-40deg);
+}
 .touch-btn--fire.no-target {
   border-color: rgba(255, 255, 255, 0.35);
   opacity: 0.55;

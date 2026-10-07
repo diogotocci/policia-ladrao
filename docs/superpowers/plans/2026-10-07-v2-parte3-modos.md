@@ -147,7 +147,7 @@
 
 ### Task 2.1: Especial e perigos
 
-**Files:**
+**Files:** (como ficou na 0.14.0: `src/sim/specials.ts` com o botão, óleo e miguelito; `src/sim/mystery.ts` com a caixa amarela; `bombs.ts` continua só com a bomba na pista; testes em `tests/sim/specials.test.ts` e `tests/sim/mystery.test.ts`)
 - Create: `src/sim/hazards.ts`, `src/sim/effects.ts`
 - Remove: `src/sim/bombs.ts` (absorvido)
 - Modify: `src/sim/car.ts` (`special`, `effects`), `src/sim/intents.ts` (`bomb` → `special`), `src/sim/items.ts`, `src/sim/world.ts`, `src/input/keyboard.ts`, `src/input/touchButtons.ts`, `src/game.ts`, `src/sim/ai.ts`
