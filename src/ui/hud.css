@@ -383,3 +383,33 @@
   outline: 2px solid #fff;
   outline-offset: 1px;
 }
+
+/* Sobrevivência: chaos level under the clock (V2 part 3) */
+.hud-chaos {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+}
+.hud-chaos[hidden] {
+  display: none;
+}
+.hud-chaos-label {
+  font:
+    800 10px/1 system-ui,
+    sans-serif;
+  color: #ffc21a;
+}
+.hud-chaos-marks {
+  display: flex;
+  gap: 2px;
+}
+.hud-chaos-mark {
+  width: 9px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.25);
+}
+.hud-chaos-mark.is-on {
+  background: #ffc21a;
+}

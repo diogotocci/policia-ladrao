@@ -178,7 +178,7 @@ test('difficulty: Difícil is remembered, pays x1,5 and has its own ranking', as
   await expect(page.locator('.end-reward')).toContainText('×1,5');
   await page.locator('.initials').press('Enter');
   await page.getByRole('button', { name: 'Ranking' }).click();
-  await expect(page.locator('.screen-ranking [role="radio"][aria-checked="true"]')).toHaveText('Difícil');
+  await expect(page.locator('.screen-ranking [aria-label="Dificuldade"] [aria-checked="true"]')).toHaveText('Difícil');
   await expect(page.locator('.ranking-row').first()).toHaveClass(/is-new/);
   await page.locator('.screen-ranking').getByRole('radio', { name: 'Médio' }).click();
   await expect(page.locator('.ranking-row')).toHaveCount(0);
@@ -186,4 +186,20 @@ test('difficulty: Difícil is remembered, pays x1,5 and has its own ranking', as
   await page.getByRole('button', { name: 'Jogar', exact: true }).click();
   await page.getByRole('button', { name: 'Jogar Perseguição' }).click();
   await expect(page.locator('.screen-choose [role="radio"][aria-checked="true"]')).toContainText('Difícil');
+});
+
+test('Sobrevivência: no clock, chaos rises, roadworks appear and the match still ends', async ({ page }) => {
+  test.setTimeout(240_000);
+  await page.goto('/?app&quality=low&mute&debug&traffic=0&mode=survival&chaosEvery=4&thiefHp=60');
+  await page.evaluate(() => localStorage.setItem('pl.howto.v1', '1'));
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await page.getByRole('button', { name: 'Jogar Sobrevivência' }).click();
+  await page.locator('[data-role="police"]').click();
+  await page.waitForFunction(() => '__game' in window && !document.querySelector('.screen-countdown'), null, { timeout: 60_000 });
+  await expect(page.locator('.hud-time-label')).toHaveText('Tempo');
+  await expect(page.locator('.hud-chaos')).toContainText('Caos 3', { timeout: 120_000 });
+  type G = { snapshot(): { works: unknown[]; mode: string } };
+  await page.waitForFunction(() => (window as unknown as { __game: G }).__game.snapshot().works.length > 0, null, { timeout: 60_000 });
+  expect(await page.evaluate(() => (window as unknown as { __game: G }).__game.snapshot().mode)).toBe('survival');
+  await expect(page.locator('.screen-end')).toBeVisible({ timeout: 180_000 });
 });

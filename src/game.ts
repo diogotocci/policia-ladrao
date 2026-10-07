@@ -13,6 +13,7 @@ import { createParticles } from './render/particles';
 import { createOpponentMarker } from './render/opponentMarker';
 import { createRearview, isBehind, rearviewRect } from './render/rearview';
 import { createWorldProps } from './render/worldProps';
+import { createWorksView } from './render/hazardsView';
 import { createCarModel, updateCarModel } from './render/carFactory';
 import { createQualityGovernor, createRenderer, type QualityTier } from './render/renderer';
 import { createLighting } from './render/scene';
@@ -142,6 +143,7 @@ export function startGame(
   const rearview = createRearview();
   rearview.setQuality(view.quality);
   const props = createWorldProps(scene, lighting.reflections);
+  const worksView = createWorksView(scene);
   const chase = createChaseCamera();
   const fog = scene.fog instanceof THREE.Fog ? scene.fog : null;
   const FOG_NEAR = fog?.near ?? 0;
@@ -399,6 +401,7 @@ export function startGame(
       for (; acc.skid >= 1; acc.skid--) particles.emitSmoke(c.x + (acc.side = -acc.side) * 0.8, 0.25, c.s - 1.5, 'white');
     }
     props.update(world, origin, world.time, frozen ? undefined : prev, alpha);
+    worksView.update(world, origin);
     fx.update(world, frameEvents, origin, dt);
     for (const e of frameEvents) {
       if (e.type === 'shot' && !e.air) flashGunner(gunners[e.from], clock);
