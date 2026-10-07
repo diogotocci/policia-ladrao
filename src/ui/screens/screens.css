@@ -713,3 +713,99 @@
     font-size: 44px;
   }
 }
+
+/* coins (V2 part 1) */
+.title-wallet {
+  position: absolute;
+  top: max(12px, var(--safe-top));
+  left: max(16px, var(--safe-left));
+  margin: 0;
+  height: 44px;
+  padding: 0 14px 0 10px;
+  border-radius: 22px;
+  background: var(--asphalt-3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font:
+    800 20px/1 system-ui,
+    sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.title-wallet svg,
+.end-reward-total svg {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+.title-sound {
+  display: flex;
+  gap: 10px;
+}
+.title-progress.screen-btn {
+  min-width: 0;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+}
+.end-result.has-reward .end-time {
+  margin-top: 0;
+  font-size: 30px;
+}
+.end-result.has-reward .end-time small {
+  display: inline;
+  margin-right: 8px;
+}
+@media (max-height: 400px) {
+  .end-result.has-reward {
+    gap: 4px;
+  }
+  .end-result.has-reward .screen-heading {
+    font-size: 30px;
+  }
+  .end-reward-lines {
+    line-height: 1.25;
+  }
+}
+.end-reward {
+  margin-top: auto;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 194, 26, 0.1);
+  border: 2px solid rgba(255, 194, 26, 0.5);
+}
+.end-reward-lines {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1px 12px;
+  font:
+    600 13px/1.35 system-ui,
+    sans-serif;
+  color: #dfe2e8;
+}
+.end-reward-lines dt,
+.end-reward-lines dd {
+  margin: 0;
+}
+.end-reward-lines dd {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+}
+.end-reward-total {
+  margin: 6px 0 0;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 194, 26, 0.35);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font:
+    800 21px/1 system-ui,
+    sans-serif;
+  font-variant-numeric: tabular-nums;
+  color: var(--sign);
+}

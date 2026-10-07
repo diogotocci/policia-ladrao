@@ -5,6 +5,8 @@ import { createAudioSession } from './audio/session';
 import { startGame, type GameHandle } from './game';
 import { createCarPreview } from './render/carPreview';
 import type { QualityTier } from './render/renderer';
+import { grantWelcome, settleMatch } from './meta/profile';
+import { loadProfile, saveProfile } from './storage/profileStore';
 import { emptyBoard, insert, loadBoard, qualifies, saveBoard, type Board } from './storage/ranking';
 import { initialState, reduce, type FlowAction, type FlowState } from './ui/screens/flow';
 import { renderChoose, renderCountdown, renderEnd, renderPause, renderRanking, renderTitle } from './ui/screens/screens';
@@ -41,6 +43,10 @@ export function startApp(
 
   let state: FlowState = initialState();
   let board: Board = storage ? loadBoard(storage) : emptyBoard();
+  // coins and stats (V2 part 1); the welcome bonus is credited once, from the records already in the ranking
+  const loaded = loadProfile(storage);
+  let profile = grantWelcome(loaded.profile, board);
+  if (profile !== loaded.profile) saveProfile(storage, profile);
   // "Como jogar" opens by itself until the player closes it once
   const howToSeen = () => {
     try {
@@ -94,7 +100,13 @@ export function startApp(
       audio,
       startPaused: true,
       onPauseRequest: () => dispatch({ type: 'pause' }),
-      onEnd: (r) => dispatch({ type: 'ended', result: r, qualifies: qualifies(board, role, r.time, r.winner === role, r.hp) }),
+      onEnd: (r) => {
+        // credited and saved before the end screen shows: a reload right after cannot lose or repeat it
+        const settled = settleMatch(profile, r, role);
+        profile = settled.profile;
+        saveProfile(storage, profile);
+        dispatch({ type: 'ended', result: r, qualifies: qualifies(board, role, r.time, r.winner === role, r.hp), reward: settled.reward });
+      },
     });
     container.append(layer); // screens always above the canvas and the game HUD
   };
@@ -114,6 +126,7 @@ export function startApp(
           onPlay: () => press({ type: 'play' }),
           onRanking: () => press({ type: 'openRanking' }),
           onHowToSeen: markHowToSeen,
+          coins: profile.coins,
           mountToggle: (p) => audio.mountToggle(p),
           version: APP_VERSION,
         });
@@ -159,6 +172,7 @@ export function startApp(
           result: s.result,
           qualifies: s.qualifies,
           saved: s.saved,
+          reward: s.reward,
           onSave: (initials) => {
             const thief =
               s.role === 'thief'

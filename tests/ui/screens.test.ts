@@ -34,6 +34,15 @@ describe('title', () => {
     s.dispose();
   });
 
+  it('coin balance (pt-BR digits) and a Progresso button', () => {
+    const onProgress = vi.fn();
+    const s = renderTitle(root, { onPlay: vi.fn(), onRanking: vi.fn(), onProgress, coins: 1240, mountToggle: () => ({ dispose() {} }) });
+    expect(root.querySelector('.title-wallet')!.textContent).toContain('1.240');
+    button('Progresso').click();
+    expect(onProgress).toHaveBeenCalledOnce();
+    s.dispose();
+  });
+
   it('Jogar and Ranking buttons, focus on Jogar, sound toggle slot', () => {
     const onPlay = vi.fn();
     const onRanking = vi.fn();
@@ -182,8 +191,53 @@ describe('end', () => {
     expect(root.querySelector('.end-time')!.textContent).toContain('01:23.4');
     expect(root.textContent).toContain('Vida restante 64');
     expect(root.textContent).toContain('Nível 3');
+    expect(root.querySelector('.end-reason')!.textContent).toBe('O ladrão foi detido · Nível 3');
     expect(root.querySelector('.initials')).toBeNull();
     expect(root.querySelector('.end-layout.has-record')).toBeNull();
+  });
+
+  it('reward breakdown: time, damage, boxes, win x2 and the total (spec example: 112)', () => {
+    vi.useFakeTimers();
+    try {
+      renderEnd(root, {
+        ...base,
+        role: 'thief',
+        result: { winner: 'thief', time: 69.9, reason: 'policeDown', level: 2, stats: { damageDealt: 100, rightBoxes: 4 } },
+        reward: { time: 23, damage: 25, boxes: 8, won: true, total: 112 },
+        qualifies: false,
+        onSave: vi.fn(),
+      });
+      const box = root.querySelector('.end-reward')!;
+      expect(box.textContent).toContain('Tempo de perseguição');
+      expect(box.textContent).toContain('+23');
+      expect(box.textContent).toContain('Dano causado (100)');
+      expect(box.textContent).toContain('+25');
+      expect(box.textContent).toContain('Caixas da sua cor (4)');
+      expect(box.textContent).toContain('+8');
+      expect(box.textContent).toContain('Vitória');
+      expect(box.textContent).toContain('×2');
+      expect(root.querySelector('.end-reward-total')!.getAttribute('aria-label')).toBe('+112 moedas');
+      vi.advanceTimersByTime(1000); // the total counts up from 0
+      expect(root.querySelector('.end-reward-total')!.textContent).toContain('+112 moedas');
+      expect(root.querySelector('.end-reason')!.textContent).toBe('A viatura foi destruída · Nível 2');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('a loss shows no "Vitória" line; no reward, no box', () => {
+    renderEnd(root, {
+      ...base,
+      role: 'police',
+      result: { winner: 'thief', time: 30, reason: 'escape', stats: { damageDealt: 10, rightBoxes: 0 } },
+      reward: { time: 10, damage: 2, boxes: 0, won: false, total: 12 },
+      qualifies: false,
+      onSave: vi.fn(),
+    });
+    expect(root.querySelector('.end-reward')!.textContent).not.toContain('Vitória');
+    root.innerHTML = '';
+    renderEnd(root, { ...base, role: 'police', result: { winner: 'police', time: 60 }, qualifies: false, onSave: vi.fn() });
+    expect(root.querySelector('.end-reward')).toBeNull();
   });
 
   it('a destroyed car does not show "Vida restante 0"', () => {

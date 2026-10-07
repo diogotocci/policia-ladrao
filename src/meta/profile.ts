@@ -1,7 +1,7 @@
 // Player profile (V2 part 1): coin balance and lifetime stats, versioned so later parts can migrate it.
 import { BALANCE, type Role } from '../config/balance';
 import type { Board } from '../storage/ranking';
-import type { Reward } from './rewards';
+import { emptyStats, rewardFor, type MatchStats, type Reward } from './rewards';
 
 export const PROFILE_VERSION = 1;
 /** upper bound for any stored number: rejects absurd values from a hand-edited backup */
@@ -69,4 +69,14 @@ export function grantWelcome(p: Profile, board: Board): Profile {
   if (p.welcomeGranted) return p;
   const coins = (board.police.length + board.thief.length) * BALANCE.rewards.welcomePerRecord;
   return { ...p, coins: p.coins + coins, welcomeGranted: true };
+}
+
+/** Coins for a finished match, credited to the profile (called once, when the match ends). */
+export function settleMatch(
+  p: Profile,
+  result: { winner: Role; time: number; reason?: 'escape' | 'policeDown' | 'thiefDown'; stats?: MatchStats },
+  player: Role,
+): { profile: Profile; reward: Reward } {
+  const reward = rewardFor({ time: result.time, won: result.winner === player }, result.stats ?? emptyStats());
+  return { profile: applyMatch(p, result, player, reward), reward };
 }

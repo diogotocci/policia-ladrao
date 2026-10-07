@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyMatch, emptyProfile, grantWelcome, parseProfile, type Profile } from '../../src/meta/profile';
+import { applyMatch, emptyProfile, grantWelcome, parseProfile, settleMatch, type Profile } from '../../src/meta/profile';
 import { emptyBoard, insert } from '../../src/storage/ranking';
 import type { Reward } from '../../src/meta/rewards';
 
@@ -66,5 +66,23 @@ describe('grantWelcome', () => {
   it('an empty ranking grants 0 and is still marked as granted', () => {
     const p = grantWelcome(emptyProfile(), emptyBoard());
     expect(p).toMatchObject({ coins: 0, welcomeGranted: true });
+  });
+});
+
+describe('settleMatch', () => {
+  it('computes the reward from the result and credits it', () => {
+    const r = settleMatch(
+      emptyProfile(),
+      { winner: 'thief', time: 69.9, reason: 'policeDown', stats: { damageDealt: 100, rightBoxes: 4 } },
+      'thief',
+    );
+    expect(r.reward.total).toBe(112);
+    expect(r.profile.coins).toBe(112);
+    expect(r.profile.stats.wins).toBe(1);
+  });
+
+  it('a result without stats still pays for the time', () => {
+    const r = settleMatch(emptyProfile(), { winner: 'police', time: 30 }, 'thief');
+    expect(r.reward).toEqual({ time: 10, damage: 0, boxes: 0, won: false, total: 10 });
   });
 });
