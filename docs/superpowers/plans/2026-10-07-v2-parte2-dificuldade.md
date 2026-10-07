@@ -48,7 +48,7 @@
   - `createWorld({ ..., difficulty?: Difficulty })`
   - `WorldState.difficulty: Difficulty`
 
-- [ ] **Step 1: Testes que falham** (`tests/sim/difficulty.test.ts`):
+- [x] **Step 1: Testes que falham** (`tests/sim/difficulty.test.ts`):
   - `levelAt`:
     - `levelAt(0,'easy')=1`, `levelAt(59.9,'easy')=1`, `levelAt(60,'easy')=2`;
     - `levelAt(44.9)=1`, `levelAt(45)=2`;
@@ -58,13 +58,13 @@
   - `trafficTarget(1,'easy')=2`, `trafficTarget(1)=3`, `trafficTarget(1,'hard')=4`. Nenhum resultado fica abaixo de 1.
   - Helicóptero do computador (jogador = ladrão), contando os tiros em 4 s: Fácil 4 (1,2 s), Médio 4, Difícil 6 (0,7 s). Com o jogador sendo a polícia, `Math.ceil(4 / 0.7)` em qualquer dificuldade.
   - Computador contra computador, 20 sementes × 2 lados, 95 s: com o jogador como ladrão, a polícia do computador vence menos partidas no Fácil do que no Difícil.
-- [ ] **Step 2: Rodar e ver falhar** — `npx vitest run tests/sim/difficulty.test.ts`.
-- [ ] **Step 3: Implementar.**
+- [x] **Step 2: Rodar e ver falhar** — `npx vitest run tests/sim/difficulty.test.ts`.
+- [x] **Step 3: Implementar.**
   - O mundo guarda `difficulty`; `stepWorld` chama `levelAt(time, w.difficulty)`.
   - O tráfego calcula `Math.max(1, Math.round(base * (1 + perLevel*(level-1)) * traffic))`.
   - `createWorld` com dificuldade desconhecida cai para `'normal'`.
-- [ ] **Step 4: Rodar** `npx vitest run tests/sim`: tudo verde, incluindo os testes de equilíbrio de hoje (Médio inalterado).
-- [ ] **Step 5: Commit** `feat(sim): difficulty sets the computer's start level and pace, traffic and its helicopter`
+- [x] **Step 4: Rodar** `npx vitest run tests/sim`: tudo verde, incluindo os testes de equilíbrio de hoje (Médio inalterado).
+- [x] **Step 5: Commit** `feat(sim): difficulty sets the computer's start level and pace, traffic and its helicopter`
 
 ### Task 2: Moedas com multiplicador
 
@@ -78,15 +78,15 @@
   - `rewardFor(r, stats, d: Difficulty = 'normal'): Reward`, com `Reward.difficulty: Difficulty`
   - `settleMatch(p, result, player, d: Difficulty = 'normal')`
 
-- [ ] **Step 1: Testes que falham:**
+- [x] **Step 1: Testes que falham:**
   - o exemplo da Parte 1 no `'hard'` dá `total: 168` e `difficulty: 'hard'`;
   - a derrota de 12 no `'easy'` dá 9;
   - total sempre inteiro;
   - `settleMatch` com `'hard'` credita 168.
-- [ ] **Step 2: Rodar e ver falhar.**
-- [ ] **Step 3: Implementar.** `total = Math.floor(soma × vitória × coins)`.
-- [ ] **Step 4: Rodar** `npx vitest run tests/meta`: PASS.
-- [ ] **Step 5: Commit** `feat(meta): coins multiplied by the difficulty`
+- [x] **Step 2: Rodar e ver falhar.**
+- [x] **Step 3: Implementar.** `total = Math.floor(soma × vitória × coins)`.
+- [x] **Step 4: Rodar** `npx vitest run tests/meta`: PASS.
+- [x] **Step 5: Commit** `feat(meta): coins multiplied by the difficulty`
 
 ### Task 3: Ranking por dificuldade e preferência salva
 
@@ -107,7 +107,7 @@
   - `loadDifficulty(storage): Difficulty`, que devolve `'normal'` quando falta, é inválido ou dá erro
   - `saveDifficulty(storage, d): void`, que nunca lança erro
 
-- [ ] **Step 1: Testes que falham:**
+- [x] **Step 1: Testes que falham:**
   - só v2 com 2 recordes → `normal` com os 2, `easy` e `hard` vazios, e v2 intacto;
   - v3 e v2 presentes → usa só o v3;
   - v3 ilegível → `emptyBoards()` e v2 intacto;
@@ -115,10 +115,10 @@
   - `countRecords` soma tudo;
   - `loadDifficulty` com `'hard'` devolve `'hard'`, e com `'insano'`, `''`, ausente ou `getItem` lançando erro devolve `'normal'`;
   - `saveDifficulty` com `setItem` lançando erro não lança.
-- [ ] **Step 2: Rodar e ver falhar.**
-- [ ] **Step 3: Implementar.** As funções `loadBoard`/`saveBoard` do v2 ficam só para a migração e os testes.
-- [ ] **Step 4: Rodar** `npx vitest run tests/storage`: PASS.
-- [ ] **Step 5: Commit** `feat(ranking): one ranking per difficulty (v3), old records become Médio; difficulty preference saved`
+- [x] **Step 2: Rodar e ver falhar.**
+- [x] **Step 3: Implementar.** As funções `loadBoard`/`saveBoard` do v2 ficam só para a migração e os testes.
+- [x] **Step 4: Rodar** `npx vitest run tests/storage`: PASS.
+- [x] **Step 5: Commit** `feat(ranking): one ranking per difficulty (v3), old records become Médio; difficulty preference saved`
 
 ### Task 4: Seletor e escolha do lado
 
@@ -134,7 +134,7 @@
   - `difficultyPicker(value: Difficulty, onChange: (d) => void, opts?: { showCoins?: boolean }): HTMLElement`
   - `renderChoose(root, { ..., difficulty: Difficulty, onDifficulty(d): void })`
 
-- [ ] **Step 1: Testes que falham:**
+- [x] **Step 1: Testes que falham:**
   - O picker é `role="radiogroup"` com `aria-label` "Dificuldade" e três `role="radio"`; o escolhido tem `aria-checked="true"` e `tabindex="0"`, os outros `-1`.
   - Clique muda a escolha e chama `onChange`. ArrowRight/ArrowLeft andam (sem dar a volta) e focam a nova opção.
   - Com `showCoins` aparece `moedas ×1,5` no Difícil.
@@ -143,12 +143,12 @@
     - mudar chama `onDifficulty`;
     - o título "Escolha seu lado" continua;
     - o foco inicial continua no primeiro cartão.
-- [ ] **Step 2: Rodar e ver falhar.**
-- [ ] **Step 3: Implementar.**
+- [x] **Step 2: Rodar e ver falhar.**
+- [x] **Step 3: Implementar.**
   - Visual do mockup: segmentado, opção ativa branca.
   - Na escolha do lado, o picker vai no centro da linha do topo e o título desce para baixo dela.
-- [ ] **Step 4: Rodar** `npx vitest run tests/ui`: PASS.
-- [ ] **Step 5: Commit** `feat(ui): difficulty picker on the side choice`
+- [x] **Step 4: Rodar** `npx vitest run tests/ui`: PASS.
+- [x] **Step 5: Commit** `feat(ui): difficulty picker on the side choice`
 
 ### Task 5: Ranking com seletor
 
@@ -164,7 +164,7 @@
   - `openRanking` passa a levar `difficulty`: `{ type: 'openRanking'; difficulty: Difficulty }`, que o app preenche com a dificuldade atual;
   - `renderRanking(root, { boards: Boards, difficulty, onDifficulty(d), ... })`.
 
-- [ ] **Step 1: Testes que falham:**
+- [x] **Step 1: Testes que falham:**
   - `flow`:
     - `openRanking` do título e do fim guarda a `difficulty`;
     - `difficultyTab` muda só a dificuldade;
@@ -173,10 +173,10 @@
     - com boards diferentes por dificuldade, mostra a lista certa;
     - trocar no picker chama `onDifficulty`;
     - o destaque do recorde novo só aparece na dificuldade e no lado dele.
-- [ ] **Step 2: Rodar e ver falhar.**
-- [ ] **Step 3: Implementar.** O picker aqui não mostra moedas.
-- [ ] **Step 4: Rodar** `npx vitest run tests/ui`: PASS.
-- [ ] **Step 5: Commit** `feat(ui): ranking per difficulty with the same picker`
+- [x] **Step 2: Rodar e ver falhar.**
+- [x] **Step 3: Implementar.** O picker aqui não mostra moedas.
+- [x] **Step 4: Rodar** `npx vitest run tests/ui`: PASS.
+- [x] **Step 5: Commit** `feat(ui): ranking per difficulty with the same picker`
 
 ### Task 6: Fim de partida e ligação no app
 
@@ -190,7 +190,7 @@
   - `renderEnd(root, { ..., difficulty: Difficulty })`;
   - `startGame(container, { ..., difficulty })`.
 
-- [ ] **Step 1: Testes que falham:**
+- [x] **Step 1: Testes que falham:**
   - Fim: selo `.end-difficulty` com "Difícil" e a classe `is-hard`; linha "Difícil" `×1,5` no quadro; no Médio, sem linha de multiplicador.
   - `app-credit`:
     - com `pl.difficulty = 'hard'`, a escolha do lado vem em Difícil e a partida mockada recebe `difficulty: 'hard'`;
@@ -198,20 +198,20 @@
     - o recorde vai para `pl.ranking.v3.hard`;
     - trocar para Fácil salva `pl.difficulty = 'easy'`.
   - As boas-vindas usam `countRecords(boards)`.
-- [ ] **Step 2: Rodar e ver falhar.**
-- [ ] **Step 3: Implementar.**
+- [x] **Step 2: Rodar e ver falhar.**
+- [x] **Step 3: Implementar.**
   - O app guarda `difficulty` (lido com `loadDifficulty`) e `boards` (lido com `loadBoards`).
   - A escolha salva com `saveDifficulty`.
   - O ranking da tela inicial abre na dificuldade atual.
-- [ ] **Step 4: Rodar** `npx vitest run`: tudo verde.
-- [ ] **Step 5: Commit** `feat: difficulty wired through the match, coins, ranking and end screen`
+- [x] **Step 4: Rodar** `npx vitest run`: tudo verde.
+- [x] **Step 5: Commit** `feat: difficulty wired through the match, coins, ranking and end screen`
 
 ### Task 7: e2e, revisão e entrega
 
-- [ ] **Step 1: e2e "difficulty"**, em `?app&quality=low&mute&debug&traffic=0&escape=4`:
+- [x] **Step 1: e2e "difficulty"**, em `?app&quality=low&mute&debug&traffic=0&escape=4`:
   - Difícil → ladrão → fim com selo "Difícil" e "×1,5";
   - Ranking abre com Difícil marcado e o recorde salvo lá;
   - recarregar: Jogar mostra Difícil marcado.
-- [ ] **Step 2:** typecheck, lint, unitários e e2e de telas e app nos dois projetos.
-- [ ] **Step 3: Revisor novo** sobre a branch inteira, com o Review Focus. Corrigir o que for confirmado.
-- [ ] **Step 4:** `chore(release): 0.12.0` e o script de entrega. O script tem que ser só ASCII, porque o PowerShell 5 lê `.ps1` sem BOM como ANSI.
+- [x] **Step 2:** typecheck, lint, unitários e e2e de telas e app nos dois projetos.
+- [x] **Step 3: Revisor novo** sobre a branch inteira, com o Review Focus. Corrigir o que for confirmado.
+- [x] **Step 4:** `chore(release): 0.12.0` e o script de entrega. O script tem que ser só ASCII, porque o PowerShell 5 lê `.ps1` sem BOM como ANSI.
