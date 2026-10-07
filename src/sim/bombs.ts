@@ -35,7 +35,7 @@ export function stepBombs(w: WorldState): WorldState {
     if (over) {
       police = hurt(police, B.damage, w);
       events.push({ type: 'explosion', s: b.s, x: b.x });
-      events.push({ type: 'hit', target: 'police', amount: scaledDamage(B.damage, w), s: b.s, x: b.x });
+      events.push({ type: 'hit', target: 'police', amount: scaledDamage(B.damage, w, 'police'), s: b.s, x: b.x });
       continue;
     }
     bombs.push(b);

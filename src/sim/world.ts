@@ -1,5 +1,6 @@
 import { BALANCE, DIFFICULTIES, MODES, type Difficulty, type Mode, type Role } from '../config/balance';
 import { chaosAt } from './chaos';
+import { hitWorks, stepWorks } from './works';
 import { aiStep } from './ai';
 import { createCar, stepCar, type CarState } from './car';
 import { resolveCollisions } from './collisions';
@@ -57,6 +58,8 @@ export function createWorld(opts: {
     difficulty,
     mode,
     chaos: 1,
+    worksFromS: null,
+    works: [],
     chaosEvery: opts.chaosEvery ?? BALANCE.survival.chaosEvery,
     playerRole: opts.playerRole,
     player,
@@ -161,6 +164,7 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
     if (now.skidding && !before.skidding) out = { ...out, events: [...out.events, { type: 'skid', role: now.role, s: now.s, x: now.x }] };
   out = stepTraffic(out, dt);
   out = resolveCollisions(out, dt);
+  out = hitWorks(stepWorks(out));
   out = enforceNoOvertake(out);
   out = stepBoxes(out);
   out = dropBomb(out, intents.thief);

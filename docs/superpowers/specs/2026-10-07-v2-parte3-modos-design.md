@@ -42,8 +42,8 @@ Dois modos de jogo e oito itens novos.
 | Caos | começa em 1 e sobe 1 a cada 45 s, até 5 |
 | Tráfego | +15% por nível de caos acima de 1, multiplicado pelo tráfego da dificuldade |
 | Caixas | intervalo entre caixas ×0,9 por nível acima de 1 |
-| Dano | todo dano ×(1 + 0,2 × (caos − 1)): tiros, batidas, bombas, itens, caixa errada |
-| Obras | a partir do caos 3, um trecho de 60 m com uma faixa fechada por cones a cada 500–700 m, com placa 80 m antes; bater nos cones conta como calçada |
+| Dano | todo dano ×(1 + 0,2 × (caos − 1)): tiros, batidas, bombas, itens, caixa errada. O ladrão leva ×0,75 (sem a fuga de 1:30 a polícia vencia 80% entre computadores; com ×0,75, ~57%) |
+| Obras | a partir do caos 3, um trecho de 60 m com uma faixa fechada por cones a cada ~500–700 m (empurrado para depois de quebra-molas e curvas fechadas), com placa 80 m antes; bater nos cones conta como calçada; o tráfego muda de faixa antes |
 | Computador | nível e ritmo da dificuldade escolhida, como na Perseguição |
 
 - **Cenas de fim:** a prisão (polícia vence) e a viatura destruída (ladrão vence) continuam iguais.

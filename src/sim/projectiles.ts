@@ -124,7 +124,7 @@ export function stepProjectiles(w: WorldState, dt: number): WorldState {
     }
     if (hit) {
       out = withCar(out, target.role, hurt(target, p.damage, w));
-      events.push({ type: 'hit', target: target.role, amount: scaledDamage(p.damage, w), s, x });
+      events.push({ type: 'hit', target: target.role, amount: scaledDamage(p.damage, w, target.role), s, x });
       continue;
     }
     const travelled = p.travelled + dist;

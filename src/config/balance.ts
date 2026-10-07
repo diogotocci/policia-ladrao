@@ -59,6 +59,7 @@ export const BALANCE = {
     worksLength: 60, // m of closed lane
     worksSign: 80, // m: warning sign before
     timeCoinsMax: 60,
+    thiefDamageTaken: 0.75, // no escape at 1:30 here: the thief takes less damage (AI x AI thief wins 30-70%)
   },
   // V2 part 2 (spec 2026-10-07-v2-parte2-dificuldade-design.md §2). Médio is the 0.11 game:
   // level every 45 s (playtest 2026-10-07: it felt harder on both sides at 30 s) and the computer's helicopter every 1 s.

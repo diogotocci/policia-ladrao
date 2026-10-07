@@ -78,6 +78,9 @@ function laneBlocked(w: WorldState, role: Role, s: number, laneX: number, mem?: 
   const inLane = (x: number) => Math.abs(x - laneX) < 2 * W;
   if (w.traffic.some((t) => inLane(t.x) && t.s > s - 3 && t.s - s < 35)) return true;
   if (role === 'police' && w.bombs.some((b) => mem?.bombDodge[b.id] && inLane(b.x) && b.s > s && b.s - s < 60)) return true;
+  // roadworks: seen earlier the better the computer (20 m at level 1, 60 m at level 10)
+  const sees = lerp(20, 60, skill(w.level));
+  if (w.works.some((wk) => inLane(BALANCE.road.laneCenters[wk.lane]) && wk.s + wk.length > s && wk.s - s < sees)) return true;
   const wrong = role === 'police' ? 'red' : 'blue';
   if (w.boxes.some((b) => b.color === wrong && inLane(b.x) && b.s > s && b.s - s < 40)) return true;
   return false;

@@ -135,7 +135,7 @@ export function stepBoxes(w: WorldState): WorldState {
     const own: Role = box.color === 'blue' ? 'police' : 'thief';
     if (own !== car.role) {
       events.push({ type: 'pickup', role: car.role, item: 'wrong' });
-      events.push({ type: 'hit', target: car.role, amount: scaledDamage(I.wrongBoxDamage, w), s: box.s, x: box.x });
+      events.push({ type: 'hit', target: car.role, amount: scaledDamage(I.wrongBoxDamage, w, car.role), s: box.s, x: box.x });
       return hurt(car, I.wrongBoxDamage, w);
     }
     const item = rollItem(car, rng);

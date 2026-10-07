@@ -1,4 +1,5 @@
 import type { Difficulty, Mode, Role } from '../config/balance';
+import type { Works } from './works';
 import type { AiMemory } from './ai';
 import type { CarState } from './car';
 
@@ -47,7 +48,7 @@ export interface Bomb {
 
 export type GameEvent =
   | { type: 'hit'; target: Role; amount: number; s: number; x: number }
-  | { type: 'crash'; a: Role | 'scenery'; b: Role | 'scenery' | 'traffic'; s: number; x: number }
+  | { type: 'crash'; a: Role | 'scenery'; b: Role | 'scenery' | 'traffic' | 'works'; s: number; x: number }
   | { type: 'blocked'; s: number; x: number }
   | { type: 'pickup'; role: Role; item: ItemId | 'wrong' | 'none' }
   | { type: 'bombDropped'; s: number; x: number }
@@ -83,6 +84,10 @@ export interface WorldState {
   chaos: number;
   /** seconds per chaos level (debug can shorten it) */
   chaosEvery: number;
+  /** roadworks start here (set when chaos first reaches 3); null = none yet */
+  worksFromS: number | null;
+  /** roadworks near the cars */
+  works: Works[];
   playerRole: Role;
   player: CarState;
   opponent: CarState;

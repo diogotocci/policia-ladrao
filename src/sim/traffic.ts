@@ -38,6 +38,12 @@ export function stepTraffic(w: WorldState, dt: number): WorldState {
   const moved: TrafficCar[] = [];
   for (const t of order) {
     let targetX = t.targetX;
+    // roadworks ahead in its lane: moves over (towards the center) in time
+    const closed = w.works.find((wk) => sameLane(BALANCE.road.laneCenters[wk.lane], targetX) && wk.s + wk.length > t.s && wk.s - t.s < 70);
+    if (closed) {
+      const lane = LANES.indexOf(targetX as (typeof LANES)[number]);
+      targetX = LANES[lane <= 1 ? lane + 1 : lane - 1]!;
+    }
     if (Math.abs(t.x - targetX) < 0.01 && rng.next() < T.laneChangePerSecond * dt) {
       const lane = LANES.indexOf(targetX as (typeof LANES)[number]);
       const options = [lane - 1, lane + 1].filter((l) => l >= 0 && l < LANES.length);

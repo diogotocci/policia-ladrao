@@ -26,9 +26,12 @@ describe('chaos (Sobrevivência)', () => {
     const w = createWorld({ seed: 1, playerRole: 'thief', mode: 'survival' });
     expect(damageScale(w)).toBe(1);
     expect(damageScale({ ...w, chaos: 3 })).toBeCloseTo(1.4);
-    const car = thiefOf(w);
+    const car = policeOf(w);
     expect(hurt(car, 10, { ...w, chaos: 3 }).hp).toBeCloseTo(BALANCE.hp - 14);
     expect(hurt({ ...car, hp: 3 }, 10, w).hp).toBe(0);
+    // Sobrevivência: the thief takes x0.75 (no escape at 1:30); the police takes it all
+    expect(hurt(thiefOf(w), 10, w).hp).toBeCloseTo(BALANCE.hp - 10 * BALANCE.survival.thiefDamageTaken);
+    expect(hurt(policeOf(w), 10, w).hp).toBeCloseTo(BALANCE.hp - 10);
     expect(damageScale(createWorld({ seed: 1, playerRole: 'thief' }))).toBe(1); // Perseguição
   });
 
@@ -50,15 +53,16 @@ describe('chaos (Sobrevivência)', () => {
     expect(w.match.over).toBe(false);
   });
 
-  it('a wall hit at chaos 3 costs 7 and reports 7', () => {
+  it('a wall hit at chaos 3 costs 7 x 0.75 for the thief and reports the same', () => {
     let w = createWorld({ seed: 1, playerRole: 'thief', mode: 'survival', traffic: false, curves: false });
     w = { ...w, time: 90, chaos: 3 };
     w = withCar(w, 'thief', { ...thiefOf(w), x: BALANCE.road.halfWidth, steer: 1 });
     const before = thiefOf(w).hp;
     const next = stepWorld(w, { ...NO_INTENTS, right: true }, DT);
     const hit = next.events.find((e) => e.type === 'hit' && e.target === 'thief');
-    expect(hit && hit.type === 'hit' && hit.amount).toBeCloseTo(BALANCE.collision.scenery * 1.4);
-    expect(before - thiefOf(next).hp).toBeCloseTo(BALANCE.collision.scenery * 1.4);
+    const cost = BALANCE.collision.scenery * 1.4 * BALANCE.survival.thiefDamageTaken;
+    expect(hit && hit.type === 'hit' && hit.amount).toBeCloseTo(cost);
+    expect(before - thiefOf(next).hp).toBeCloseTo(cost);
   });
 
   it('traffic +15% per chaos level above 1', () => {
