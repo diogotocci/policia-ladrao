@@ -107,16 +107,20 @@ export function startApp(
     clearView();
     if (s.screen !== 'title' && !(history.state as { pl?: boolean } | null)?.pl) trap(); // Back returns to the app
     switch (s.screen) {
-      case 'title':
+      case 'title': {
         stopGame();
         highlight = undefined;
-        view = renderTitle(layer, {
+        const t = renderTitle(layer, {
           onPlay: () => press({ type: 'play' }),
           onRanking: () => press({ type: 'openRanking' }),
+          onHowToSeen: markHowToSeen,
           mountToggle: (p) => audio.mountToggle(p),
           version: APP_VERSION,
         });
+        const preview = createCarPreview(t.previews);
+        view = { dispose: () => (preview.dispose(), t.dispose()) };
         break;
+      }
       case 'choose': {
         stopGame(); // coming from the end screen ("Trocar de lado")
         const c = renderChoose(layer, {

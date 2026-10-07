@@ -31,13 +31,11 @@
   font-family: system-ui, sans-serif;
   text-align: center;
 }
+.screen-title,
 .screen-choose {
   background:
     repeating-linear-gradient(90deg, transparent 0 3px, rgba(255, 255, 255, 0.012) 3px 4px),
     radial-gradient(ellipse at 50% -20%, #3a3f48 0%, var(--asphalt) 60%, #1b1d22 100%);
-}
-.screen-title {
-  background: radial-gradient(ellipse at 50% 30%, #1a2550 0%, #0b1020 55%, #05070d 100%);
 }
 .screen-pause,
 .screen-end,
@@ -124,25 +122,73 @@
   outline-offset: 2px;
 }
 
-/* title */
-.title-logo {
-  width: 96px;
-  height: 96px;
-  border-radius: 22px;
-  box-shadow:
-    0 8px 30px rgba(255, 40, 40, 0.25),
-    0 8px 30px rgba(40, 90, 255, 0.25);
+/* title: blue street-name plate, the two 3D cars, menu on the right */
+.screen-title {
+  flex-direction: row;
+  gap: clamp(18px, 4vw, 40px);
 }
-.title-name {
+.title-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 0 1 430px;
+  min-width: 0;
+}
+.title-plate {
   margin: 0;
+  padding: 12px 24px 14px;
+  border-radius: 10px;
+  background: #1d4fb8;
+  border: 4px solid #fff;
+  outline: 3px solid #1d4fb8;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  transform: rotate(-2deg);
+  color: #fff;
   font:
-    900 40px/1 system-ui,
+    900 clamp(44px, 16vh, 66px) / 0.95 system-ui,
     sans-serif;
-  letter-spacing: 0.01em;
-  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
+  letter-spacing: -0.01em;
+  text-align: left;
 }
-.title-name span {
-  color: #ffcf4a;
+.title-x {
+  color: var(--sign);
+}
+.title-line {
+  display: block;
+}
+.title-cars {
+  display: flex;
+  width: 100%;
+  height: min(140px, 32vh);
+}
+.title-car {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.title-car canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+.title-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 250px;
+  flex: none;
+}
+.title-menu .screen-btn {
+  width: 100%;
+  font-size: 20px;
+}
+.title-play.screen-btn {
+  min-height: 60px;
+  font-size: 28px;
+}
+.title-play svg {
+  width: 22px;
+  height: 22px;
 }
 .title-version {
   position: absolute;
@@ -649,13 +695,6 @@
 }
 
 @media (max-height: 420px) {
-  .title-logo {
-    width: 72px;
-    height: 72px;
-  }
-  .title-name {
-    font-size: 32px;
-  }
   .screen-heading {
     font-size: 22px;
   }

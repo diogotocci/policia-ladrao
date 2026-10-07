@@ -66,8 +66,8 @@ describe('match end', () => {
     expect(w.projectiles).toEqual([]);
   });
 
-  it('level is 2 at 30 s', () => {
-    const w = run(createWorld({ seed: 1, playerRole: 'thief' }), 30 * 60 + 1);
+  it('level is 2 at 45 s', () => {
+    const w = run(createWorld({ seed: 1, playerRole: 'thief' }), 45 * 60 + 1);
     expect(w.level).toBe(2);
   });
 });

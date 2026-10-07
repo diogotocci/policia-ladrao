@@ -22,7 +22,7 @@ Never run `git commit`, `git push`, `git merge`, `git rebase`, `git am`, `git ch
 3. Choose:
    - branch `feat/…`, `fix/…`, `chore/…`, `docs/…`, `test/…` (kebab-case, English);
    - Conventional Commit messages in English, one per plan checkpoint;
-   - PR title and body in English: what changes for players and developers, how it was validated.
+   - PR title and body in English: what changes for players and developers, how it was validated. The body goes through `--body-file` (Windows PowerShell 5 breaks double quotes in native arguments); no double quotes in the title.
 4. Bump `package.json` `version` once per PR following SemVer (`.agents/rules/coding-standards.md`, Versioning): `feat` → minor, everything else → patch, breaking → major (minor while `0.y.z`). Put it in the last commit, `chore(release): x.y.z`, and mention the version in the PR body.
 5. Refresh the Graphify graph when indexed files changed (`.agents/rules/graphify.md`). The script also runs `graphify update .` and stops with `GRAPHIFY_UPDATE_FAILED` if it fails.
 6. Copy `template.ps1` to `scratch/NN-<slug>.ps1`, keep exactly one of the two modes and fill every `<...>`:

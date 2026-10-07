@@ -19,6 +19,21 @@ describe('title', () => {
     expect(root.querySelector('.title-version')!.textContent).toBe('v0.8.0');
   });
 
+  it('street-plate logo with the two cars; Como jogar opens the tips and marks them as seen', () => {
+    const onHowToSeen = vi.fn();
+    const s = renderTitle(root, { onPlay: vi.fn(), onRanking: vi.fn(), onHowToSeen, mountToggle: () => ({ dispose() {} }) });
+    expect(root.querySelector('h1.title-plate')!.textContent).toBe('Polícia × Ladrão');
+    expect(root.querySelector('img')).toBeNull(); // the app icon is no longer the logo
+    expect(s.previews.police.dataset.preview).toBe('police'); // 3D car slots
+    expect(s.previews.thief.dataset.preview).toBe('thief');
+    button('Como jogar').click();
+    expect(root.querySelector('.howto')).not.toBeNull();
+    button('Entendi').click();
+    expect(onHowToSeen).toHaveBeenCalledOnce();
+    expect(document.activeElement).toBe(button('Como jogar'));
+    s.dispose();
+  });
+
   it('Jogar and Ranking buttons, focus on Jogar, sound toggle slot', () => {
     const onPlay = vi.fn();
     const onRanking = vi.fn();
@@ -73,7 +88,8 @@ describe('choose', () => {
     expect(dialog.querySelectorAll('.howto-tip')).toHaveLength(4);
     expect(dialog.textContent).toContain('O carro acelera sozinho');
     expect(dialog.textContent).toContain('Freie nas curvas fechadas');
-    expect(dialog.textContent).toContain('perde 5 de vida'); // BALANCE.collision.scenery
+    expect(dialog.textContent).toContain('sobe na calçada e perde 5 de vida'); // BALANCE.collision.scenery
+    expect(dialog.textContent).not.toContain('muro'); // there is no wall, it is the curb
     expect(dialog.textContent).toContain('tira 2 de vida'); // BALANCE.items.wrongBoxDamage
     expect(dialog.textContent).toContain('Quebra-molas');
     button('Próximo: tráfego e tiros').click();

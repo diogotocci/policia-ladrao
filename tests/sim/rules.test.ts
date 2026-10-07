@@ -43,10 +43,11 @@ describe('inFireCone', () => {
 });
 
 describe('levelAt', () => {
-  it('goes up every 30 s, max 10', () => {
+  it('goes up every 45 s, max 10', () => {
     expect(levelAt(0)).toBe(1);
-    expect(levelAt(29.9)).toBe(1);
-    expect(levelAt(30)).toBe(2);
+    // playtest 2026-10-07 (game felt harder on both sides): the computer levels up every 45 s
+    expect(levelAt(44.9)).toBe(1);
+    expect(levelAt(45)).toBe(2);
     expect(levelAt(1000)).toBe(10);
   });
 });

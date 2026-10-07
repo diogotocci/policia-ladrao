@@ -20,7 +20,7 @@ test('splash: shows right away, then fades out once the title is ready; iPhone l
   expect(html).toContain('id="splash"');
   expect(html).toContain('Ladrão');
   await page.goto('/?app');
-  await expect(page.getByRole('button', { name: 'Jogar' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Jogar', exact: true })).toBeVisible();
   await expect(page.locator('#splash')).toHaveCount(0, { timeout: 4000 });
   const imgs = await page.locator('link[rel="apple-touch-startup-image"]').evaluateAll((ls) => ls.map((l) => l.getAttribute('href')!));
   expect(imgs.length).toBeGreaterThanOrEqual(10);
