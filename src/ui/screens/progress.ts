@@ -44,16 +44,24 @@ function restorePanel(current: Profile, onRestore: (next: Profile) => void): HTM
   const check = () => {
     confirm.replaceChildren();
     const r = decodeBackup(input.value);
-    if (!r.ok) return void (error.textContent = BACKUP_ERROR_TEXT[r.error]);
+    if (!r.ok) {
+      error.textContent = BACKUP_ERROR_TEXT[r.error];
+      error.scrollIntoView?.({ block: 'nearest' }); // short screens: the message may sit below the fold
+      return;
+    }
     error.textContent = '';
     const text = `Isso substitui o progresso deste aparelho (${n(current.coins)} moedas) pelo do código (${n(r.profile.coins)} moedas).`;
     const row = h('div', 'progress-actions');
+    const replace = btn('Substituir', 'is-primary', () => onRestore(r.profile));
     row.append(
-      btn('Substituir', 'is-primary', () => onRestore(r.profile)),
+      replace,
       btn('Cancelar', 'is-quiet', () => confirm.replaceChildren()),
     );
     confirm.append(h('p', 'progress-note', text), row);
+    replace.focus(); // also scrolls the confirmation into view on short screens
   };
+  // a confirmation belongs to the code it was made for
+  input.addEventListener('input', () => confirm.replaceChildren());
   panel.append(label, input, btn('Conferir', '', check), error, confirm);
   return panel;
 }

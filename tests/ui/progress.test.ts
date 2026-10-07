@@ -72,8 +72,21 @@ describe('progress dialog', () => {
     button('Cancelar').click();
     expect(cb.onRestore).not.toHaveBeenCalled();
     button('Conferir').click();
+    expect(document.activeElement).toBe(button('Substituir')); // brings the confirmation into view on short screens
     button('Substituir').click();
     expect(cb.onRestore).toHaveBeenCalledWith(other);
+  });
+
+  it('editing the code after Conferir drops the pending confirmation', () => {
+    const cb = open();
+    button('Restaurar').click();
+    const input = host.querySelector('textarea') as HTMLTextAreaElement;
+    input.value = encodeBackup(other);
+    button('Conferir').click();
+    input.value = 'PL1-';
+    input.dispatchEvent(new Event('input'));
+    expect(host.textContent).not.toContain('Isso substitui');
+    expect(cb.onRestore).not.toHaveBeenCalled();
   });
 
   it('an invalid code shows what to do and changes nothing', () => {

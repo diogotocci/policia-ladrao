@@ -47,7 +47,10 @@ export function startApp(
   // coins and stats (V2 part 1); the welcome bonus is credited once, from the records already in the ranking
   const loaded = loadProfile(storage);
   let profile = grantWelcome(loaded.profile, board);
-  if (profile !== loaded.profile) saveProfile(storage, profile);
+  // false once any save fails (full or blocked storage): the Progresso dialog then warns that nothing is kept
+  let persistent = loaded.persistent;
+  const persist = () => (persistent = saveProfile(storage, profile) && persistent);
+  if (profile !== loaded.profile) persist();
   // "Como jogar" opens by itself until the player closes it once
   const howToSeen = () => {
     try {
@@ -69,16 +72,18 @@ export function startApp(
     if (!host) return;
     openProgress(host, {
       profile,
-      persistent: loaded.persistent,
+      persistent,
       onRestore: (next) => {
         profile = next;
-        saveProfile(storage, profile);
+        persist();
         show(state);
       },
       onClose: () => host.querySelector<HTMLElement>('.title-progress')?.focus(),
     });
   };
   let highlight: { role: Role; rank: number } | undefined;
+  /** the reward of the last match already counted up on screen once */
+  let rewardShown = false;
   let game: GameHandle | undefined;
   let view: { dispose(): void } | undefined;
   let countdown: ReturnType<typeof renderCountdown> | undefined;
@@ -120,7 +125,8 @@ export function startApp(
         // credited and saved before the end screen shows: a reload right after cannot lose or repeat it
         const settled = settleMatch(profile, r, role);
         profile = settled.profile;
-        saveProfile(storage, profile);
+        persist();
+        rewardShown = false;
         dispatch({ type: 'ended', result: r, qualifies: qualifies(board, role, r.time, r.winner === role, r.hp), reward: settled.reward });
       },
     });
@@ -190,6 +196,7 @@ export function startApp(
           qualifies: s.qualifies,
           saved: s.saved,
           reward: s.reward,
+          animateReward: !rewardShown, // count up only the first time, not when coming back from the ranking
           onSave: (initials) => {
             const thief =
               s.role === 'thief'
@@ -209,6 +216,7 @@ export function startApp(
           onRanking: () => press({ type: 'openRanking' }),
           onHome: () => press({ type: 'quit' }),
         });
+        rewardShown = true;
         break;
       case 'ranking':
         view = renderRanking(layer, {

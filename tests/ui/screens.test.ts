@@ -225,6 +225,19 @@ describe('end', () => {
     }
   });
 
+  it('coming back from the ranking the total shows final at once (no second count-up)', () => {
+    renderEnd(root, {
+      ...base,
+      role: 'thief',
+      result: { winner: 'thief', time: 90, reason: 'escape' },
+      reward: { time: 30, damage: 0, boxes: 0, won: true, total: 60 },
+      animateReward: false,
+      qualifies: false,
+      onSave: vi.fn(),
+    });
+    expect(root.querySelector('.end-reward-total')!.textContent).toContain('+60 moedas');
+  });
+
   it('a loss shows no "Vitória" line; no reward, no box', () => {
     renderEnd(root, {
       ...base,

@@ -17,7 +17,7 @@ const COUNT_UP_MS = 800;
 const reducedMotion = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /** Coins earned, line by line; the total counts up from 0 (final at once with reduced motion). */
-function rewardBox(reward: Reward, stats: MatchStats | undefined): HTMLElement {
+function rewardBox(reward: Reward, stats: MatchStats | undefined, animate: boolean): { box: HTMLElement; stop(): void } {
   const box = h('div', 'end-reward');
   const list = h('dl', 'end-reward-lines');
   const line = (label: string, value: string) => list.append(h('dt', '', label), h('dd', '', value));
@@ -28,23 +28,28 @@ function rewardBox(reward: Reward, stats: MatchStats | undefined): HTMLElement {
   const total = h('p', 'end-reward-total');
   const label = `+${reward.total} moedas`;
   total.setAttribute('aria-label', label);
-  const value = h('span', '', reducedMotion() ? label : '+0 moedas');
+  const counting = animate && !reducedMotion();
+  const value = h('span', '', counting ? '+0 moedas' : label);
   value.setAttribute('aria-hidden', 'true');
   total.insertAdjacentHTML('afterbegin', SCREEN_ICONS.coin);
   total.append(value);
-  if (!reducedMotion()) {
-    const start = Date.now();
-    const tick = setInterval(() => {
-      const k = Math.min(1, (Date.now() - start) / COUNT_UP_MS);
-      value.textContent = `+${Math.round(reward.total * k)} moedas`;
-      if (k >= 1) clearInterval(tick);
-    }, 40);
-  }
   box.append(list, total);
-  return box;
+  return { box, stop: counting ? countUp(value, reward.total) : () => {} };
 }
 
-function resultCard(r: MatchResult, won: boolean, role: Role, reward?: Reward): HTMLElement {
+/** Counts "+N moedas" up from 0 in COUNT_UP_MS; returns a function that stops it early. */
+function countUp(el: HTMLElement, total: number): () => void {
+  const start = Date.now();
+  const tick = setInterval(() => {
+    const k = Math.min(1, (Date.now() - start) / COUNT_UP_MS);
+    el.textContent = `+${Math.round(total * k)} moedas`;
+    if (k >= 1) clearInterval(tick);
+  }, 40);
+  return () => clearInterval(tick);
+}
+
+function resultCard(r: MatchResult, role: Role, coins: { reward?: Reward; animate: boolean }): { card: HTMLElement; stop(): void } {
+  const won = r.winner === role;
   const card = h('div', `end-result is-${won ? 'won' : 'lost'}`);
   const reason = r.level === undefined ? endReason(r, role) : `${endReason(r, role)} · Nível ${r.level}`;
   card.append(h('h2', 'screen-heading', won ? 'Você venceu!' : 'Você perdeu'), h('p', 'end-reason', reason));
@@ -53,11 +58,14 @@ function resultCard(r: MatchResult, won: boolean, role: Role, reward?: Reward): 
   const time = h('p', 'end-time');
   time.append(h('small', '', 'Tempo'), formatTime(r.time));
   card.append(time);
-  if (reward) {
+  let stop = () => {};
+  if (coins.reward) {
     card.classList.add('has-reward');
-    card.append(rewardBox(reward, r.stats));
+    const rb = rewardBox(coins.reward, r.stats, coins.animate);
+    card.append(rb.box);
+    stop = rb.stop;
   }
-  return card;
+  return { card, stop };
 }
 
 const savedNote = () => {
@@ -151,6 +159,8 @@ export function renderEnd(
     saved?: boolean;
     /** coins credited for this match */
     reward?: Reward;
+    /** count the total up from 0 (only the first time the screen shows this match) */
+    animateReward?: boolean;
     onSave(initials: string): void;
     onAgain(): void;
     onChangeSide(): void;
@@ -164,7 +174,8 @@ export function renderEnd(
   s.setAttribute('aria-modal', 'true');
   s.setAttribute('aria-label', won ? 'Você venceu!' : 'Você perdeu');
   const layout = h('div', 'end-layout');
-  layout.append(resultCard(p.result, won, p.role, p.reward));
+  const result = resultCard(p.result, p.role, { reward: p.reward, animate: p.animateReward !== false });
+  layout.append(result.card);
   const again = btn('Jogar de novo', 'is-primary', p.onAgain, SCREEN_ICONS.replay);
   const actions = h('div', 'end-actions');
   actions.append(
@@ -182,5 +193,6 @@ export function renderEnd(
   }
   layout.classList.toggle('has-record', p.saved === true || p.qualifies);
   s.append(layout, actions);
-  return mount(root, s, focus);
+  const m = mount(root, s, focus);
+  return { dispose: () => (result.stop(), m.dispose()) };
 }

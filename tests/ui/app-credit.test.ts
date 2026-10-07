@@ -82,3 +82,21 @@ describe('coins credit', () => {
     expect(container.querySelector('.title-wallet')!.textContent).toContain('78');
   });
 });
+
+describe('storage that stops saving', () => {
+  it('the Progresso dialog warns when saving the coins failed', () => {
+    const app = startApp(container, { mute: true });
+    click('Jogar');
+    (container.querySelector('[data-role="police"]') as HTMLButtonElement).click();
+    frames(60);
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('quota');
+    });
+    ends[0]!({ winner: 'police', time: 60, hp: 80, level: 2, stats: { damageDealt: 100, rightBoxes: 1 } });
+    vi.restoreAllMocks();
+    click('Início');
+    click('Progresso');
+    expect(container.textContent).toContain('Seu progresso não está sendo salvo neste navegador');
+    app.stop();
+  });
+});
