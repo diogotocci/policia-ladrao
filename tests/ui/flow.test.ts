@@ -20,6 +20,12 @@ describe('screen flow', () => {
     expect(reduce(s, { type: 'quit' }).screen).toBe('title');
   });
 
+  it('the end screen keeps the match stats (damage dealt, right boxes) for the reward', () => {
+    const stats = { damageDealt: 42, rightBoxes: 3 };
+    const end = reduce({ screen: 'playing', role: 'thief' }, { type: 'ended', result: { winner: 'thief', time: 90, stats } });
+    expect(end).toMatchObject({ screen: 'end', result: { stats } });
+  });
+
   it('end → "Trocar de lado" goes straight to the side choice', () => {
     const end = reduce({ screen: 'playing', role: 'police' }, { type: 'ended', result: { winner: 'thief', time: 90 } });
     expect(reduce(end, { type: 'changeSide' })).toEqual({ screen: 'choose' });

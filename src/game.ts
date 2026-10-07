@@ -21,6 +21,7 @@ import { createTrackFrame, setActiveTrackFrame, trackPos } from './render/trackF
 import type { CarState } from './sim/car';
 import { FixedStepper } from './sim/fixedStepper';
 import type { Intents } from './sim/intents';
+import { addEvents, emptyStats, type MatchStats } from './meta/rewards';
 import { createWorld, stepWorld, type GameEvent, type ItemId, type WorldState } from './sim/world';
 import { feedbackForFrame } from './ui/feedback';
 import { ICONS } from './ui/icons';
@@ -72,7 +73,14 @@ export function startGame(
     /** the app decides what the pause shows; without it the game pauses/resumes by itself (Esc/P/⏸) */
     onPauseRequest?: () => void;
     /** match end (the app shows the end screen; without it the HUD shows the end card) */
-    onEnd?: (result: { winner: Role; time: number; reason?: 'escape' | 'policeDown' | 'thiefDown'; hp: number; level: number }) => void;
+    onEnd?: (result: {
+      winner: Role;
+      time: number;
+      reason?: 'escape' | 'policeDown' | 'thiefDown';
+      hp: number;
+      level: number;
+      stats: MatchStats;
+    }) => void;
   },
 ): GameHandle {
   const view = createRenderer(container, opts.quality ?? 'high');
@@ -276,10 +284,15 @@ export function startGame(
       )
     : undefined;
 
+  // damage dealt and right boxes, for the coins earned (V2 part 1)
+  let stats = emptyStats();
   const stepper = new FixedStepper((dt) => {
     prev = world;
     world = stepWorld(world, readIntents(), dt);
-    if (world.events.length) frameEvents.push(...world.events);
+    if (world.events.length) {
+      frameEvents.push(...world.events);
+      stats = addEvents(stats, world.events, opts.role);
+    }
   });
 
   let portrait = false;
@@ -313,6 +326,17 @@ export function startGame(
 
   let raf = 0;
   let endReported = false;
+  const reportEnd = () => {
+    endReported = true;
+    opts.onEnd?.({
+      winner: world.match.winner!,
+      time: world.match.endTime ?? world.time,
+      reason: world.match.reason,
+      hp: world.player.hp,
+      level: world.level,
+      stats,
+    });
+  };
   let last = performance.now();
   const frame = (now: number) => {
     if (container.clientWidth !== sizeW || container.clientHeight !== sizeH) resize();
@@ -382,16 +406,7 @@ export function startGame(
     chase.camera.position.add(fx.shake());
     syncFireButton();
     hud.update(world);
-    if (world.match.over && !endReported) {
-      endReported = true;
-      opts.onEnd?.({
-        winner: world.match.winner!,
-        time: world.match.endTime ?? world.time,
-        reason: world.match.reason,
-        hp: world.player.hp,
-        level: world.level,
-      });
-    }
+    if (world.match.over && !endReported) reportEnd();
     const here = trackPos(car.s, car.x, origin);
     lighting.follow(here.x, here.z, here.heading);
     if (governor && !frozen) {

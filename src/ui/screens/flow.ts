@@ -1,5 +1,6 @@
 // Screen flow (spec §7) as a pure state machine: title -> choice -> countdown -> game <-> pause -> end -> ranking.
 import type { Role } from '../../config/balance';
+import type { MatchStats } from '../../meta/rewards';
 
 export const COUNTDOWN = 3; // s
 
@@ -12,6 +13,8 @@ export interface MatchResult {
   hp?: number;
   /** difficulty level reached */
   level?: number;
+  /** damage dealt and boxes of the player's color (coins, V2 part 1) */
+  stats?: MatchStats;
 }
 
 export type FlowState =
