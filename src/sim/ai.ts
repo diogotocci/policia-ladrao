@@ -5,7 +5,7 @@ import type { Rng } from './rng';
 import { NO_INTENTS, type Intents } from './intents';
 import { curvesBetween } from './curves';
 import { bumpXRange, bumpsBetween } from './track';
-import type { WorldState } from './types';
+import type { Hazard, WorldState } from './types';
 import { policeOf, thiefOf } from './world';
 
 export interface AiMemory {
@@ -93,7 +93,7 @@ function laneBlocked(w: WorldState, role: Role, s: number, laneX: number, mem?: 
   // hazards aimed at this car that it decided to avoid (thief's oil and spikes; police roadblock and its spikes)
   if (
     w.hazards.some(
-      (h) => h.target === role && mem?.hazardDodge[h.id] && laneX + W > h.xFrom && laneX - W < h.xTo && h.s + h.length > s && h.s - s < 60,
+      (h) => aimedAt(h, role) && mem?.hazardDodge[h.id] && laneX + W > h.xFrom && laneX - W < h.xTo && h.s + h.length > s && h.s - s < 60,
     )
   )
     return true;
@@ -104,6 +104,9 @@ function laneBlocked(w: WorldState, role: Role, s: number, laneX: number, mem?: 
   if (w.boxes.some((b) => b.color === wrong && inLane(b.x) && b.s > s && b.s - s < 40)) return true;
   return false;
 }
+
+/** Hazards that can hit this car: its own target, plus the roadblock patrol car for the police too. */
+const aimedAt = (h: Hazard, role: Role) => h.target === role || (role === 'police' && h.kind === 'roadblock');
 
 /** Does the speed bump the AI decided to avoid (if any) cover this lane? */
 function bumpCovers(w: WorldState, s: number, laneX: number, mem: AiMemory): boolean {
@@ -152,7 +155,7 @@ function considerHazards(w: WorldState, role: Role, s: number, rng: Rng, mem: Ai
   let changed = false;
   const next: Record<number, boolean> = {};
   for (const h of w.hazards) {
-    if (h.target !== role) continue;
+    if (!aimedAt(h, role)) continue;
     if (h.id in mem.hazardDodge) next[h.id] = mem.hazardDodge[h.id]!;
     else if (h.s > s && h.s - s < 60) {
       next[h.id] = rng.next() < (h.group !== undefined ? lerp(0.6, 0.97, k) : lerp(0.4, 0.92, k));

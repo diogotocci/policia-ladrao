@@ -50,6 +50,8 @@ export function createLookModel(role: Role, look: CarLook = defaultLook(role)): 
   const root = instantiate(`car-${look.car}`, spec.build);
   root.name = `car-${role}`;
   root.userData.camLift = spec.camLift;
+  root.userData.camBack = spec.camBack ?? 0;
+  if (spec.gunnerAlways) root.userData.gunnerAlways = true;
   if (spec.gunner) root.userData.gunnerAt = spec.gunner;
   if (spec.scale) root.scale.setScalar(spec.scale);
   // paint: the materials are this car's own copies (instantiate), so the template and other cars keep theirs

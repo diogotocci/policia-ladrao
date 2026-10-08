@@ -50,27 +50,34 @@ describe('roadblock (police special)', () => {
     expect(placeRoadblock(armed({ boxes }))).toBeNull();
   });
 
-  it('crashing into it: −15 and speed loss like the curb, driving through; spikes: flat tire; the police is never hit', () => {
+  it('crashing into it: −15, a hard speed loss and a crash, driving through; spikes: flat tire; the police crashes into the car too', () => {
     let w = usePoliceSpecial(armed(), PRESS);
     const block = w.hazards.find((h) => h.kind === 'roadblock')!;
     w = withCar(w, 'thief', { ...thiefOf(w), s: block.s + 0.5, x: (block.xFrom + block.xTo) / 2, speed: 30 });
     const hit = stepHazards(w);
     const t = thiefOf(hit);
     expect(t.maxHp - t.hp).toBeCloseTo(I.roadblock.damage);
-    expect(t.speed).toBeCloseTo(30 * (1 - BALANCE.collision.speedLoss));
+    expect(t.speed).toBeCloseTo(30 * (1 - I.roadblock.speedLoss));
+    expect(I.roadblock.speedLoss).toBeGreaterThan(BALANCE.collision.speedLoss); // more than the curb (playtest 2026-10-08)
+    expect(hit.events.some((e) => e.type === 'crash' && e.a === 'thief')).toBe(true); // sparks and shake
     expect(t.s).toBeCloseTo(block.s + 0.5); // not held: drives on
     expect(hit.events.some((e) => e.type === 'roadblockHit')).toBe(true);
     const spikes = w.hazards.find((h) => h.kind === 'spikes')!;
     const flat = stepHazards(withCar(w, 'thief', { ...thiefOf(w), s: spikes.s + 0.5, x: (spikes.xFrom + spikes.xTo) / 2 }));
     expect(thiefOf(flat).effects.flatUntil).toBeGreaterThan(flat.time);
     const cop = stepHazards(withCar(w, 'police', { ...policeOf(w), s: block.s + 0.5, x: (block.xFrom + block.xTo) / 2 }));
-    expect(policeOf(cop).hp).toBe(policeOf(cop).maxHp);
+    expect(policeOf(cop).maxHp - policeOf(cop).hp).toBeCloseTo(I.roadblock.damage);
+    const copSpikes = stepHazards(withCar(w, 'police', { ...policeOf(w), s: spikes.s + 0.5, x: (spikes.xFrom + spikes.xTo) / 2 }));
+    expect(policeOf(copSpikes).effects.flatUntil).toBeLessThanOrEqual(copSpikes.time); // its own spikes: never
   });
 
-  it('removed with its spikes once the thief passed it', () => {
+  it('removed with its spikes only once both cars passed it (the police can crash into it too)', () => {
     let w = usePoliceSpecial(armed(), PRESS);
     const block = w.hazards.find((h) => h.kind === 'roadblock')!;
-    w = withCar(w, 'thief', { ...thiefOf(w), s: block.s + block.length + I.roadblock.gone + 1, x: 4.5 });
+    const past = block.s + block.length + I.roadblock.gone + 1;
+    w = withCar(w, 'thief', { ...thiefOf(w), s: past, x: 4.5 });
+    expect(stepHazards(w).hazards.length).toBeGreaterThan(0); // the police is still behind it
+    w = withCar(w, 'police', { ...policeOf(w), s: past, x: 4.5 });
     expect(stepHazards(w).hazards).toEqual([]);
   });
 
@@ -103,6 +110,29 @@ describe('roadblock (police special)', () => {
       return n;
     };
     expect(hits(10)).toBeLessThan(hits(1));
+  });
+});
+
+describe('the police and its own roadblock (playtest 2026-10-08)', () => {
+  it('the police AI goes around the patrol car most of the time (it crashes into it only if it does not dodge)', () => {
+    let crashes = 0;
+    for (let k = 0; k < 20; k++) {
+      let x = {
+        ...createWorld({ seed: 700 + k, playerRole: 'thief', traffic: false, curves: false }),
+        level: 10,
+        time: 9 * 45 + 0.01,
+        nextBoxAt: 1e9,
+      };
+      x = withCar(x, 'thief', { ...thiefOf(x), s: 150, x: LANES[1] });
+      const placed = placeRoadblock(x);
+      if (!placed) continue;
+      const block = placed.hazards.find((h) => h.kind === 'roadblock')!;
+      x = withCar(placed, 'thief', { ...thiefOf(placed), s: 3000 }); // far ahead: the police just drives
+      x = withCar(x, 'police', { ...policeOf(x), s: block.s - 70, x: (block.xFrom + block.xTo) / 2, speed: 30 });
+      for (let i = 0; i < 5 * 60; i++) x = stepWorld(x, NO_INTENTS, DT);
+      if (policeOf(x).hp < policeOf(x).maxHp) crashes++;
+    }
+    expect(crashes).toBeLessThan(6);
   });
 });
 

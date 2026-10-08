@@ -86,22 +86,25 @@ export function usePoliceSpecial(w: WorldState, intents: Intents): WorldState {
 
 /** Crashing into the roadblock patrol car: −15 and loses speed like on the curb, then drives through (1 s immunity). */
 export function hitRoadblock(w: WorldState, car: CarState, _h: Hazard): { car: CarState; w: WorldState } {
-  // like the curb (playtest 2026-10-07: holding the car before it got it stuck): damage and speed loss once per
-  // immunity window, and the car drives on through
-  if ((w.immunity['roadblock'] ?? 0) > 0) return { car, w };
+  // like the curb (playtest 2026-10-07: holding the car before it got it stuck): a real crash (damage, a hard speed
+  // loss, sparks) once per immunity window per car, and the car drives on through (playtest 2026-10-08: it felt like
+  // passing through nothing). The police crashes into it too if it does not dodge.
+  const key = `roadblock:${car.role}`;
+  if ((w.immunity[key] ?? 0) > 0) return { car, w };
   const events: GameEvent[] = [
     ...w.events,
     { type: 'roadblockHit', s: car.s, x: car.x },
+    { type: 'crash', a: car.role, b: 'works', s: car.s, x: car.x },
     { type: 'hit', target: car.role, amount: scaledDamage(R.damage, w, car.role), s: car.s, x: car.x },
   ];
-  const slowed: CarState = { ...car, speed: car.speed * (1 - BALANCE.collision.speedLoss) };
-  return { car: hurt(slowed, R.damage, w), w: { ...w, events, immunity: { ...w.immunity, roadblock: BALANCE.collision.immunity } } };
+  const slowed: CarState = { ...car, speed: car.speed * (1 - R.speedLoss) };
+  return { car: hurt(slowed, R.damage, w), w: { ...w, events, immunity: { ...w.immunity, [key]: BALANCE.collision.immunity } } };
 }
 
-/** Roadblocks the thief already passed are removed (with their spikes). */
+/** Roadblocks both cars already passed are removed (with their spikes): the police can crash into it too. */
 export function clearPassedRoadblocks(w: WorldState): WorldState {
-  const t = thiefOf(w).s;
-  const passed = new Set(w.hazards.filter((h) => h.kind === 'roadblock' && t > h.s + h.length + R.gone).map((h) => h.id));
+  const last = Math.min(thiefOf(w).s, policeOf(w).s);
+  const passed = new Set(w.hazards.filter((h) => h.kind === 'roadblock' && last > h.s + h.length + R.gone).map((h) => h.id));
   if (passed.size === 0) return w;
   return { ...w, hazards: w.hazards.filter((h) => !(h.group !== undefined && passed.has(h.group))) };
 }

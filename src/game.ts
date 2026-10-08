@@ -149,7 +149,7 @@ export function startGame(
   const rearview = createRearview();
   rearview.setQuality(view.quality);
   const props = createWorldProps(scene, lighting.reflections);
-  const chase = createChaseCamera((model.userData.camLift as number | undefined) ?? 0);
+  const chase = createChaseCamera((model.userData.camLift as number | undefined) ?? 0, (model.userData.camBack as number | undefined) ?? 0);
   const fog = scene.fog instanceof THREE.Fog ? scene.fog : null;
   const FOG_NEAR = fog?.near ?? 0;
   const FOG_FAR = fog?.far ?? 0;

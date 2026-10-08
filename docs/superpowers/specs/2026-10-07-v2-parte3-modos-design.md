@@ -68,13 +68,13 @@ Todos os números ficam em `BALANCE.items`. "Caos N+" vale só no Sobrevivência
 
 | Item | Uso | Efeito | Mais forte |
 |---|---|---|---|
-| **Bloqueio + spike** | especial, com botão | uma viatura atravessada numa faixa, 120 m à frente do ladrão, e spike nas faixas vizinhas; na Perseguição ficam 2 faixas livres. Bater na viatura: −15 e perde velocidade como na calçada, passando direto. Passar no spike: pneu furado, como o miguelito. Placa de aviso 80 m antes. Some depois que o ladrão passa. | caos 2+: só 1 faixa livre |
+| **Bloqueio + spike** | especial, com botão | uma viatura atravessada numa faixa, 120 m à frente do ladrão, e spike nas faixas vizinhas; na Perseguição ficam 2 faixas livres. Bater na viatura é uma batida de verdade: −15, perde 55% da velocidade e faz faíscas, mas atravessa (playtest 2026-10-08). A polícia também bate nela se não desviar. Passar no spike dá pneu furado, como o miguelito, e só pega o ladrão. Placa de aviso 80 m antes. Some depois que os dois carros passam. | caos 2+: só 1 faixa livre |
 | **Metralhadora** | na hora | 4 s atirando a cada 0,2 s, com dano ×0,4 por tiro | caos 3+: 6 s |
 | **Segunda viatura** | na hora | uma viatura do computador entra por trás, na faixa vizinha, por 8 s. Quando fica lado a lado, dá uma batida lateral no ladrão (−6, empurra 1,5 m), no máximo 1 a cada 2 s. Depois vai embora. | caos 4+: 12 s |
 
 #### 4.2.1 Ajustes da implementação (0.15.0)
 
-- **Bloqueio:** a viatura fica na faixa do ladrão; com 2 faixas livres, o spike vai na faixa vizinha do lado do centro; com 1 livre, nas duas vizinhas (ou nas duas do lado com espaço). Lugar livre: fora de quebra-mola (10 m), de curva fechada, de obra, de caixa e de outro perigo (6 m). Sem lugar em 60 m, a carga fica e a polícia vê "Sem lugar para o bloqueio agora". Bater na viatura funciona como a calçada (playtest 2026-10-07: segurar o carro antes dela fazia ele travar): −15, perde velocidade e passa direto. Some 15 m depois que o ladrão passa. Só acerta o ladrão.
+- **Bloqueio:** a viatura fica na faixa do ladrão; com 2 faixas livres, o spike vai na faixa vizinha do lado do centro; com 1 livre, nas duas vizinhas (ou nas duas do lado com espaço). Lugar livre: fora de quebra-mola (10 m), de curva fechada, de obra, de caixa e de outro perigo (6 m). Sem lugar em 60 m, a carga fica e a polícia vê "Sem lugar para o bloqueio agora". Bater na viatura é uma batida (playtest 2026-10-07: segurar o carro antes dela fazia ele travar; playtest 2026-10-08: parecia passar por nada). Tira −15, faz perder 55% da velocidade, com faíscas e tremor, e o carro atravessa. A viatura acerta os dois carros, e o computador da polícia desvia dela como o ladrão desvia. O spike só acerta o ladrão. Some 15 m depois que os dois passam.
 - **Segunda viatura:** depois do tempo, ela desacelera e some quando a polícia passa por ela.
 - **Holofote:** removido (playtest 2026-10-07). **Lama:** quase opaca, para atrapalhar de verdade.
 - **Avisos:** o ladrão vê "Bloqueio à frente!"; os dois veem "Metralhadora!", e "Reforço chegando!".

@@ -99,15 +99,24 @@ const over = (car: CarState, h: Hazard) =>
 
 /**
  * Hazards expire; each one hits only its target. Thief's oil and spikes on the police (skid, flat tire, no damage);
- * police roadblock on the thief (crash into the patrol car, flat tire on the spikes). Once per effect.
+ * police roadblock (both cars crash into the patrol car; the thief gets a flat tire on the spikes). Once per effect.
  */
 export function stepHazards(w: WorldState): WorldState {
   const live = w.hazards.filter((h) => w.time < h.expiresAt);
   if (live.length === 0) return live.length === w.hazards.length ? w : { ...w, hazards: live };
   const rng = createRngFromState(w.itemRng);
   let out: WorldState = { ...w, hazards: live, events: [...w.events] };
-  for (const h of live) {
-    let car = h.target === 'police' ? policeOf(out) : thiefOf(out);
+  // the roadblock patrol car is hit by both cars (its spikes only by the thief); the rest only by its target
+  const pairs: [Hazard, Role][] = live.flatMap((h): [Hazard, Role][] =>
+    h.kind === 'roadblock'
+      ? [
+          [h, 'thief'],
+          [h, 'police'],
+        ]
+      : [[h, h.target]],
+  );
+  for (const [h, role] of pairs) {
+    let car = role === 'police' ? policeOf(out) : thiefOf(out);
     const fx = car.effects; // current: two overlapping pools never hit twice in the same step
     if (!over(car, h)) continue;
     const side: -1 | 1 = rng.next() < 0.5 ? -1 : 1;

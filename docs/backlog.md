@@ -2,6 +2,14 @@
 
 Ideias anotadas durante o desenvolvimento. **Nada aqui está aprovado nem implementado**: cada item passa por brainstorming e entra na spec antes de virar código.
 
+## Parte 5 (gamificação): desbloquear a loja (anotado em 2026-10-08)
+
+Pedido do Diogo no playtest da loja (0.16.x), para retomar na Parte 5:
+
+- **Preços mais altos.** Os itens devem ficar mais caros, para o jogador precisar jogar para comprar.
+- **Desbloqueio.** Nem tudo fica disponível ao mesmo tempo: carros, cores, sons etc. são desbloqueados.
+- **Desafios.** Completar desafios libera itens (carros, cores, sons...).
+
 ## Progressão e retenção (anotado em 2026-10-04)
 
 **Objetivo (Diogo):** manter os jogadores interessados; gamificar.

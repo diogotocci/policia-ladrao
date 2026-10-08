@@ -157,11 +157,12 @@ export const BALANCE = {
       search: 60, // m further looking for a free spot (curve, bump, works, box); none: the charge stays
       length: 4.4, // m (a patrol car across a lane)
       damage: 15,
+      speedLoss: 0.55, // crashing into the patrol car: harder than the curb (0.3)
       freeLanes: 2, // lanes left free (the rest: patrol car + spike strips)
       freeLanesFromChaos2: 1,
       spikesLength: 2,
       sign: 80, // m: warning sign before
-      gone: 15, // m after the thief passes it, it is removed
+      gone: 15, // m after both cars pass it, it is removed
     },
     machineGun: { time: 4, timeStrong: 6, interval: 0.2, damageFactor: 0.4 },
     wingman: { time: 8, timeStrongFromChaos: 4, timeStrong: 12, damage: 6, push: 1.5, every: 2, behind: 25, catchUp: 10 },
