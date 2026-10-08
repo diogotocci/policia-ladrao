@@ -24,9 +24,11 @@ const STYLE: Record<Role, { shirt: number; hat: number; face: number }> = {
   thief: { shirt: 0x2b2b30, hat: 0x111113, face: 0xb01818 }, // black beanie and red scarf over the face
 };
 
-const geoCache = new Map<Role, THREE.BufferGeometry>();
-function gunnerGeometry(role: Role): THREE.BufferGeometry {
-  let g = geoCache.get(role);
+const geoCache = new Map<string, THREE.BufferGeometry>();
+/** `armed` false: the same person without the gun (moto passenger before picking a weapon) */
+function gunnerGeometry(role: Role, armed = true): THREE.BufferGeometry {
+  const key = `${role}-${armed}`;
+  let g = geoCache.get(key);
   if (g) return g;
   const st = STYLE[role];
   const SKIN = 0xc89a72;
@@ -37,8 +39,8 @@ function gunnerGeometry(role: Role): THREE.BufferGeometry {
     box(0.25, 0.1, 0.25, 0, 0.42 + 0.02, -0.002, st.face === SKIN ? SKIN : st.face), // scarf (thief) / neck
     box(0.07, 0.07, 0.36, 0.14, 0.32, -0.2, st.shirt), // arm extended forward (−z)
     box(0.08, 0.08, 0.08, 0.14, 0.32, -0.42, SKIN), // hand
-    box(0.06, 0.1, 0.34, 0.14, 0.35, -0.6, GUN), // gun
   ];
+  if (armed) parts.push(box(0.06, 0.1, 0.34, 0.14, 0.35, -0.6, GUN)); // gun
   if (role === 'police') {
     parts.push(box(0.27, 0.08, 0.27, 0, 0.71, 0, st.hat)); // cap
     parts.push(box(0.2, 0.025, 0.12, 0, 0.67, -0.17, st.hat)); // brim
@@ -47,7 +49,7 @@ function gunnerGeometry(role: Role): THREE.BufferGeometry {
   }
   g = mergeGeometries(parts)!;
   g.computeVertexNormals();
-  geoCache.set(role, g);
+  geoCache.set(key, g);
   return g;
 }
 
@@ -73,6 +75,8 @@ export function attachGunner(model: THREE.Object3D, role: Role): THREE.Group {
   else g.position.set(0.86, 0.84, role === 'police' ? -0.05 : 0.0);
   g.scale.setScalar(1.15);
   g.userData.flashUntil = -1;
+  g.userData.body = body;
+  g.userData.always = model.userData.gunnerAlways === true;
   g.userData.flash = flash;
   (model.getObjectByName('body') ?? model).add(g);
   return g;
@@ -86,9 +90,18 @@ export function flashGunner(g: THREE.Object3D, now: number): void {
 export function updateGunner(g: THREE.Object3D, car: CarState, target: { s: number; x: number }, now: number): void {
   g.visible = car.role === 'police' || car.hasGun;
   // moto (shop): the passenger figure stands in while the armed gunner is not on the back seat
-  let passenger = g.userData.passenger as THREE.Object3D | null | undefined;
-  if (passenger === undefined) g.userData.passenger = passenger = g.parent?.getObjectByName('passenger') ?? null; // looked up once
-  if (passenger) passenger.visible = !g.visible;
+  // moto (shop): the shooter is the passenger from the start; without a weapon he just rides, unarmed
+  if (g.userData.always) {
+    const armed = g.visible;
+    g.visible = true;
+    const body = g.userData.body as THREE.Mesh;
+    body.geometry = gunnerGeometry(car.role, armed);
+    if (!armed) {
+      g.rotation.y = 0;
+      (g.userData.flash as THREE.Object3D).visible = false;
+      return;
+    }
+  }
   if (!g.visible) return;
   const facing = car.role === 'police' ? 'front' : 'rear';
   let yaw = 0;

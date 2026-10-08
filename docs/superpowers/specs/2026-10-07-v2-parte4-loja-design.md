@@ -42,14 +42,14 @@ Uma partida rende ~75 moedas na Perseguição e ~120 no Sobrevivência.
 | Som | 2 sirenes: Americana, Choque | 3 buzinas: Corneta, Grave, Dupla | 500 cada |
 | Placa | letras e números à escolha, uma só para os dois lados | | 400, uma vez |
 
-**Pinturas:** a cor original de cada carro é grátis.
+**Pinturas:** a cor original de cada carro é grátis. Os carros da polícia sempre usam as quatro cores de viatura: branco, prata, azul-marinho e preto (playtest 2026-10-08).
 
 | Carro | Original | Pinturas |
 |---|---|---|
-| Viatura | branca | prata, preta, azul-marinho |
-| Esportivo | preto | azul, cinza, branco |
-| Blazer | branca | prata, grafite, verde-oliva |
-| Caveirão | preto fosco | cinza urbano, areia, azul-noite |
+| Viatura | branca | prata, azul-marinho, preta |
+| Esportivo | preto | branco, prata, azul-marinho |
+| Blazer | branca | prata, azul-marinho, preta |
+| Caveirão | preto | branco, prata, azul-marinho |
 | Sedã | vermelho | amarelo, verde, roxo |
 | Picape | laranja | vinho, azul, verde-oliva |
 | Moto | vermelha | verde-limão, azul, amarela |
@@ -107,17 +107,19 @@ Uma partida rende ~75 moedas na Perseguição e ~120 no Sobrevivência.
 - **Pintura:** o material principal de cada modelo é marcado (`userData.paint`) e recebe a cor escolhida na criação do carro, antes do dano guardar a cor original para a sujeira.
 - **Neon:** um plano embaixo do carro com degradê radial e mistura aditiva (`neon`), sem luz extra. Os modelos novos já vêm com ele.
 - **Placa:** um plano na traseira, no padrão Mercosul: faixa azul "BRASIL" e texto preto. A posição é definida por carro.
-- **Câmera da perseguição** sobe por carro, para os carros altos não taparem a pista:
+- **Câmera da perseguição** sobe e recua por carro, para os carros grandes não taparem a pista:
 
-  | Carro | Câmera sobe |
-  |---|---|
-  | Caveirão | +0,7 m |
-  | Van | +0,5 m |
-  | Blazer | +0,25 m |
-  | Demais | 0 |
+  | Carro | Câmera sobe | Câmera recua |
+  |---|---|---|
+  | Caveirão | +0,35 m | +1,5 m |
+  | Blazer | +0,25 m | 0 |
+  | Van | +0,2 m | +0,6 m |
+  | Demais | 0 | 0 |
 
-- **Atirador:** a posição dele é definida por carro. Na moto, ele é o carona, sentado no banco de trás.
-- **Moto:** fica 15% maior que o tamanho real, para ser vista na pista. A área de batida continua a de um carro.
+- **Caveirão** (playtest 2026-10-08): desenhado 12% menor. O atirador fica na janela do carona, não em cima do teto.
+- **Atirador:** a posição dele é definida por carro.
+- **Moto:** fica 15% maior que o tamanho real, para ser vista na pista. A área de batida continua a de um carro. O carona é o atirador desde o começo da partida: sem arma, só vai na garupa; com arma, atira. Não existe uma segunda figura para trocar de lugar.
+- **Van** (playtest 2026-10-08, fotos de referência): van de teto alto, comprida e lisa, não blindada. Tem nariz curto inclinado, janelas só na cabine, faixa cinza embaixo e portas traseiras sem janela, com lanternas altas nos cantos. Fica menor que o Caveirão.
 - **Roda:** gira conforme o raio de cada carro (`userData.r`).
 - **Placas de titânio** (item do ladrão): todos os carros do ladrão têm as três placas, com os mesmos nomes do Sedã.
 

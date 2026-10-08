@@ -88,7 +88,7 @@ describe('shop screen (spec §6)', () => {
     expect(s.shown.at(-1)!.paint).toBe(0x1b2a4a);
     action().click();
     button('Comprar e usar').click();
-    expect(s.profile.equipped.paint.viatura).toBe(3);
+    expect(s.profile.equipped.paint.viatura).toBe(2);
   });
 
   it('sound tab: Sirene for the police, Buzina for the thief, each with Ouvir', () => {

@@ -17,34 +17,35 @@ export interface CarInfo {
   colorNames: [string, string, string, string];
 }
 
+// police: always the four colours of a real patrol car (white, silver, navy, black; playtest 2026-10-08)
 export const CARS: Record<CarId, CarInfo> = {
   viatura: {
     role: 'police',
     name: 'Viatura',
     price: 0,
-    colors: [0xf4f5f7, 0xb8bec6, 0x16181c, 0x1b2a4a],
-    colorNames: ['Branca', 'Prata', 'Preta', 'Azul-marinho'],
+    colors: [0xf4f5f7, 0xb8bec6, 0x1b2a4a, 0x16181c],
+    colorNames: ['Branca', 'Prata', 'Azul-marinho', 'Preta'],
   },
   esportivo: {
     role: 'police',
     name: 'Esportivo',
     price: 800,
-    colors: [0x111316, 0x1c3fa8, 0x6b7380, 0xf3f4f6],
-    colorNames: ['Preto', 'Azul', 'Cinza', 'Branco'],
+    colors: [0x111316, 0xf3f4f6, 0xb8bec6, 0x1b2a4a],
+    colorNames: ['Preto', 'Branco', 'Prata', 'Azul-marinho'],
   },
   blazer: {
     role: 'police',
     name: 'Blazer',
     price: 1500,
-    colors: [0xf1f2f4, 0xb8bec6, 0x3a3f47, 0x5d6b3c],
-    colorNames: ['Branca', 'Prata', 'Grafite', 'Verde-oliva'],
+    colors: [0xf1f2f4, 0xb8bec6, 0x1b2a4a, 0x16181c],
+    colorNames: ['Branca', 'Prata', 'Azul-marinho', 'Preta'],
   },
   caveirao: {
     role: 'police',
     name: 'Caveirão',
     price: 3000,
-    colors: [0x1e2126, 0x4b5058, 0x9c8a63, 0x1c2740],
-    colorNames: ['Preto fosco', 'Cinza urbano', 'Areia', 'Azul-noite'],
+    colors: [0x1e2126, 0xf3f4f6, 0xb8bec6, 0x1b2a4a],
+    colorNames: ['Preto', 'Branco', 'Prata', 'Azul-marinho'],
   },
   seda: {
     role: 'thief',

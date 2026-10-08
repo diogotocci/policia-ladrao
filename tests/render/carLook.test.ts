@@ -65,20 +65,33 @@ describe('look: paint, neon, plate', () => {
   });
 
   it('tall cars raise the chase camera; the moto is drawn bigger', () => {
-    expect(createLookModel('police', look('caveirao')).userData.camLift).toBeGreaterThan(0.5);
+    expect(createLookModel('police', look('caveirao')).userData.camBack).toBeGreaterThan(1);
+    expect(createLookModel('police', look('caveirao')).scale.x).toBeLessThan(1); // drawn smaller
     expect(createLookModel('police', look('viatura')).userData.camLift).toBe(0);
     expect(createLookModel('thief', look('moto')).scale.x).toBeCloseTo(1.15);
   });
 
-  it('gunner goes where the car says; on the moto he replaces the passenger', () => {
+  it('moto: the shooter is the passenger from the start, unarmed until the thief gets a weapon', () => {
     const moto = createLookModel('thief', look('moto'));
+    expect(moto.getObjectByName('passenger')).toBeUndefined(); // no second figure to swap with
     const g = attachGunner(moto, 'thief');
-    expect(g.position.toArray()).toEqual([0, 1.12, 0.72]);
-    const passenger = moto.getObjectByName('passenger')!;
+    expect(g.position.toArray()).toEqual([0, 1.0, 0.68]);
+    const body = g.getObjectByName('gunner-body') as THREE.Mesh;
     updateGunner(g, { ...createCar('thief', 1, 0), hasGun: false }, { s: 0, x: 0 }, 0);
-    expect(passenger.visible).toBe(true);
+    expect(g.visible).toBe(true);
+    const unarmed = body.geometry.getAttribute('position').count;
     updateGunner(g, { ...createCar('thief', 1, 0), hasGun: true }, { s: 0, x: 0 }, 0);
-    expect(passenger.visible).toBe(false);
+    expect(g.visible).toBe(true);
+    expect(body.geometry.getAttribute('position').count).toBeGreaterThan(unarmed); // now with the gun
+  });
+
+  it('other cars: the thief gunner still shows only with a weapon; the Caveirão gunner is at the window, not on the roof', () => {
+    const g = attachGunner(createLookModel('thief', look('van')), 'thief');
+    updateGunner(g, { ...createCar('thief', 1, 0), hasGun: false }, { s: 0, x: 0 }, 0);
+    expect(g.visible).toBe(false);
+    const cav = attachGunner(createLookModel('police', look('caveirao')), 'police');
+    expect(cav.position.y).toBeLessThan(1.8);
+    expect(cav.position.x).toBeGreaterThan(0.9);
   });
 
   it('wheels turn by their own radius', () => {

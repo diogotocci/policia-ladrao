@@ -36,6 +36,14 @@ describe('catalog (spec §2)', () => {
     expect(CATALOG.map((i) => i.id)).toEqual(expected);
   });
 
+  it('police cars: always white, silver, navy and black (playtest 2026-10-08)', () => {
+    const palette = new Set([0xf4f5f7, 0xf1f2f4, 0xf3f4f6, 0xb8bec6, 0x1b2a4a, 0x16181c, 0x111316, 0x1e2126]);
+    for (const c of ['viatura', 'esportivo', 'blazer', 'caveirao'] as const) {
+      expect(CARS[c].colors.every((x) => palette.has(x))).toBe(true);
+      expect(CARS[c].colorNames.map((n) => n.replace(/[ao]$/, '').toLowerCase()).sort()).toEqual(['azul-marinh', 'branc', 'prat', 'pret']);
+    }
+  });
+
   it('every car has 4 colours (original + 3 paints) with names', () => {
     for (const c of Object.values(CARS)) {
       expect(c.colors).toHaveLength(4);
