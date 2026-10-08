@@ -9,6 +9,10 @@ export interface MatchStats {
   mysteryBoxes?: number;
   roadblocks?: number;
   bombHits?: number;
+  /** daily challenges (playtest 2026-10-08): opponent's boxes picked, shots fired, every box picked */
+  wrongBoxes?: number;
+  shots?: number;
+  boxes?: number;
 }
 
 export interface Reward {
@@ -21,22 +25,34 @@ export interface Reward {
   total: number;
 }
 
-export const emptyStats = (): MatchStats => ({ damageDealt: 0, rightBoxes: 0, mysteryBoxes: 0, roadblocks: 0, bombHits: 0 });
+export const emptyStats = (): Required<MatchStats> => ({
+  damageDealt: 0,
+  rightBoxes: 0,
+  mysteryBoxes: 0,
+  roadblocks: 0,
+  bombHits: 0,
+  wrongBoxes: 0,
+  shots: 0,
+  boxes: 0,
+});
 
 /** Adds one simulation step's events to the running stats of the player's car. */
-export function addEvents(stats: MatchStats, events: readonly GameEvent[], player: Role): MatchStats {
-  let { damageDealt, rightBoxes } = stats;
-  let mysteryBoxes = stats.mysteryBoxes ?? 0;
-  let roadblocks = stats.roadblocks ?? 0;
-  let bombHits = stats.bombHits ?? 0;
+export function addEvents(stats: MatchStats, events: readonly GameEvent[], player: Role): Required<MatchStats> {
+  const out: Required<MatchStats> = { ...emptyStats(), ...stats };
   for (const e of events) {
-    if (e.type === 'hit' && e.target !== player) damageDealt += e.amount;
-    else if (e.type === 'pickup' && e.role === player && e.item !== 'wrong' && e.item !== 'none') rightBoxes++;
-    else if (e.type === 'mystery' && e.role === player) mysteryBoxes++;
-    else if (e.type === 'special' && e.role === 'police' && e.kind === 'roadblock' && player === 'police') roadblocks++;
-    else if (e.type === 'explosion' && player === 'thief') bombHits++; // a bomb only explodes when it hits the police
+    if (e.type === 'hit' && e.target !== player) out.damageDealt += e.amount;
+    else if (e.type === 'pickup' && e.role === player) {
+      out.boxes++;
+      if (e.item === 'wrong') out.wrongBoxes++;
+      else if (e.item !== 'none') out.rightBoxes++;
+    } else if (e.type === 'mystery' && e.role === player) {
+      out.mysteryBoxes++;
+      out.boxes++;
+    } else if (e.type === 'shot' && e.from === player && !e.air) out.shots++;
+    else if (e.type === 'special' && e.role === 'police' && e.kind === 'roadblock' && player === 'police') out.roadblocks++;
+    else if (e.type === 'explosion' && player === 'thief') out.bombHits++; // a bomb only explodes when it hits the police
   }
-  return { damageDealt, rightBoxes, mysteryBoxes, roadblocks, bombHits };
+  return out;
 }
 
 export function rewardFor(

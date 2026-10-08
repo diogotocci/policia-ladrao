@@ -95,6 +95,10 @@ export interface MatchSummary {
   damageDealt: number;
   roadblocks: number;
   bombHits: number;
+  /** playtest 2026-10-08 (more daily challenges): opponent's boxes, shots fired, every box picked */
+  wrongBoxes?: number;
+  shots?: number;
+  boxes?: number;
   /** coins the match paid (= XP for that side) */
   coins: number;
 }
@@ -139,6 +143,23 @@ export const DAILIES: readonly Daily[] = [
     side: 'thief',
     count: (m) => (m.role === 'thief' && m.mode === 'survival' && m.time >= 120 ? 1 : 0),
   },
+  // playtest 2026-10-08: a bigger pool, so the days do not repeat (some ask for something bad on purpose)
+  { id: 'shots30', tier: 0, title: 'Atire 30 vezes', target: 30, count: (m) => m.shots ?? 0 },
+  { id: 'halfLife', tier: 0, title: 'Termine uma partida com mais de metade da vida', target: 1, count: (m) => (m.hpFrac > 0.5 ? 1 : 0) },
+  { id: 'wrong3', tier: 0, title: 'Pegue 3 caixas do adversário', target: 3, count: (m) => m.wrongBoxes ?? 0 },
+  { id: 'mystery4', tier: 1, title: 'Abra 4 caixas ?', target: 4, count: (m) => m.mysteryBoxes },
+  { id: 'roadblock2', tier: 1, title: 'Use 2 bloqueios', target: 2, side: 'police', count: (m) => m.roadblocks },
+  { id: 'wrong6', tier: 1, title: 'Pegue 6 caixas do adversário', target: 6, count: (m) => m.wrongBoxes ?? 0 },
+  {
+    id: 'kill1',
+    tier: 2,
+    title: 'Destrua a viatura 1 vez',
+    target: 1,
+    side: 'thief',
+    count: (m) => (m.role === 'thief' && m.won && m.reason !== 'escape' ? 1 : 0),
+  },
+  { id: 'winNoBox', tier: 2, title: 'Vença sem pegar nenhuma caixa', target: 1, count: (m) => (m.won && (m.boxes ?? 0) === 0 ? 1 : 0) },
+  { id: 'winLowHp', tier: 2, title: 'Vença com menos de 30% de vida', target: 1, count: (m) => (m.won && m.hpFrac < 0.3 ? 1 : 0) },
 ];
 
 /** Small deterministic hash of a string (same challenges for everyone on the same day). */
@@ -148,22 +169,71 @@ function hash(s: string): number {
   return h >>> 0;
 }
 
-/** The 3 challenges of a day (easy, medium, hard); at most one asks for a side. */
-export function dailiesFor(date: string): Daily[] {
+/** The challenges of the first version (12): the days before the bigger pool keep them, so a challenge already done
+ * or waiting for "Resgatar" stays the same one. */
+const FIRST_POOL = DAILIES.slice(0, 12);
+/** First day of the bigger pool (playtest 2026-10-08). */
+export const POOL_FROM = '2026-10-09';
+
+function firstPoolDay(date: string): Daily[] {
   const pick = (tier: number, pool: Daily[]) => pool[hash(`${date}#${tier}`) % pool.length]!;
   const easy = pick(
     0,
-    DAILIES.filter((d) => d.tier === 0),
+    FIRST_POOL.filter((d) => d.tier === 0),
   );
   const mid = pick(
     1,
-    DAILIES.filter((d) => d.tier === 1),
+    FIRST_POOL.filter((d) => d.tier === 1),
   );
   const hard = pick(
     2,
-    DAILIES.filter((d) => d.tier === 2 && (!mid.side || !d.side)),
+    FIRST_POOL.filter((d) => d.tier === 2 && (!mid.side || !d.side)),
   );
   return [easy, mid, hard];
+}
+
+const dayAfter = (date: string): string => {
+  const d = new Date(`${date}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + 1);
+  return d.toISOString().slice(0, 10);
+};
+
+/** One day of the bigger pool: per tier, the challenges in a shuffled order of that day, the first one that is not
+ * yesterday's of that tier; the hard one cannot ask for a side when the medium one already does. */
+function poolDay(date: string, yesterday: Daily[] | null): Daily[] {
+  const out: Daily[] = [];
+  for (const tier of [0, 1, 2] as const) {
+    const order = DAILIES.filter((d) => d.tier === tier)
+      .map((d) => ({ d, h: hash(`${date}#${tier}#${d.id}`) }))
+      .sort((a, b) => a.h - b.h || (a.d.id < b.d.id ? -1 : 1))
+      .map((x) => x.d);
+    const ok = (d: Daily) => d !== yesterday?.[tier] && !(tier === 2 && out[1]!.side && d.side);
+    out.push(order.find(ok)!);
+  }
+  return out;
+}
+
+const poolCache = new Map<string, Daily[]>();
+/** Days of the bigger pool are chained (no repeats from the day before), so they are worked out from POOL_FROM. */
+function poolDays(date: string): Daily[] {
+  const hit = poolCache.get(date);
+  if (hit) return hit;
+  let day = POOL_FROM;
+  let prev: Daily[] | null = null;
+  // start from the latest day already known before `date`
+  for (const [k, v] of poolCache) if (k < date && k >= day) [day, prev] = [dayAfter(k), v];
+  for (; day <= date; day = dayAfter(day)) {
+    prev = poolDay(day, prev);
+    poolCache.set(day, prev);
+  }
+  return prev!;
+}
+
+/** The 3 challenges of a day (easy, medium, hard); at most one asks for a side; none repeats the day before. */
+export function dailiesFor(date: string): Daily[] {
+  // a clock set to a far year would chain thousands of years of days: those fall back to the simple pick
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date < POOL_FROM || date >= '2100') return firstPoolDay(date);
+  return poolDays(date);
 }
 
 // ---------- streak ----------

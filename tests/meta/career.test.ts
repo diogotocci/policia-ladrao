@@ -1,7 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   ACHIEVEMENTS,
+  DAILIES,
   DAILY_COINS,
+  POOL_FROM,
   RANK_NAMES,
   careerAfterMatch,
   careerFromStats,
@@ -244,5 +246,68 @@ describe('escapes in Sobrevivência (playtest 2026-10-09)', () => {
     c = careerAfterMatch(c, match({ role: 'thief', mode: 'pursuit', won: true, reason: 'policeDown' }), DAY).career;
     expect(c.counters.escapes).toBe(1);
     expect(c.counters.kills).toBe(2);
+  });
+});
+
+describe('bigger daily pool (playtest 2026-10-08)', () => {
+  const days = (from: string, n: number) => {
+    const out = [from];
+    while (out.length < n) {
+      const d = new Date(`${out[out.length - 1]}T12:00:00Z`);
+      d.setUTCDate(d.getUTCDate() + 1);
+      out.push(d.toISOString().slice(0, 10));
+    }
+    return out;
+  };
+
+  it('21 challenges, 7 per tier, unique ids; the first 12 keep their place', () => {
+    expect(DAILIES).toHaveLength(21);
+    expect([0, 1, 2].map((t) => DAILIES.filter((d) => d.tier === t).length)).toEqual([7, 7, 7]);
+    expect(new Set(DAILIES.map((d) => d.id)).size).toBe(21);
+    expect(DAILIES.slice(0, 4).map((d) => d.id)).toEqual(['play2', 'boxes8', 'survival1', 'mystery2']);
+  });
+
+  it('a year of days: never the same challenge of a tier two days in a row, at most one side, all of them show up', () => {
+    const list = days(POOL_FROM, 366).map(dailiesFor);
+    const seen = new Set<string>();
+    list.forEach((day, i) => {
+      expect(day.map((x) => x.tier)).toEqual([0, 1, 2]);
+      expect(day.filter((x) => x.side).length).toBeLessThanOrEqual(1);
+      day.forEach((x) => seen.add(x.id));
+      if (i > 0) day.forEach((x, t) => expect(x.id, `${t} on day ${i}`).not.toBe(list[i - 1]![t]!.id));
+    });
+    expect(seen.size).toBe(21);
+  });
+
+  it('the same for everyone: asking for a far day first gives the same as walking day by day', async () => {
+    const far = days(POOL_FROM, 120).at(-1)!;
+    vi.resetModules();
+    const fresh = await import('../../src/meta/career');
+    const direct = fresh.dailiesFor(far).map((x) => x.id);
+    expect(direct).toEqual(dailiesFor(far).map((x) => x.id));
+  });
+
+  it('days before the new pool keep the challenges they had (nothing done or waiting changes)', () => {
+    const old = DAILIES.slice(0, 12).map((d) => d.id);
+    for (const d of days('2026-09-01', 38)) expect(dailiesFor(d).every((x) => old.includes(x.id))).toBe(true);
+  });
+
+  it('the new challenges count what they say', () => {
+    const count = (id: string, o: Partial<MatchSummary>) => DAILIES.find((d) => d.id === id)!.count(match(o));
+    expect(count('shots30', { shots: 12 })).toBe(12);
+    expect(count('halfLife', { hpFrac: 0.6 })).toBe(1);
+    expect(count('halfLife', { hpFrac: 0.5 })).toBe(0);
+    expect(count('wrong3', { wrongBoxes: 2 })).toBe(2);
+    expect(count('wrong6', {})).toBe(0);
+    expect(count('mystery4', { mysteryBoxes: 3 })).toBe(3);
+    expect(count('roadblock2', { roadblocks: 2 })).toBe(2);
+    expect(count('kill1', { role: 'thief', won: true, reason: 'policeDown' })).toBe(1);
+    expect(count('kill1', { role: 'thief', won: true, reason: 'escape' })).toBe(0);
+    expect(count('winNoBox', { won: true, boxes: 0 })).toBe(1);
+    expect(count('winNoBox', { won: true, boxes: 1 })).toBe(0);
+    expect(count('winLowHp', { won: true, hpFrac: 0.2 })).toBe(1);
+    expect(count('winLowHp', { won: false, hpFrac: 0.2 })).toBe(0);
+    expect(DAILIES.find((d) => d.id === 'roadblock2')!.side).toBe('police');
+    expect(DAILIES.find((d) => d.id === 'kill1')!.side).toBe('thief');
   });
 });
