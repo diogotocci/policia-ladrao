@@ -6,6 +6,8 @@ import { formatTime } from '../hud';
 import { btn, h, mount, type Disposable } from './dom';
 import type { MatchResult } from './flow';
 import { SCREEN_ICONS } from './icons';
+import type { CareerEvent } from '../../meta/career';
+import { careerStrip, openStreak } from './careerScreen';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -174,6 +176,8 @@ export function renderEnd(
     difficulty?: Difficulty;
     /** count the total up from 0 (only the first time the screen shows this match) */
     animateReward?: boolean;
+    /** V2 part 5: career of this match; the streak dialog opens over the screen when `animateReward` (first time) */
+    career?: CareerEvent[];
     onSave(initials: string): void;
     onAgain(): void;
     onChangeSide(): void;
@@ -193,6 +197,12 @@ export function renderEnd(
     difficulty: p.difficulty ?? 'normal',
   });
   layout.append(result.card);
+  const strip = p.career ? careerStrip(p.career, p.role) : null;
+  // with the career below, the coins show only the total (the line-by-line detail would push it off the card)
+  if (strip) {
+    result.card.append(strip);
+    result.card.classList.add('has-career');
+  }
   const again = btn('Jogar de novo', 'is-primary', p.onAgain, SCREEN_ICONS.replay);
   const actions = h('div', 'end-actions');
   actions.append(
@@ -211,5 +221,7 @@ export function renderEnd(
   layout.classList.toggle('has-record', p.saved === true || p.qualifies);
   s.append(layout, actions);
   const m = mount(root, s, focus);
-  return { dispose: () => (result.stop(), m.dispose()) };
+  const streak = p.career?.find((e): e is Extract<CareerEvent, { kind: 'streak' }> => e.kind === 'streak');
+  const closeStreak = streak && p.animateReward !== false ? openStreak(s, streak) : () => {};
+  return { dispose: () => (closeStreak(), result.stop(), m.dispose()) };
 }

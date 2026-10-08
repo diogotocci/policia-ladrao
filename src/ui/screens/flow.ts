@@ -2,6 +2,7 @@
 // The shop (V2 part 4) opens from the title or the side choice and goes back there.
 import type { Difficulty, Mode, Role } from '../../config/balance';
 import type { MatchStats, Reward } from '../../meta/rewards';
+import type { CareerEvent } from '../../meta/career';
 
 export const COUNTDOWN = 3; // s
 
@@ -12,6 +13,8 @@ export interface MatchResult {
   reason?: 'escape' | 'policeDown' | 'thiefDown';
   /** player's car health at the end (breaks ties between escapes in the thief ranking) */
   hp?: number;
+  /** same, as a fraction of the max life (V2 part 5) */
+  hpFrac?: number;
   /** difficulty level reached */
   level?: number;
   /** damage dealt and boxes of the player's color (coins, V2 part 1) */
@@ -24,6 +27,8 @@ export type FlowState =
   | { screen: 'choose' }
   /** V2 part 4: the shop, on one side; Back returns to whoever opened it */
   | { screen: 'shop'; side: Role; from: 'title' | 'choose' }
+  /** V2 part 5: challenges, achievements and ranks (from the title) */
+  | { screen: 'career' }
   | { screen: 'countdown'; role: Role; left: number }
   | { screen: 'playing'; role: Role }
   | { screen: 'paused'; role: Role }
@@ -40,6 +45,8 @@ export type EndState = {
   saved?: boolean;
   /** coins credited for this match (already in the profile) */
   reward?: Reward;
+  /** V2 part 5: what the match did for the career (XP, rank, challenges, achievements, streak) */
+  career?: CareerEvent[];
 };
 
 export type FlowAction =
@@ -52,7 +59,8 @@ export type FlowAction =
   | { type: 'resume' }
   | { type: 'restart' }
   | { type: 'quit' }
-  | { type: 'ended'; result: MatchResult; qualifies?: boolean; reward?: Reward }
+  | { type: 'ended'; result: MatchResult; qualifies?: boolean; reward?: Reward; career?: CareerEvent[] }
+  | { type: 'openCareer' }
   /** opens on this difficulty (the app's current one); default Médio */
   | { type: 'openRanking'; difficulty?: Difficulty; mode?: Mode }
   | { type: 'modeTab'; mode: Mode }
@@ -78,6 +86,10 @@ export function reduce(s: FlowState, a: FlowAction): FlowState {
       if (a.type === 'openRanking')
         return { screen: 'ranking', tab: 'police', mode: a.mode ?? 'pursuit', difficulty: a.difficulty ?? 'normal', from: 'title' };
       if (a.type === 'openShop') return { screen: 'shop', side: a.side ?? 'police', from: 'title' };
+      if (a.type === 'openCareer') return { screen: 'career' };
+      return s;
+    case 'career':
+      if (a.type === 'back' || a.type === 'quit') return initialState();
       return s;
     case 'shop':
       if (a.type === 'shopSide') return a.side === s.side ? s : { ...s, side: a.side };
@@ -103,7 +115,8 @@ export function reduce(s: FlowState, a: FlowAction): FlowState {
       return s;
     case 'playing':
       if (a.type === 'pause') return { screen: 'paused', role: s.role };
-      if (a.type === 'ended') return { screen: 'end', role: s.role, result: a.result, qualifies: a.qualifies === true, reward: a.reward };
+      if (a.type === 'ended')
+        return { screen: 'end', role: s.role, result: a.result, qualifies: a.qualifies === true, reward: a.reward, career: a.career };
       return s;
     case 'paused':
       if (a.type === 'resume') return { screen: 'playing', role: s.role };

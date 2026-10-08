@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BACKUP_ERROR_TEXT, decodeBackup, encodeBackup } from '../../src/meta/backup';
+import { careerFromStats } from '../../src/meta/career';
 import { emptyProfile, type Profile } from '../../src/meta/profile';
 
 const sample: Profile = {
@@ -56,7 +57,7 @@ describe('backup code', () => {
 
   it('a well-formed code with an invalid profile (future version, negative coins) is rejected', () => {
     const forged = (o: object) => encodeBackup(o as Profile);
-    expect(decodeBackup(forged({ ...sample, v: 3 }))).toEqual({ ok: false, error: 'invalid' });
+    expect(decodeBackup(forged({ ...sample, v: 4 }))).toEqual({ ok: false, error: 'invalid' });
     expect(decodeBackup(forged({ ...sample, coins: -5 }))).toEqual({ ok: false, error: 'invalid' });
     expect(decodeBackup(forged({ ...sample, coins: 1e12 }))).toEqual({ ok: false, error: 'invalid' });
   });
@@ -91,7 +92,10 @@ describe('backup code v2 (shop, V2 part 4)', () => {
     const bytes = new TextEncoder().encode(JSON.stringify([1, 1240, 37, 21, 14, 7, 2890, 1]));
     const code = legacyCode(bytes);
     const r = decodeBackup(code);
-    expect(r).toEqual({ ok: true, profile: { ...emptyProfile(), coins: 1240, stats: sample.stats, welcomeGranted: true } });
+    expect(r).toEqual({
+      ok: true,
+      profile: { ...emptyProfile(), coins: 1240, stats: sample.stats, welcomeGranted: true, career: careerFromStats(sample.stats) },
+    });
   });
 
   it('unknown positions and items in use that were not bought are dropped', () => {
@@ -129,3 +133,22 @@ function legacyCode(bytes: Uint8Array): string {
   const crc = ((c ^ 0xffffffff) >>> 0).toString(16).toUpperCase().padStart(8, '0');
   return 'PL1-' + ((out + crc).match(/.{1,4}/g) ?? []).join('-');
 }
+
+describe('backup code v3 (career, V2 part 5)', () => {
+  it('round-trips the career', () => {
+    const p: Profile = {
+      ...sample,
+      owned: ['car:picape'],
+      career: {
+        xp: { police: 1580, thief: 360 },
+        counters: { ...sample.career.counters, matches: 40, arrests: 14, roadblocks: 3, bestStreak: 3 },
+        achieved: ['arrest10', 'play10'],
+        daily: { date: '2026-10-08', progress: [2, 0, 7] },
+        streak: { last: '2026-10-08', days: 3 },
+        unseen: 2,
+      },
+    };
+    const r = decodeBackup(encodeBackup(p));
+    expect(r.ok && r.profile.career).toEqual(p.career);
+  });
+});

@@ -190,6 +190,14 @@
 .shop-row-name {
   flex: 1 1 auto;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.shop-row-need {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
 }
 .shop-tag {
   display: inline-flex;

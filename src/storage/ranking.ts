@@ -17,6 +17,8 @@ export interface Entry {
   how?: 'escape' | 'kill' | 'caught';
   /** V2 part 4: the shop plate in use when the record was saved */
   plate?: string;
+  /** V2 part 5: the player's rank on that side (1..7) when the record was saved */
+  rank?: number;
 }
 export interface Board {
   police: Entry[];
@@ -54,7 +56,8 @@ const valid = (x: unknown): x is Entry =>
   typeof (x as Entry).date === 'string' &&
   ((x as Entry).hp === undefined || (typeof (x as Entry).hp === 'number' && (x as Entry).hp! >= 0 && (x as Entry).hp! <= MAX_HP)) &&
   ((x as Entry).how === undefined || (x as Entry).how === 'escape' || (x as Entry).how === 'kill' || (x as Entry).how === 'caught') &&
-  ((x as Entry).plate === undefined || (typeof (x as Entry).plate === 'string' && /^[A-Z0-9]{1,7}$/.test((x as Entry).plate!)));
+  ((x as Entry).plate === undefined || (typeof (x as Entry).plate === 'string' && /^[A-Z0-9]{1,7}$/.test((x as Entry).plate!))) &&
+  ((x as Entry).rank === undefined || ((x as Entry).rank! >= 1 && (x as Entry).rank! <= 7 && Number.isInteger((x as Entry).rank)));
 
 /** Sorts keeping the original order on ties (the oldest was inserted first) and truncates to 10. */
 function normalize(role: Role, list: Entry[], mode: Mode = 'pursuit'): Entry[] {
@@ -182,8 +185,9 @@ export function recordEntry(
   initials: string,
   date: string,
   plate?: string | null,
+  rank?: number,
 ): Entry {
-  const extra = plate ? { plate } : {};
+  const extra = { ...(plate ? { plate } : {}), ...(rank ? { rank } : {}) };
   if (role === 'police') return { initials, time: result.time, date, ...extra };
   const how = result.winner === 'police' ? 'caught' : result.reason === 'escape' ? 'escape' : 'kill';
   return { initials, time: result.time, date, hp: Math.max(0, Math.min(MAX_HP, result.hp ?? 0)), how, ...extra };

@@ -1,0 +1,395 @@
+/* Carreira (V2 part 5): fits 844x390 landscape like the shop */
+.screen-career {
+  justify-content: flex-start;
+  gap: 8px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 3px, rgba(255, 255, 255, 0.012) 3px 4px),
+    radial-gradient(ellipse at 30% -20%, #3a3f48 0%, var(--asphalt) 60%, #1b1d22 100%);
+}
+.career-top {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+}
+.career-back {
+  min-width: 0;
+  padding: 0 10px 0 4px;
+  gap: 4px;
+}
+.career-heading {
+  font-size: 24px;
+}
+.career-tabs {
+  display: flex;
+  gap: 4px;
+}
+.career-tab.screen-btn,
+.career-seg-btn.screen-btn {
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 12px;
+  font-size: 14px;
+  border-radius: 10px;
+}
+.career-tab.is-on {
+  background: var(--sign);
+  color: var(--sign-ink);
+}
+.career-wallet {
+  margin: 0 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.35);
+  font:
+    800 16px/1 system-ui,
+    sans-serif;
+}
+.career-wallet svg,
+.career-tag svg {
+  width: 18px;
+  height: 18px;
+}
+.career-body {
+  width: 100%;
+  max-width: 900px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  text-align: left;
+}
+.career-today {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.career-col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.career-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.career-head small,
+.career-note {
+  color: var(--muted);
+  font-size: 12px;
+}
+.career-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.career-row.is-done {
+  border-color: rgba(63, 207, 106, 0.55);
+  background: rgba(63, 207, 106, 0.1);
+}
+.career-row-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.career-row-text b {
+  font-size: 15px;
+}
+.career-row-text small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.career-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font:
+    800 14px/1 system-ui,
+    sans-serif;
+  color: var(--sign);
+  white-space: nowrap;
+}
+.career-tag.is-done {
+  color: var(--win);
+}
+.career-bar {
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.career-bar i {
+  display: block;
+  height: 100%;
+  background: var(--sign);
+}
+.career-bar.is-police i {
+  background: var(--police);
+}
+.career-bar.is-thief i {
+  background: var(--thief);
+}
+.career-bar.is-done i {
+  background: var(--win);
+}
+.career-streak-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.career-streak-title svg {
+  width: 20px;
+  height: 20px;
+  color: #ff8a1a;
+}
+.career-days {
+  display: flex;
+  gap: 5px;
+}
+.career-day {
+  flex: 1 1 0;
+  padding: 5px 2px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+.career-day b {
+  color: var(--sign);
+  font-size: 13px;
+}
+.career-day.is-got {
+  background: rgba(63, 207, 106, 0.14);
+  border-color: rgba(63, 207, 106, 0.5);
+}
+.career-day.is-today {
+  outline: 2px solid var(--sign);
+}
+.career-seg {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+}
+.career-seg-btn.screen-btn {
+  background: transparent;
+  box-shadow: none;
+}
+.career-seg-btn[aria-checked='true'] {
+  background: #fff;
+  color: var(--sign-ink);
+}
+.career-seg-btn.is-police[aria-checked='true'] {
+  background: var(--police);
+  color: #fff;
+}
+.career-seg-btn.is-thief[aria-checked='true'] {
+  background: var(--thief);
+  color: #fff;
+}
+.career-rank-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.career-rank-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font:
+    900 20px/1 system-ui,
+    sans-serif;
+  flex: none;
+}
+.career-rank-badge.is-police {
+  background: rgba(47, 107, 255, 0.3);
+}
+.career-rank-badge.is-thief {
+  background: rgba(236, 58, 63, 0.3);
+}
+.career-rank-info {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.career-rank-info b {
+  font-size: 18px;
+}
+.career-rank-info small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.career-ranks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.career-rank {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border-radius: 9px;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.04);
+}
+.career-rank.is-got {
+  opacity: 0.6;
+}
+.career-rank.is-current {
+  outline: 2px solid var(--sign);
+  background: rgba(255, 194, 26, 0.1);
+}
+.career-rank-n {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  background: var(--asphalt-3);
+  flex: none;
+}
+/* title: Carreira button badge and streak chip */
+.title-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border-radius: 11px;
+  background: var(--thief);
+  color: #fff;
+  font:
+    900 13px/22px system-ui,
+    sans-serif;
+}
+.title-career {
+  position: relative;
+}
+/* five buttons in the title menu: a bit shorter on short landscape phones */
+@media (max-height: 380px) {
+  .title-menu .screen-btn {
+    min-height: 42px;
+  }
+  .title-play.screen-btn {
+    min-height: 54px;
+  }
+}
+.title-streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  color: #ffb35a;
+}
+.title-streak svg {
+  width: 18px;
+  height: 18px;
+}
+/* end screen */
+.end-result.has-career .end-reward-lines {
+  display: none;
+}
+.end-result.has-career .end-reward {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.end-career {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  max-width: 360px;
+  text-align: left;
+  font-size: 13px;
+}
+.end-career-head {
+  display: flex;
+  justify-content: space-between;
+}
+.end-career-head span,
+.end-career-note {
+  color: var(--muted);
+}
+.end-career-line {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(63, 207, 106, 0.12);
+}
+.end-career-line b {
+  color: var(--win);
+  white-space: nowrap;
+}
+.career-streak {
+  position: absolute;
+  top: max(10px, var(--safe-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  border-radius: 16px;
+  background: rgba(14, 18, 28, 0.95);
+  border: 1px solid rgba(255, 194, 26, 0.6);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: career-streak-in 0.3s ease-out;
+  cursor: pointer;
+}
+@keyframes career-streak-in {
+  from {
+    transform: translate(-50%, -20px);
+    opacity: 0;
+  }
+}
+.career-streak-coins {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font:
+    900 20px/1 system-ui,
+    sans-serif;
+  color: var(--sign);
+}
+.career-streak-coins svg {
+  width: 24px;
+  height: 24px;
+}
+.ranking-rank {
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--sign);
+}

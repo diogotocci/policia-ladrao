@@ -152,9 +152,12 @@ test('coins: a finished match pays, the balance survives a reload, a backup code
   const earned = Number((await total.getAttribute('aria-label'))!.match(/\d+/)![0]);
   expect(earned).toBeGreaterThan(0);
   await page.getByRole('button', { name: 'Início' }).click();
-  await expect(page.locator('.title-wallet')).toHaveText(String(earned));
+  // the career (V2 part 5) adds the streak and any challenge of the day on top of the match coins
+  const label = (await page.locator('.title-wallet').getAttribute('aria-label'))!; // "N moedas, sequência de 1 dia"
+  const balance = Number(label.match(/^[\d.]+/)![0].replace(/\./g, ''));
+  expect(balance).toBeGreaterThanOrEqual(earned + 50);
   await page.reload();
-  await expect(page.locator('.title-wallet')).toHaveText(String(earned));
+  await expect(page.locator('.title-wallet')).toHaveAttribute('aria-label', label);
   // restore a progress with 500 coins
   await page.getByRole('button', { name: 'Progresso' }).click();
   const dialog = page.getByRole('dialog', { name: 'Seu progresso' });

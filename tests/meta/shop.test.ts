@@ -1,18 +1,21 @@
 import { describe, expect, it } from 'vitest';
+import { ACHIEVEMENTS, emptyCareer } from '../../src/meta/career';
 import { emptyProfile, type Profile } from '../../src/meta/profile';
 import { CATALOG, CARS, buy, canBuy, inUse, lookFor, normalizePlate, owns, setPlate, use } from '../../src/meta/shop';
 
-const rich = (coins = 10_000): Profile => ({ ...emptyProfile(), coins });
+/** everything unlocked by the career (part 5), so these tests only look at coins and ownership */
+const unlockedCareer = () => ({ ...emptyCareer(), xp: { police: 99_999, thief: 99_999 }, achieved: ACHIEVEMENTS.map((a) => a.id) });
+const rich = (coins = 100_000): Profile => ({ ...emptyProfile(), coins, career: unlockedCareer() });
 
 describe('catalog (spec §2)', () => {
-  it('prices: cars 800 / 1500 / 3000, paint 300, neon 600, sound 500, plate 400', () => {
+  it('prices (part 5, ~3x): cars 2500 / 5000 / 10000, paint 900, neon 1800, sound 1500, plate 1200', () => {
     const price = (id: string) => CATALOG.find((i) => i.id === id)?.price;
-    expect([price('car:esportivo'), price('car:blazer'), price('car:caveirao')]).toEqual([800, 1500, 3000]);
-    expect([price('car:picape'), price('car:moto'), price('car:van')]).toEqual([800, 1500, 3000]);
-    expect(price('paint:viatura:1')).toBe(300);
-    expect(price('neon:thief:rosa')).toBe(600);
-    expect(price('sound:dupla')).toBe(500);
-    expect(price('plate')).toBe(400);
+    expect([price('car:esportivo'), price('car:blazer'), price('car:caveirao')]).toEqual([2500, 5000, 10000]);
+    expect([price('car:picape'), price('car:moto'), price('car:van')]).toEqual([2500, 5000, 10000]);
+    expect(price('paint:viatura:1')).toBe(900);
+    expect(price('neon:thief:rosa')).toBe(1800);
+    expect(price('sound:dupla')).toBe(1500);
+    expect(price('plate')).toBe(1200);
   });
 
   it('ids are unique and the order is stable (the backup code stores positions)', () => {
@@ -54,16 +57,16 @@ describe('catalog (spec §2)', () => {
 
 describe('buying (spec §3)', () => {
   it('takes the coins, keeps the item and puts it in use', () => {
-    const r = buy(rich(1000), 'car:esportivo');
+    const r = buy(rich(3000), 'car:esportivo');
     expect(r.ok).toBe(true);
-    expect(r.profile.coins).toBe(200);
+    expect(r.profile.coins).toBe(500);
     expect(r.profile.owned).toEqual(['car:esportivo']);
     expect(r.profile.equipped.police.car).toBe('esportivo');
   });
 
   it('not enough coins: tells how many are missing and changes nothing', () => {
-    const p = rich(500);
-    expect(canBuy(p, 'car:esportivo')).toEqual({ ok: false, reason: 'coins', missing: 300 });
+    const p = rich(2000);
+    expect(canBuy(p, 'car:esportivo')).toEqual({ ok: false, reason: 'coins', missing: 500 });
     expect(buy(p, 'car:esportivo')).toEqual({ ok: false, profile: p });
   });
 
@@ -71,7 +74,7 @@ describe('buying (spec §3)', () => {
     const p = buy(rich(), 'car:blazer').profile;
     expect(canBuy(p, 'car:blazer')).toEqual({ ok: false, reason: 'owned' });
     expect(canBuy(p, 'car:ferrari')).toEqual({ ok: false, reason: 'unknown' });
-    expect(canBuy(p, 'paint:caveirao:1')).toEqual({ ok: false, reason: 'locked' });
+    expect(canBuy(p, 'paint:caveirao:1')).toEqual({ ok: false, reason: 'locked', need: 'Compre o carro primeiro' });
     expect(canBuy(p, 'paint:blazer:1').ok).toBe(true);
     expect(canBuy(p, 'paint:viatura:2').ok).toBe(true); // the free car counts as owned
   });
@@ -131,16 +134,16 @@ describe('plate (spec §3)', () => {
   });
 
   it('needs the plate bought; then changes for free; empty removes it', () => {
-    let p = rich(1000);
+    let p = rich(3000);
     expect(setPlate(p, 'ABC')).toBe(p);
     p = buy(p, 'plate').profile;
-    expect(p.coins).toBe(600);
+    expect(p.coins).toBe(1800);
     p = setPlate(p, 'pl4ca');
     expect(lookFor(p, 'thief').plate).toBe('PL4CA');
     expect(lookFor(p, 'police').plate).toBe('PL4CA'); // one plate for both sides
     p = setPlate(p, '');
     expect(lookFor(p, 'police').plate).toBeNull();
-    expect(p.coins).toBe(600);
+    expect(p.coins).toBe(1800);
   });
 });
 
@@ -154,5 +157,31 @@ describe('lookFor', () => {
       sound: null,
     });
     expect(lookFor(emptyProfile(), 'thief').car).toBe('seda');
+  });
+});
+
+describe('unlocking (part 5, spec §4)', () => {
+  it('cars and sounds need their achievement; paints, neon and plate a rank; then coins', () => {
+    const p: Profile = { ...emptyProfile(), coins: 100_000 };
+    expect(canBuy(p, 'car:esportivo')).toEqual({ ok: false, reason: 'locked', need: 'Prenda 10 ladrões (0/10)' });
+    expect(canBuy(p, 'sound:yelp')).toEqual({ ok: false, reason: 'locked', need: 'Prenda um ladrão em menos de 40 s' });
+    expect(canBuy(p, 'paint:viatura:1')).toEqual({ ok: false, reason: 'locked', need: 'Patente Soldado' });
+    expect(canBuy(p, 'paint:seda:3')).toEqual({ ok: false, reason: 'locked', need: 'Patente Procurado' });
+    expect(canBuy(p, 'neon:police:azul')).toEqual({ ok: false, reason: 'locked', need: 'Patente Cabo' });
+    expect(canBuy(p, 'neon:police:rosa')).toEqual({ ok: false, reason: 'locked', need: 'Patente Tenente' });
+    expect(canBuy(p, 'neon:thief:rosa')).toEqual({ ok: false, reason: 'locked', need: 'Patente Batedor' });
+    expect(canBuy(p, 'plate')).toEqual({ ok: false, reason: 'locked', need: 'Patente Soldado ou Trombadinha' });
+    const career = { ...emptyCareer(), achieved: ['arrest10'], xp: { police: 0, thief: 300 } };
+    const q: Profile = { ...p, career };
+    expect(canBuy(q, 'car:esportivo').ok).toBe(true);
+    expect(canBuy(q, 'plate').ok).toBe(true); // rank 2 on either side
+    expect(canBuy(q, 'paint:viatura:1').ok).toBe(false); // police rank still 1
+    expect(canBuy(q, 'paint:seda:1').ok).toBe(true);
+  });
+
+  it('items bought in 0.16 stay owned and usable without the unlock', () => {
+    const p: Profile = { ...emptyProfile(), owned: ['car:caveirao'] };
+    expect(canBuy(p, 'car:caveirao')).toEqual({ ok: false, reason: 'owned' });
+    expect(use(p, 'car:caveirao').equipped.police.car).toBe('caveirao');
   });
 });

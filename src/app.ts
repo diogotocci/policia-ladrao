@@ -7,7 +7,9 @@ import { createCarPreview } from './render/carPreview';
 import { createShopPreview } from './render/shopPreview';
 import { CARS, buy, lookFor, setPlate, use } from './meta/shop';
 import type { QualityTier } from './render/renderer';
-import { grantWelcome, settleMatch } from './meta/profile';
+import { grantWelcome, settleCareer, settleMatch } from './meta/profile';
+import { localDate, rankOf } from './meta/career';
+import { streakDays } from './ui/screens/careerScreen';
 import { loadProfile, saveProfile } from './storage/profileStore';
 import { loadDifficulty, saveDifficulty } from './storage/difficulty';
 import { loadMode, saveMode } from './storage/mode';
@@ -15,7 +17,16 @@ import { renderMode } from './ui/screens/mode';
 import { countModeRecords, insert, loadModeBoards, qualifies, recordEntry, saveModeBoards, type ModeBoards } from './storage/ranking';
 import { initialState, reduce, type FlowAction, type FlowState } from './ui/screens/flow';
 import { openProgress } from './ui/screens/progress';
-import { renderChoose, renderCountdown, renderEnd, renderPause, renderRanking, renderShop, renderTitle } from './ui/screens/screens';
+import {
+  renderCareer,
+  renderChoose,
+  renderCountdown,
+  renderEnd,
+  renderPause,
+  renderRanking,
+  renderShop,
+  renderTitle,
+} from './ui/screens/screens';
 
 declare const __APP_VERSION__: string | undefined;
 /** injected by Vite (package.json version); absent when the module runs outside a Vite build (unit tests) */
@@ -93,6 +104,8 @@ export function startApp(
       onClose: () => host.querySelector<HTMLElement>('.title-progress')?.focus(),
     });
   };
+  /** the player's calendar day (challenges renew at local midnight) */
+  const today = () => localDate(new Date());
   /** the cars in use (shop), for the spinning previews */
   const looks = () => ({ police: lookFor(profile, 'police'), thief: lookFor(profile, 'thief') });
   let highlight: { mode: Mode; difficulty: Difficulty; role: Role; rank: number } | undefined;
@@ -142,7 +155,28 @@ export function startApp(
       onEnd: (r) => {
         // credited and saved before the end screen shows: a reload right after cannot lose or repeat it
         const settled = settleMatch(profile, r, role, difficulty, mode);
-        profile = settled.profile;
+        // V2 part 5: XP (= the coins of the match), challenges, achievements and the streak
+        const st = r.stats ?? { damageDealt: 0, rightBoxes: 0 };
+        const career = settleCareer(
+          settled.profile,
+          {
+            role,
+            mode,
+            difficulty,
+            won: r.winner === role,
+            reason: r.reason,
+            time: r.time,
+            hpFrac: r.hpFrac ?? 0,
+            rightBoxes: st.rightBoxes,
+            mysteryBoxes: st.mysteryBoxes ?? 0,
+            damageDealt: st.damageDealt,
+            roadblocks: st.roadblocks ?? 0,
+            bombHits: st.bombHits ?? 0,
+            coins: settled.reward.total,
+          },
+          today(),
+        );
+        profile = career.profile;
         persist();
         rewardShown = false;
         dispatch({
@@ -150,6 +184,7 @@ export function startApp(
           result: r,
           qualifies: qualifies(boards[mode][difficulty], role, r.time, r.winner === role, r.hp, mode),
           reward: settled.reward,
+          career: career.events,
         });
       },
     });
@@ -176,6 +211,9 @@ export function startApp(
           coins: profile.coins,
           onProgress: openProgressDialog,
           onShop: () => press({ type: 'openShop' }),
+          onCareer: () => press({ type: 'openCareer' }),
+          careerBadge: profile.career.unseen,
+          streak: streakDays(profile.career, today()),
           mountToggle: (p) => audio.mountToggle(p),
           version: APP_VERSION,
         });
@@ -214,6 +252,14 @@ export function startApp(
         view = { dispose: () => (preview.dispose(), c.dispose()) };
         break;
       }
+      case 'career':
+        stopGame();
+        view = renderCareer(layer, { career: profile.career, coins: profile.coins, today: today(), onBack: () => press({ type: 'back' }) });
+        if (profile.career.unseen > 0) {
+          profile = { ...profile, career: { ...profile.career, unseen: 0 } }; // seen: the title badge goes away
+          persist();
+        }
+        break;
       case 'shop':
         stopGame();
         view = renderShop(layer, {
@@ -265,8 +311,16 @@ export function startApp(
           reward: s.reward,
           difficulty,
           animateReward: !rewardShown, // count up only the first time, not when coming back from the ranking
+          career: s.career,
           onSave: (initials) => {
-            const entry = recordEntry(s.role, s.result, initials, new Date().toISOString(), profile.equipped.plate || null);
+            const entry = recordEntry(
+              s.role,
+              s.result,
+              initials,
+              new Date().toISOString(),
+              profile.equipped.plate || null,
+              rankOf(profile.career.xp[s.role]),
+            );
             const r = insert(boards[mode][difficulty], s.role, entry, mode);
             boards = { ...boards, [mode]: { ...boards[mode], [difficulty]: r.board } };
             saveModeBoards(storage, boards);
@@ -345,7 +399,7 @@ export function startApp(
     const portrait = container.clientHeight > container.clientWidth; // phone held upright: the game rotates by itself (styles.css)
     if (state.screen === 'countdown' && !portrait) dispatch({ type: 'tick', dt }); // in portrait the countdown waits
     // menu music on screens with no match running (during a match the game plays; silence while paused)
-    if (['title', 'choose', 'shop', 'end', 'ranking'].includes(state.screen)) audio.mixer.menu(dt);
+    if (['title', 'choose', 'shop', 'career', 'end', 'ranking'].includes(state.screen)) audio.mixer.menu(dt);
     raf = requestAnimationFrame(loop);
   };
   raf = requestAnimationFrame(loop);

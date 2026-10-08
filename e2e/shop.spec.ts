@@ -1,15 +1,18 @@
 import { expect, test } from '@playwright/test';
+import { emptyCareer } from '../src/meta/career';
 import { emptyProfile } from '../src/meta/profile';
 
 // V2 part 4: buy a car in the shop and play with it (spec §7)
 const errors: string[] = [];
 test.beforeEach(async ({ page }) => {
   errors.length = 0;
-  const profile = JSON.stringify({ ...emptyProfile(), coins: 5000, welcomeGranted: true });
+  // the Esportivo unlocked by the career (V2 part 5: 10 arrests), coins to buy it
+  const career = { ...emptyCareer(), counters: { ...emptyCareer().counters, arrests: 10 }, achieved: ['arrest10'] };
+  const profile = JSON.stringify({ ...emptyProfile(), coins: 5000, welcomeGranted: true, career });
   await page.addInitScript((p) => {
     localStorage.setItem('pl.howto.v1', '1');
     if (!sessionStorage.getItem('seeded')) {
-      localStorage.setItem('pl.profile.v2', p);
+      localStorage.setItem('pl.profile.v3', p);
       sessionStorage.setItem('seeded', '1');
     }
   }, profile);
@@ -28,10 +31,10 @@ test('buy the Esportivo, see it on the side choice and start a match with it', a
   await page.getByRole('button', { name: 'Loja' }).click();
   await expect(page.getByRole('heading', { name: 'Loja' })).toBeVisible();
   await page.locator('.shop-row', { hasText: 'Esportivo' }).click();
-  await page.getByRole('button', { name: 'Comprar · 800' }).click();
-  await expect(page.getByText('Saldo depois: 4.200')).toBeVisible();
+  await page.getByRole('button', { name: 'Comprar · 2.500' }).click();
+  await expect(page.getByText('Saldo depois: 2.500')).toBeVisible();
   await page.getByRole('button', { name: 'Comprar e usar' }).click();
-  await expect(page.locator('.shop-wallet')).toHaveText('4.200');
+  await expect(page.locator('.shop-wallet')).toHaveText('2.500');
   await page.screenshot({ path: `test-results/shop-${info.project.name}.png` });
   await page.getByRole('button', { name: 'Voltar' }).click();
   await page.getByRole('button', { name: 'Jogar', exact: true }).click();
@@ -55,4 +58,18 @@ test('"trocar" opens the shop on that side and Voltar returns to the side choice
   await expect(page.getByRole('tab', { name: 'Buzina' })).toBeVisible();
   await page.getByRole('button', { name: 'Voltar' }).click();
   await expect(page.getByRole('heading', { name: 'Escolha seu lado' })).toBeVisible();
+});
+
+test('Carreira: challenges of the day, achievements and ranks; a locked car in the shop says what is missing', async ({ page }) => {
+  await page.goto('/?app&quality=low&mute');
+  await page.getByRole('button', { name: 'Carreira' }).click();
+  await expect(page.getByRole('heading', { name: 'Carreira' })).toBeVisible();
+  await expect(page.getByText('Desafios do dia')).toBeVisible();
+  await page.getByRole('tab', { name: 'Conquistas' }).click();
+  await expect(page.getByText('Prenda 30 ladrões')).toBeVisible();
+  await page.getByRole('tab', { name: 'Patente' }).click();
+  await expect(page.getByText('Recruta', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Voltar' }).click();
+  await page.getByRole('button', { name: 'Loja' }).click();
+  await expect(page.locator('.shop-row', { hasText: 'Blazer' })).toContainText('Prenda 30 ladrões (10/30)');
 });

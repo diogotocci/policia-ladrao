@@ -41,11 +41,14 @@ describe('match stats from events', () => {
     let s = emptyStats();
     s = addEvents(s, [hit('thief', 5), hit('police', 3), pickup('police', 'nitro'), pickup('police', 'wrong')], 'police');
     s = addEvents(s, [hit('thief', 1.5), pickup('police', 'none'), pickup('thief', 'bomb')], 'police');
-    expect(s).toEqual({ damageDealt: 6.5, rightBoxes: 1 });
+    expect(s).toMatchObject({ damageDealt: 6.5, rightBoxes: 1 });
   });
 
   it('as the thief, hits on the police count', () => {
-    expect(addEvents(emptyStats(), [hit('police', 15), pickup('thief', 'bomb')], 'thief')).toEqual({ damageDealt: 15, rightBoxes: 1 });
+    expect(addEvents(emptyStats(), [hit('police', 15), pickup('thief', 'bomb')], 'thief')).toMatchObject({
+      damageDealt: 15,
+      rightBoxes: 1,
+    });
   });
 });
 
@@ -71,5 +74,17 @@ describe('Sobrevivência coins', () => {
   it('the time part goes up to 60 (1 per 3 s)', () => {
     expect(rewardFor({ time: 300, won: false }, { damageDealt: 0, rightBoxes: 0 }, 'normal', 'survival').time).toBe(60);
     expect(rewardFor({ time: 300, won: false }, { damageDealt: 0, rightBoxes: 0 }, 'normal', 'pursuit').time).toBe(30);
+  });
+});
+
+describe('career stats (V2 part 5)', () => {
+  it('counts yellow boxes opened, roadblocks used (police) and bombs that hit (thief)', () => {
+    const ev = [
+      { type: 'mystery', role: 'thief', outcome: { good: true }, s: 0, x: 0 },
+      { type: 'special', role: 'police', kind: 'roadblock', s: 0, x: 0 },
+      { type: 'explosion', s: 0, x: 0 },
+    ] as unknown as Parameters<typeof addEvents>[1];
+    expect(addEvents(emptyStats(), ev, 'thief')).toMatchObject({ mysteryBoxes: 1, roadblocks: 0, bombHits: 1 });
+    expect(addEvents(emptyStats(), ev, 'police')).toMatchObject({ mysteryBoxes: 0, roadblocks: 1, bombHits: 0 });
   });
 });

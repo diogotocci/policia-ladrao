@@ -13,7 +13,7 @@ describe('parseProfile', () => {
   it('rejects other versions, bad numbers, missing fields and non-objects', () => {
     const ok = emptyProfile() as unknown as Record<string, unknown>;
     for (const bad of [
-      { ...ok, v: 3 },
+      { ...ok, v: 4 },
       { ...ok, coins: -1 },
       { ...ok, coins: 1.5 },
       { ...ok, coins: 2e9 },
@@ -99,8 +99,9 @@ describe('profile v2 (shop, V2 part 4)', () => {
   it('a v1 profile is migrated: same coins and stats, nothing bought, default cars', () => {
     const v1 = { v: 1, coins: 900, stats: { matches: 3, wins: 2, escapes: 1, arrests: 1, coinsEarned: 900 }, welcomeGranted: true };
     const p = parseProfile(v1)!;
-    expect(p.v).toBe(2);
+    expect(p.v).toBe(3);
     expect(p.coins).toBe(900);
+    expect(p.career.counters.arrests).toBe(1); // the career starts from the stats (part 5)
     expect(p.stats).toEqual(v1.stats);
     expect(p.owned).toEqual([]);
     expect(p.equipped.police.car).toBe('viatura');

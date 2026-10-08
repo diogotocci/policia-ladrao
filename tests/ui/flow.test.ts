@@ -153,3 +153,16 @@ describe('shop (V2 part 4)', () => {
     expect(reduce(s, { type: 'play' })).toBe(s);
   });
 });
+
+describe('career (V2 part 5)', () => {
+  it('title -> Carreira -> back to title; the end screen keeps the career events', () => {
+    const s = reduce(initialState(), { type: 'openCareer' });
+    expect(s).toEqual({ screen: 'career' });
+    expect(reduce(s, { type: 'back' })).toEqual({ screen: 'title' });
+    const end = reduce(
+      { screen: 'playing', role: 'thief' },
+      { type: 'ended', result: { winner: 'thief', time: 90 }, career: [{ kind: 'streak', days: 2, coins: 100 }] },
+    );
+    expect(end.screen === 'end' && end.career).toEqual([{ kind: 'streak', days: 2, coins: 100 }]);
+  });
+});

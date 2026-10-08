@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ACHIEVEMENTS, emptyCareer } from '../../src/meta/career';
 import { emptyProfile, type Profile } from '../../src/meta/profile';
 import { buy, setPlate, use, type CarLook } from '../../src/meta/shop';
 import { renderChoose, renderShop, renderTitle } from '../../src/ui/screens/screens';
@@ -15,7 +16,15 @@ afterEach(() => root.remove());
 const button = (label: string) =>
   [...root.querySelectorAll('button')].find((b) => b.textContent?.trim() === label || b.getAttribute('aria-label') === label)!;
 const row = (name: string) =>
-  [...root.querySelectorAll<HTMLButtonElement>('.shop-row')].find((b) => b.querySelector('.shop-row-name')!.textContent === name)!;
+  [...root.querySelectorAll<HTMLButtonElement>('.shop-row')].find(
+    (b) => b.querySelector('.shop-row-name')!.firstChild!.textContent === name,
+  )!;
+/** a profile with everything unlocked by the career (part 5), so these tests look at buying only */
+const unlocked = (coins: number): Profile => ({
+  ...emptyProfile(),
+  coins,
+  career: { ...emptyCareer(), xp: { police: 99_999, thief: 99_999 }, achieved: ACHIEVEMENTS.map((a) => a.id) },
+});
 const action = () => root.querySelector<HTMLButtonElement>('.shop-action')!;
 
 /** the shop with the same rules the app uses, keeping the profile in a variable */
@@ -46,37 +55,37 @@ function open(start: Profile, side: Role = 'police') {
 
 describe('shop screen (spec §6)', () => {
   it('cars tab: the free car in use, the others with prices; a row only selects and shows it on the car', () => {
-    const s = open({ ...emptyProfile(), coins: 1000 });
+    const s = open(unlocked(3000));
     expect(row('Viatura').textContent).toContain('Em uso');
-    expect(row('Esportivo').textContent).toContain('800');
+    expect(row('Esportivo').textContent).toContain('2.500');
     expect(action().textContent).toBe('Em uso');
     row('Caveirão').click();
     expect(s.shown.at(-1)!.car).toBe('caveirao'); // tried on before buying
-    expect(action().textContent).toBe('Faltam 2.000');
+    expect(action().textContent).toBe('Faltam 7.000');
     expect(action().disabled).toBe(true);
-    expect(s.profile.coins).toBe(1000);
+    expect(s.profile.coins).toBe(3000);
   });
 
   it('buying asks first, shows the balance after, then puts it in use', () => {
-    const s = open({ ...emptyProfile(), coins: 1000 });
+    const s = open(unlocked(3000));
     row('Esportivo').click();
-    expect(action().textContent).toBe('Comprar · 800');
+    expect(action().textContent).toBe('Comprar · 2.500');
     action().click();
     const dialog = root.querySelector('.shop-confirm')!;
     expect(dialog.textContent).toContain('Comprar Esportivo?');
-    expect(dialog.textContent).toContain('Saldo depois: 200');
+    expect(dialog.textContent).toContain('Saldo depois: 500');
     button('Cancelar').click();
-    expect(s.profile.coins).toBe(1000);
+    expect(s.profile.coins).toBe(3000);
     action().click();
     button('Comprar e usar').click();
-    expect(s.profile.coins).toBe(200);
+    expect(s.profile.coins).toBe(500);
     expect(s.profile.equipped.police.car).toBe('esportivo');
     expect(row('Esportivo').textContent).toContain('Em uso');
-    expect(root.querySelector('.shop-wallet')!.textContent).toBe('200');
+    expect(root.querySelector('.shop-wallet')!.textContent).toBe('500');
   });
 
   it('paint tab: paints of the car on the showcase; locked until the car is bought', () => {
-    const s = open({ ...emptyProfile(), coins: 5000 });
+    const s = open(unlocked(50_000));
     row('Blazer').click();
     button('Pintura').click();
     row('Prata').click();
@@ -92,7 +101,7 @@ describe('shop screen (spec §6)', () => {
   });
 
   it('sound tab: Sirene for the police, Buzina for the thief, each with Ouvir', () => {
-    const s = open({ ...emptyProfile(), coins: 5000 }, 'thief');
+    const s = open(unlocked(50_000), 'thief');
     button('Buzina').click();
     expect([...root.querySelectorAll('.shop-row-name')].map((e) => e.textContent)).toEqual(['Buzina padrão', 'Corneta', 'Grave', 'Dupla']);
     button('Ouvir Grave').click();
@@ -102,7 +111,7 @@ describe('shop screen (spec §6)', () => {
   });
 
   it('plate tab: buy once, then save and remove for free', async () => {
-    const s = open({ ...emptyProfile(), coins: 1000 });
+    const s = open(unlocked(3000));
     button('Placa').click();
     const input = root.querySelector<HTMLInputElement>('.shop-plate-input')!;
     input.value = 'dio-2026';
@@ -113,11 +122,11 @@ describe('shop screen (spec §6)', () => {
     root.querySelector<HTMLButtonElement>('.shop-plate .is-primary')!.click();
     expect(root.querySelector('.shop-confirm')!.textContent).toContain('Comprar a placa?');
     button('Comprar e usar').click();
-    expect(s.profile.coins).toBe(600);
+    expect(s.profile.coins).toBe(1800);
     expect(s.profile.equipped.plate).toBe('DIO2026');
     button('Tirar placa').click();
     expect(s.profile.equipped.plate).toBe('');
-    expect(s.profile.coins).toBe(600);
+    expect(s.profile.coins).toBe(1800);
   });
 });
 
@@ -137,5 +146,15 @@ describe('shop entry points', () => {
     expect(onShop).toHaveBeenCalledWith('thief');
     expect(onChoose).not.toHaveBeenCalled();
     expect(root.querySelector('.choose-swap')!.textContent).toContain('Caveirão · trocar');
+  });
+});
+
+describe('locked items (part 5)', () => {
+  it('a car still locked shows what is missing under its name and on the main button', () => {
+    open({ ...emptyProfile(), coins: 50_000 });
+    expect(row('Blazer').textContent).toContain('Prenda 30 ladrões (0/30)');
+    row('Blazer').click();
+    expect(action().textContent).toBe('Prenda 30 ladrões (0/30)');
+    expect(action().disabled).toBe(true);
   });
 });
