@@ -7,7 +7,7 @@ import { createCarPreview } from './render/carPreview';
 import { createShopPreview } from './render/shopPreview';
 import { CARS, buy, lookFor, randomLook, setPlate, use } from './meta/shop';
 import type { QualityTier } from './render/renderer';
-import { grantWelcome, settleCareer, settleMatch } from './meta/profile';
+import { claimReward, grantWelcome, settleCareer, settleMatch } from './meta/profile';
 import { localDate, rankOf } from './meta/career';
 import { streakDays } from './ui/screens/careerScreen';
 import { loadProfile, saveProfile } from './storage/profileStore';
@@ -214,7 +214,7 @@ export function startApp(
           onProgress: openProgressDialog,
           onShop: () => press({ type: 'openShop' }),
           onCareer: () => press({ type: 'openCareer' }),
-          careerBadge: profile.career.unseen,
+          careerBadge: profile.career.claims.length, // rewards waiting for Resgatar
           streak: streakDays(profile.career, today()),
           mountToggle: (p) => audio.mountToggle(p),
           version: APP_VERSION,
@@ -256,11 +256,21 @@ export function startApp(
       }
       case 'career':
         stopGame();
-        view = renderCareer(layer, { career: profile.career, coins: profile.coins, today: today(), onBack: () => press({ type: 'back' }) });
-        if (profile.career.unseen > 0) {
-          profile = { ...profile, career: { ...profile.career, unseen: 0 } }; // seen: the title badge goes away
-          persist();
-        }
+        view = renderCareer(layer, {
+          career: profile.career,
+          coins: profile.coins,
+          today: today(),
+          onBack: () => press({ type: 'back' }),
+          onClaim: (id) => {
+            const r = claimReward(profile, id);
+            if (r.coins > 0 || r.profile !== profile) {
+              profile = r.profile;
+              persist();
+              audio.mixer.cue('ui');
+            }
+            return { career: profile.career, coins: profile.coins };
+          },
+        });
         break;
       case 'shop':
         stopGame();

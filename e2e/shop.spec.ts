@@ -68,7 +68,7 @@ test('Carreira: challenges of the day, achievements and ranks; a locked car in t
   await page.getByRole('tab', { name: 'Conquistas' }).click();
   await expect(page.getByText('Prenda 30 ladrões')).toBeVisible();
   await page.getByRole('tab', { name: 'Patente' }).click();
-  await expect(page.getByText('Recruta', { exact: true })).toBeVisible();
+  await expect(page.locator('svg[aria-label="Recruta"]')).toBeVisible(); // the insignia of the current rank
   await page.getByRole('button', { name: 'Voltar' }).click();
   await page.getByRole('button', { name: 'Loja' }).click();
   await expect(page.locator('.shop-row', { hasText: 'Blazer' })).toContainText('Prenda 30 ladrões (10/30)');

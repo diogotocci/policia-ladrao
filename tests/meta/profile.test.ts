@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyMatch, emptyProfile, grantWelcome, parseProfile, settleMatch, type Profile } from '../../src/meta/profile';
+import { applyMatch, claimReward, emptyProfile, grantWelcome, parseProfile, settleMatch, type Profile } from '../../src/meta/profile';
 import type { Reward } from '../../src/meta/rewards';
 
 const reward = (total: number, won = true): Reward => ({ time: 0, damage: 0, boxes: 0, won, difficulty: 'normal', total });
@@ -130,5 +130,17 @@ describe('profile v2 (shop, V2 part 4)', () => {
   it('a v2 profile without the owned list is rejected', () => {
     const { owned: _owned, ...rest } = emptyProfile();
     expect(parseProfile(rest)).toBeUndefined();
+  });
+});
+
+describe('claimReward (Resgatar, playtest 2026-10-08)', () => {
+  it('pays a waiting reward once into the balance and the coins earned', () => {
+    const p = { ...emptyProfile(), coins: 10, career: { ...emptyProfile().career, achieved: ['play10'], claims: ['ach:play10'] } };
+    const r = claimReward(p, 'ach:play10');
+    expect(r.coins).toBe(300);
+    expect(r.profile.coins).toBe(310);
+    expect(r.profile.stats.coinsEarned).toBe(300);
+    expect(r.profile.career.claims).toEqual([]);
+    expect(claimReward(r.profile, 'ach:play10').profile).toBe(r.profile);
   });
 });

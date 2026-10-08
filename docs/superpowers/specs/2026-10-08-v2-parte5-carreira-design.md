@@ -170,3 +170,54 @@ A loja deixa de liberar tudo de uma vez:
   - abrir a Carreira e as três abas;
   - ver o cadeado com o progresso na loja;
   - comprar o Esportivo já desbloqueado.
+
+## 8. Resgatar e insígnias (playtest 2026-10-08, mockup `mockup-patentes.html`)
+
+**Resgatar:**
+
+- Desafios do dia, conquistas e patentes completados não pagam mais sozinhos. Eles entram na lista `career.claims`, com ids no formato `daily:<data>:<0..2>`, `ach:<id>` e `rank:<lado>:<n>`.
+- O jogador toca em **Resgatar** na Carreira para receber.
+- O que um item libera na loja só abre depois do resgate. Até lá, a loja mostra "Resgate na Carreira".
+- Um desafio não resgatado nunca vence: depois da meia-noite, aparece em "Hoje" como "Desafio de dd/mm".
+- A sequência de dias continua sendo paga sozinha.
+- A bolinha do início conta os resgates esperando, e cada aba com resgate pendente ganha um ponto vermelho.
+- A tela de fim mostra "Resgate na Carreira" e não soma essas moedas.
+- O backup v3 guarda os resgates no 9º campo da carreira. Os códigos da 0.17.0 tinham ali um número; nesse caso, ficam sem resgates.
+
+**Moedas por patente**, pagas ao resgatar:
+
+| Patente | Moedas |
+|---|---|
+| 2 | 200 |
+| 3 | 400 |
+| 4 | 600 |
+| 5 | 1.000 |
+| 6 | 1.500 |
+| 7 | 2.000 |
+
+Na aba Patente, um botão resgata de uma vez todas as patentes alcançadas naquele lado.
+
+**Insígnias** (`src/ui/screens/insignia.ts`, SVG):
+
+- **Polícia:** escudo azul com borda dourada.
+  - Recruta: pistolas cruzadas.
+  - Soldado, Cabo e Sargento: 1, 2 e 3 divisas.
+  - Tenente: 1 estrela de oficial; Capitão: 3 estrelas.
+  - Delegado: escudo dourado com estrela e louros.
+- **Ladrão:** losango vinho com borda vermelha, um ícone por patente e pontos com o nível.
+
+  | Patente | Ícone |
+  |---|---|
+  | Pivete | boné |
+  | Trombadinha | carteira |
+  | Batedor | chave mixa |
+  | Assaltante | máscara |
+  | Fugitivo | algema quebrada |
+  | Procurado | cartaz de procurado |
+  | Chefão | coroa dourada |
+
+**Aba Patente:**
+
+- Um cartão por lado, com a insígnia grande, a barra de XP e o botão Resgatar.
+- Embaixo, a trilha das 7 insígnias: as que ainda faltam ficam em cinza e a atual brilha.
+- Por último, a próxima patente e o que ela traz.

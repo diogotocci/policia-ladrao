@@ -393,3 +393,98 @@
   font-weight: 800;
   color: var(--sign);
 }
+/* "Resgatar" (playtest 2026-10-08) */
+.career-claim.screen-btn {
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 14px;
+  background: var(--sign);
+  color: var(--sign-ink);
+  box-shadow:
+    0 0 0 3px rgba(255, 194, 26, 0.25),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.25);
+  flex: none;
+}
+.career-tab.has-claim,
+.career-seg-btn.has-claim {
+  position: relative;
+}
+.career-tab.has-claim::after,
+.career-seg-btn.has-claim::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--thief);
+}
+/* Patente: a card per side with the insignia, and the track of the 7 insignias */
+.career-rank-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.career-rank-big {
+  width: 64px;
+  flex: none;
+}
+.career-rank-big svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+.career-rank-side {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.career-rank-info b {
+  font-size: 20px;
+}
+.career-track {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 2px;
+}
+.career-track-step {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+}
+.career-track-step svg {
+  width: 100%;
+  max-width: 40px;
+  height: auto;
+}
+.career-track-step.is-current {
+  color: #fff;
+  font-weight: 800;
+}
+.career-track-step.is-current svg {
+  filter: drop-shadow(0 0 6px rgba(255, 194, 26, 0.7));
+}
+.insignia.is-locked {
+  filter: grayscale(1) brightness(0.55);
+}
+.career-track-step small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}

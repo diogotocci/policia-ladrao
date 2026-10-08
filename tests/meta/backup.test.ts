@@ -145,7 +145,7 @@ describe('backup code v3 (career, V2 part 5)', () => {
         achieved: ['arrest10', 'play10'],
         daily: { date: '2026-10-08', progress: [2, 0, 7] },
         streak: { last: '2026-10-08', days: 3 },
-        unseen: 2,
+        claims: ['ach:arrest10', 'daily:2026-10-08:0'],
       },
     };
     const r = decodeBackup(encodeBackup(p));
