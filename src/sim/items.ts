@@ -26,8 +26,9 @@ function available(car: CarState): ItemId[] {
     if (u.fireInterval > P.fireIntervalMin + 1e-9) out.push('fireRate');
     if (u.power < P.powerMax - 1e-9) out.push('power');
     if (car.hp < car.maxHp) out.push('heal');
-    out.push('nitro', 'ram', 'heli', 'pierce', 'machineGun', 'wingman');
+    out.push('ram', 'heli', 'pierce', 'machineGun', 'wingman');
     if (specialRoom(car, 'roadblock')) out.push('roadblock');
+    if (specialRoom(car, 'nitro')) out.push('nitro');
   } else {
     const T = I.thief;
     if (u.plates < T.platesMax) out.push('plate');
@@ -82,9 +83,6 @@ export function applyItem(car: CarState, item: ItemId, time: number, w?: Pick<Wo
     case 'heal':
       hp = Math.min(car.maxHp, hp + (car.role === 'police' ? P.heal : T.heal));
       break;
-    case 'nitro':
-      u.nitroUntil = time + P.nitroTime;
-      break;
     case 'ram':
       u.ramCharges = P.ramCharges;
       break;
@@ -102,6 +100,7 @@ export function applyItem(car: CarState, item: ItemId, time: number, w?: Pick<Wo
     case 'spikes':
     case 'smoke':
     case 'roadblock':
+    case 'nitro': // kept for the button (playtest 2026-10-09), like the spikes
       return addSpecial({ ...car, hp, hasGun, upgrades: u }, item);
     case 'gun':
       if (!hasGun) hasGun = true;

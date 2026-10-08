@@ -109,7 +109,8 @@ export interface Daily {
   count(m: MatchSummary): number;
 }
 const arrested = (m: MatchSummary) => m.role === 'police' && m.won;
-const escaped = (m: MatchSummary) => m.role === 'thief' && m.won && m.reason === 'escape';
+/** The thief got away: by the clock, or by winning in Sobrevivência (no clock there; playtest 2026-10-09) */
+const escaped = (m: MatchSummary) => m.role === 'thief' && m.won && (m.reason === 'escape' || m.mode === 'survival');
 export const DAILY_COINS = [150, 250, 350] as const;
 export const DAILIES: readonly Daily[] = [
   { id: 'play2', tier: 0, title: 'Jogue 2 partidas', target: 2, count: () => 1 },
@@ -254,13 +255,12 @@ export function careerAfterMatch(c: Career, m: MatchSummary, today: string): { c
     if (hard) k.arrestsHard++;
     if (m.time < 40) k.fastArrest = 1;
   }
-  if (m.role === 'thief' && m.won) {
-    if (m.reason === 'escape') {
-      k.escapes++;
-      if (hard) k.escapesHard++;
-      if (m.hpFrac > 0.8) k.cleanEscape = 1;
-    } else k.kills++;
+  if (escaped(m)) {
+    k.escapes++;
+    if (hard) k.escapesHard++;
+    if (m.hpFrac > 0.8) k.cleanEscape = 1;
   }
+  if (m.role === 'thief' && m.won && m.reason !== 'escape') k.kills++; // the patrol car destroyed (also in Sobrevivência)
   if (m.role === 'thief' && m.mode === 'survival' && m.time >= 180) k.survival3min = 1;
   k.roadblocks += m.roadblocks;
   k.bombHits += m.bombHits;

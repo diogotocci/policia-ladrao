@@ -90,10 +90,20 @@ test('touch brake slows the car (mobile)', async ({ page }, info) => {
 test('draw calls stay under budget and stable over time (high quality, shadows on)', async ({ page }) => {
   await page.goto('/?debug&seed=1&quality=high');
   await page.waitForFunction(() => '__game' in window);
+  // short bursts (sparks, smoke, a box coming into view) add a few calls for a moment;
+  // a leak never goes away, so compare the lowest count of a few samples at each moment
+  const steady = async () => {
+    const counts: number[] = [];
+    for (let i = 0; i < 5; i++) {
+      await waitSim(page, 0.2);
+      counts.push(await drawCalls(page));
+    }
+    return Math.min(...counts);
+  };
   await waitSim(page, 3);
-  const a = await drawCalls(page);
-  await waitSim(page, 5);
-  const b = await drawCalls(page);
+  const a = await steady();
+  await waitSim(page, 4);
+  const b = await steady();
   expect(a).toBeGreaterThan(0);
   expect(a).toBeLessThan(100);
   expect(Math.abs(a - b)).toBeLessThanOrEqual(5);

@@ -1,12 +1,12 @@
 // Shop showcase (V2 part 4, spec §6): one big car spinning on a dark round floor, swapped as the player
 // browses (car, paint, neon, plate). Own renderer, released when the shop closes. No WebGL: text only.
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import type { Role } from '../config/balance';
 import type { CarLook } from '../meta/shop';
 import { createCar } from '../sim/car';
 import { updateCarModel } from './carFactory';
 import { createLookModel, disposeLookModel } from './carLook';
+import { addPreviewLighting } from './scene';
 
 export interface ShopPreview {
   show(role: Role, look: CarLook): void;
@@ -24,14 +24,7 @@ export function createShopPreview(slot: HTMLElement): ShopPreview {
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
   slot.append(renderer.domElement);
   const scene = new THREE.Scene();
-  // soft studio reflections: dark paint reads as glossy instead of a black hole
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  pmrem.dispose();
-  scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x30333a, 1.6));
-  const sun = new THREE.DirectionalLight(0xffffff, 2.2);
-  sun.position.set(4, 6, 3);
-  scene.add(sun);
+  const reflections = addPreviewLighting(scene, renderer); // same light as in a match: colours match
   const floor = new THREE.Mesh(
     new THREE.CircleGeometry(3.4, 48).rotateX(-Math.PI / 2),
     new THREE.MeshStandardMaterial({ color: 0x15171b, roughness: 0.9 }),
@@ -87,7 +80,7 @@ export function createShopPreview(slot: HTMLElement): ShopPreview {
     dispose() {
       cancelAnimationFrame(raf);
       renderer.domElement.remove();
-      scene.environment?.dispose();
+      reflections.dispose();
       if (model) disposeLookModel(model);
       floor.geometry.dispose();
       (floor.material as THREE.Material).dispose();

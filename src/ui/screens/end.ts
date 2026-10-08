@@ -106,8 +106,13 @@ function initialsPad(step: (d: number) => void, move: (d: number) => void): HTML
 }
 
 /** Mercosul-style plate with 3 initials. Tap a slot to pick it; ▲▼ change the letter, ◀ ▶ move; the keyboard types. */
-function recordPanel(onSave: (initials: string) => void, onSaved: (note: HTMLElement) => void): { panel: HTMLElement; focus: HTMLElement } {
-  const letters = [0, 0, 0];
+function recordPanel(
+  onSave: (initials: string) => void,
+  onSaved: (note: HTMLElement) => void,
+  last = '',
+): { panel: HTMLElement; focus: HTMLElement } {
+  // starts on the last initials saved (playtest 2026-10-09: no typing them again every match)
+  const letters = [0, 1, 2].map((i) => Math.max(0, LETTERS.indexOf(last[i] ?? 'A')));
   let cursor = 0;
   let saved = false;
   const panel = h('div', 'end-record');
@@ -176,6 +181,8 @@ export function renderEnd(
     difficulty?: Difficulty;
     /** count the total up from 0 (only the first time the screen shows this match) */
     animateReward?: boolean;
+    /** the last initials saved: the plate starts with them */
+    lastInitials?: string;
     /** V2 part 5: career of this match; the streak dialog opens over the screen when `animateReward` (first time) */
     career?: CareerEvent[];
     onSave(initials: string): void;
@@ -214,7 +221,7 @@ export function renderEnd(
   let focus: HTMLElement = again;
   if (p.saved) layout.append(savedNote());
   else if (p.qualifies) {
-    const rec = recordPanel(p.onSave, () => again.focus());
+    const rec = recordPanel(p.onSave, () => again.focus(), p.lastInitials);
     layout.append(rec.panel);
     focus = rec.focus;
   }

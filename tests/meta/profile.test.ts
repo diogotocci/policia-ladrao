@@ -144,3 +144,11 @@ describe('claimReward (Resgatar, playtest 2026-10-08)', () => {
     expect(claimReward(r.profile, 'ach:play10').profile).toBe(r.profile);
   });
 });
+
+describe('escapes stat in Sobrevivência (playtest 2026-10-09)', () => {
+  it('a thief win there adds to the escapes shown in Progresso', () => {
+    const r = settleMatch(emptyProfile(), { winner: 'thief', time: 200, reason: 'policeDown' }, 'thief', 'normal', 'survival');
+    expect(r.profile.stats.escapes).toBe(1);
+    expect(settleMatch(emptyProfile(), { winner: 'thief', time: 60, reason: 'policeDown' }, 'thief').profile.stats.escapes).toBe(0);
+  });
+});

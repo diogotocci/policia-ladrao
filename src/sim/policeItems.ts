@@ -67,13 +67,30 @@ export function placeRoadblock(w: WorldState): WorldState | null {
   return { ...w, hazards: [...w.hazards, ...hazards], nextHazardId: id + hazards.length };
 }
 
-/** The police presses the special button (rising edge): the roadblock; no free spot = the charge stays. */
+/** The police presses the special button (rising edge): the roadblock (no free spot = the charge stays) or the nitro. */
 export function usePoliceSpecial(w: WorldState, intents: Intents): WorldState {
   const pressed = intents.bomb && !w.policeSpecialHeld;
   const out: WorldState = { ...w, policeSpecialHeld: intents.bomb };
   const police = policeOf(out);
   const sp = police.upgrades.special;
-  if (!pressed || !sp || sp.kind !== 'roadblock' || sp.charges <= 0) return out;
+  if (!pressed || !sp || sp.charges <= 0) return out;
+  if (sp.kind === 'nitro') {
+    // kept nitro (playtest 2026-10-09): fired with the button, one charge each time
+    const left = sp.charges - 1;
+    const boosted: CarState = {
+      ...police,
+      upgrades: {
+        ...police.upgrades,
+        nitroUntil: out.time + BALANCE.items.police.nitroTime,
+        special: left > 0 ? { ...sp, charges: left } : null,
+      },
+    };
+    return {
+      ...withCar(out, 'police', boosted),
+      events: [...out.events, { type: 'special', role: 'police', kind: 'nitro', s: police.s, x: police.x }],
+    };
+  }
+  if (sp.kind !== 'roadblock') return out;
   const placed = placeRoadblock(out);
   if (!placed) return { ...out, events: [...out.events, { type: 'roadblockNoRoom' }] };
   const left = sp.charges - 1;

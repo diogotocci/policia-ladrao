@@ -124,3 +124,22 @@ function makeStreetEnvironment(): THREE.Scene {
   env.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide })));
   return env;
 }
+
+/**
+ * The game's car lighting for the 3D previews (title, side choice, shop): same sky/ground light, sun and street
+ * reflections as in a match, so a colour looks the same there (playtest 2026-10-09: black looked grey, white and
+ * silver alike). Returns the reflections texture (dispose it with the preview).
+ */
+export function addPreviewLighting(scene: THREE.Scene, renderer: THREE.WebGLRenderer): THREE.Texture {
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.15;
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const reflections = pmrem.fromScene(makeStreetEnvironment(), 0.02).texture;
+  pmrem.dispose();
+  scene.environment = reflections;
+  scene.add(new THREE.HemisphereLight(0xe4eeff, 0x6a6052, 1.7));
+  const sun = new THREE.DirectionalLight(0xffe4bd, 3.0);
+  sun.position.copy(SUN_DIR).normalize().multiplyScalar(10);
+  scene.add(sun);
+  return reflections;
+}

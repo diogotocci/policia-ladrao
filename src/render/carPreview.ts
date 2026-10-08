@@ -7,6 +7,7 @@ import type { CarLook } from '../meta/shop';
 import { updateCarModel } from './carFactory';
 import { createLookModel } from './carLook';
 import { attachGunner, updateGunner } from './gunner';
+import { addPreviewLighting } from './scene';
 
 /** `looks`: the cars in use from the shop (V2 part 4); default cars without it. */
 export function createCarPreview(slots: Record<Role, HTMLElement>, looks?: Partial<Record<Role, CarLook>>): { dispose(): void } {
@@ -25,13 +26,11 @@ export function createCarPreview(slots: Record<Role, HTMLElement>, looks?: Parti
     ctx2d[role] = canvases[role].getContext('2d');
   }
 
+  const reflections: THREE.Texture[] = [];
   const scenes = {} as Record<Role, { scene: THREE.Scene; model: THREE.Group; gunner: THREE.Group }>;
   for (const role of ['police', 'thief'] as Role[]) {
     const scene = new THREE.Scene();
-    scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x30333a, 1.6));
-    const sun = new THREE.DirectionalLight(0xffffff, 2.2);
-    sun.position.set(4, 6, 3);
-    scene.add(sun);
+    reflections.push(addPreviewLighting(scene, renderer)); // same light as in a match: colours match
     const model = createLookModel(role, looks?.[role]);
     const gunner = attachGunner(model, role);
     scene.add(model);
@@ -84,6 +83,7 @@ export function createCarPreview(slots: Record<Role, HTMLElement>, looks?: Parti
     dispose() {
       cancelAnimationFrame(raf);
       for (const role of ['police', 'thief'] as Role[]) canvases[role].remove();
+      for (const r of reflections) r.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
     },

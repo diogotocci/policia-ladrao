@@ -40,15 +40,20 @@ describe('applyItem — police', () => {
   });
   it('timed items expire independently and re-picking renews (no stacking)', () => {
     let c = police();
-    c = applyItem(c, 'nitro', 0);
     c = applyItem(c, 'heli', 1);
     c = applyItem(c, 'pierce', 2);
-    expect(c.upgrades.nitroUntil).toBe(3);
     expect(c.upgrades.heliUntil).toBe(9);
     expect(c.upgrades.pierceUntil).toBe(12);
-    c = applyItem(c, 'nitro', 2.5);
-    expect(c.upgrades.nitroUntil).toBe(5.5);
   });
+
+  it('nitro is kept for the button and stacks up to 3 (playtest 2026-10-09)', () => {
+    let c = applyItem(police(), 'nitro', 0);
+    expect(c.upgrades.nitroUntil).toBe(0); // not fired on pickup
+    expect(c.upgrades.special).toEqual({ kind: 'nitro', charges: 1 });
+    c = applyItem(applyItem(applyItem(c, 'nitro', 1), 'nitro', 2), 'nitro', 3);
+    expect(c.upgrades.special).toEqual({ kind: 'nitro', charges: 3 });
+  });
+
   it('ram gives 3 charges', () => {
     expect(applyItem(police(), 'ram', 0).upgrades.ramCharges).toBe(3);
   });

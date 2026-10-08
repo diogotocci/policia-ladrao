@@ -36,6 +36,10 @@ export const SPECIAL_ICONS: Record<SpecialKind, string> = {
   roadblock: svg(
     '<path d="M6 16h36v10H6z"/><path d="M12 16l-6 10M22 16l-6 10M32 16l-6 10M42 16l-6 10" stroke-width="3"/><path d="M12 26v14M36 26v14"/>',
   ),
+  // nitro bottle with a flame (police, kept since playtest 2026-10-09)
+  nitro: svg(
+    '<rect x="14" y="14" width="14" height="26" rx="4" fill="currentColor" stroke="none"/><path d="M18 14v-5h6v5"/><path d="M34 30c4-4 2-8 0-12 6 3 9 9 4 16" stroke-width="3"/>',
+  ),
   // cloud of smoke
   smoke: svg(
     '<path d="M14 34a7 7 0 0 1 1-14 9 9 0 0 1 17-2 7 7 0 0 1 3 14z" fill="currentColor" stroke="none"/><path d="M10 40h10M26 40h12" stroke-width="3"/>',
@@ -47,6 +51,7 @@ export const SPECIAL_NAMES: Record<SpecialKind, string> = {
   spikes: 'miguelito',
   smoke: 'fumaça',
   roadblock: 'bloqueio',
+  nitro: 'nitro',
 };
 
 const BUTTONS: { name: IntentName; label: string; side: 'left' | 'right' }[] = [

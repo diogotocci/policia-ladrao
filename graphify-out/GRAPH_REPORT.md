@@ -1,16 +1,16 @@
 # Graph Report - policia-ladrao  (2026-10-08)
 
 ## Corpus Check
-- 219 files · ~169,355 words
+- 220 files · ~170,336 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1490 nodes · 4016 edges · 91 communities (73 shown, 18 thin omitted)
+- 1492 nodes · 4026 edges · 85 communities (67 shown, 18 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 16 edges (avg confidence: 0.76)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c08fbe0d`
+- Built from commit: `ed713593`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -32,7 +32,7 @@
 - compilerOptions
 - devDependencies
 - Polícia × Ladrão: V2, Parte 2: dificuldade (design)
-- ui/shop.test.ts
+- track.ts
 - package.json
 - trackPos
 - shopCars.ts
@@ -43,7 +43,7 @@
 - Review Focus
 - eslint.config.mjs
 - AudioBackend
-- itemsFx.ts
+- touchButtons.ts
 - Tasks
 - particles.ts
 - AGENTS.md — policia-ladrao
@@ -55,24 +55,23 @@
 - Workflow: skills that apply automatically
 - minimal-code.md
 - VENDORED.md
-- gunner.ts
+- ai.ts
 - 2. Refresh
-- sfx.ts
-- feedback.ts
+- synth.ts
+- createRng
 - foundation.spec.ts
 - visual.spec.ts
-- howto.ts
+- curves.ts
 - backup.ts
 - meta/shop.ts
-- carLook.ts
+- gunner.ts
 - hud.ts
 - Polícia × Ladrão: V2, Parte 1: perfil e moedas (design)
 - renderer.ts
 - eslint-plugin-import-x
 - typescript
 - @types/node
-- DIFFICULTIES
-- careerScreen.ts
+- Rng
 - typescript-eslint
 - Review Focus
 - app-credit.test.ts
@@ -80,23 +79,18 @@
 - worldProps.ts
 - PR 1 (0.13.0): modos e Sobrevivência
 - Polícia × Ladrão: V2, Parte 3: modos de jogo e itens novos (design)
-- ai.ts
-- screens.ts
+- roadChunks.ts
 - career.ts
 - vitest
 - @playwright/test
 - h
-- profile.ts
-- MODES
-- Role
+- app.ts
 - Polícia × Ladrão: V2, Parte 5: Carreira (gamificação)
 - opponentMarker.ts
 - V2 Parte 5: Carreira, plano de implementação
 - Polícia × Ladrão: V2, Parte 4: loja e skins (design)
-- fixedStepper.ts
 - ui/icons.ts
 - V2 Parte 4: loja e skins, plano de implementação
-- app.ts
 - typescript7
 - AudioSession
 - GameHandle
@@ -115,16 +109,16 @@
 10. `h()` - 44 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `createTouchButtons()` --indirect_call--> `t()`  [INFERRED]
+  src/input/touchButtons.ts → tests/storage/ranking.test.ts
 - `feedbackForFrame()` --indirect_call--> `e()`  [INFERRED]
   src/ui/feedback.ts → tests/storage/ranking.test.ts
 - `run()` --indirect_call--> `reduce()`  [INFERRED]
   tests/ui/flow.test.ts → src/ui/screens/flow.ts
+- `open()` --calls--> `openProgress()`  [EXTRACTED]
+  tests/ui/progress.test.ts → src/ui/screens/progress.ts
 - `run()` --calls--> `createSequencer()`  [EXTRACTED]
   tests/audio/music.test.ts → src/audio/music.ts
-- `createTouchButtons()` --indirect_call--> `t()`  [INFERRED]
-  src/input/touchButtons.ts → tests/storage/ranking.test.ts
-- `unlockedCareer()` --calls--> `emptyCareer()`  [EXTRACTED]
-  tests/meta/shop.test.ts → src/meta/career.ts
 
 ## Import Cycles
 - 3-file cycle: `src/sim/chaos.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/chaos.ts`
@@ -138,23 +132,23 @@
 - 5-file cycle: `src/sim/car.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/curves.ts -> src/sim/track.ts -> src/sim/car.ts`
 - 5-file cycle: `src/sim/car.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/world.ts -> src/sim/track.ts -> src/sim/car.ts`
 
-## Communities (91 total, 18 thin omitted)
+## Communities (85 total, 18 thin omitted)
 
 ### Community 0 - "world.ts"
 Cohesion: 0.05
-Nodes (139): BALANCE, AiMemory, initialAiMemory(), stepBombs(), CarEffects, CarState, cornering(), hpPct() (+131 more)
+Nodes (140): BALANCE, Role, AiMemory, initialAiMemory(), stepBombs(), CarEffects, CarState, cornering() (+132 more)
 
 ### Community 1 - "Review Focus"
 Cohesion: 0.18
 Nodes (10): Global Constraints, Review Focus, Task 1: Dificuldade na simulação, Task 2: Moedas com multiplicador, Task 3: Ranking por dificuldade e preferência salva, Task 4: Seletor e escolha do lado, Task 5: Ranking com seletor, Task 6: Fim de partida e ligação no app (+2 more)
 
 ### Community 2 - "carFactory.ts"
-Cohesion: 0.14
-Nodes (29): addLamps(), addWheels(), buildCivilian(), buildPolice(), buildThief(), CHROME, CIVILIAN_LAMPS, CIVILIANS (+21 more)
+Cohesion: 0.12
+Nodes (33): addLamps(), addWheels(), buildCivilian(), buildPolice(), buildThief(), CHROME, CIVILIAN_LAMPS, CIVILIANS (+25 more)
 
 ### Community 3 - "ranking.ts"
-Cohesion: 0.13
-Nodes (29): better(), Board, Boards, countModeRecords(), countRecords(), emptyBoard(), emptyBoards(), emptyModeBoards() (+21 more)
+Cohesion: 0.11
+Nodes (34): better(), Board, Boards, countModeRecords(), countRecords(), emptyBoard(), emptyBoards(), emptyModeBoards() (+26 more)
 
 ### Community 4 - "strategy.ts"
 Cohesion: 0.06
@@ -170,19 +164,19 @@ Nodes (5): Car, errors, Snap, snapshot(), waitSim()
 
 ### Community 7 - "main.ts"
 Cohesion: 0.12
-Nodes (17): app, chaosEvery, debug, escapeParam, ITEMS, mute, params, q (+9 more)
+Nodes (16): app, chaosEvery, debug, escapeParam, ITEMS, mute, params, q (+8 more)
 
 ### Community 8 - "game.ts"
-Cohesion: 0.17
-Nodes (15): createDebug(), anyOf(), lerpCar(), startGame(), createKeyboardInput(), IntentName, KEYMAP, INSTANT_POLICE (+7 more)
+Cohesion: 0.12
+Nodes (20): createDebug(), anyOf(), lerpCar(), startGame(), createKeyboardInput(), IntentName, KEYMAP, buzz() (+12 more)
 
 ### Community 9 - "Review Focus"
 Cohesion: 0.13
 Nodes (14): Entrega 3 — Mundo: Plano de Implementação, Global Constraints, Review Focus, Task 10: e2e do mundo, Task 11: Verificação, revisão e entrega, Task 1: Retrovisor, Task 2: Quebra-molas e pulo, Task 3: Tráfego (+6 more)
 
 ### Community 10 - "mixer.ts"
-Cohesion: 0.15
-Nodes (17): createMixer(), HORN_AHEAD, HORN_GAP, BASS, createSequencer(), DRUM_BAR, LEAD, MENU_BASS (+9 more)
+Cohesion: 0.16
+Nodes (16): createMixer(), HORN_AHEAD, HORN_GAP, BASS, createSequencer(), DRUM_BAR, LEAD, MENU_BASS (+8 more)
 
 ### Community 11 - "damageView.ts"
 Cohesion: 0.14
@@ -208,17 +202,17 @@ Nodes (15): eslint, eslint-plugin-security, globals, jsdom, devDependencies, esl
 Cohesion: 0.18
 Nodes (10): 1. Objetivo, 2. O que muda, 3. Escolha da dificuldade, 4. Ranking, 5. Fim de partida, 6. Arquitetura, 7. Erros e casos de borda, 8. Testes (+2 more)
 
-### Community 17 - "ui/shop.test.ts"
-Cohesion: 0.11
-Nodes (13): errors, G, errors, emptyCareer(), emptyCounters(), emptyProfile(), CORRUPT_KEY, loadProfile() (+5 more)
+### Community 17 - "track.ts"
+Cohesion: 0.16
+Nodes (12): Car, errors, Snap, snapshot(), waitSim(), freeSpot(), Bump, bumpInBlock() (+4 more)
 
 ### Community 18 - "package.json"
 Cohesion: 0.20
 Nodes (9): dependencies, three, engines, node, name, private, type, version (+1 more)
 
 ### Community 19 - "trackPos"
-Cohesion: 0.21
-Nodes (12): createCombatFx(), dotTexture(), tracerHeight(), box(), createHeli(), HELI_EXIT, HELI_Y, heliPose (+4 more)
+Cohesion: 0.32
+Nodes (9): createCombatFx(), dotTexture(), tracerHeight(), box(), createHeli(), HELI_EXIT, HELI_Y, heliPose (+1 more)
 
 ### Community 20 - "shopCars.ts"
 Cohesion: 0.08
@@ -248,9 +242,9 @@ Nodes (7): BROWSER_GLOBALS, local, require, SIM_FORBIDDEN_IMPORTS, ref_node_modu
 Cohesion: 0.12
 Nodes (4): Note, SoundName, AudioBackend, NullBackend
 
-### Community 28 - "itemsFx.ts"
-Cohesion: 0.12
-Nodes (15): BUTTONS, buzz(), createTouchButtons(), ICONS, IntentName, SPECIAL_ICONS, SPECIAL_NAMES, itemToast() (+7 more)
+### Community 28 - "touchButtons.ts"
+Cohesion: 0.20
+Nodes (5): BUTTONS, ICONS, IntentName, SPECIAL_ICONS, SPECIAL_NAMES
 
 ### Community 29 - "Tasks"
 Cohesion: 0.22
@@ -277,68 +271,60 @@ Cohesion: 0.29
 Nodes (6): buildCommand, framework, headers, installCommand, outputDirectory, $schema
 
 ### Community 35 - "createCar"
-Cohesion: 0.20
-Nodes (11): createItemsFx(), createCarModel(), blockSign(), createSpecialsView(), nailsGeometry(), baseUpgrades(), createCar(), Hazard (+3 more)
+Cohesion: 0.17
+Nodes (14): createItemsFx(), itemToast(), createCarModel(), blockSign(), createSpecialsView(), nailsGeometry(), baseUpgrades(), createCar() (+6 more)
 
 ### Community 36 - "Backlog — ideias para próximas versões"
 Cohesion: 0.33
 Nodes (5): Backlog — ideias para próximas versões, Fases (anotado em 2026-10-05), Parte 5 (gamificação): desbloquear a loja (anotado em 2026-10-08), Progressão e retenção (anotado em 2026-10-04), Reforço da polícia: bloqueio de via (anotado em 2026-10-05)
 
-### Community 42 - "gunner.ts"
-Cohesion: 0.20
-Nodes (11): attachGunner(), BODY_MAT, box(), FLASH_GEO, FLASH_MAT, flashGunner(), geoCache, gunnerGeometry() (+3 more)
+### Community 42 - "ai.ts"
+Cohesion: 0.38
+Nodes (13): aimedAt(), aiStep(), bumpCovers(), considerBombs(), considerBump(), considerHazards(), curveBraking(), laneBlocked() (+5 more)
 
 ### Community 43 - "2. Refresh"
 Cohesion: 0.25
 Nodes (7): 1. Discovery, 2. Refresh, Graphify, Refresh failure, Refresh order, Running the refresh, When refresh is required
 
-### Community 44 - "sfx.ts"
-Cohesion: 0.39
-Nodes (5): envelopeAt(), recipeDuration(), RECIPES, Voice, Wave
+### Community 44 - "synth.ts"
+Cohesion: 0.26
+Nodes (7): envelopeAt(), recipeDuration(), RECIPES, Voice, Wave, SIREN_STYLES, SirenStyle
 
-### Community 45 - "feedback.ts"
-Cohesion: 0.53
-Nodes (4): Feedback, feedbackFor(), feedbackForFrame(), e()
+### Community 45 - "createRng"
+Cohesion: 0.21
+Nodes (9): buildingsForChunk(), BuildingSpec, PALETTE, Layout, createRng(), clear(), levelOf(), worksInBlock() (+1 more)
 
 ### Community 47 - "visual.spec.ts"
 Cohesion: 0.33
 Nodes (4): errors, Game, Snap, Visuals
 
-### Community 48 - "howto.ts"
-Cohesion: 0.17
-Nodes (11): gameDelta(), openModal(), dragToTurn(), ESCAPE, openHowTo(), pageDots(), PAGES, Tip (+3 more)
+### Community 48 - "curves.ts"
+Cohesion: 0.36
+Nodes (8): active, createTrackFrame(), curvatureAt(), Curve, curvesBetween(), extend(), layoutFor(), layouts
 
 ### Community 49 - "backup.ts"
-Cohesion: 0.11
-Nodes (28): RFC-4648, at(), BACKUP_ERROR_TEXT, BackupError, BackupResult, blocks(), crc32(), CRC_TABLE (+20 more)
+Cohesion: 0.08
+Nodes (33): RFC-4648, errors, G, errors, at(), BACKUP_ERROR_TEXT, BackupError, BackupResult (+25 more)
 
 ### Community 50 - "meta/shop.ts"
-Cohesion: 0.11
-Nodes (38): buy(), BuyCheck, BY_ID, canBuy(), CarId, CarInfo, CARS, carsOf() (+30 more)
+Cohesion: 0.09
+Nodes (37): Profile, buy(), BuyCheck, BY_ID, canBuy(), CarId, CarInfo, CARS (+29 more)
 
-### Community 51 - "carLook.ts"
-Cohesion: 0.20
-Nodes (13): CarLook, DEFORMABLE, instantiate(), updateCarModel(), createLookModel(), disposeLookModel(), glowTexture(), plateTexture() (+5 more)
+### Community 51 - "gunner.ts"
+Cohesion: 0.12
+Nodes (22): CarLook, defaultLook(), updateCarModel(), createLookModel(), disposeLookModel(), glowTexture(), plateTexture(), createCarPreview() (+14 more)
 
 ### Community 52 - "hud.ts"
-Cohesion: 0.19
-Nodes (13): strong(), ALERT_LEFT, BAD, createHud(), distanceBand, el(), FX_TEXT, HudItem (+5 more)
+Cohesion: 0.15
+Nodes (15): ALERT_LEFT, BAD, createHud(), distanceBand, el(), FX_TEXT, HudItem, ITEM_ICON (+7 more)
 
 ### Community 53 - "Polícia × Ladrão: V2, Parte 1: perfil e moedas (design)"
 Cohesion: 0.17
 Nodes (11): 10. Versão, 1. Contexto: a V2, 2. Objetivo da Parte 1, 3. Ganho de moedas, 4. Perfil do jogador, 5. Backup por código, 6. Telas, 7. Arquitetura (+3 more)
 
 ### Community 54 - "renderer.ts"
-Cohesion: 0.24
-Nodes (10): computeRenderSize(), createQualityGovernor(), createRenderer(), ORDER, QUALITY, createLighting(), makeStreetEnvironment(), SHADOW_BOX (+2 more)
-
-### Community 58 - "DIFFICULTIES"
-Cohesion: 0.48
-Nodes (4): DIFFICULTIES, DIFFICULTY_KEY, loadDifficulty(), saveDifficulty()
-
-### Community 59 - "careerScreen.ts"
-Cohesion: 0.13
-Nodes (25): claimCoins(), dailiesFor(), dayBefore(), MAX_RANK, RANK_XP, STREAK_COINS, NeonColor, achievementsPanel() (+17 more)
+Cohesion: 0.22
+Nodes (12): computeRenderSize(), createQualityGovernor(), createRenderer(), ORDER, QUALITY, addPreviewLighting(), createLighting(), makeStreetEnvironment() (+4 more)
 
 ### Community 61 - "Review Focus"
 Cohesion: 0.18
@@ -349,12 +335,12 @@ Cohesion: 0.14
 Nodes (5): ends, gameOpts, OnEnd, Opts, rafs
 
 ### Community 66 - "session.ts"
-Cohesion: 0.25
-Nodes (9): createAudioSession(), UNLOCK_EVENTS, createNullBackend(), createWebAudioBackend(), SIREN_STYLES, createSoundToggle(), readSoundPref(), writeSoundPref() (+1 more)
+Cohesion: 0.29
+Nodes (9): createAudioSession(), UNLOCK_EVENTS, createNullBackend(), createWebAudioBackend(), onTap(), createSoundToggle(), readSoundPref(), writeSoundPref() (+1 more)
 
 ### Community 67 - "worldProps.ts"
-Cohesion: 0.19
-Nodes (13): createTrafficModel(), CONES_PER_WORKS, createWorksView(), signTexture(), createMysteryBox(), faceTexture(), GLYPH, haloTexture() (+5 more)
+Cohesion: 0.24
+Nodes (12): CONES_PER_WORKS, createWorksView(), signTexture(), createMysteryBox(), faceTexture(), GLYPH, haloTexture(), pulseMysteryHalo() (+4 more)
 
 ### Community 68 - "PR 1 (0.13.0): modos e Sobrevivência"
 Cohesion: 0.11
@@ -364,33 +350,21 @@ Nodes (17): Global Constraints, PR 1 (0.13.0): modos e Sobrevivência, PR 2 (0.1
 Cohesion: 0.11
 Nodes (18): 10. Testes, 1. Objetivo, 2. Modos e fluxo, 3. Sobrevivência, 4.1 Ladrão (caixas vermelhas): especiais, usados com o botão, 4.2.1 Ajustes da implementação (0.15.0), 4.2 Polícia (caixas azuis), 4.3.1 Ajustes da implementação (0.14.0) (+10 more)
 
-### Community 70 - "ai.ts"
-Cohesion: 0.06
-Nodes (53): Car, errors, Snap, snapshot(), waitSim(), buildingsForChunk(), BuildingSpec, PALETTE (+45 more)
-
-### Community 71 - "screens.ts"
-Cohesion: 0.27
-Nodes (10): Difficulty, Mode, MatchSummary, ModeBoards, trapFocus(), renderTitle(), shortDate(), TAB_LABEL (+2 more)
+### Community 70 - "roadChunks.ts"
+Cohesion: 0.22
+Nodes (13): smoothTexture(), CHUNK_LENGTH, createRoad(), renderOrigin(), Slot, visibleChunkRange(), canvas(), FACADE_TILE_METERS (+5 more)
 
 ### Community 72 - "career.ts"
-Cohesion: 0.12
-Nodes (27): Achievement, ACHIEVEMENTS, arrested(), awaitingClaim(), careerAfterMatch(), Counters, DAILIES, Daily (+19 more)
+Cohesion: 0.07
+Nodes (50): Achievement, ACHIEVEMENTS, arrested(), awaitingClaim(), Career, careerAfterMatch(), careerFromStats(), claim() (+42 more)
 
 ### Community 75 - "h"
-Cohesion: 0.17
-Nodes (25): formatTime(), openStreak(), renderChoose(), roleCard(), ROLES, choicePicker(), coinsLabel(), DIFFICULTY_LABEL (+17 more)
+Cohesion: 0.08
+Nodes (60): CareerEvent, formatTime(), gameDelta(), achievementsPanel(), bar(), careerStrip(), challengeRow(), n() (+52 more)
 
-### Community 76 - "profile.ts"
-Cohesion: 0.20
-Nodes (16): careerFromStats(), claim(), applyMatch(), claimReward(), grantWelcome(), isCount(), isObject(), parseProfile() (+8 more)
-
-### Community 77 - "MODES"
-Cohesion: 0.48
-Nodes (4): MODES, loadMode(), MODE_KEY, saveMode()
-
-### Community 78 - "Role"
-Cohesion: 0.33
-Nodes (5): Role, Career, Profile, renderShop(), ShopProps
+### Community 76 - "app.ts"
+Cohesion: 0.08
+Nodes (43): startApp(), DIFFICULTIES, Difficulty, Mode, MODES, MatchSummary, applyMatch(), claimReward() (+35 more)
 
 ### Community 79 - "Polícia × Ladrão: V2, Parte 5: Carreira (gamificação)"
 Cohesion: 0.20
@@ -408,10 +382,6 @@ Nodes (8): 1. Objetivo, 2. Catálogo e preços, 3. Regras, 4. Visual dos carros,
 Cohesion: 0.40
 Nodes (4): Global Constraints, Review Focus, Tasks, V2 Parte 4: loja e skins, plano de implementação
 
-### Community 86 - "app.ts"
-Cohesion: 0.19
-Nodes (19): startApp(), CareerEvent, localDate(), settleCareer(), MatchStats, saveModeBoards(), renderCareer(), mount() (+11 more)
-
 ## Knowledge Gaps
 - **451 isolated node(s):** `root`, `skillsDir`, `rulesDir`, `skills`, `usingSuperpowers` (+446 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -420,17 +390,17 @@ Nodes (19): startApp(), CareerEvent, localDate(), settleCareer(), MatchStats, sa
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Role` connect `Role` to `world.ts`, `carFactory.ts`, `ranking.ts`, `main.ts`, `game.ts`, `ui/shop.test.ts`, `itemsFx.ts`, `createCar`, `gunner.ts`, `feedback.ts`, `meta/shop.ts`, `carLook.ts`, `hud.ts`, `careerScreen.ts`, `ai.ts`, `screens.ts`, `career.ts`, `h`, `profile.ts`, `opponentMarker.ts`, `app.ts`?**
-  _High betweenness centrality (0.037) - this node is a cross-community bridge._
-- **Why does `BALANCE` connect `world.ts` to `worldProps.ts`, `createCar`, `ranking.ts`, `ai.ts`, `game.ts`, `h`, `profile.ts`, `feedback.ts`, `howto.ts`, `trackPos`, `fixedStepper.ts`, `hud.ts`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
-- **Why does `AudioBackend` connect `AudioBackend` to `mixer.ts`, `session.ts`, `Mixer`?**
+- **Why does `Role` connect `world.ts` to `carFactory.ts`, `createCar`, `ranking.ts`, `main.ts`, `game.ts`, `career.ts`, `ai.ts`, `h`, `app.ts`, `opponentMarker.ts`, `meta/shop.ts`, `gunner.ts`, `hud.ts`, `Mixer`, `touchButtons.ts`?**
+  _High betweenness centrality (0.040) - this node is a cross-community bridge._
+- **Why does `BALANCE` connect `world.ts` to `worldProps.ts`, `createCar`, `ranking.ts`, `roadChunks.ts`, `game.ts`, `ai.ts`, `h`, `app.ts`, `curves.ts`, `track.ts`, `trackPos`, `hud.ts`?**
+  _High betweenness centrality (0.022) - this node is a cross-community bridge._
+- **Why does `AudioBackend` connect `AudioBackend` to `mixer.ts`, `synth.ts`, `session.ts`, `Mixer`?**
   _High betweenness centrality (0.013) - this node is a cross-community bridge._
 - **What connects `root`, `skillsDir`, `rulesDir` to the rest of the system?**
   _451 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `world.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.05407964355332776 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05355584642233857 - nodes in this community are weakly interconnected._
 - **Should `carFactory.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.14022988505747128 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12299465240641712 - nodes in this community are weakly interconnected._
 - **Should `ranking.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.1253968253968254 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1064102564102564 - nodes in this community are weakly interconnected._

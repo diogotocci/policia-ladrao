@@ -233,3 +233,16 @@ describe('clock going back (review)', () => {
     expect(r.career.xp.police).toBeGreaterThan(c.xp.police); // the match itself still counts (XP, counters)
   });
 });
+
+describe('escapes in Sobrevivência (playtest 2026-10-09)', () => {
+  it('a thief win there counts as an escape (and as the patrol car destroyed); a pursuit kill does not', () => {
+    let c = { ...emptyCareer(), streak: { last: DAY, days: 1 } };
+    c = careerAfterMatch(c, match({ role: 'thief', mode: 'survival', won: true, reason: 'policeDown', difficulty: 'hard' }), DAY).career;
+    expect(c.counters.escapes).toBe(1);
+    expect(c.counters.escapesHard).toBe(1);
+    expect(c.counters.kills).toBe(1);
+    c = careerAfterMatch(c, match({ role: 'thief', mode: 'pursuit', won: true, reason: 'policeDown' }), DAY).career;
+    expect(c.counters.escapes).toBe(1);
+    expect(c.counters.kills).toBe(2);
+  });
+});

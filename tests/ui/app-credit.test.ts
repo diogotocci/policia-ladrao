@@ -161,6 +161,7 @@ describe('difficulty', () => {
     (container.querySelector('.initials') as HTMLElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
     const v4 = JSON.parse(localStorage.getItem('pl.ranking.v4')!);
     expect(v4.pursuit.hard.thief).toHaveLength(1);
+    expect(localStorage.getItem('pl.initials')).toBe('AAA'); // remembered for the next record (playtest 2026-10-09)
     expect(v4.pursuit.normal.thief).toHaveLength(0);
     click('Ranking');
     expect(container.querySelector('.screen-ranking [aria-label="Dificuldade"] [aria-checked="true"]')!.textContent).toBe('Difícil');

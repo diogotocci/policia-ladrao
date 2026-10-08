@@ -49,7 +49,8 @@ export type ItemId =
   | 'wingman';
 
 /** specials (V2 part 3), used with the special button: the thief's four and the police roadblock */
-export type SpecialKind = 'bomb' | 'oil' | 'spikes' | 'smoke' | 'roadblock';
+/** thief: bomb, oil, spikes, smoke; police: roadblock and nitro (kept and used with the button, playtest 2026-10-09) */
+export type SpecialKind = 'bomb' | 'oil' | 'spikes' | 'smoke' | 'roadblock' | 'nitro';
 /** the thief's specials (they share one weight in the box mix) */
 export const SPECIALS: readonly SpecialKind[] = ['bomb', 'oil', 'spikes', 'smoke'];
 

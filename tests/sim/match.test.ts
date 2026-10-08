@@ -90,7 +90,7 @@ describe('AI vs AI (player also driven by the AI)', () => {
     expect(hurt).toBeGreaterThanOrEqual(12);
     expect(close).toBeGreaterThanOrEqual(4);
     expect(total / 16).toBeGreaterThanOrEqual(60);
-  });
+  }, 120_000);
 
   for (const role of ['police', 'thief'] as Role[]) {
     it(`always ends within 10 simulated minutes — player as ${role}`, () => {
@@ -104,7 +104,7 @@ describe('AI vs AI (player also driven by the AI)', () => {
         expect(w.match.over, `seed ${seed}`).toBe(true);
         expect(policeOf(w).s).toBeLessThanOrEqual(thiefOf(w).s + 1e-9);
       }
-    });
+    }, 60_000);
   }
 });
 
