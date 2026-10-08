@@ -106,11 +106,6 @@ const PAGES: { tips: Tip[] }[] = [
         title: 'Reforço',
         text: `Uma segunda viatura chega por trás e bate na lateral do ladrão por ${BALANCE.items.wingman.time} s.`,
       },
-      {
-        icon: 'light',
-        title: 'Holofote',
-        text: `Por ${BALANCE.items.spotlight.time} s o ladrão fica mais lento e a fumaça dele não funciona.`,
-      },
     ],
   },
 ];

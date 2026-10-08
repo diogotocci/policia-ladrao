@@ -50,15 +50,15 @@ describe('roadblock (police special)', () => {
     expect(placeRoadblock(armed({ boxes }))).toBeNull();
   });
 
-  it('crashing into it: −15 and 40% of the speed, held before it; spikes: flat tire; the police is never hit', () => {
+  it('crashing into it: −15 and speed loss like the curb, driving through; spikes: flat tire; the police is never hit', () => {
     let w = usePoliceSpecial(armed(), PRESS);
     const block = w.hazards.find((h) => h.kind === 'roadblock')!;
     w = withCar(w, 'thief', { ...thiefOf(w), s: block.s + 0.5, x: (block.xFrom + block.xTo) / 2, speed: 30 });
     const hit = stepHazards(w);
     const t = thiefOf(hit);
     expect(t.maxHp - t.hp).toBeCloseTo(I.roadblock.damage);
-    expect(t.speed).toBeCloseTo(30 * I.roadblock.speedFactor);
-    expect(t.s).toBeLessThan(block.s);
+    expect(t.speed).toBeCloseTo(30 * (1 - BALANCE.collision.speedLoss));
+    expect(t.s).toBeCloseTo(block.s + 0.5); // not held: drives on
     expect(hit.events.some((e) => e.type === 'roadblockHit')).toBe(true);
     const spikes = w.hazards.find((h) => h.kind === 'spikes')!;
     const flat = stepHazards(withCar(w, 'thief', { ...thiefOf(w), s: spikes.s + 0.5, x: (spikes.xFrom + spikes.xTo) / 2 }));
@@ -74,9 +74,9 @@ describe('roadblock (police special)', () => {
     expect(stepHazards(w).hazards).toEqual([]);
   });
 
-  it('the police AI uses it with the thief 40-150 m ahead; the thief AI goes around it more at level 10', () => {
+  it('the police AI uses it with the thief ahead (up to 150 m), even close; the thief AI goes around it more at level 10', () => {
     let w = armed();
-    w = withCar(w, 'police', { ...policeOf(w), s: thiefOf(w).s - 80, x: thiefOf(w).x });
+    w = withCar(w, 'police', { ...policeOf(w), s: thiefOf(w).s - 20, x: thiefOf(w).x }); // close behind too (playtest)
     let used = false;
     for (let i = 0; i < 60 && !used; i++) {
       w = stepWorld(w, 'ai', DT);
@@ -122,21 +122,6 @@ describe('instant police items', () => {
     expect(x.projectiles[0]!.damage).toBeCloseTo(BALANCE.combat.policeDamage * I.machineGun.damageFactor, 5);
   });
 
-  it('spotlight: the thief 15% slower and its smoke does nothing, 3 s (5 s strong)', () => {
-    let w = base();
-    w = withCar(w, 'police', applyItem({ ...policeOf(w), s: 960, x: LANES[1] }, 'spotlight', 0));
-    expect(applyItem(policeOf(w), 'spotlight', 0, { mode: 'survival', chaos: 3 }).upgrades.spotUntil).toBe(I.spotlight.timeStrong);
-    for (let i = 0; i < 120; i++) w = stepWorld(w, NO_INTENTS, DT);
-    expect(thiefOf(w).speed).toBeLessThan(BALANCE.movement.cruise.thief * (1 - I.spotlight.slow) + 0.5);
-    // smoke on the thief: with the spotlight the shot is not spread (no random draw)
-    const smoked = withCar(base(), 'thief', { ...thiefOf(base()), effects: { ...thiefOf(base()).effects, smokeUntil: 9 } });
-    const near = withCar(smoked, 'police', { ...policeOf(smoked), s: 980, x: LANES[1] });
-    const fire = { police: { ...NO_INTENTS, fire: true }, thief: NO_INTENTS };
-    expect(fireWeapons(near, fire, DT).itemRng).not.toBe(near.itemRng); // spread drawn
-    const lit = withCar(near, 'police', applyItem(policeOf(near), 'spotlight', 0));
-    expect(fireWeapons(lit, fire, DT).itemRng).toBe(lit.itemRng); // no spread
-  });
-
   it('backup car: comes from behind next to the thief, hits its side (−6, pushed) at most once every 2 s, then leaves', () => {
     let w = base();
     w = withCar(w, 'police', applyItem({ ...policeOf(w), s: 900 }, 'wingman', 0));
@@ -174,14 +159,19 @@ describe('instant police items', () => {
 });
 
 describe('police items: edge cases (review)', () => {
-  it('steering into the roadblock from the side pushes the thief back out on that side (no jump backwards)', () => {
+  it('driving through the roadblock (playtest: it got stuck): one hit, then out the other side, never held', () => {
     let w = usePoliceSpecial(armed(), PRESS);
     const block = w.hazards.find((h) => h.kind === 'roadblock')!;
     const cx = (block.xFrom + block.xTo) / 2;
-    w = withCar(w, 'thief', { ...thiefOf(w), s: block.s + 3, x: cx + 1.9, speed: 30 });
-    const t = thiefOf(stepHazards(w));
-    expect(t.s).toBeCloseTo(block.s + 3);
-    expect(t.x).toBeGreaterThan(cx + 1.5);
+    w = withCar(w, 'thief', { ...thiefOf(w), s: block.s - 10, x: cx, speed: 30 });
+    w = withCar(w, 'police', { ...policeOf(w), s: block.s - 300 });
+    let hits = 0;
+    for (let i = 0; i < 90; i++) {
+      w = stepWorld(withCar(w, 'thief', { ...thiefOf(w), x: cx }), NO_INTENTS, DT);
+      hits += w.events.filter((e) => e.type === 'roadblockHit').length;
+    }
+    expect(hits).toBe(1);
+    expect(thiefOf(w).s).toBeGreaterThan(block.s + block.length + 10);
   });
 
   it('every lane and free count leaves exactly the free lanes open, with the car on the thief lane', () => {
@@ -218,9 +208,9 @@ describe('police items: edge cases (review)', () => {
     w = withCar(w, 'police', { ...policeOf(w), upgrades: { ...policeOf(w).upgrades, wingmanUntil: 15 } });
     w = stepWingman(w, DT);
     expect(w.wingman!.until).toBe(15);
-    let end = withCar(w, 'police', applyItem(applyItem(policeOf(w), 'machineGun', 0), 'spotlight', 0));
+    let end = withCar(w, 'police', applyItem(applyItem(policeOf(w), 'machineGun', 0), 'wingman', 0));
     end = withCar(end, 'thief', { ...thiefOf(end), hp: 0 });
     end = stepWorld(end, NO_INTENTS, DT);
-    expect(policeOf(end).upgrades).toMatchObject({ mgUntil: 0, wingmanUntil: 0, spotUntil: 0 });
+    expect(policeOf(end).upgrades).toMatchObject({ mgUntil: 0, wingmanUntil: 0 });
   });
 });

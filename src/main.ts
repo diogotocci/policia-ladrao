@@ -41,7 +41,6 @@ const ITEMS: ItemId[] = [
   'roadblock',
   'machineGun',
   'wingman',
-  'spotlight',
 ];
 const debugGive = debug ? (params.get('give') ?? '').split(',').filter((x): x is ItemId => (ITEMS as string[]).includes(x)) : undefined;
 const traffic = debug && params.get('traffic') === '0' ? false : undefined;

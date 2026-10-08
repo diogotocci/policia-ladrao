@@ -66,11 +66,10 @@ export const RECIPES = {
   'tire-pop': [v('noise', 6000, 1500, 0.55, 0.08, 0.001), v('noise', 1200, 300, 0.25, 0.625, 0.015625, 0.0625)], // bang + air out
   smoke: [v('noise', 5000, 2500, 0.18, 0.9, 0.05)], // hiss
   spikes: [v('triangle', 1400, 1100, 0.12, 0.06), v('triangle', 1700, 1300, 0.1, 0.06, 0.004, 0.05)], // metal clink
-  // V2 part 3 police items: short rapid burst, roadblock siren sweep, backup siren, spotlight hum
+  // V2 part 3 police items: short rapid burst, roadblock siren sweep, backup siren
   'shot-mg': [v('noise', 7000, 1800, 0.32, 0.05, 0.001), v('sine', 220, 90, 0.18, 0.04, 0.001)],
   roadblock: [v('square', 700, 1100, 0.1, 0.35, 0.01), v('square', 1100, 700, 0.1, 0.35, 0.01, 0.375)],
   wingman: [v('square', 950, 650, 0.08, 0.25, 0.01), v('square', 950, 650, 0.08, 0.25, 0.01, 0.25)],
-  spotlight: [v('sawtooth', 110, 140, 0.08, 0.5, 0.0625)],
   // yellow box: roulette ticks, then good (rising) or bad (falling)
   'mystery-spin': [0, 0.125, 0.25, 0.375, 0.5].map((d) => v('square', 1100, 1100, 0.08, 0.0625, 0.001953125, d)),
   'mystery-good': [v('square', 784, 784, 0.13, 0.09), v('square', 1175, 1175, 0.13, 0.18, 0.004, 0.09)],

@@ -153,7 +153,7 @@ export function createMixer(initial: AudioBackend): Mixer {
         else if (e.type === 'tirePop') play('tire-pop');
         else if (e.type === 'special' && e.kind === 'roadblock') play('roadblock');
         else if (e.type === 'roadblockHit') play('crash');
-        else if (e.type === 'policeItem') play(e.item === 'wingman' ? 'wingman' : e.item === 'spotlight' ? 'spotlight' : 'pickup');
+        else if (e.type === 'policeItem') play(e.item === 'wingman' ? 'wingman' : 'pickup');
         else if (e.type === 'wingmanHit') play('crash');
         else if (e.type === 'special' && e.kind === 'smoke') play('smoke');
         else if (e.type === 'special' && (e.kind === 'oil' || e.kind === 'spikes')) play(e.kind === 'oil' ? 'oil-splash' : 'spikes');
@@ -164,7 +164,7 @@ export function createMixer(initial: AudioBackend): Mixer {
           if (clock - lastSkid[e.role] < SKID_GAP || Math.abs(e.s - meS) > SKID_RANGE) continue;
           lastSkid[e.role] = clock;
           play('skid');
-        } else if (e.type === 'pickup' && e.role === playerRole && !['machineGun', 'wingman', 'spotlight'].includes(e.item))
+        } else if (e.type === 'pickup' && e.role === playerRole && !['machineGun', 'wingman'].includes(e.item))
           play(e.item === 'wrong' || e.item === 'none' ? 'wrong' : 'pickup');
         else if (e.type === 'end') play(e.winner === playerRole ? 'win' : 'lose');
       }

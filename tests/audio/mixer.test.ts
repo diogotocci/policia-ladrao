@@ -81,7 +81,7 @@ describe('audio mixer', () => {
     expect(be.played).toEqual(['oil-splash', 'tire-pop', 'smoke', 'spikes', 'mystery-spin', 'mystery-bad']);
   });
 
-  it('V2 part 3 police items: machine gun burst, roadblock siren, backup car and spotlight', () => {
+  it('V2 part 3 police items: machine gun burst, roadblock siren and backup car', () => {
     const be = createNullBackend();
     const mx = createMixer(be);
     mx.frame(world('police'), DT);
@@ -89,9 +89,8 @@ describe('audio mixer', () => {
       { type: 'shot', from: 'police', s: 0, x: 0, rapid: true },
       { type: 'special', role: 'police', kind: 'roadblock', s: 0, x: 0 },
       { type: 'policeItem', item: 'wingman' },
-      { type: 'policeItem', item: 'spotlight' },
     ]);
-    expect(be.played).toEqual(['shot-mg', 'roadblock', 'wingman', 'spotlight']);
+    expect(be.played).toEqual(['shot-mg', 'roadblock', 'wingman']);
   });
 
   it('a burst of 20 shots in the same frame plays at most 6', () => {

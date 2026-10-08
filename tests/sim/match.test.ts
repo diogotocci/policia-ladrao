@@ -67,7 +67,7 @@ describe('match end', () => {
   });
 
   it('level is 2 at 45 s', () => {
-    const w = run(createWorld({ seed: 1, playerRole: 'thief', traffic: false, curves: false }), 45 * 60 + 1); // the idle thief stays alive
+    const w = run(createWorld({ seed: 1, playerRole: 'police', traffic: false, curves: false }), 45 * 60 + 1); // an idle police car stays alive
     expect(w.level).toBe(2);
   });
 });

@@ -146,7 +146,7 @@ export const policeSlowed = (w: WorldState): boolean => {
 export function clearForScene(w: WorldState): WorldState {
   const clean = (r: Role) => {
     const c = r === 'police' ? policeOf(w) : thiefOf(w);
-    return { ...c, effects: NO_EFFECTS, mystery: null, upgrades: { ...c.upgrades, mgUntil: 0, wingmanUntil: 0, spotUntil: 0 } };
+    return { ...c, effects: NO_EFFECTS, mystery: null, upgrades: { ...c.upgrades, mgUntil: 0, wingmanUntil: 0 } };
   };
   return {
     ...withCar(withCar(w, 'police', clean('police')), 'thief', clean('thief')),

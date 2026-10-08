@@ -82,12 +82,12 @@
   opacity: 0;
   transition: opacity 0.6s;
   background:
-    radial-gradient(ellipse 15% 22% at 30% 45%, rgba(92, 62, 30, 0.55) 60%, transparent 62%),
-    radial-gradient(ellipse 9% 12% at 41% 62%, rgba(105, 72, 35, 0.55) 60%, transparent 62%),
-    radial-gradient(ellipse 13% 18% at 68% 38%, rgba(88, 58, 26, 0.55) 60%, transparent 62%),
-    radial-gradient(ellipse 6% 8% at 60% 70%, rgba(110, 76, 38, 0.55) 60%, transparent 62%),
-    radial-gradient(ellipse 5% 7% at 22% 70%, rgba(110, 76, 38, 0.55) 60%, transparent 62%),
-    radial-gradient(ellipse 7% 9% at 80% 62%, rgba(95, 64, 30, 0.55) 60%, transparent 62%);
+    radial-gradient(ellipse 15% 22% at 30% 45%, rgba(92, 62, 30, 0.97) 60%, transparent 62%),
+    radial-gradient(ellipse 9% 12% at 41% 62%, rgba(105, 72, 35, 0.97) 60%, transparent 62%),
+    radial-gradient(ellipse 13% 18% at 68% 38%, rgba(88, 58, 26, 0.97) 60%, transparent 62%),
+    radial-gradient(ellipse 6% 8% at 60% 70%, rgba(110, 76, 38, 0.97) 60%, transparent 62%),
+    radial-gradient(ellipse 5% 7% at 22% 70%, rgba(110, 76, 38, 0.97) 60%, transparent 62%),
+    radial-gradient(ellipse 7% 9% at 80% 62%, rgba(95, 64, 30, 0.97) 60%, transparent 62%);
 }
 .fx-mud.is-on {
   opacity: 1;
@@ -114,17 +114,4 @@
   .mystery-flash.is-on {
     animation: none;
   }
-}
-
-/* police helicopter spotlight on the thief: white glow at the screen edges */
-.fx-spot {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.25s;
-  box-shadow: inset 0 0 90px 24px rgba(255, 255, 245, 0.7);
-}
-.fx-spot.is-on {
-  opacity: 1;
 }

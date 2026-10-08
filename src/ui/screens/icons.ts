@@ -38,5 +38,4 @@ export const SCREEN_ICONS = {
   // V2 part 3: police items
   barrier: svg('<path d="M3 8h18v6H3z"/><path d="M7 8l-4 6M12 8l-4 6M17 8l-4 6M21 8l-4 6"/><path d="M6 14v6M18 14v6"/>'),
   siren: svg('<path d="M7 18v-5a5 5 0 0 1 10 0v5"/><path d="M5 18h14v3H5zM12 3v2M4.5 6l1.5 1.5M19.5 6 18 7.5"/>'),
-  light: svg('<path d="M9 3h6l-1 5h-4z"/><path d="M10 8 5 21h14l-5-13"/>'),
 } as const;
