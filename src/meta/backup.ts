@@ -2,6 +2,7 @@
 // in blocks of 4. The CRC catches a code pasted incomplete or mistyped; it does not stop deliberate edits.
 import { parseProfile, type Profile } from './profile';
 import { CAR_IDS, CATALOG, NEON_IDS, SOUND_IDS, defaultEquipped } from './shop';
+import { ACHIEVEMENTS, COUNTER_KEYS, emptyCareer } from './career';
 
 const PREFIX = 'PL1-';
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -82,27 +83,56 @@ const pack = (p: Profile) => {
     p.stats.coinsEarned,
     p.welcomeGranted ? 1 : 0,
   ];
-  // nothing bought and the defaults in use: the short form (same length as before the shop)
-  if (p.owned.length === 0 && JSON.stringify(p.equipped) === JSON.stringify(defaultEquipped())) return base;
+  const c = p.career;
+  // nothing bought, the defaults in use and no career yet: the short form (same length as before the shop)
+  if (
+    p.owned.length === 0 &&
+    JSON.stringify(p.equipped) === JSON.stringify(defaultEquipped()) &&
+    JSON.stringify(c) === JSON.stringify(emptyCareer())
+  )
+    return base;
   return [
     ...base,
     p.owned.map((id) => CATALOG.findIndex((i) => i.id === id)).filter((i) => i >= 0),
-    [...side('police'), ...side('thief'), CAR_IDS.map((c) => p.equipped.paint[c] ?? 0).join(''), p.equipped.plate],
+    [...side('police'), ...side('thief'), CAR_IDS.map((x) => p.equipped.paint[x] ?? 0).join(''), p.equipped.plate],
+    // v3 (career): xp, counters, achievements (positions), today's challenges, streak, unseen
+    [
+      c.xp.police,
+      c.xp.thief,
+      COUNTER_KEYS.map((k) => c.counters[k]),
+      c.achieved.map((id) => ACHIEVEMENTS.findIndex((a) => a.id === id)).filter((i) => i >= 0),
+      c.daily.date,
+      c.daily.progress,
+      c.streak.last,
+      c.streak.days,
+      c.unseen,
+    ],
   ];
 };
 const at = <T>(list: readonly T[], i: unknown): T | null =>
   typeof i === 'number' && Number.isInteger(i) && i >= 0 && i < list.length ? list[i]! : null;
 function unpack(a: unknown): unknown {
-  if (!Array.isArray(a) || (a.length !== 8 && a.length !== 10)) return undefined;
-  const [v, coins, matches, wins, escapes, arrests, coinsEarned, welcome, ownedIdx, eq] = a as unknown[];
+  if (!Array.isArray(a) || (a.length !== 8 && a.length !== 10 && a.length !== 11)) return undefined;
+  const [v, coins, matches, wins, escapes, arrests, coinsEarned, welcome, ownedIdx, eq, car] = a as unknown[];
   if (welcome !== 0 && welcome !== 1) return undefined;
   const base = { v, coins, stats: { matches, wins, escapes, arrests, coinsEarned }, welcomeGranted: welcome === 1 };
-  if (a.length === 8) return v === 2 ? { ...base, owned: [] } : base; // v1, or v2 with nothing from the shop
+  if (a.length === 8) return v === 1 ? base : { ...base, owned: [] }; // v1, or later with nothing from the shop or career
   if (!Array.isArray(ownedIdx) || !Array.isArray(eq) || eq.length !== 8 || typeof eq[6] !== 'string') return undefined;
   const owned = ownedIdx.map((i) => at(CATALOG, i)?.id).filter((x) => x !== undefined);
   const side = (o: number) => ({ car: at(CAR_IDS, eq[o]), neon: at(NEON_IDS, eq[o + 1]), sound: at(SOUND_IDS, eq[o + 2]) });
   const paint = Object.fromEntries(CAR_IDS.map((c, i) => [c, Number((eq[6] as string)[i] ?? 0)]));
-  return { ...base, owned, equipped: { police: side(0), thief: side(3), paint, plate: eq[7] } };
+  const out = { ...base, owned, equipped: { police: side(0), thief: side(3), paint, plate: eq[7] } };
+  if (a.length === 10) return out; // v2: the career starts from the stats
+  if (!Array.isArray(car) || car.length !== 9 || !Array.isArray(car[2]) || !Array.isArray(car[3])) return undefined;
+  const career = {
+    xp: { police: car[0], thief: car[1] },
+    counters: Object.fromEntries(COUNTER_KEYS.map((k, i) => [k, (car[2] as unknown[])[i]])),
+    achieved: (car[3] as unknown[]).map((i) => at(ACHIEVEMENTS, i)?.id).filter((x) => x !== undefined),
+    daily: { date: car[4], progress: car[5] },
+    streak: { last: car[6], days: car[7] },
+    unseen: car[8],
+  };
+  return { ...out, career };
 }
 
 export function encodeBackup(profile: Profile): string {

@@ -5,6 +5,10 @@ import type { GameEvent } from '../sim/types';
 export interface MatchStats {
   damageDealt: number;
   rightBoxes: number;
+  /** V2 part 5 (career): yellow boxes opened, roadblocks used, bombs that hit the police */
+  mysteryBoxes?: number;
+  roadblocks?: number;
+  bombHits?: number;
 }
 
 export interface Reward {
@@ -17,16 +21,22 @@ export interface Reward {
   total: number;
 }
 
-export const emptyStats = (): MatchStats => ({ damageDealt: 0, rightBoxes: 0 });
+export const emptyStats = (): MatchStats => ({ damageDealt: 0, rightBoxes: 0, mysteryBoxes: 0, roadblocks: 0, bombHits: 0 });
 
 /** Adds one simulation step's events to the running stats of the player's car. */
 export function addEvents(stats: MatchStats, events: readonly GameEvent[], player: Role): MatchStats {
   let { damageDealt, rightBoxes } = stats;
+  let mysteryBoxes = stats.mysteryBoxes ?? 0;
+  let roadblocks = stats.roadblocks ?? 0;
+  let bombHits = stats.bombHits ?? 0;
   for (const e of events) {
     if (e.type === 'hit' && e.target !== player) damageDealt += e.amount;
     else if (e.type === 'pickup' && e.role === player && e.item !== 'wrong' && e.item !== 'none') rightBoxes++;
+    else if (e.type === 'mystery' && e.role === player) mysteryBoxes++;
+    else if (e.type === 'special' && e.role === 'police' && e.kind === 'roadblock' && player === 'police') roadblocks++;
+    else if (e.type === 'explosion' && player === 'thief') bombHits++; // a bomb only explodes when it hits the police
   }
-  return { damageDealt, rightBoxes };
+  return { damageDealt, rightBoxes, mysteryBoxes, roadblocks, bombHits };
 }
 
 export function rewardFor(

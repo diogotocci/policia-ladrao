@@ -90,6 +90,8 @@ export function startGame(
       time: number;
       reason?: 'escape' | 'policeDown' | 'thiefDown';
       hp: number;
+      /** player's life left, 0..1 (career: escape with more than 80%) */
+      hpFrac?: number;
       level: number;
       stats: MatchStats;
     }) => void;
@@ -348,6 +350,7 @@ export function startGame(
       time: world.match.endTime ?? world.time,
       reason: world.match.reason,
       hp: world.player.hp,
+      hpFrac: world.player.maxHp > 0 ? world.player.hp / world.player.maxHp : 0,
       level: world.level,
       stats,
     });

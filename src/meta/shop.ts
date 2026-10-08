@@ -2,6 +2,7 @@
 // reaches the simulation. The catalog order never changes (the backup code stores positions): new items go at the end.
 import type { Role } from '../config/balance';
 import type { Profile } from './profile';
+import { meets, requirementText, unlockOf } from './career';
 
 export type CarId = 'viatura' | 'esportivo' | 'blazer' | 'caveirao' | 'seda' | 'picape' | 'moto' | 'van';
 export type NeonColor = 'azul' | 'roxo' | 'verde' | 'rosa';
@@ -29,21 +30,21 @@ export const CARS: Record<CarId, CarInfo> = {
   esportivo: {
     role: 'police',
     name: 'Esportivo',
-    price: 800,
+    price: 2500,
     colors: [0x111316, 0xf3f4f6, 0xb8bec6, 0x1b2a4a],
     colorNames: ['Preto', 'Branco', 'Prata', 'Azul-marinho'],
   },
   blazer: {
     role: 'police',
     name: 'Blazer',
-    price: 1500,
+    price: 5000,
     colors: [0xf1f2f4, 0xb8bec6, 0x1b2a4a, 0x16181c],
     colorNames: ['Branca', 'Prata', 'Azul-marinho', 'Preta'],
   },
   caveirao: {
     role: 'police',
     name: 'Caveirão',
-    price: 3000,
+    price: 10000,
     colors: [0x1e2126, 0xf3f4f6, 0xb8bec6, 0x1b2a4a],
     colorNames: ['Preto', 'Branco', 'Prata', 'Azul-marinho'],
   },
@@ -57,21 +58,21 @@ export const CARS: Record<CarId, CarInfo> = {
   picape: {
     role: 'thief',
     name: 'Picape',
-    price: 800,
+    price: 2500,
     colors: [0xe0731c, 0x6e1420, 0x1f4fb0, 0x5d6b3c],
     colorNames: ['Laranja', 'Vinho', 'Azul', 'Verde-oliva'],
   },
   moto: {
     role: 'thief',
     name: 'Moto com carona',
-    price: 1500,
+    price: 5000,
     colors: [0xd0151c, 0x8fd61a, 0x1f4fb0, 0xf2c014],
     colorNames: ['Vermelha', 'Verde-limão', 'Azul', 'Amarela'],
   },
   van: {
     role: 'thief',
     name: 'Van preta',
-    price: 3000,
+    price: 10000,
     colors: [0x101114, 0xeeeff1, 0x6b7380, 0x6e1420],
     colorNames: ['Preta', 'Branca', 'Cinza', 'Vinho'],
   },
@@ -98,7 +99,8 @@ export const SOUNDS: Record<SoundId, { role: Role; name: string }> = {
 export const SOUND_IDS = Object.keys(SOUNDS) as SoundId[];
 export const DEFAULT_SOUND_NAME: Record<Role, string> = { police: 'Sirene padrão', thief: 'Buzina padrão' };
 
-export const PRICES = { paint: 300, neon: 600, sound: 500, plate: 400 } as const;
+// V2 part 5: ~3x the 0.16 prices, and every item needs to be unlocked first (career.ts unlockOf)
+export const PRICES = { paint: 900, neon: 1800, sound: 1500, plate: 1200 } as const;
 export const PLATE_MAX = 7;
 
 export interface ShopItem {
@@ -197,13 +199,19 @@ export function sanitizeShop(ownedRaw: readonly unknown[], eq: Partial<Equipped>
 }
 
 // ---------- buying and using ----------
-export type BuyCheck = { ok: true; price: number } | { ok: false; reason: 'unknown' | 'owned' | 'locked' | 'coins'; missing?: number };
+export type BuyCheck =
+  | { ok: true; price: number }
+  | { ok: false; reason: 'unknown' | 'owned' | 'coins'; missing?: number }
+  /** car not owned yet (paints), or the career requirement is not met; `need` is the player-facing text */
+  | { ok: false; reason: 'locked'; need: string };
 
 export function canBuy(p: Profile, id: string): BuyCheck {
   const item = BY_ID.get(id);
   if (!item) return { ok: false, reason: 'unknown' };
   if (has(p.owned, id)) return { ok: false, reason: 'owned' };
-  if (item.kind === 'paint' && !ownsCar(p.owned, item.car!)) return { ok: false, reason: 'locked' };
+  if (item.kind === 'paint' && !ownsCar(p.owned, item.car!)) return { ok: false, reason: 'locked', need: 'Compre o carro primeiro' };
+  const req = unlockOf(id);
+  if (req && !meets(p.career, req)) return { ok: false, reason: 'locked', need: requirementText(p.career, req) };
   if (p.coins < item.price) return { ok: false, reason: 'coins', missing: item.price - p.coins };
   return { ok: true, price: item.price };
 }

@@ -155,7 +155,7 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
     const c = canBuy(profile, id);
     if (c.ok) return { label: `Comprar · ${n(c.price)}`, enabled: true, kind: 'buy' };
     if (c.reason === 'coins') return { label: `Faltam ${n(c.missing!)}`, enabled: false, kind: 'none' };
-    if (c.reason === 'locked') return { label: 'Compre o carro primeiro', enabled: false, kind: 'none' };
+    if (c.reason === 'locked') return { label: c.need, enabled: false, kind: 'none' };
     return { label: '', enabled: false, kind: 'none' };
   };
 
@@ -208,8 +208,13 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
       `shop-tag${inUse(profile, r.id) ? ' is-on' : ''}${!owns(profile, r.id) && !st.enabled ? ' is-locked' : ''}`,
       tag,
     );
-    if (!owns(profile, r.id) && r.price > 0) state.insertAdjacentHTML('afterbegin', SCREEN_ICONS.coin);
-    el.append(sw, h('span', 'shop-row-name', r.name), state);
+    const name = h('span', 'shop-row-name', r.name);
+    // V2 part 5: still locked by the career (or the car not bought): what is missing, under the name
+    const check = owns(profile, r.id) ? null : canBuy(profile, r.id);
+    const locked = check !== null && !check.ok && check.reason === 'locked';
+    if (locked) name.append(h('small', 'shop-row-need', check.need));
+    if (!owns(profile, r.id) && r.price > 0) state.insertAdjacentHTML('afterbegin', locked ? SCREEN_ICONS.lock : SCREEN_ICONS.coin);
+    el.append(sw, name, state);
     el.addEventListener('click', () => {
       selected = r.id;
       if (tab === 'cars') stageCar = r.id.split(':')[1] as CarId;

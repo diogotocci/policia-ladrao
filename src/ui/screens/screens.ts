@@ -12,6 +12,7 @@ export { trapFocus } from './dom';
 export { renderChoose } from './choose';
 export { renderEnd } from './end';
 export { renderShop } from './shop';
+export { renderCareer } from './careerScreen';
 
 // ---------- title ----------
 /** Logo (a blue street-name plate) over the two spinning 3D cars. */
@@ -49,6 +50,10 @@ export function renderTitle(
     onProgress?(): void;
     /** V2 part 4: opens the shop */
     onShop?(): void;
+    /** V2 part 5: opens Carreira; `careerBadge` = things to see there; `streak` = days in a row */
+    onCareer?(): void;
+    careerBadge?: number;
+    streak?: number;
     coins?: number;
     mountToggle(parent: HTMLElement): Disposable;
     version?: string;
@@ -61,6 +66,15 @@ export function renderTitle(
   const help = btn('Como jogar', '', () => openHowTo(s, () => (p.onHowToSeen?.(), help.focus())), SCREEN_ICONS.help);
   const menu = h('div', 'title-menu');
   menu.append(play);
+  if (p.onCareer) {
+    const career = btn('Carreira', 'title-career', p.onCareer, SCREEN_ICONS.medal);
+    if (p.careerBadge) {
+      const dot = h('span', 'title-badge', String(Math.min(99, p.careerBadge)));
+      career.setAttribute('aria-label', `Carreira, ${p.careerBadge} novidades`);
+      career.append(dot);
+    }
+    menu.append(career);
+  }
   if (p.onShop) menu.append(btn('Loja', 'title-shop', p.onShop, SCREEN_ICONS.shop));
   menu.append(help, btn('Ranking', '', p.onRanking, SCREEN_ICONS.trophy));
   const sound = h('div', 'title-sound');
@@ -71,7 +85,19 @@ export function renderTitle(
   }
   const toggle = p.mountToggle(sound);
   s.append(hero, menu, sound);
-  if (p.coins !== undefined) s.append(walletChip(p.coins));
+  if (p.coins !== undefined) {
+    const chip = walletChip(p.coins);
+    if (p.streak) {
+      const st = h('span', 'title-streak', `${p.streak} ${p.streak === 1 ? 'dia' : 'dias'}`);
+      st.insertAdjacentHTML('afterbegin', SCREEN_ICONS.flame);
+      chip.append(st);
+      chip.setAttribute(
+        'aria-label',
+        `${p.coins.toLocaleString('pt-BR')} moedas, sequência de ${p.streak} ${p.streak === 1 ? 'dia' : 'dias'}`,
+      );
+    }
+    s.append(chip);
+  }
   if (p.version) s.append(h('p', 'title-version', `v${p.version}`));
   const m = mount(root, s, play);
   return { dispose: () => (toggle.dispose(), m.dispose()), previews };
@@ -185,6 +211,7 @@ export function renderRanking(
       time.append(tag);
     }
     const initials = h('span', 'ranking-initials', e.initials);
+    if (e.rank === 7) initials.append(h('span', 'ranking-rank', p.tab === 'police' ? 'Delegado' : 'Chefão')); // V2 part 5: top rank
     if (e.plate) {
       const plate = h('span', 'ranking-plate', e.plate); // V2 part 4: the shop plate in use at the time
       plate.setAttribute('aria-label', `placa ${e.plate}`);

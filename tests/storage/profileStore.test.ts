@@ -79,10 +79,10 @@ describe('profile store v2 key (V2 part 4)', () => {
     s.setItem(PROFILE_V1_KEY, v1);
     const { profile } = loadProfile(s);
     expect(profile.coins).toBe(700);
-    expect(profile.v).toBe(2);
+    expect(profile.v).toBe(3);
     saveProfile(s, { ...profile, coins: 100 });
     expect(s.getItem(PROFILE_V1_KEY)).toBe(v1); // an older build still open keeps its own progress
     expect(loadProfile(s).profile.coins).toBe(100); // the v2 key wins
-    expect(PROFILE_KEY).toBe('pl.profile.v2');
+    expect(PROFILE_KEY).toBe('pl.profile.v3');
   });
 });

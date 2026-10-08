@@ -38,6 +38,39 @@ const frames = (n: number) => {
 
 const { startApp } = await import('../../src/app');
 const { PROFILE_KEY } = await import('../../src/storage/profileStore');
+const { careerAfterMatch, emptyCareer, localDate } = await import('../../src/meta/career');
+/** coins the career adds to a first match on an empty profile (streak day 1, and today's challenges it completes) */
+const careerCoins = (o: {
+  role: 'police' | 'thief';
+  mode?: 'pursuit' | 'survival';
+  difficulty?: 'easy' | 'normal' | 'hard';
+  won: boolean;
+  reason?: 'escape' | 'thiefDown';
+  time: number;
+  hpFrac?: number;
+  damage: number;
+  boxes: number;
+  coins: number;
+}) =>
+  careerAfterMatch(
+    emptyCareer(),
+    {
+      role: o.role,
+      mode: o.mode ?? 'pursuit',
+      difficulty: o.difficulty ?? 'normal',
+      won: o.won,
+      reason: o.reason,
+      time: o.time,
+      hpFrac: o.hpFrac ?? 0,
+      rightBoxes: o.boxes,
+      mysteryBoxes: 0,
+      damageDealt: o.damage,
+      roadblocks: 0,
+      bombHits: 0,
+      coins: o.coins,
+    },
+    localDate(new Date()),
+  ).coins;
 
 let container: HTMLElement;
 beforeEach(() => {
@@ -73,18 +106,19 @@ describe('coins credit', () => {
     vi.restoreAllMocks();
     expect(container.querySelector('.screen-end')).not.toBeNull();
     expect(endShownBeforeSave).toBe(false);
-    // (30 + 5 + 4) x 2 = 78
-    expect(saved()).toBe(78);
+    // (30 + 5 + 4) x 2 = 78, plus the career (V2 part 5: streak and any challenge of the day it completes)
+    const total = 78 + careerCoins({ role: 'thief', won: true, reason: 'escape', time: 90, damage: 20, boxes: 2, coins: 78 });
+    expect(saved()).toBe(total);
     expect(container.querySelector('.end-reward-total')!.getAttribute('aria-label')).toBe('+78 moedas');
     click('Ranking');
     click('Voltar'); // back to the same end screen: no new credit
-    expect(saved()).toBe(78);
+    expect(saved()).toBe(total);
     click('Início');
-    expect(container.querySelector('.title-wallet')!.textContent).toContain('78');
+    expect(container.querySelector('.title-wallet')!.textContent).toContain(String(total));
     app.stop();
     container.innerHTML = '';
     startApp(container, { mute: true }); // reload
-    expect(container.querySelector('.title-wallet')!.textContent).toContain('78');
+    expect(container.querySelector('.title-wallet')!.textContent).toContain(String(total));
   });
 });
 
@@ -118,8 +152,10 @@ describe('difficulty', () => {
     expect(gameOpts[0]!.difficulty).toBe('hard');
     frames(60);
     ends[0]!({ winner: 'thief', time: 90, reason: 'escape', hp: 50, level: 6, stats: { damageDealt: 20, rightBoxes: 2 } });
-    // (30 + 5 + 4) x 2 x 1.5 = 117
-    expect(saved()).toBe(117);
+    // (30 + 5 + 4) x 2 x 1.5 = 117, plus the career
+    expect(saved()).toBe(
+      117 + careerCoins({ role: 'thief', difficulty: 'hard', won: true, reason: 'escape', time: 90, damage: 20, boxes: 2, coins: 117 }),
+    );
     (container.querySelector('.initials') as HTMLElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
     const v4 = JSON.parse(localStorage.getItem('pl.ranking.v4')!);
     expect(v4.pursuit.hard.thief).toHaveLength(1);
@@ -148,7 +184,10 @@ describe('Sobrevivência', () => {
     expect(gameOpts[0]!.mode).toBe('survival');
     frames(60);
     ends[0]!({ winner: 'police', time: 300, reason: 'thiefDown', hp: 0, level: 7, stats: { damageDealt: 0, rightBoxes: 0 } });
-    expect(saved()).toBe(60); // 300 s -> 60 (survival cap), a loss: x1
+    // 300 s -> 60 (survival cap), a loss: x1; plus the career
+    expect(saved()).toBe(
+      60 + careerCoins({ role: 'thief', mode: 'survival', won: false, reason: 'thiefDown', time: 300, damage: 0, boxes: 0, coins: 60 }),
+    );
     expect(container.querySelector('.initials')).not.toBeNull(); // the survival thief ranks even when caught
     (container.querySelector('.initials') as HTMLElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
     const v4 = JSON.parse(localStorage.getItem('pl.ranking.v4')!);
