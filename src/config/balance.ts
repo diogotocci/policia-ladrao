@@ -157,7 +157,6 @@ export const BALANCE = {
       search: 60, // m further looking for a free spot (curve, bump, works, box); none: the charge stays
       length: 4.4, // m (a patrol car across a lane)
       damage: 15,
-      speedFactor: 0.4, // the thief keeps 40% of its speed when it crashes into it
       freeLanes: 2, // lanes left free (the rest: patrol car + spike strips)
       freeLanesFromChaos2: 1,
       spikesLength: 2,
@@ -166,7 +165,6 @@ export const BALANCE = {
     },
     machineGun: { time: 4, timeStrong: 6, interval: 0.2, damageFactor: 0.4 },
     wingman: { time: 8, timeStrongFromChaos: 4, timeStrong: 12, damage: 6, push: 1.5, every: 2, behind: 25, catchUp: 10 },
-    spotlight: { time: 3, timeStrong: 5, slow: 0.15 }, // the thief 15% slower; its smoke does nothing
     // V2 part 3: the yellow "?" box (both modes): a good item of your side or a bad effect, after a 0.6 s roulette
     mystery: {
       share: 0.15, // of the boxes (about 1 in 7; at 1 in 5 the computer thief lost too often)
@@ -186,10 +184,9 @@ export const BALANCE = {
         ram: 2,
         heli: 1,
         pierce: 2,
-        roadblock: 2,
+        roadblock: 7,
         machineGun: 2,
         wingman: 1,
-        spotlight: 2,
       },
       // the thief's specials share the weight the bomb had (3), then split by kind: the rest of the mix stays as it was
       // (balance: with each kind weighing on its own, plates, heal and gun came much less and the thief won ~28%)

@@ -16,7 +16,6 @@ export interface Upgrades {
   /** V2 part 3 police items */
   mgUntil: number;
   wingmanUntil: number;
-  spotUntil: number;
 }
 
 export function baseUpgrades(role: Role): Upgrades {
@@ -31,7 +30,6 @@ export function baseUpgrades(role: Role): Upgrades {
     pierceUntil: 0,
     mgUntil: 0,
     wingmanUntil: 0,
-    spotUntil: 0,
   };
 }
 

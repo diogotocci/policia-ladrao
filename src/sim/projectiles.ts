@@ -26,8 +26,7 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
   const projectiles: Projectile[] = [...w.projectiles];
   const c = BALANCE.combat;
   // the thief's smoke (V2 part 3): police shots spread up to ±12° and the helicopter does not fire
-  // ...unless the helicopter spotlight is on him (police item): then the smoke does nothing
-  const smoke = w.time < thiefOf(w).effects.smokeUntil && w.time >= policeOf(w).upgrades.spotUntil;
+  const smoke = w.time < thiefOf(w).effects.smokeUntil;
   const rng = createRngFromState(w.itemRng);
   const spread = (vs: number, vx: number): [number, number] => {
     if (!smoke) return [vs, vx];

@@ -68,16 +68,16 @@ Todos os números ficam em `BALANCE.items`. "Caos N+" vale só no Sobrevivência
 
 | Item | Uso | Efeito | Mais forte |
 |---|---|---|---|
-| **Bloqueio + spike** | especial, com botão | uma viatura atravessada numa faixa, 120 m à frente do ladrão, e spike nas faixas vizinhas; na Perseguição ficam 2 faixas livres. Bater na viatura: −15 e perde 60% da velocidade. Passar no spike: pneu furado, como o miguelito. Placa de aviso 80 m antes. Some depois que o ladrão passa. | caos 2+: só 1 faixa livre |
+| **Bloqueio + spike** | especial, com botão | uma viatura atravessada numa faixa, 120 m à frente do ladrão, e spike nas faixas vizinhas; na Perseguição ficam 2 faixas livres. Bater na viatura: −15 e perde velocidade como na calçada, passando direto. Passar no spike: pneu furado, como o miguelito. Placa de aviso 80 m antes. Some depois que o ladrão passa. | caos 2+: só 1 faixa livre |
 | **Metralhadora** | na hora | 4 s atirando a cada 0,2 s, com dano ×0,4 por tiro | caos 3+: 6 s |
 | **Segunda viatura** | na hora | uma viatura do computador entra por trás, na faixa vizinha, por 8 s. Quando fica lado a lado, dá uma batida lateral no ladrão (−6, empurra 1,5 m), no máximo 1 a cada 2 s. Depois vai embora. | caos 4+: 12 s |
-| **Holofote** | na hora | por 3 s o ladrão fica 15% mais lento e a fumaça dele não tem efeito; o jogador ladrão vê um brilho branco nas bordas da tela | caos 3+: 5 s |
 
 #### 4.2.1 Ajustes da implementação (0.15.0)
 
-- **Bloqueio:** a viatura fica na faixa do ladrão; com 2 faixas livres, o spike vai na faixa vizinha do lado do centro; com 1 livre, nas duas vizinhas (ou nas duas do lado com espaço). Lugar livre: fora de quebra-mola (10 m), de curva fechada, de obra, de caixa e de outro perigo (6 m). Sem lugar em 60 m, a carga fica e a polícia vê "Sem lugar para o bloqueio agora". Bater na viatura segura o ladrão logo antes dela (como nas obras). Some 15 m depois que o ladrão passa. Só acerta o ladrão.
+- **Bloqueio:** a viatura fica na faixa do ladrão; com 2 faixas livres, o spike vai na faixa vizinha do lado do centro; com 1 livre, nas duas vizinhas (ou nas duas do lado com espaço). Lugar livre: fora de quebra-mola (10 m), de curva fechada, de obra, de caixa e de outro perigo (6 m). Sem lugar em 60 m, a carga fica e a polícia vê "Sem lugar para o bloqueio agora". Bater na viatura funciona como a calçada (playtest 2026-10-07: segurar o carro antes dela fazia ele travar): −15, perde velocidade e passa direto. Some 15 m depois que o ladrão passa. Só acerta o ladrão.
 - **Segunda viatura:** depois do tempo, ela desacelera e some quando a polícia passa por ela.
-- **Avisos:** o ladrão vê "Bloqueio à frente!"; os dois veem "Metralhadora!", "Reforço chegando!" e "Holofote!". O ladrão vê um selo vermelho "Holofote" e o brilho branco nas bordas.
+- **Holofote:** removido (playtest 2026-10-07). **Lama:** quase opaca, para atrapalhar de verdade.
+- **Avisos:** o ladrão vê "Bloqueio à frente!"; os dois veem "Metralhadora!", e "Reforço chegando!".
 - **Equilíbrio (0.15.0):** com todos os itens, entre computadores o ladrão vence ~37% na Perseguição e ~42% no Sobrevivência.
 - **Como jogar:** quinta página com os itens da polícia.
 
@@ -88,7 +88,7 @@ Todos os números ficam em `BALANCE.items`. "Caos N+" vale só no Sobrevivência
 - A polícia passa a ter o botão, para o bloqueio. Antes ela não tinha especial.
 - **Peso nas caixas:**
   - ladrão: os especiais juntos pesam 3 (o peso que a bomba tinha) e, dentro deles, bomba 3, óleo 2, miguelito 2, fumaça 2; os itens de hoje mantêm os pesos. Equilíbrio 0.14.0: com cada especial pesando sozinho, blindagem, vida e arma vinham bem menos e o ladrão do computador vencia só ~28%;
-  - polícia: bloqueio 2, metralhadora 2, segunda viatura 1, holofote 2.
+  - polícia: bloqueio 7 (playtest 2026-10-07: com 2, quase não aparecia), metralhadora 2, segunda viatura 1 (o holofote foi removido no playtest de 2026-10-07: com a fumaça virando uma nuvem parada, ele perdeu o sentido).
 
 ### 4.3.1 Ajustes da implementação (0.14.0)
 
@@ -122,7 +122,7 @@ Todos os números ficam em `BALANCE.items`. "Caos N+" vale só no Sobrevivência
   - o ladrão usa óleo e miguelito com a viatura alinhada atrás, entre 30 e 80 m (mais perto, quem decide é a investida);
   - usa a fumaça quando está sendo atingido ou com a viatura alinhada a até 50 m;
   - só vai para a faixa da viatura para soltar a bomba (com os outros especiais ficava sempre na mira);
-  - a polícia usa o bloqueio quando o ladrão está 40–150 m à frente;
+  - a polícia usa o bloqueio com o ladrão à frente, até 150 m (playtest 2026-10-07: a partir de 40 m ela quase nunca usava);
   - os itens "na hora" agem sozinhos.
 
 ## 5. Visual e som
@@ -132,7 +132,6 @@ Todos os números ficam em `BALANCE.items`. "Caos N+" vale só no Sobrevivência
 - **Bloqueio:** modelo da viatura atravessado, com giroflex piscando, e um policial em pé; placa de aviso.
 - **Obras:** cones laranja e placa "Obras".
 - **Segunda viatura:** o mesmo modelo da viatura, que entra e sai por trás.
-- **Holofote:** facho de luz do helicóptero sobre o ladrão; para o jogador ladrão, um brilho branco nas bordas da tela.
 - **Pneu furado:** faíscas na roda e o carro balançando.
 - **Sons:**
   - o óleo espirra;
@@ -140,7 +139,7 @@ Todos os números ficam em `BALANCE.items`. "Caos N+" vale só no Sobrevivência
   - a metralhadora faz uma rajada mais curta e rápida que o tiro normal;
   - a fumaça chia;
   - o bloqueio liga a sirene.
-- **Avisos no HUD** (toast curto): "Óleo!", "Pneu furado!", "Fumaça!", "Bloqueio à frente!", "Metralhadora!", "Reforço chegando!", "Holofote!".
+- **Avisos no HUD** (toast curto): "Óleo!", "Pneu furado!", "Fumaça!", "Bloqueio à frente!", "Metralhadora!", "Reforço chegando!".
 
 ## 6. Ranking e moedas
 
@@ -178,7 +177,6 @@ Todos os números ficam em `BALANCE.items`. "Caos N+" vale só no Sobrevivência
 - **Render:**
   - `hazardsView.ts` (óleo, pregos, spike, viatura do bloqueio, cones);
   - fumaça e faíscas em `particles`;
-  - holofote em `combatFx`;
   - a segunda viatura reaproveita `createCarModel('police')`.
 - **Telas:**
   - `mode.ts` (tela de modo);
@@ -196,7 +194,7 @@ Todos os números ficam em `BALANCE.items`. "Caos N+" vale só no Sobrevivência
    - troca da bomba pelo botão de especial;
    - óleo, miguelito, fumaça e bomba de área, com visual, som e HUD;
    - o computador usando esses itens e desviando deles.
-3. **0.15.0, itens da polícia:** bloqueio + spike, metralhadora, segunda viatura e holofote, com visual, som e HUD, e o computador usando e desviando.
+3. **0.15.0, itens da polícia:** bloqueio + spike, metralhadora, segunda viatura, com visual, som e HUD, e o computador usando e desviando.
 
 Cada PR passa por revisão própria e sai jogável.
 

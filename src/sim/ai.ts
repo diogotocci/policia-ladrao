@@ -230,10 +230,10 @@ export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): {
       else mem = { ...mem, targetX: Math.max(-EDGE + 0.3, Math.min(EDGE - 0.3, foe.x)) };
     }
     const cb = curveBraking(w, me.s, me.speed, rng, mem, k);
-    // roadblock: with the thief 40-150 m ahead
+    // roadblock: with the thief ahead, up to 150 m (playtest 2026-10-07: from 40 m on it was almost never used)
     let block = false;
     const gapAhead = foe.s - me.s;
-    if (me.upgrades.special?.kind === 'roadblock' && gapAhead > 40 && gapAhead < 150 && w.time >= cb.memory.nextBombAt) {
+    if (me.upgrades.special?.kind === 'roadblock' && gapAhead > 5 && gapAhead < 150 && w.time >= cb.memory.nextBombAt) {
       block = !w.policeSpecialHeld;
       if (block) cb.memory = { ...cb.memory, nextBombAt: w.time + lerp(5, 2, k) };
     }

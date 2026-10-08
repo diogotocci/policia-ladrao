@@ -46,8 +46,7 @@ export type ItemId =
   | 'smoke'
   | 'roadblock'
   | 'machineGun'
-  | 'wingman'
-  | 'spotlight';
+  | 'wingman';
 
 /** specials (V2 part 3), used with the special button: the thief's four and the police roadblock */
 export type SpecialKind = 'bomb' | 'oil' | 'spikes' | 'smoke' | 'roadblock';
@@ -123,7 +122,7 @@ export type GameEvent =
   | { type: 'mysteryReveal'; role: Role; outcome: MysteryOutcome }
   | { type: 'roadblockHit'; s: number; x: number }
   | { type: 'roadblockNoRoom' }
-  | { type: 'policeItem'; item: 'machineGun' | 'wingman' | 'spotlight' }
+  | { type: 'policeItem'; item: 'machineGun' | 'wingman' }
   | { type: 'wingmanHit'; s: number; x: number }
   | { type: 'end'; winner: Role }
   | { type: 'escape' }

@@ -173,9 +173,7 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   const kT = curvatureAt(w.seed, t0.s, w.curvesOn);
   const kP = curvatureAt(w.seed, p0.s, w.curvesOn);
   const time0 = out.time;
-  // helicopter spotlight (police item): the thief 15% slower
-  const spot = time0 < p0.upgrades.spotUntil ? -BALANCE.items.spotlight.slow : 0;
-  out = withCar(out, 'thief', stepJump(stepCar(t0, intents.thief, dt, { curvature: kT, time: time0, speedBonus: spot }), t0.s, w.seed, dt));
+  out = withCar(out, 'thief', stepJump(stepCar(t0, intents.thief, dt, { curvature: kT, time: time0 }), t0.s, w.seed, dt));
   out = withCar(
     out,
     'police',

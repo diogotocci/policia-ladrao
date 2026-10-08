@@ -99,6 +99,7 @@ test('thief with oil (V2 part 3): the special button shows the charges and B dro
 });
 
 test('yellow box (V2 part 3): only yellow boxes with ?mystery=1, and picking one spins the roulette', async ({ page }) => {
+  test.setTimeout(300_000);
   await page.goto('/?debug&seed=5&role=police&quality=low&traffic=0&mystery=1');
   await page.waitForFunction(() => '__game' in window);
   await page.waitForFunction(
@@ -109,7 +110,8 @@ test('yellow box (V2 part 3): only yellow boxes with ?mystery=1, and picking one
   expect((await snapshot(page)).boxes.every((b) => b.color === 'yellow')).toBe(true);
   // steer onto the next box's lane until the roulette shows (it spins below the time pill)
   const roulette = page.locator('.hud-roulette:not([hidden])');
-  for (let i = 0; i < 120 && !(await roulette.isVisible()); i++) {
+  // bounded by game time, not by tries: slow machines run the game slower than real time
+  for (let i = 0; i < 2000 && !(await roulette.isVisible()) && (await snapshot(page)).time < 60; i++) {
     const s = await snapshot(page);
     const box = (s.boxes as unknown as { s: number; x: number }[]).filter((b) => b.s > s.player.s).sort((a, b) => a.s - b.s)[0];
     const key = box && box.x < s.player.x - 0.3 ? 'ArrowLeft' : box && box.x > s.player.x + 0.3 ? 'ArrowRight' : undefined;

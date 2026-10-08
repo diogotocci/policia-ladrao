@@ -288,17 +288,13 @@ describe('effects on the car (V2 part 3)', () => {
 });
 
 describe('police items in the HUD (V2 part 3)', () => {
-  it('machine gun, backup car and spotlight chips for the police; a red spotlight chip for the thief', () => {
+  it('machine gun and backup car chips for the police', () => {
     const w = { ...createWorld({ seed: 1, playerRole: 'police' }), time: 1 };
     const p = policeOf(w);
-    const lit = withCar(w, 'police', { ...p, upgrades: { ...p.upgrades, mgUntil: 3, wingmanUntil: 5, spotUntil: 2 } });
+    const lit = withCar(w, 'police', { ...p, upgrades: { ...p.upgrades, mgUntil: 3, wingmanUntil: 5 } });
     const hud = createHud(root, 'police');
     hud.update(lit);
-    for (const id of ['machineGun', 'wingman', 'spotlight']) expect(root.querySelector(`.hud-item[data-item="${id}"]`)).not.toBeNull();
+    for (const id of ['machineGun', 'wingman']) expect(root.querySelector(`.hud-item[data-item="${id}"]`)).not.toBeNull();
     hud.dispose();
-    const thiefHud = createHud(root, 'thief');
-    thiefHud.update({ ...lit, playerRole: 'thief', player: lit.opponent, opponent: lit.player });
-    expect(root.querySelector('.hud-item[data-item="fxSpot"]')!.classList.contains('hud-item--bad')).toBe(true);
-    thiefHud.dispose();
   });
 });

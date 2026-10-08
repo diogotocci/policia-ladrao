@@ -26,7 +26,7 @@ function available(car: CarState): ItemId[] {
     if (u.fireInterval > P.fireIntervalMin + 1e-9) out.push('fireRate');
     if (u.power < P.powerMax - 1e-9) out.push('power');
     if (car.hp < car.maxHp) out.push('heal');
-    out.push('nitro', 'ram', 'heli', 'pierce', 'machineGun', 'wingman', 'spotlight');
+    out.push('nitro', 'ram', 'heli', 'pierce', 'machineGun', 'wingman');
     if (specialRoom(car, 'roadblock')) out.push('roadblock');
   } else {
     const T = I.thief;
@@ -66,7 +66,7 @@ const round = (v: number) => Math.round(v * 1000) / 1000;
 
 /** `w` (mode and chaos) gives the "strong" times of the V2 part 3 items; without it, the normal ones. */
 export function applyItem(car: CarState, item: ItemId, time: number, w?: Pick<WorldState, 'mode' | 'chaos'>): CarState {
-  if (item === 'machineGun' || item === 'wingman' || item === 'spotlight') return applyPoliceItem(car, item, time, w);
+  if (item === 'machineGun' || item === 'wingman') return applyPoliceItem(car, item, time, w);
   const u = { ...car.upgrades };
   let hp = car.hp;
   let hasGun = car.hasGun;
@@ -183,7 +183,7 @@ export function stepBoxes(w: WorldState): WorldState {
     }
     const item = rollItem(car, rng);
     events.push({ type: 'pickup', role: car.role, item: item ?? 'none' });
-    if (item === 'machineGun' || item === 'wingman' || item === 'spotlight') events.push({ type: 'policeItem', item });
+    if (item === 'machineGun' || item === 'wingman') events.push({ type: 'policeItem', item });
     return item ? applyItem(car, item, w.time, w) : car;
   };
   police = take(police);

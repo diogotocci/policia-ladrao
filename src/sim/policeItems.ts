@@ -1,5 +1,5 @@
 // The police items (V2 part 3, spec §4.2). Roadblock: the police special (button), a patrol car across a lane
-// 120 m ahead of the thief with spike strips next to it. Machine gun, backup patrol car and helicopter spotlight act
+// 120 m ahead of the thief with spike strips next to it. Machine gun and backup patrol car act
 // at once when picked. "Strong" times in Sobrevivência from chaos 3 (backup car: chaos 4).
 import { BALANCE } from '../config/balance';
 import type { CarState } from './car';
@@ -84,23 +84,18 @@ export function usePoliceSpecial(w: WorldState, intents: Intents): WorldState {
   };
 }
 
-/** Crashing into the roadblock patrol car: −15, keeps 40% of the speed and is held right before it (1 s immunity). */
-export function hitRoadblock(w: WorldState, car: CarState, h: Hazard): { car: CarState; w: WorldState } {
-  const fresh = (w.immunity['roadblock'] ?? 0) <= 0;
-  // from the front: held right before it; from the side (steering or pushed into it): pushed back out on that side
-  const front = car.s - h.s < h.length / 4;
-  const cx = (h.xFrom + h.xTo) / 2;
-  const sideX = cx + Math.sign(car.x - cx || 1) * (LANE_HALF + BALANCE.car.halfWidth + 0.05);
-  const held: CarState = front
-    ? { ...car, s: h.s - L / 2 - 0.1, speed: fresh ? car.speed * R.speedFactor : Math.min(car.speed, 3) }
-    : { ...car, x: Math.max(-EDGE, Math.min(EDGE, sideX)), speed: fresh ? car.speed * R.speedFactor : car.speed };
-  if (!fresh) return { car: held, w };
+/** Crashing into the roadblock patrol car: −15 and loses speed like on the curb, then drives through (1 s immunity). */
+export function hitRoadblock(w: WorldState, car: CarState, _h: Hazard): { car: CarState; w: WorldState } {
+  // like the curb (playtest 2026-10-07: holding the car before it got it stuck): damage and speed loss once per
+  // immunity window, and the car drives on through
+  if ((w.immunity['roadblock'] ?? 0) > 0) return { car, w };
   const events: GameEvent[] = [
     ...w.events,
     { type: 'roadblockHit', s: car.s, x: car.x },
     { type: 'hit', target: car.role, amount: scaledDamage(R.damage, w, car.role), s: car.s, x: car.x },
   ];
-  return { car: hurt(held, R.damage, w), w: { ...w, events, immunity: { ...w.immunity, roadblock: BALANCE.collision.immunity } } };
+  const slowed: CarState = { ...car, speed: car.speed * (1 - BALANCE.collision.speedLoss) };
+  return { car: hurt(slowed, R.damage, w), w: { ...w, events, immunity: { ...w.immunity, roadblock: BALANCE.collision.immunity } } };
 }
 
 /** Roadblocks the thief already passed are removed (with their spikes). */
@@ -111,14 +106,13 @@ export function clearPassedRoadblocks(w: WorldState): WorldState {
   return { ...w, hazards: w.hazards.filter((h) => !(h.group !== undefined && passed.has(h.group))) };
 }
 
-/** Machine gun, backup car and spotlight act at once when picked (times by chaos). */
+/** Machine gun and backup car act at once when picked (times by chaos). */
 export function applyPoliceItem(car: CarState, item: ItemId, time: number, w?: Pick<WorldState, 'mode' | 'chaos'>): CarState {
   const s3 = !!w && strongAt(w, I.strongFromChaos);
   const u = { ...car.upgrades };
   if (item === 'machineGun') u.mgUntil = time + (s3 ? I.machineGun.timeStrong : I.machineGun.time);
   else if (item === 'wingman')
     u.wingmanUntil = time + (w && strongAt(w, I.wingman.timeStrongFromChaos) ? I.wingman.timeStrong : I.wingman.time);
-  else if (item === 'spotlight') u.spotUntil = time + (s3 ? I.spotlight.timeStrong : I.spotlight.time);
   return { ...car, upgrades: u };
 }
 
