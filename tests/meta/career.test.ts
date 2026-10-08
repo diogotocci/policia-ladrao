@@ -14,6 +14,10 @@ import {
   rankOf,
   streakCoins,
   unlockOf,
+  claim,
+  claimCoins,
+  meets,
+  requirementText,
   type Career,
   type MatchSummary,
 } from '../../src/meta/career';
@@ -42,15 +46,49 @@ describe('ranks (spec §3)', () => {
     expect(RANK_NAMES.thief[6]).toBe('Chefão');
   });
 
-  it('XP = the coins of the match on the side played; rank up is reported, the top rank pays 2000', () => {
+  it('XP = the coins of the match on the side played; a rank up waits in Carreira with its coins (top rank 2000)', () => {
     let c: Career = { ...emptyCareer(), streak: { last: DAY, days: 1 } };
     let r = careerAfterMatch(c, match({ coins: 320 }), DAY);
     expect(r.career.xp).toEqual({ police: 320, thief: 0 });
-    expect(r.events).toContainEqual({ kind: 'rank', side: 'police', rank: 2, coins: 0 });
+    expect(r.events).toContainEqual({ kind: 'rank', side: 'police', rank: 2, coins: 200 });
+    expect(r.career.claims).toContain('rank:police:2');
+    expect(r.coins).toBe(0); // nothing paid until "Resgatar"
     c = { ...r.career, xp: { police: 11_990, thief: 0 } };
     r = careerAfterMatch(c, match({ coins: 50 }), DAY);
     expect(r.events).toContainEqual({ kind: 'rank', side: 'police', rank: 7, coins: 2000 });
-    expect(r.coins).toBeGreaterThanOrEqual(2000);
+  });
+});
+
+describe('Resgatar (playtest 2026-10-08)', () => {
+  it('challenges, achievements and ranks pay only when claimed, once; the shop unlock waits for the claim too', () => {
+    let c = { ...emptyCareer(), streak: { last: DAY, days: 1 } };
+    for (let i = 0; i < 10; i++) c = careerAfterMatch(c, match({ won: true, time: 80, coins: 40 }), DAY).career;
+    expect(c.claims).toContain('ach:arrest10');
+    const req = unlockOf('car:esportivo')!;
+    expect(meets(c, req)).toBe(false);
+    expect(requirementText(c, req)).toBe('Resgate na Carreira');
+    let r = claim(c, 'ach:arrest10');
+    expect(r.coins).toBe(0); // it unlocks a car, no coins
+    expect(meets(r.career, req)).toBe(true);
+    expect(claim(r.career, 'ach:arrest10')).toEqual({ career: r.career, coins: 0 }); // twice: nothing
+    r = claim(r.career, 'ach:play10');
+    expect(r.coins).toBe(300);
+    const rank = r.career.claims.find((x) => x.startsWith('rank:police:'))!;
+    expect(meets(r.career, unlockOf('plate')!)).toBe(false); // rank 2 reached, not claimed yet
+    r = claim(r.career, rank);
+    expect(r.coins).toBe(claimCoins(rank));
+    expect(meets(r.career, unlockOf('plate')!)).toBe(true);
+    const daily = r.career.claims.find((x) => x.startsWith('daily:'));
+    if (daily) expect(claim(r.career, daily).coins).toBe(DAILY_COINS[dailiesFor(DAY)[Number(daily.split(':')[2])]!.tier]);
+  });
+
+  it('tampered claims are dropped when the career is read', () => {
+    const c = parseCareer({
+      ...emptyCareer(),
+      achieved: ['arrest10'],
+      claims: ['ach:arrest10', 'ach:arrest30', 'rank:police:5', 'daily:bad:1', 'x'],
+    });
+    expect(c.claims).toEqual(['ach:arrest10']);
   });
 });
 

@@ -10,7 +10,8 @@ export const RANK_NAMES: Record<Role, readonly string[]> = {
   thief: ['Pivete', 'Trombadinha', 'Batedor', 'Assaltante', 'Fugitivo', 'Procurado', 'Chefão'],
 };
 export const MAX_RANK = RANK_XP.length;
-export const TOP_RANK_COINS = 2000;
+/** coins for reaching each rank (index = rank), paid when claimed in Carreira */
+export const RANK_COINS = [0, 0, 200, 400, 600, 1000, 1500, 2000] as const;
 /** rank 1..7 for an amount of XP */
 export const rankOf = (xp: number): number => RANK_XP.filter((t) => xp >= t).length;
 
@@ -187,8 +188,11 @@ export interface Career {
   /** today's challenges: the date they belong to and the progress of each */
   daily: { date: string; progress: [number, number, number] };
   streak: { last: string; days: number };
-  /** things to look at in Carreira (title badge); cleared when it opens */
-  unseen: number;
+  /**
+   * Rewards waiting for "Resgatar" in Carreira (playtest 2026-10-08): `daily:<date>:<0..2>`, `ach:<id>`,
+   * `rank:<side>:<2..7>`. Their coins (and what they unlock in the shop) come only when claimed.
+   */
+  claims: string[];
 }
 
 export const emptyCareer = (): Career => ({
@@ -197,7 +201,7 @@ export const emptyCareer = (): Career => ({
   achieved: [],
   daily: { date: '', progress: [0, 0, 0] },
   streak: { last: '', days: 0 },
-  unseen: 0,
+  claims: [],
 });
 
 /** Today's progress (a new day starts at zero). */
@@ -218,6 +222,7 @@ export function careerAfterMatch(c: Career, m: MatchSummary, today: string): { c
   const events: CareerEvent[] = [];
   let coins = 0;
   const k = { ...c.counters };
+  const claims = [...c.claims];
   // the device clock went back (or a trip west): the day already credited stays as it is, nothing is paid twice
   const past = (c.daily.date !== '' && today < c.daily.date) || (c.streak.last !== '' && today < c.streak.last);
 
@@ -237,9 +242,8 @@ export function careerAfterMatch(c: Career, m: MatchSummary, today: string): { c
   const xp = { ...c.xp, [m.role]: before + Math.max(0, Math.floor(m.coins)) };
   events.push({ kind: 'xp', side: m.role, gained: xp[m.role] - before, xp: xp[m.role] });
   for (let r = rankOf(before) + 1; r <= rankOf(xp[m.role]); r++) {
-    const paid = r === MAX_RANK ? TOP_RANK_COINS : 0;
-    coins += paid;
-    events.push({ kind: 'rank', side: m.role, rank: r, coins: paid });
+    claims.push(`rank:${m.role}:${r}`);
+    events.push({ kind: 'rank', side: m.role, rank: r, coins: RANK_COINS[r] ?? 0 });
   }
 
   // lifetime counters
@@ -269,7 +273,7 @@ export function careerAfterMatch(c: Career, m: MatchSummary, today: string): { c
     const add = past ? 0 : !d.side || d.side === m.role ? d.count(m) : 0;
     const next = Math.min(d.target, p + add);
     if (p < d.target && next >= d.target) {
-      coins += DAILY_COINS[d.tier];
+      claims.push(`daily:${today}:${i}`);
       k.dailiesDone++;
       events.push({ kind: 'daily', title: d.title, coins: DAILY_COINS[d.tier] });
     }
@@ -281,13 +285,12 @@ export function careerAfterMatch(c: Career, m: MatchSummary, today: string): { c
   for (const a of ACHIEVEMENTS) {
     if (achieved.includes(a.id) || k[a.counter] < a.target) continue;
     achieved.push(a.id);
-    coins += a.coins ?? 0;
+    claims.push(`ach:${a.id}`);
     events.push({ kind: 'achievement', title: a.title, unlock: a.unlock, coins: a.coins ?? 0 });
   }
 
-  const news = events.filter((e) => e.kind === 'rank' || e.kind === 'daily' || e.kind === 'achievement').length;
   return {
-    career: { xp, counters: k, achieved, daily: past ? c.daily : { date: today, progress }, streak, unseen: c.unseen + news },
+    career: { xp, counters: k, achieved, daily: past ? c.daily : { date: today, progress }, streak, claims },
     coins,
     events,
   };
@@ -311,14 +314,27 @@ export function unlockOf(id: string): Requirement | null {
 const POLICE_CARS = ['viatura', 'esportivo', 'blazer', 'caveirao'];
 const paintSide = (car: string): Role => (POLICE_CARS.includes(car) ? 'police' : 'thief');
 
+/** A rank counts once reached and claimed (every rank up to it on that side). */
+const rankClaimed = (c: Career, side: Role, rank: number) =>
+  rankOf(c.xp[side]) >= rank && !c.claims.some((x) => x.startsWith(`rank:${side}:`) && Number(x.split(':')[2]) <= rank);
+
+/** Requirement met: the achievement done and claimed, or the rank reached and claimed. */
 export function meets(c: Career, r: Requirement): boolean {
+  if (r.kind === 'achievement') return c.achieved.includes(r.achievement.id) && !c.claims.includes(`ach:${r.achievement.id}`);
+  return r.side === 'any' ? rankClaimed(c, 'police', r.rank) || rankClaimed(c, 'thief', r.rank) : rankClaimed(c, r.side, r.rank);
+}
+
+/** Done but waiting in Carreira. */
+export function awaitingClaim(c: Career, r: Requirement): boolean {
+  if (meets(c, r)) return false;
   if (r.kind === 'achievement') return c.achieved.includes(r.achievement.id);
-  const best = r.side === 'any' ? Math.max(rankOf(c.xp.police), rankOf(c.xp.thief)) : rankOf(c.xp[r.side]);
-  return best >= r.rank;
+  const sides: Role[] = r.side === 'any' ? ['police', 'thief'] : [r.side];
+  return sides.some((s) => rankOf(c.xp[s]) >= r.rank);
 }
 
 /** Player-facing text of what is missing: "Prenda 30 ladrões (14/30)" or "Patente Sargento". */
 export function requirementText(c: Career, r: Requirement): string {
+  if (awaitingClaim(c, r)) return 'Resgate na Carreira';
   if (r.kind === 'achievement') {
     const a = r.achievement;
     return a.target > 1 ? `${a.title} (${progressOf(c, a)}/${a.target})` : a.title;
@@ -346,7 +362,7 @@ export function parseCareer(raw: unknown): Career {
     out.daily = { date: d.date, progress: d.progress as [number, number, number] };
   const s = r.streak as Record<string, unknown> | undefined;
   if (s && isDate(s.last) && isCount(s.days)) out.streak = { last: s.last, days: s.days };
-  if (isCount(r.unseen)) out.unseen = r.unseen;
+  if (Array.isArray(r.claims)) out.claims = [...new Set(r.claims.filter((x): x is string => typeof x === 'string' && validClaim(out, x)))];
   return out;
 }
 
@@ -361,4 +377,28 @@ export function careerFromStats(stats: { matches: number; arrests: number; escap
   // achievements already reached by those counts are given silently (no coins: they were played before part 5)
   c.achieved = ACHIEVEMENTS.filter((a) => c.counters[a.counter] >= a.target).map((a) => a.id);
   return c;
+}
+
+/** A claim id that can exist for this career (rejects tampered or unknown ones). */
+function validClaim(c: Career, id: string): boolean {
+  const [kind, a, b] = id.split(':');
+  if (kind === 'daily') return isDate(a) && a !== '' && (b === '0' || b === '1' || b === '2');
+  if (kind === 'ach') return c.achieved.includes(a!);
+  if (kind === 'rank' && (a === 'police' || a === 'thief')) return Number(b) >= 2 && Number(b) <= rankOf(c.xp[a]);
+  return false;
+}
+
+/** Coins of a claim (0 for an unknown one). */
+export function claimCoins(id: string): number {
+  const [kind, a, b] = id.split(':');
+  if (kind === 'daily') return DAILY_COINS[dailiesFor(a!)[Number(b)]?.tier ?? 0];
+  if (kind === 'ach') return ACHIEVEMENTS.find((x) => x.id === a)?.coins ?? 0;
+  if (kind === 'rank') return RANK_COINS[Number(b)] ?? 0;
+  return 0;
+}
+
+/** "Resgatar": takes the claim out of the list and returns its coins (unknown id: nothing happens). */
+export function claim(c: Career, id: string): { career: Career; coins: number } {
+  if (!c.claims.includes(id)) return { career: c, coins: 0 };
+  return { career: { ...c, claims: c.claims.filter((x) => x !== id) }, coins: claimCoins(id) };
 }

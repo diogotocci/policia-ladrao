@@ -95,7 +95,7 @@ const pack = (p: Profile) => {
     ...base,
     p.owned.map((id) => CATALOG.findIndex((i) => i.id === id)).filter((i) => i >= 0),
     [...side('police'), ...side('thief'), CAR_IDS.map((x) => p.equipped.paint[x] ?? 0).join(''), p.equipped.plate],
-    // v3 (career): xp, counters, achievements (positions), today's challenges, streak, unseen
+    // v3 (career): xp, counters, achievements (positions), today's challenges, streak, rewards waiting to be claimed
     [
       c.xp.police,
       c.xp.thief,
@@ -105,7 +105,7 @@ const pack = (p: Profile) => {
       c.daily.progress,
       c.streak.last,
       c.streak.days,
-      c.unseen,
+      c.claims,
     ],
   ];
 };
@@ -130,7 +130,7 @@ function unpack(a: unknown): unknown {
     achieved: (car[3] as unknown[]).map((i) => at(ACHIEVEMENTS, i)?.id).filter((x) => x !== undefined),
     daily: { date: car[4], progress: car[5] },
     streak: { last: car[6], days: car[7] },
-    unseen: car[8],
+    claims: Array.isArray(car[8]) ? car[8] : [], // 0.17.0 kept a number here (no claims then)
   };
   return { ...out, career };
 }

@@ -4,6 +4,7 @@ import type { Role } from '../../config/balance';
 import {
   ACHIEVEMENTS,
   DAILY_COINS,
+  claimCoins,
   MAX_RANK,
   RANK_NAMES,
   RANK_XP,
@@ -19,6 +20,7 @@ import {
 import { CARS, NEONS, SOUNDS, type CarId, type NeonColor, type SoundId } from '../../meta/shop';
 import { btn, h, mount, type Disposable } from './dom';
 import { SCREEN_ICONS } from './icons';
+import { insignia } from './insignia';
 import './career.css';
 
 type Tab = 'today' | 'achievements' | 'ranks';
@@ -38,12 +40,12 @@ export function itemName(id: string): string {
 /** What each rank unlocks on its side (text of the Patente tab and of the end strip). */
 export const RANK_UNLOCKS = [
   'carro padrão',
-  'placa e 1ª pintura',
-  '2 cores de neon',
-  '2ª pintura',
-  'as outras 2 cores de neon',
-  '3ª pintura',
-  '+2.000 moedas',
+  '+200 · placa e 1ª pintura',
+  '+400 · 2 cores de neon',
+  '+600 · 2ª pintura',
+  '+1.000 · as outras 2 cores de neon',
+  '+1.500 · 3ª pintura',
+  '+2.000 · patente no ranking',
 ];
 
 /** Streak still alive today or yesterday (otherwise the next match starts over at 1). */
@@ -61,15 +63,26 @@ const bar = (value: number, max: number, cls = '') => {
   return b;
 };
 
-function challengeRow(title: string, value: number, target: number, coins: number, sideCls: string, note?: string): HTMLElement {
+type Claim = (id: string) => void;
+
+/** The right side of a row: price while open, "Resgatar +N" when done and waiting, "Recebido"/"Liberado" after. */
+function rowTag(done: boolean, claimId: string | null, pending: boolean, coins: number, onClaim: Claim, doneText: string): HTMLElement {
+  if (done && pending && claimId) {
+    const b = btn(coins ? `Resgatar +${n(coins)}` : 'Resgatar', 'career-claim', () => onClaim(claimId));
+    return b;
+  }
+  const tag = h('span', `career-tag${done ? ' is-done' : ''}`, done ? doneText : coins ? n(coins) : '');
+  if (!done && coins) tag.insertAdjacentHTML('afterbegin', SCREEN_ICONS.coin);
+  return tag;
+}
+
+function challengeRow(title: string, value: number, target: number, sideCls: string, tag: HTMLElement, note?: string): HTMLElement {
   const done = value >= target;
   const row = h('div', `career-row${done ? ' is-done' : ''}`);
   const txt = h('div', 'career-row-text');
   txt.append(h('b', '', title), bar(value, target, done ? 'is-done' : sideCls));
   if (note) txt.append(h('small', '', note));
   else if (target > 1 && !done) txt.append(h('small', '', `${n(value)} de ${n(target)}`));
-  const tag = h('span', `career-tag${done ? ' is-done' : ''}`, done ? (coins ? `+${n(coins)} recebido` : 'Feito') : coins ? n(coins) : '');
-  if (!done && coins) tag.insertAdjacentHTML('afterbegin', SCREEN_ICONS.coin);
   row.append(txt, tag);
   return row;
 }
@@ -81,7 +94,9 @@ function untilMidnight(now: Date): string {
   return min >= 60 ? `renovam em ${Math.floor(min / 60)}h ${min % 60}min` : `renovam em ${min} min`;
 }
 
-function todayPanel(c: Career, today: string, now: Date): HTMLElement {
+const shortDay = (date: string) => `${date.slice(8, 10)}/${date.slice(5, 7)}`;
+
+function todayPanel(c: Career, today: string, now: Date, onClaim: Claim): HTMLElement {
   const wrap = h('div', 'career-today');
   const left = h('div', 'career-col');
   const head = h('div', 'career-head');
@@ -90,17 +105,27 @@ function todayPanel(c: Career, today: string, now: Date): HTMLElement {
   const prog = dailyProgress(c, today);
   dailiesFor(today).forEach((d, i) => {
     const side = d.side === 'police' ? 'is-police' : d.side === 'thief' ? 'is-thief' : '';
+    const id = `daily:${today}:${i}`;
+    const tag = rowTag(prog[i]! >= d.target, id, c.claims.includes(id), DAILY_COINS[d.tier], onClaim, 'Recebido');
     left.append(
       challengeRow(
         d.title,
         prog[i]!,
         d.target,
-        DAILY_COINS[d.tier],
         side,
+        tag,
         d.side ? `Só jogando de ${d.side === 'police' ? 'polícia' : 'ladrão'}` : undefined,
       ),
     );
   });
+  // challenges of earlier days still waiting: they never expire
+  for (const id of c.claims.filter((x) => x.startsWith('daily:') && !x.startsWith(`daily:${today}:`))) {
+    const [, date, k] = id.split(':');
+    const d = dailiesFor(date!)[Number(k)]!;
+    left.append(
+      challengeRow(d.title, d.target, d.target, '', rowTag(true, id, true, claimCoins(id), onClaim, ''), `Desafio de ${shortDay(date!)}`),
+    );
+  }
   const right = h('div', 'career-col');
   const days = streakDays(c, today);
   const title = h('b', 'career-streak-title', days > 0 ? `Sequência: ${days} ${days === 1 ? 'dia' : 'dias'}` : 'Sequência de dias');
@@ -120,7 +145,7 @@ function todayPanel(c: Career, today: string, now: Date): HTMLElement {
   return wrap;
 }
 
-function achievementsPanel(c: Career, side: Role | 'any', onSide: (s: Role | 'any') => void): HTMLElement {
+function achievementsPanel(c: Career, side: Role | 'any', onSide: (s: Role | 'any') => void, onClaim: Claim): HTMLElement {
   const wrap = h('div', 'career-col');
   const seg = h('div', 'career-seg');
   seg.setAttribute('role', 'radiogroup');
@@ -130,7 +155,8 @@ function achievementsPanel(c: Career, side: Role | 'any', onSide: (s: Role | 'an
     ['thief', 'Ladrão'],
     ['any', 'Geral'],
   ] as const) {
-    const b = btn(label, `career-seg-btn is-${s}`, () => onSide(s));
+    const waiting = ACHIEVEMENTS.some((a) => a.side === s && c.claims.includes(`ach:${a.id}`));
+    const b = btn(label, `career-seg-btn is-${s}${waiting ? ' has-claim' : ''}`, () => onSide(s));
     b.setAttribute('role', 'radio');
     b.setAttribute('aria-checked', String(s === side));
     seg.append(b);
@@ -139,42 +165,66 @@ function achievementsPanel(c: Career, side: Role | 'any', onSide: (s: Role | 'an
   const cls = side === 'police' ? 'is-police' : side === 'thief' ? 'is-thief' : '';
   for (const a of ACHIEVEMENTS.filter((x) => x.side === side)) {
     const done = c.achieved.includes(a.id);
+    const id = `ach:${a.id}`;
     const what = a.unlock ? `Libera na loja: ${itemName(a.unlock)}` : `+${n(a.coins ?? 0)} moedas`;
     const value = done ? a.target : progressOf(c, a);
-    wrap.append(challengeRow(a.title, value, a.target, 0, cls, a.target > 1 && !done ? `${n(value)} de ${n(a.target)} · ${what}` : what));
+    const tag = rowTag(done, id, c.claims.includes(id), a.coins ?? 0, onClaim, a.unlock ? 'Liberado' : 'Recebido');
+    wrap.append(challengeRow(a.title, value, a.target, cls, tag, a.target > 1 && !done ? `${n(value)} de ${n(a.target)} · ${what}` : what));
   }
   return wrap;
 }
 
-function rankColumn(c: Career, role: Role): HTMLElement {
-  const col = h('div', 'career-col');
+/** One card per side: the insignia, the XP bar, "Resgatar" for ranks reached, and the track of the 7 insignias. */
+function rankCard(c: Career, role: Role, onClaim: Claim): HTMLElement {
+  const col = h('div', `career-col career-rank-col is-${role}`);
   const xp = c.xp[role];
   const r = rankOf(xp);
-  const head = h('div', `career-rank-head is-${role}`);
+  const card = h('div', 'career-rank-card');
+  const big = h('div', 'career-rank-big');
+  big.innerHTML = insignia(role, r, { label: RANK_NAMES[role][r - 1] });
   const info = h('div', 'career-rank-info');
-  info.append(h('b', '', RANK_NAMES[role][r - 1]!));
+  info.append(h('small', 'career-rank-side', role === 'police' ? 'POLÍCIA' : 'LADRÃO'), h('b', '', RANK_NAMES[role][r - 1]!));
   if (r < MAX_RANK) {
     info.append(bar(xp - RANK_XP[r - 1]!, RANK_XP[r]! - RANK_XP[r - 1]!, `is-${role}`));
     info.append(h('small', '', `${n(xp)} / ${n(RANK_XP[r]!)} XP para ${RANK_NAMES[role][r]}`));
   } else info.append(h('small', '', `${n(xp)} XP · patente máxima`));
-  head.append(h('span', `career-rank-badge is-${role}`, String(r)), info);
-  col.append(head);
-  const list = h('ol', 'career-ranks');
+  card.append(big, info);
+  const waiting = c.claims.filter((x) => x.startsWith(`rank:${role}:`)).sort();
+  if (waiting.length) {
+    const coins = waiting.reduce((t, id) => t + claimCoins(id), 0);
+    card.append(btn(`Resgatar +${n(coins)}`, 'career-claim', () => waiting.forEach(onClaim)));
+  }
+  const track = h('ol', 'career-track');
   RANK_NAMES[role].forEach((name, i) => {
-    const li = h('li', `career-rank${i + 1 < r ? ' is-got' : ''}${i + 1 === r ? ' is-current' : ''}`);
-    li.append(h('span', 'career-rank-n', String(i + 1)), h('span', '', `${name} · ${RANK_UNLOCKS[i]}`));
-    list.append(li);
+    const li = h('li', `career-track-step${i + 1 === r ? ' is-current' : ''}${i + 1 > r ? ' is-locked' : ''}`);
+    li.innerHTML = insignia(role, i + 1, { locked: i + 1 > r });
+    li.append(h('small', '', name));
+    li.title = `${name}: ${RANK_UNLOCKS[i]}`;
+    track.append(li);
   });
-  col.append(list);
+  const next = r < MAX_RANK ? h('small', 'career-note', `Próxima: ${RANK_NAMES[role][r]} · ${RANK_UNLOCKS[r]}`) : null;
+  col.append(card, track);
+  if (next) col.append(next);
   return col;
 }
 
 export function renderCareer(
   root: HTMLElement,
-  p: { career: Career; coins: number; today: string; now?: Date; onBack(): void; tab?: Tab },
+  p: {
+    career: Career;
+    coins: number;
+    today: string;
+    now?: Date;
+    onBack(): void;
+    /** "Resgatar": the app pays it and returns the new career and balance */
+    onClaim(id: string): { career: Career; coins: number };
+    tab?: Tab;
+  },
 ): Disposable {
   let tab: Tab = p.tab ?? 'today';
   let side: Role | 'any' = 'police';
+  let career = p.career;
+  let coins = p.coins;
   const s = h('section', 'screen screen-career');
   s.setAttribute('aria-label', 'Carreira');
   const top = h('div', 'career-top');
@@ -182,13 +232,26 @@ export function renderCareer(
   const tabs = h('div', 'career-tabs');
   tabs.setAttribute('role', 'tablist');
   const wallet = h('p', 'career-wallet');
-  wallet.insertAdjacentHTML('afterbegin', SCREEN_ICONS.coin);
-  wallet.append(n(p.coins));
-  wallet.setAttribute('aria-label', `${n(p.coins)} moedas`);
   top.append(back, h('h2', 'screen-heading career-heading', 'Carreira'), tabs, wallet);
   const body = h('div', 'career-body');
   s.append(top, body);
-  const draw = () => {
+  const onClaim: Claim = (id) => {
+    const r = p.onClaim(id);
+    career = r.career;
+    coins = r.coins;
+    draw();
+    // keep the keyboard nearby: the next "Resgatar" or the active tab
+    (body.querySelector<HTMLElement>('.career-claim') ?? tabs.querySelector<HTMLElement>('.is-on'))?.focus();
+  };
+  const waitingIn = (t: Tab) =>
+    career.claims.some((x) =>
+      t === 'today' ? x.startsWith('daily:') : t === 'achievements' ? x.startsWith('ach:') : x.startsWith('rank:'),
+    );
+  function draw() {
+    wallet.replaceChildren();
+    wallet.insertAdjacentHTML('afterbegin', SCREEN_ICONS.coin);
+    wallet.append(n(coins));
+    wallet.setAttribute('aria-label', `${n(coins)} moedas`);
     tabs.replaceChildren(
       ...(
         [
@@ -197,31 +260,37 @@ export function renderCareer(
           ['ranks', 'Patente'],
         ] as const
       ).map(([t, label]) => {
-        const b = btn(label, `career-tab${t === tab ? ' is-on' : ''}`, () => {
+        const b = btn(label, `career-tab${t === tab ? ' is-on' : ''}${waitingIn(t) ? ' has-claim' : ''}`, () => {
           tab = t;
           draw();
           tabs.querySelector<HTMLElement>('.is-on')?.focus();
         });
         b.setAttribute('role', 'tab');
         b.setAttribute('aria-selected', String(t === tab));
+        if (waitingIn(t)) b.setAttribute('aria-label', `${label}, prêmios para resgatar`);
         return b;
       }),
     );
-    if (tab === 'today') body.replaceChildren(todayPanel(p.career, p.today, p.now ?? new Date()));
+    if (tab === 'today') body.replaceChildren(todayPanel(career, p.today, p.now ?? new Date(), onClaim));
     else if (tab === 'achievements')
       body.replaceChildren(
-        achievementsPanel(p.career, side, (x) => {
-          side = x;
-          draw();
-          body.querySelector<HTMLElement>('[aria-checked="true"]')?.focus();
-        }),
+        achievementsPanel(
+          career,
+          side,
+          (x) => {
+            side = x;
+            draw();
+            body.querySelector<HTMLElement>('[aria-checked="true"]')?.focus();
+          },
+          onClaim,
+        ),
       );
     else {
       const two = h('div', 'career-today');
-      two.append(rankColumn(p.career, 'police'), rankColumn(p.career, 'thief'));
+      two.append(rankCard(career, 'police', onClaim), rankCard(career, 'thief', onClaim));
       body.replaceChildren(two);
     }
-  };
+  }
   draw();
   return mount(root, s, back);
 }
@@ -242,13 +311,14 @@ export function careerStrip(events: readonly CareerEvent[], role: Role): HTMLEle
     h('span', '', `+${n(xp.gained)} XP`),
   );
   box.append(head, bar(r < MAX_RANK ? xp.xp - RANK_XP[r - 1]! : 1, r < MAX_RANK ? RANK_XP[r]! - RANK_XP[r - 1]! : 1, `is-${role}`));
-  if (up) box.append(h('small', 'end-career-note', `Liberou na loja: ${ups.map((u) => RANK_UNLOCKS[u.rank - 1]).join(', ')}`));
+  if (up)
+    box.append(h('small', 'end-career-note', `Nova patente! Resgate na Carreira: ${ups.map((u) => RANK_UNLOCKS[u.rank - 1]).join(', ')}`));
   const lines = events.filter((e) => e.kind === 'daily' || e.kind === 'achievement').slice(0, 3);
   for (const e of lines) {
     const line = h('p', 'end-career-line');
-    if (e.kind === 'daily') line.append(h('span', '', `Desafio do dia: ${e.title}`), h('b', '', `+${n(e.coins)}`));
-    else if (e.kind === 'achievement')
-      line.append(h('span', '', `Conquista: ${e.title}`), h('b', '', e.unlock ? `liberou ${itemName(e.unlock)}` : `+${n(e.coins)}`));
+    // completed here, paid in Carreira ("Resgatar", playtest 2026-10-08)
+    if (e.kind === 'daily') line.append(h('span', '', `Desafio completo: ${e.title}`), h('b', '', 'Resgate na Carreira'));
+    else if (e.kind === 'achievement') line.append(h('span', '', `Conquista: ${e.title}`), h('b', '', 'Resgate na Carreira'));
     box.append(line);
   }
   return box;
