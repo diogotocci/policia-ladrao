@@ -265,17 +265,11 @@ export function buildPicape(root: THREE.Group, body: THREE.Group): void {
     box(W - 0.02, 0.38, 0.07, 0, 0.8, 2.22), // tailgate
   ];
   body.add(mesh(merge(walls), ORANGE, 'bed'));
-  // load: crates, a tarp lump, a spare tire
+  // load at the rear corners: the front of the bed is where the shooter rides (playtest 2026-10-08)
   const WOOD = matte(0x9a6b3a, 0.85);
-  body.add(
-    mesh(
-      merge([box(0.55, 0.42, 0.5, -0.4, 0.82, 1.0), box(0.5, 0.36, 0.45, 0.35, 0.79, 1.15), box(0.45, 0.3, 0.4, -0.35, 1.18, 1.05)]),
-      WOOD,
-      'crates',
-    ),
-  );
-  body.add(mesh(new THREE.SphereGeometry(0.42, 12, 8).scale(1.3, 0.6, 0.9).translate(0.1, 0.72, 1.8), matte(0x33573a, 0.9), 'tarp'));
-  body.add(mesh(cyl(0.3, 0.2, 16).translate(0.45, 0.72, 1.85), RUBBER, 'bed-tire'));
+  body.add(mesh(merge([box(0.5, 0.4, 0.45, -0.52, 0.8, 1.85), box(0.4, 0.3, 0.38, -0.52, 1.15, 1.85)]), WOOD, 'crates'));
+  body.add(mesh(new THREE.SphereGeometry(0.42, 12, 8).scale(0.8, 0.5, 0.8).translate(0.52, 0.68, 1.4), matte(0x33573a, 0.9), 'tarp'));
+  body.add(mesh(cyl(0.3, 0.2, 16).translate(0.5, 0.72, 1.92), RUBBER, 'bed-tire'));
   // roll bar with two lights
   const bar = [box(W - 0.2, 0.06, 0.06, 0, 1.38, 0.72), ...both((sd) => box(0.06, 0.78, 0.06, sd * (HALF - 0.12), 1.0, 0.72))];
   body.add(mesh(merge(bar), PLASTIC, 'rollbar'));

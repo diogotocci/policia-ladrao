@@ -381,3 +381,13 @@ describe('shop sounds (V2 part 4)', () => {
     expect(be.played).toEqual(['siren-choque', 'horn-padrao']);
   });
 });
+
+describe('the computer car siren (playtest 2026-10-08)', () => {
+  it('playing thief, the siren heard is the one of the random police car', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.setLook('thief', null, 'choque');
+    mx.frame(world('thief'), DT);
+    expect(be.sirenStyle).toBe('choque');
+  });
+});

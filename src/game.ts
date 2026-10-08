@@ -15,7 +15,7 @@ import { createParticles } from './render/particles';
 import { createOpponentMarker } from './render/opponentMarker';
 import { createRearview, isBehind, rearviewRect } from './render/rearview';
 import { createWorldProps } from './render/worldProps';
-import { createCarModel, updateCarModel } from './render/carFactory';
+import { updateCarModel } from './render/carFactory';
 import { createQualityGovernor, createRenderer, type QualityTier } from './render/renderer';
 import { createLighting } from './render/scene';
 import { createRoad, renderOrigin } from './render/roadChunks';
@@ -74,6 +74,8 @@ export function startGame(
     chaosEvery?: number;
     /** V2 part 4: the player's car from the shop (visual and sound only); default car without it */
     look?: CarLook;
+    /** the computer's car (random in the app); default car without it (debug/e2e) */
+    opponentLook?: CarLook;
     /** debug/e2e only: share of yellow boxes (?mystery=1) */
     mysteryShare?: number;
     /** starts muted (?mute), without touching the saved preference */
@@ -117,7 +119,7 @@ export function startGame(
     });
   const opponentRole: Role = opts.role === 'police' ? 'thief' : 'police';
   const model = createLookModel(opts.role, opts.look);
-  const opponentModel = createCarModel(opponentRole);
+  const opponentModel = createLookModel(opponentRole, opts.opponentLook);
   withReflections(model);
   withReflections(opponentModel);
   scene.add(model, opponentModel);
@@ -237,7 +239,7 @@ export function startGame(
   const ownAudio = !opts.audio;
   const audioSession = opts.audio ?? createAudioSession({ forceMute: opts.mute });
   const mixer = audioSession.mixer;
-  mixer.setLook(opts.role, opts.look?.sound ?? null);
+  mixer.setLook(opts.role, opts.look?.sound ?? null, opts.opponentLook?.sound ?? null);
   const hudCenter = (ui.querySelector('.hud-center') as HTMLElement | null) ?? ui;
   const soundToggle = audioSession.mountToggle(hudCenter);
   const pauseBtn = document.createElement('button');

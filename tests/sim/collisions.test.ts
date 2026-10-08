@@ -67,22 +67,47 @@ describe('car × car collisions', () => {
     expect(w.policeTurboOffUntil).toBeCloseTo(14, 10);
   });
 
-  it('side-swipe: same damage, pushed apart laterally until they no longer overlap', () => {
-    const w = tick(overlapping(BALANCE.car.halfWidth * 1.4, 0));
-    expect(thiefOf(w).hp).toBe(95);
-    expect(policeOf(w).hp).toBe(97);
+  // side by side (playtest 2026-10-08): whoever steers into the other hurts it; both at once, both are hurt.
+  // overlapping(dx > 0): the police is on the thief's right, so steering into the other is -1 (police), +1 (thief)
+  const side = (policeSteer: -1 | 0 | 1, thiefSteer: -1 | 0 | 1) => {
+    const w = overlapping(BALANCE.car.halfWidth * 1.4, 0);
+    return tick(withCar(withCar(w, 'police', { ...policeOf(w), steer: policeSteer }), 'thief', { ...thiefOf(w), steer: thiefSteer }));
+  };
+
+  it('side hit by the police: only the thief is hurt; the police still drops back; pushed apart', () => {
+    const w = side(-1, 0);
+    expect(thiefOf(w).hp).toBe(100 - BALANCE.collision.sideHit);
+    expect(policeOf(w).hp).toBe(100);
+    expect(policeOf(w).speed).toBeCloseTo(30 * (1 - BALANCE.collision.carCarPoliceSpeedLoss));
     expect(Math.abs(thiefOf(w).x - policeOf(w).x)).toBeGreaterThanOrEqual(BALANCE.car.halfWidth * 2 - 1e-9);
+  });
+
+  it('side hit by the thief: the police is hurt, not the thief', () => {
+    const w = side(0, 1);
+    expect(policeOf(w).hp).toBe(100 - BALANCE.collision.sideHit);
+    expect(thiefOf(w).hp).toBe(100);
+    expect(w.events.some((e) => e.type === 'crash' && e.a === 'thief')).toBe(true);
+  });
+
+  it('both steering into each other: both are hurt; nobody steering in: no damage, just pushed apart', () => {
+    const both = side(-1, 1);
+    expect(thiefOf(both).hp).toBe(100 - BALANCE.collision.sideHit);
+    expect(policeOf(both).hp).toBe(100 - BALANCE.collision.sideHit);
+    const none = side(0, 0);
+    expect(thiefOf(none).hp).toBe(100);
+    expect(policeOf(none).hp).toBe(100);
+    expect(Math.abs(thiefOf(none).x - policeOf(none).x)).toBeGreaterThanOrEqual(BALANCE.car.halfWidth * 2 - 1e-9);
   });
 
   it('a car pushed sideways against the edge does not take wall damage next step', () => {
     const w0 = base();
     const t = { ...thiefOf(w0), x: EDGE - 0.3, speed: 30 };
-    const p = { ...policeOf(w0), s: t.s, x: t.x - 1.3, speed: 30 };
+    const p = { ...policeOf(w0), s: t.s, x: t.x - 1.3, speed: 30, steer: 1 as const };
     let w = withCar(withCar(w0, 'thief', t), 'police', p);
     w = tick(w);
     expect(Math.abs(thiefOf(w).x)).toBeLessThan(EDGE);
     w = tick(withCar(w, 'thief', { ...thiefOf(w), touchingEdge: Math.abs(thiefOf(w).x) >= EDGE }));
-    expect(thiefOf(w).hp).toBe(95); // only the hit from the police
+    expect(thiefOf(w).hp).toBe(100 - BALANCE.collision.sideHit); // only the hit from the police
   });
 
   it('a new overlap within 1 s costs nothing', () => {

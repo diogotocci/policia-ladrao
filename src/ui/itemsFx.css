@@ -81,13 +81,19 @@
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.6s;
+  /* playtest 2026-10-08: more mud, mostly in front (the middle of the screen, where the road ahead is),
+     a few small gaps to peek through, and a thin dirty film over everything */
   background:
-    radial-gradient(ellipse 15% 22% at 30% 45%, rgba(92, 62, 30, 0.97) 60%, transparent 62%),
-    radial-gradient(ellipse 9% 12% at 41% 62%, rgba(105, 72, 35, 0.97) 60%, transparent 62%),
-    radial-gradient(ellipse 13% 18% at 68% 38%, rgba(88, 58, 26, 0.97) 60%, transparent 62%),
-    radial-gradient(ellipse 6% 8% at 60% 70%, rgba(110, 76, 38, 0.97) 60%, transparent 62%),
-    radial-gradient(ellipse 5% 7% at 22% 70%, rgba(110, 76, 38, 0.97) 60%, transparent 62%),
-    radial-gradient(ellipse 7% 9% at 80% 62%, rgba(95, 64, 30, 0.97) 60%, transparent 62%);
+    radial-gradient(ellipse 20% 26% at 50% 48%, rgba(92, 62, 30, 0.98) 60%, transparent 62%),
+    radial-gradient(ellipse 15% 22% at 33% 42%, rgba(92, 62, 30, 0.97) 60%, transparent 62%),
+    radial-gradient(ellipse 14% 20% at 67% 40%, rgba(88, 58, 26, 0.97) 60%, transparent 62%),
+    radial-gradient(ellipse 12% 14% at 44% 66%, rgba(105, 72, 35, 0.97) 60%, transparent 62%),
+    radial-gradient(ellipse 11% 13% at 58% 28%, rgba(98, 66, 32, 0.97) 60%, transparent 62%),
+    radial-gradient(ellipse 9% 12% at 62% 68%, rgba(110, 76, 38, 0.97) 60%, transparent 62%),
+    radial-gradient(ellipse 8% 10% at 20% 66%, rgba(110, 76, 38, 0.97) 60%, transparent 62%),
+    radial-gradient(ellipse 8% 10% at 82% 60%, rgba(95, 64, 30, 0.97) 60%, transparent 62%),
+    radial-gradient(ellipse 6% 8% at 24% 28%, rgba(100, 68, 32, 0.95) 60%, transparent 62%),
+    radial-gradient(ellipse 6% 8% at 78% 26%, rgba(100, 68, 32, 0.95) 60%, transparent 62%), rgba(70, 48, 22, 0.28);
 }
 .fx-mud.is-on {
   opacity: 1;

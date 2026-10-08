@@ -34,7 +34,7 @@ export interface Mixer {
   cue(name: 'beep' | 'go' | 'ui' | 'bomb-hit'): void;
   song(): 'menu' | 'chase';
   /** the player's shop sound for this match (siren style as police, horn as thief); null = standard */
-  setLook(role: 'police' | 'thief', sound: SoundId | null): void;
+  setLook(role: 'police' | 'thief', sound: SoundId | null, rivalSound?: SoundId | null): void;
   /** shop "Ouvir": a short sample of a siren or horn */
   preview(role: 'police' | 'thief', sound: SoundId | null): void;
   reset(): void;
@@ -51,7 +51,7 @@ export function createMixer(initial: AudioBackend): Mixer {
   let meS = 0;
   let lastBeep = Infinity; // whole seconds remaining at the last countdown beep
   const lastSkid = { police: -Infinity, thief: -Infinity };
-  let look: { role: 'police' | 'thief'; sound: SoundId | null } = { role: 'police', sound: null };
+  let look: { role: 'police' | 'thief'; sound: SoundId | null; rival: SoundId | null } = { role: 'police', sound: null, rival: null };
   let sirenStyle: SirenStyle = 'padrao';
   let lastHorn = -Infinity;
   const setSirenStyle = (st: SirenStyle) => {
@@ -116,9 +116,9 @@ export function createMixer(initial: AudioBackend): Mixer {
           siren = d >= SIREN_RANGE ? 0 : 0.22 * (1 - d / SIREN_RANGE);
         }
       }
-      // the player's siren as police; as thief the siren heard is the computer's (standard)
-      const mine = w.playerRole === 'police' && look.role === 'police' && (look.sound === 'yelp' || look.sound === 'choque');
-      setSirenStyle(mine ? (look.sound as SirenStyle) : 'padrao');
+      // the siren heard: the player's as police, the computer's (random car, playtest 2026-10-08) as thief
+      const style = w.playerRole === 'police' ? look.sound : look.rival;
+      setSirenStyle(style === 'yelp' || style === 'choque' ? style : 'padrao');
       be.setSiren(siren);
       setMusic(over ? 0.3 : 1);
       if (!quiet && !escaping && w.playerRole === 'thief') {
@@ -169,8 +169,8 @@ export function createMixer(initial: AudioBackend): Mixer {
       be.play(name);
     },
     song: () => current,
-    setLook(role, sound) {
-      look = { role, sound };
+    setLook(role, sound, rival = null) {
+      look = { role, sound, rival };
     },
     preview(role, sound) {
       if (isMuted || !be.running()) return;
@@ -218,7 +218,7 @@ export function createMixer(initial: AudioBackend): Mixer {
       be.setEngine(0, 0);
       be.setSiren(0);
       lastHorn = -Infinity;
-      look = { role: 'police', sound: null };
+      look = { role: 'police', sound: null, rival: null };
       songs.chase.seq.reset();
       songs.menu.seq.reset();
       nextNoteTime = -1;

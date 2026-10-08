@@ -94,3 +94,11 @@ describe('rear-view mirror image', () => {
     expect(Math.max(...sizes)).toBe(Math.round(844 * 0.22)); // 1× pixel, not 3×
   });
 });
+
+describe('clean mirror (playtest 2026-10-08)', () => {
+  it('starts past the longest car: the player never sees their own car (pickup bed, shooter) in it', async () => {
+    const { MIRROR_NEAR, createRearview } = await import('../../src/render/rearview');
+    expect(MIRROR_NEAR).toBeGreaterThan(2.5);
+    expect(createRearview().camera.near).toBe(MIRROR_NEAR);
+  });
+});

@@ -85,6 +85,13 @@ describe('look: paint, neon, plate', () => {
     expect(body.geometry.getAttribute('position').count).toBeGreaterThan(unarmed); // now with the gun
   });
 
+  it('picape: the shooter rides in the bed from the start (playtest 2026-10-08)', () => {
+    const g = attachGunner(createLookModel('thief', look('picape')), 'thief');
+    updateGunner(g, { ...createCar('thief', 1, 0), hasGun: false }, { s: 0, x: 0 }, 0);
+    expect(g.visible).toBe(true);
+    expect(g.position.z).toBeGreaterThan(0.7); // in the bed, behind the cab (z 0.62)
+  });
+
   it('other cars: the thief gunner still shows only with a weapon; the Caveirão gunner is at the window, not on the roof', () => {
     const g = attachGunner(createLookModel('thief', look('van')), 'thief');
     updateGunner(g, { ...createCar('thief', 1, 0), hasGun: false }, { s: 0, x: 0 }, 0);

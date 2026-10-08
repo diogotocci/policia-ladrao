@@ -46,6 +46,8 @@ export const BALANCE = {
     // police × thief: only the police loses speed and loses its catch-up turbo for a while (the thief gets away)
     carCarPoliceSpeedLoss: 0.5,
     carCarThiefSpeedLoss: 0,
+    // side by side (playtest 2026-10-08): whoever steers into the other hurts it (both at once: both)
+    sideHit: 5,
     policeTurboOff: 4, // s
   },
   catchUp: { start: 20, end: 150, maxBonus: 0.35 },

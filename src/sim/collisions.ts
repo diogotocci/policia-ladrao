@@ -71,7 +71,32 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
   const ds = thief.s - police.s;
   const dx = thief.x - police.x;
   if (Math.abs(ds) < L && Math.abs(dx) < 2 * W) {
-    if ((immunity.cars ?? 0) <= EPS) {
+    const side = Math.abs(dx) >= W; // side by side (not one behind the other)
+    const dir = Math.sign(dx) || 1; // where the thief is, seen from the police
+    const policeIn = police.steer !== 0 && police.steer === dir;
+    const thiefIn = thief.steer !== 0 && thief.steer === -dir;
+    if ((immunity.cars ?? 0) <= EPS && side && (policeIn || thiefIn)) {
+      // side hit (playtest 2026-10-08): whoever steers into the other hurts it; both at once, both get hurt
+      const C = BALANCE.collision;
+      const s = (thief.s + police.s) / 2;
+      const x = (thief.x + police.x) / 2;
+      events.push({ type: 'crash', a: policeIn ? 'police' : 'thief', b: policeIn ? 'thief' : 'police', s, x });
+      if (policeIn) {
+        const ram = police.upgrades.ramCharges > 0;
+        const dmg = (ram ? BALANCE.items.police.ramThief : C.sideHit) * armorFactor(thief.upgrades.plates);
+        if (ram) police = { ...police, upgrades: { ...police.upgrades, ramCharges: police.upgrades.ramCharges - 1 } };
+        thief = hurt(thief, dmg, w);
+        events.push({ type: 'hit', target: 'thief', amount: scaledDamage(dmg, w, 'thief'), s, x });
+      }
+      if (thiefIn) {
+        police = hurt(police, C.sideHit, w);
+        events.push({ type: 'hit', target: 'police', amount: scaledDamage(C.sideHit, w, 'police'), s, x });
+      }
+      // as in every contact, only the police loses speed and its catch-up turbo for a while (the thief gets away)
+      police = { ...police, speed: police.speed * (1 - C.carCarPoliceSpeedLoss) };
+      out = { ...out, policeTurboOffUntil: w.time + C.policeTurboOff };
+      immunity.cars = C.immunity;
+    } else if ((immunity.cars ?? 0) <= EPS && !side) {
       const ram = police.upgrades.ramCharges > 0;
       const thiefDmg = (ram ? BALANCE.items.police.ramThief : BALANCE.collision.carCarThief) * armorFactor(thief.upgrades.plates);
       const policeDmg = ram ? BALANCE.items.police.ramPolice : BALANCE.collision.carCarPolice;
@@ -95,7 +120,6 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
       // separates slightly beyond 2W: with exactly 2W rounding leaves 1.7999… and the
       // no-overtake rule (which uses < 2W) would think they are in the same lane
       const push = (2 * W + SEPARATION_SLACK - Math.abs(dx)) / 2;
-      const dir = Math.sign(dx) || 1;
       let tx = thief.x + dir * push;
       let px = police.x - dir * push;
       // if one hits the edge, the other absorbs the rest

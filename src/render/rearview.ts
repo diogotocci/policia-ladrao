@@ -12,6 +12,9 @@ const TIER: Record<QualityTier, { far: number; every: number; maxPr: number }> =
   low: { far: 80, every: 2, maxPr: 1 },
 };
 
+/** m: the longest car's rear (Caveirão/van ~2.45 m from the centre) stays out of the mirror */
+export const MIRROR_NEAR = 2.8;
+
 const MARGIN_TOP = 10; // px (aligns with the HUD bars)
 const MARGIN_RIGHT = 14;
 
@@ -36,7 +39,9 @@ export function createRearview(): {
 } {
   let tier = TIER.high;
   let frame = 0;
-  const camera = new THREE.PerspectiveCamera(50, 3, 0.5, 140);
+  // near plane past the player's own rear (pickup bed, its shooter, tall cars): the mirror shows only what is
+  // behind (playtest 2026-10-08)
+  const camera = new THREE.PerspectiveCamera(50, 3, MIRROR_NEAR, 140);
   const target = new THREE.WebGLRenderTarget(1, 1, { depthBuffer: true });
   target.texture.colorSpace = THREE.SRGBColorSpace;
   // mirror: flips the texture horizontally (u → 1 − u)

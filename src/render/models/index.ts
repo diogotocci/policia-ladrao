@@ -44,7 +44,15 @@ export const MODELS: Record<CarId, ModelSpec> = {
     scale: 0.88,
   },
   seda: { build: buildThief, camLift: 0, plate: { y: 0.62, z: 2.42, w: 0.5 }, neon: { w: 2.1, l: 4.8 } },
-  picape: { build: buildPicape, camLift: 0, gunner: [0.25, 0.95, 1.35], plate: { y: 0.8, z: 2.27, w: 0.5 }, neon: { w: 2.0, l: 4.7 } },
+  // playtest 2026-10-08: the shooter rides in the bed from the start (unarmed until the thief gets a weapon)
+  picape: {
+    build: buildPicape,
+    camLift: 0,
+    gunner: [0, 0.95, 1.0],
+    gunnerAlways: true,
+    plate: { y: 0.8, z: 2.27, w: 0.5 },
+    neon: { w: 2.0, l: 4.7 },
+  },
   moto: {
     build: buildMoto,
     camLift: 0,
