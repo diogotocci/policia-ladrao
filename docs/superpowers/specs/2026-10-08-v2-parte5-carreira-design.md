@@ -221,3 +221,21 @@ Na aba Patente, um botão resgata de uma vez todas as patentes alcançadas naque
 - Um cartão por lado, com a insígnia grande, a barra de XP e o botão Resgatar.
 - Embaixo, a trilha das 7 insígnias: as que ainda faltam ficam em cinza e a atual brilha.
 - Por último, a próxima patente e o que ela traz.
+
+## 9. Mais desafios do dia (playtest 2026-10-08)
+
+Os desafios se repetiam demais com só 4 por nível. Agora são 21, 7 por nível (aprovados pelo Diogo):
+
+| Fácil (150) | Médio (250) | Difícil (350) |
+|---|---|---|
+| Jogue 2 partidas | Vença 2 partidas | Vença 3 partidas no Difícil |
+| Pegue 8 caixas da sua cor | Fuja 1 vez (ladrão) | Fuja 2 vezes (ladrão) |
+| Jogue 1 partida no Sobrevivência | Prenda 1 ladrão (polícia) | Prenda 2 ladrões em menos de 1 min (polícia) |
+| Abra 2 caixas ? | Cause 300 de dano | Sobreviva 2 min no Sobrevivência (ladrão) |
+| Atire 30 vezes | Abra 4 caixas ? | Destrua a viatura 1 vez (ladrão) |
+| Termine uma partida com mais de metade da vida | Use 2 bloqueios (polícia) | Vença sem pegar nenhuma caixa |
+| Pegue 3 caixas do adversário | Pegue 6 caixas do adversário | Vença com menos de 30% de vida |
+
+- Sorteio, a partir de 09/10/2026: por nível, cada dia embaralha os 7 pela data e pega o primeiro que não foi o do dia anterior. O difícil não pede lado quando o médio já pede. Todo mundo vê os mesmos.
+- Os dias antes de 09/10/2026 continuam com o sorteio antigo (só os 12 primeiros), então um desafio feito ou esperando "Resgatar" não muda.
+- Contadores novos da partida: caixas do adversário pegas, tiros dados pelo jogador (o helicóptero não conta) e total de caixas pegas (inclui as "?").
