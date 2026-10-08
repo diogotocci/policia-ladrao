@@ -331,3 +331,53 @@ describe('audio mixer', () => {
     expect(be.played.filter((n) => n === 'rotor')).toHaveLength(0);
   });
 });
+
+describe('shop sounds (V2 part 4)', () => {
+  const ahead = (w: WorldState, gap: number, dx = 0): WorldState => ({
+    ...w,
+    traffic: [{ id: 99, s: thiefOf(w).s + gap, x: thiefOf(w).x + dx, speed: 10, targetX: thiefOf(w).x + dx, model: 0 }],
+  });
+
+  it('police player: the siren style bought; thief player: always the standard one', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.setLook('police', 'yelp');
+    mx.frame(world('police'), DT);
+    expect(be.sirenStyle).toBe('yelp');
+    mx.setLook('thief', 'dupla');
+    mx.frame(world('thief'), DT);
+    expect(be.sirenStyle).toBe('padrao');
+  });
+
+  it('thief player honks at the traffic just ahead in his lane, at most once every 4 s', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.setLook('thief', 'grave');
+    const w = ahead(world('thief'), 10);
+    mx.frame(w, DT);
+    expect(be.played).toContain('horn-grave');
+    const n = be.played.filter((x) => x === 'horn-grave').length;
+    for (let i = 0; i < 60; i++) mx.frame(w, DT);
+    expect(be.played.filter((x) => x === 'horn-grave').length).toBe(n);
+    for (let i = 0; i < 4 * 60; i++) mx.frame(w, DT);
+    expect(be.played.filter((x) => x === 'horn-grave').length).toBe(n + 1);
+  });
+
+  it('no honk for traffic far ahead, behind or in another lane; standard horn when none bought', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.setLook('thief', null);
+    for (const w of [ahead(world('thief'), 30), ahead(world('thief'), -5), ahead(world('thief'), 8, 3)]) mx.frame(w, DT);
+    expect(be.played.some((x) => x.startsWith('horn'))).toBe(false);
+    mx.frame(ahead(world('thief'), 8), DT);
+    expect(be.played).toContain('horn-padrao');
+  });
+
+  it('preview plays the sample (siren for police, horn for thief)', () => {
+    const be = createNullBackend();
+    const mx = createMixer(be);
+    mx.preview('police', 'choque');
+    mx.preview('thief', null);
+    expect(be.played).toEqual(['siren-choque', 'horn-padrao']);
+  });
+});

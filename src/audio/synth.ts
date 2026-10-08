@@ -11,6 +11,8 @@ export interface AudioBackend {
   play(name: SoundName, gain?: number): void;
   setEngine(freq: number, gain: number): void;
   setSiren(gain: number): void;
+  /** siren sound (V2 part 4 shop): standard, yelp or deep */
+  setSirenStyle(style: SirenStyle): void;
   setMaster(gain: number): void;
   setMusic(gain: number): void;
   note(n: Note, when: number): void;
@@ -19,6 +21,13 @@ export interface AudioBackend {
   suspend(): void;
   close(): void;
 }
+
+export type SirenStyle = 'padrao' | 'yelp' | 'choque';
+export const SIREN_STYLES: Record<SirenStyle, { wave: OscillatorType; freq: number; lfo: number; depth: number }> = {
+  padrao: { wave: 'square', freq: 760, lfo: 0.9, depth: 230 },
+  yelp: { wave: 'square', freq: 950, lfo: 3.6, depth: 320 },
+  choque: { wave: 'sawtooth', freq: 430, lfo: 0.6, depth: 150 },
+};
 
 export interface NullBackend extends AudioBackend {
   /** simulates a locked/suspended context in tests */
@@ -29,6 +38,7 @@ export interface NullBackend extends AudioBackend {
   notes: { note: Note; when: number }[];
   engine: { freq: number; gain: number };
   siren: number;
+  sirenStyle: SirenStyle;
   master: number;
   music: number;
 }
@@ -48,6 +58,7 @@ export function createNullBackend(): NullBackend {
     notes: [],
     engine: { freq: 0, gain: 0 },
     siren: 0,
+    sirenStyle: 'padrao',
     master: 1,
     music: 1,
     now: () => t,
@@ -59,6 +70,9 @@ export function createNullBackend(): NullBackend {
     },
     setSiren(gain) {
       be.siren = gain;
+    },
+    setSirenStyle(style) {
+      be.sirenStyle = style;
     },
     setMaster(gain) {
       be.master = gain;
@@ -216,6 +230,13 @@ export function createWebAudioBackend(): AudioBackend {
     },
     setSiren(gain) {
       smooth(sirenGain.gain, gain);
+    },
+    setSirenStyle(style) {
+      const st = SIREN_STYLES[style];
+      siren.type = st.wave;
+      smooth(siren.frequency, st.freq);
+      smooth(lfo.frequency, st.lfo);
+      smooth(lfoDepth.gain, st.depth);
     },
     setMaster(gain) {
       smooth(master.gain, gain * 0.8);

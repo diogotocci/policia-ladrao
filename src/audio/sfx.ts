@@ -75,6 +75,19 @@ export const RECIPES = {
   'mystery-good': [v('square', 784, 784, 0.13, 0.09), v('square', 1175, 1175, 0.13, 0.18, 0.004, 0.09)],
   'mystery-bad': [v('sawtooth', 330, 150, 0.15, 0.35)],
   lose: [v('square', 392, 392, 0.15, 0.2), v('square', 311, 311, 0.15, 0.2, 0.004, 0.2), v('square', 196, 196, 0.15, 0.6, 0.004, 0.4)],
+  // V2 part 4 (shop): horns (thief player near traffic) and short siren samples for "Ouvir"
+  'horn-padrao': [v('square', 415, 415, 0.13, 0.4, 0.01), v('square', 523, 523, 0.11, 0.4, 0.01)],
+  'horn-corneta': [v('sawtooth', 659, 659, 0.12, 0.16, 0.005), v('sawtooth', 880, 880, 0.12, 0.3, 0.005, 0.18)],
+  'horn-grave': [v('sawtooth', 165, 160, 0.16, 0.6, 0.02), v('sawtooth', 208, 200, 0.12, 0.6, 0.02)],
+  'horn-dupla': [
+    v('square', 415, 415, 0.13, 0.15, 0.005),
+    v('square', 523, 523, 0.11, 0.15, 0.005),
+    v('square', 415, 415, 0.13, 0.22, 0.005, 0.22),
+    v('square', 523, 523, 0.11, 0.22, 0.005, 0.22),
+  ],
+  'siren-padrao': [v('square', 560, 990, 0.1, 0.8, 0.05), v('square', 990, 560, 0.1, 0.8, 0.004, 0.8)],
+  'siren-yelp': [0, 0.25, 0.5, 0.75, 1.0, 1.25].map((d) => v('square', 700, 1250, 0.1, 0.25, 0.01, d)),
+  'siren-choque': [v('sawtooth', 300, 560, 0.12, 0.8, 0.05), v('sawtooth', 560, 300, 0.12, 0.8, 0.004, 0.8)],
 } satisfies Record<string, Voice[]>;
 
 export type SoundName = keyof typeof RECIPES;

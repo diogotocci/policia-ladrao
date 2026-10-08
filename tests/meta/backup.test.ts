@@ -3,7 +3,7 @@ import { BACKUP_ERROR_TEXT, decodeBackup, encodeBackup } from '../../src/meta/ba
 import { emptyProfile, type Profile } from '../../src/meta/profile';
 
 const sample: Profile = {
-  v: 1,
+  ...emptyProfile(),
   coins: 1240,
   stats: { matches: 37, wins: 21, escapes: 14, arrests: 7, coinsEarned: 2890 },
   welcomeGranted: true,
@@ -56,7 +56,7 @@ describe('backup code', () => {
 
   it('a well-formed code with an invalid profile (future version, negative coins) is rejected', () => {
     const forged = (o: object) => encodeBackup(o as Profile);
-    expect(decodeBackup(forged({ ...sample, v: 2 }))).toEqual({ ok: false, error: 'invalid' });
+    expect(decodeBackup(forged({ ...sample, v: 3 }))).toEqual({ ok: false, error: 'invalid' });
     expect(decodeBackup(forged({ ...sample, coins: -5 }))).toEqual({ ok: false, error: 'invalid' });
     expect(decodeBackup(forged({ ...sample, coins: 1e12 }))).toEqual({ ok: false, error: 'invalid' });
   });
@@ -66,3 +66,66 @@ describe('backup code', () => {
       expect(BACKUP_ERROR_TEXT[k]).toBe('Código incompleto ou com erro. Copie de novo no outro aparelho.');
   });
 });
+
+describe('backup code v2 (shop, V2 part 4)', () => {
+  it('round-trips items bought and in use', () => {
+    const p: Profile = {
+      ...sample,
+      owned: ['car:caveirao', 'paint:caveirao:2', 'neon:police:roxo', 'sound:dupla', 'plate', 'car:moto'],
+      equipped: {
+        police: { car: 'caveirao', neon: 'roxo', sound: null },
+        thief: { car: 'moto', neon: null, sound: 'dupla' },
+        paint: { caveirao: 2 },
+        plate: 'DIO2026',
+      },
+    };
+    const back = decodeBackup(encodeBackup(p));
+    expect(back.ok).toBe(true);
+    if (!back.ok) return;
+    expect(back.profile.owned.sort()).toEqual([...p.owned].sort());
+    expect(back.profile.equipped).toEqual(p.equipped);
+  });
+
+  it('a v1 code (8 fields) still restores, with nothing bought', () => {
+    // encoded by 0.15.x: [1, coins, matches, wins, escapes, arrests, coinsEarned, welcome]
+    const bytes = new TextEncoder().encode(JSON.stringify([1, 1240, 37, 21, 14, 7, 2890, 1]));
+    const code = legacyCode(bytes);
+    const r = decodeBackup(code);
+    expect(r).toEqual({ ok: true, profile: { ...emptyProfile(), coins: 1240, stats: sample.stats, welcomeGranted: true } });
+  });
+
+  it('unknown positions and items in use that were not bought are dropped', () => {
+    const p: Profile = {
+      ...sample,
+      owned: ['car:blazer'],
+      equipped: { ...sample.equipped, police: { car: 'blazer', neon: null, sound: null } },
+    };
+    const r = decodeBackup(encodeBackup({ ...p, equipped: { ...p.equipped, thief: { car: 'van', neon: 'rosa', sound: 'corneta' } } }));
+    expect(r.ok && r.profile.equipped.thief).toEqual({ car: 'seda', neon: null, sound: null });
+    expect(r.ok && r.profile.equipped.police.car).toBe('blazer');
+  });
+});
+
+/** Same encoding as encodeBackup, for a raw payload (the format of older versions). */
+function legacyCode(bytes: Uint8Array): string {
+  const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  let out = '';
+  let buffer = 0;
+  let bits = 0;
+  for (const b of bytes) {
+    buffer = (buffer << 8) | b;
+    bits += 8;
+    while (bits >= 5) {
+      out += ALPHA[(buffer >>> (bits - 5)) & 31];
+      bits -= 5;
+    }
+  }
+  if (bits > 0) out += ALPHA[(buffer << (5 - bits)) & 31];
+  let c = 0xffffffff;
+  for (const b of bytes) {
+    c ^= b;
+    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+  }
+  const crc = ((c ^ 0xffffffff) >>> 0).toString(16).toUpperCase().padStart(8, '0');
+  return 'PL1-' + ((out + crc).match(/.{1,4}/g) ?? []).join('-');
+}

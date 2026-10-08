@@ -5,6 +5,8 @@ import { createDebug } from './debug';
 import { createKeyboardInput } from './input/keyboard';
 import { createTouchButtons } from './input/touchButtons';
 import { createChaseCamera } from './render/cameras';
+import { createLookModel } from './render/carLook';
+import type { CarLook } from './meta/shop';
 import { createCombatFx } from './render/combatFx';
 import { applyDamage, damageLook } from './render/damageView';
 import { attachGunner, flashGunner, updateGunner } from './render/gunner';
@@ -70,6 +72,8 @@ export function startGame(
     /** V2 part 3: Perseguição (default) / Sobrevivência; chaosEvery only in debug */
     mode?: Mode;
     chaosEvery?: number;
+    /** V2 part 4: the player's car from the shop (visual and sound only); default car without it */
+    look?: CarLook;
     /** debug/e2e only: share of yellow boxes (?mystery=1) */
     mysteryShare?: number;
     /** starts muted (?mute), without touching the saved preference */
@@ -105,12 +109,12 @@ export function startGame(
   const road = createRoad(scene, opts.seed, trackFrame);
   const withReflections = (m: THREE.Object3D) =>
     m.traverse((o) => {
-      if (o.name === 'contact-shadow') return;
+      if (o.name === 'contact-shadow' || o.name === 'neon') return;
       const mat = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | THREE.MeshStandardMaterial[] | undefined;
       for (const x of Array.isArray(mat) ? mat : mat ? [mat] : []) if ('envMap' in x) x.envMap = lighting.reflections;
     });
   const opponentRole: Role = opts.role === 'police' ? 'thief' : 'police';
-  const model = createCarModel(opts.role);
+  const model = createLookModel(opts.role, opts.look);
   const opponentModel = createCarModel(opponentRole);
   withReflections(model);
   withReflections(opponentModel);
@@ -145,7 +149,7 @@ export function startGame(
   const rearview = createRearview();
   rearview.setQuality(view.quality);
   const props = createWorldProps(scene, lighting.reflections);
-  const chase = createChaseCamera();
+  const chase = createChaseCamera((model.userData.camLift as number | undefined) ?? 0);
   const fog = scene.fog instanceof THREE.Fog ? scene.fog : null;
   const FOG_NEAR = fog?.near ?? 0;
   const FOG_FAR = fog?.far ?? 0;
@@ -231,6 +235,7 @@ export function startGame(
   const ownAudio = !opts.audio;
   const audioSession = opts.audio ?? createAudioSession({ forceMute: opts.mute });
   const mixer = audioSession.mixer;
+  mixer.setLook(opts.role, opts.look?.sound ?? null);
   const hudCenter = (ui.querySelector('.hud-center') as HTMLElement | null) ?? ui;
   const soundToggle = audioSession.mountToggle(hudCenter);
   const pauseBtn = document.createElement('button');

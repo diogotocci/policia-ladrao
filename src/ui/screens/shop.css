@@ -1,0 +1,334 @@
+/* Shop (V2 part 4), layout A "garagem": showcase on the left, list on the right; fits 844x390 landscape */
+.screen-shop {
+  justify-content: flex-start;
+  gap: 8px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 3px, rgba(255, 255, 255, 0.012) 3px 4px),
+    radial-gradient(ellipse at 30% -20%, #3a3f48 0%, var(--asphalt) 60%, #1b1d22 100%);
+}
+.shop-top {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+}
+.shop-back {
+  min-width: 0;
+  padding: 0 10px 0 4px;
+  gap: 4px;
+}
+.shop-heading {
+  font-size: 24px;
+}
+.shop-sides {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  margin-left: auto;
+}
+.shop-side.screen-btn {
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 14px;
+  font-size: 15px;
+  background: transparent;
+  box-shadow: none;
+}
+.shop-side.is-police[aria-checked='true'] {
+  background: var(--police);
+}
+.shop-side.is-thief[aria-checked='true'] {
+  background: var(--thief);
+}
+.shop-wallet {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.35);
+  font:
+    800 16px/1 system-ui,
+    sans-serif;
+}
+.shop-wallet svg,
+.shop-tag svg {
+  width: 18px;
+  height: 18px;
+}
+.shop-body {
+  width: 100%;
+  max-width: 900px;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  gap: 12px;
+}
+.shop-stage {
+  flex: 1.2 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px 10px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.22);
+}
+.shop-3d {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 80px;
+}
+.shop-3d canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+.shop-name {
+  margin: 0;
+  font:
+    800 18px/1.1 system-ui,
+    sans-serif;
+}
+.shop-action.screen-btn {
+  min-width: 200px;
+}
+.shop-action:disabled {
+  background: var(--asphalt-3);
+  color: rgba(255, 255, 255, 0.75);
+  cursor: default;
+}
+.shop-panel {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+.shop-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  flex: none;
+}
+.shop-tab.screen-btn {
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 12px;
+  font-size: 14px;
+  border-radius: 10px;
+}
+.shop-tab.is-on {
+  background: var(--sign);
+  color: var(--sign-ink);
+}
+.shop-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.shop-row-wrap {
+  display: flex;
+  gap: 6px;
+}
+.shop-row {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font:
+    700 15px/1.1 system-ui,
+    sans-serif;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.shop-row[aria-selected='true'] {
+  border-color: var(--sign);
+  background: rgba(255, 194, 26, 0.12);
+}
+.shop-row:focus-visible,
+.shop-plate-input:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+.shop-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex: none;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.35),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.25);
+}
+.shop-swatch.is-icon {
+  border-radius: 6px;
+  box-shadow: none;
+  display: grid;
+  place-items: center;
+}
+.shop-swatch.is-icon svg {
+  width: 24px;
+  height: 24px;
+}
+.shop-row-name {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.shop-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.shop-tag.is-on {
+  color: var(--win);
+}
+.shop-tag.is-locked {
+  opacity: 0.6;
+}
+.shop-listen.screen-btn {
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+.shop-plate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.shop-plate-preview {
+  width: 210px;
+  height: 70px;
+  border-radius: 6px;
+  border: 3px solid #111;
+  background: #f4f4f4;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.shop-plate-band {
+  background: #1f47b0;
+  color: #fff;
+  font:
+    800 11px/16px system-ui,
+    sans-serif;
+  letter-spacing: 0.2em;
+}
+.shop-plate-text {
+  flex: 1 1 auto;
+  display: grid;
+  place-items: center;
+  font:
+    900 32px/1 ui-monospace,
+    monospace;
+  letter-spacing: 0.08em;
+}
+.shop-plate-label {
+  font:
+    600 13px/1.2 system-ui,
+    sans-serif;
+  color: var(--muted);
+}
+.shop-plate-input {
+  width: 180px;
+  min-height: 42px;
+  border-radius: 10px;
+  border: 0;
+  padding: 0 12px;
+  text-align: center;
+  text-transform: uppercase;
+  font:
+    800 22px/1 ui-monospace,
+    monospace;
+  letter-spacing: 0.1em;
+}
+.shop-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.shop-confirm {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(4, 6, 12, 0.72);
+}
+.shop-confirm-title {
+  margin: 0;
+  font:
+    800 24px/1.1 system-ui,
+    sans-serif;
+}
+.shop-confirm-price {
+  margin: 0;
+  font:
+    800 20px/1 system-ui,
+    sans-serif;
+  color: var(--sign);
+}
+.shop-confirm-after {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* side choice: the car in use and the "trocar" shortcut to the shop */
+.choose-slot {
+  position: relative;
+  flex: 1 1 0;
+  display: flex;
+  min-width: 0;
+}
+.choose-slot .choose-card {
+  width: 100%;
+  padding-top: 46px; /* room for the "trocar" shortcut above the car */
+}
+.choose-swap.screen-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  min-width: 0;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 17px;
+  font-size: 13px;
+  background: rgba(0, 0, 0, 0.45);
+}
+.ranking-plate {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  border: 1px solid #111;
+  border-top: 3px solid #1f47b0;
+  background: #f4f4f4;
+  color: #111;
+  font:
+    800 11px/1.2 ui-monospace,
+    monospace;
+  vertical-align: middle;
+}

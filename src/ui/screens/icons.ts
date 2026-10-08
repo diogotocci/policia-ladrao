@@ -37,5 +37,8 @@ export const SCREEN_ICONS = {
   smoke: svg('<path d="M7 17a4 4 0 0 1 .5-8 5.5 5.5 0 0 1 10.5 1.5A3.5 3.5 0 0 1 17 17z"/><path d="M5 21h6M14 21h5"/>'),
   // V2 part 3: police items
   barrier: svg('<path d="M3 8h18v6H3z"/><path d="M7 8l-4 6M12 8l-4 6M17 8l-4 6M21 8l-4 6"/><path d="M6 14v6M18 14v6"/>'),
+  // V2 part 4: shop
+  shop: svg('<path d="M4 9h16l-1.5 11h-13z"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/>'),
+  car: svg('<path d="M3 15v-3l2-5h14l2 5v3z"/><circle cx="7.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/><path d="M5 12h14"/>'),
   siren: svg('<path d="M7 18v-5a5 5 0 0 1 10 0v5"/><path d="M5 18h14v3H5zM12 3v2M4.5 6l1.5 1.5M19.5 6 18 7.5"/>'),
 } as const;

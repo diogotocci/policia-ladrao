@@ -67,8 +67,10 @@ export function attachGunner(model: THREE.Object3D, role: Role): THREE.Group {
   flash.position.set(0.14, 0.35, -0.82);
   flash.visible = false;
   g.add(body, flash);
-  // leaning out of the passenger window, in the front seat
-  g.position.set(0.86, 0.84, role === 'police' ? -0.05 : 0.0);
+  // leaning out of the passenger window, in the front seat; shop cars say where (roof hatch, pickup bed, moto seat)
+  const at = model.userData.gunnerAt as [number, number, number] | undefined;
+  if (at) g.position.set(...at);
+  else g.position.set(0.86, 0.84, role === 'police' ? -0.05 : 0.0);
   g.scale.setScalar(1.15);
   g.userData.flashUntil = -1;
   g.userData.flash = flash;
@@ -83,6 +85,10 @@ export function flashGunner(g: THREE.Object3D, now: number): void {
 /** Visibility (thief only with a weapon), aiming at the target within the cone, and flash. */
 export function updateGunner(g: THREE.Object3D, car: CarState, target: { s: number; x: number }, now: number): void {
   g.visible = car.role === 'police' || car.hasGun;
+  // moto (shop): the passenger figure stands in while the armed gunner is not on the back seat
+  let passenger = g.userData.passenger as THREE.Object3D | null | undefined;
+  if (passenger === undefined) g.userData.passenger = passenger = g.parent?.getObjectByName('passenger') ?? null; // looked up once
+  if (passenger) passenger.visible = !g.visible;
   if (!g.visible) return;
   const facing = car.role === 'police' ? 'front' : 'rear';
   let yaw = 0;

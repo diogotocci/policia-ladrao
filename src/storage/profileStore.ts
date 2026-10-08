@@ -1,7 +1,11 @@
 // Player profile on the device (localStorage). Never throws: a blocked or full storage just stops persisting.
+// A v1 profile is migrated when read and moves to the v2 key on the next save.
 import { emptyProfile, parseProfile, type Profile } from '../meta/profile';
 
-export const PROFILE_KEY = 'pl.profile.v1';
+// v2 (V2 part 4, shop) has its own key: an older build still open (cached app, another tab) reads v1 and keeps
+// working with it instead of rejecting v2 and saving an empty profile over it. v1 is read once and never deleted.
+export const PROFILE_KEY = 'pl.profile.v2';
+export const PROFILE_V1_KEY = 'pl.profile.v1';
 /** a profile that failed validation is kept here instead of being silently lost */
 export const CORRUPT_KEY = 'pl.profile.corrupt';
 
@@ -9,7 +13,7 @@ export function loadProfile(storage: Storage | undefined): { profile: Profile; p
   if (!storage) return { profile: emptyProfile(), persistent: false };
   let raw: string | null;
   try {
-    raw = storage.getItem(PROFILE_KEY);
+    raw = storage.getItem(PROFILE_KEY) ?? storage.getItem(PROFILE_V1_KEY);
   } catch {
     return { profile: emptyProfile(), persistent: false };
   }

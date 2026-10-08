@@ -4,6 +4,8 @@ import type { Difficulty, Mode, Role } from './config/balance';
 import { createAudioSession } from './audio/session';
 import { startGame, type GameHandle } from './game';
 import { createCarPreview } from './render/carPreview';
+import { createShopPreview } from './render/shopPreview';
+import { CARS, buy, lookFor, setPlate, use } from './meta/shop';
 import type { QualityTier } from './render/renderer';
 import { grantWelcome, settleMatch } from './meta/profile';
 import { loadProfile, saveProfile } from './storage/profileStore';
@@ -13,7 +15,7 @@ import { renderMode } from './ui/screens/mode';
 import { countModeRecords, insert, loadModeBoards, qualifies, recordEntry, saveModeBoards, type ModeBoards } from './storage/ranking';
 import { initialState, reduce, type FlowAction, type FlowState } from './ui/screens/flow';
 import { openProgress } from './ui/screens/progress';
-import { renderChoose, renderCountdown, renderEnd, renderPause, renderRanking, renderTitle } from './ui/screens/screens';
+import { renderChoose, renderCountdown, renderEnd, renderPause, renderRanking, renderShop, renderTitle } from './ui/screens/screens';
 
 declare const __APP_VERSION__: string | undefined;
 /** injected by Vite (package.json version); absent when the module runs outside a Vite build (unit tests) */
@@ -91,6 +93,8 @@ export function startApp(
       onClose: () => host.querySelector<HTMLElement>('.title-progress')?.focus(),
     });
   };
+  /** the cars in use (shop), for the spinning previews */
+  const looks = () => ({ police: lookFor(profile, 'police'), thief: lookFor(profile, 'thief') });
   let highlight: { mode: Mode; difficulty: Difficulty; role: Role; rank: number } | undefined;
   /** the reward of the last match already counted up on screen once */
   let rewardShown = false;
@@ -131,6 +135,7 @@ export function startApp(
       difficulty,
       mode,
       chaosEvery: opts.chaosEvery,
+      look: lookFor(profile, role),
       audio,
       startPaused: true,
       onPauseRequest: () => dispatch({ type: 'pause' }),
@@ -170,10 +175,11 @@ export function startApp(
           onHowToSeen: markHowToSeen,
           coins: profile.coins,
           onProgress: openProgressDialog,
+          onShop: () => press({ type: 'openShop' }),
           mountToggle: (p) => audio.mountToggle(p),
           version: APP_VERSION,
         });
-        const preview = createCarPreview(t.previews);
+        const preview = createCarPreview(t.previews, looks());
         view = { dispose: () => (preview.dispose(), t.dispose()) };
         break;
       }
@@ -201,11 +207,35 @@ export function startApp(
             saveDifficulty(storage, d);
           },
           onHowToSeen: markHowToSeen,
+          cars: { police: CARS[profile.equipped.police.car].name, thief: CARS[profile.equipped.thief.car].name },
+          onShop: (side) => press({ type: 'openShop', side }),
         });
-        const preview = createCarPreview(c.previews);
+        const preview = createCarPreview(c.previews, looks());
         view = { dispose: () => (preview.dispose(), c.dispose()) };
         break;
       }
+      case 'shop':
+        stopGame();
+        view = renderShop(layer, {
+          profile,
+          side: s.side,
+          onSide: (side) => press({ type: 'shopSide', side }),
+          onBack: () => press({ type: 'back' }),
+          onBuy: (id) => {
+            const r = buy(profile, id);
+            if (r.ok) {
+              profile = r.profile;
+              persist();
+              audio.mixer.cue('ui');
+            }
+            return profile;
+          },
+          onUse: (id) => ((profile = use(profile, id)), persist(), profile),
+          onPlate: (text) => ((profile = setPlate(profile, text)), persist(), profile),
+          onListen: (role, sound) => audio.mixer.preview(role, sound),
+          mountPreview: (slot) => createShopPreview(slot),
+        });
+        break;
       case 'countdown':
         highlight = undefined; // the record highlight applies only to the match that just ended
         newGame(s.role);
@@ -236,7 +266,7 @@ export function startApp(
           difficulty,
           animateReward: !rewardShown, // count up only the first time, not when coming back from the ranking
           onSave: (initials) => {
-            const entry = recordEntry(s.role, s.result, initials, new Date().toISOString());
+            const entry = recordEntry(s.role, s.result, initials, new Date().toISOString(), profile.equipped.plate || null);
             const r = insert(boards[mode][difficulty], s.role, entry, mode);
             boards = { ...boards, [mode]: { ...boards[mode], [difficulty]: r.board } };
             saveModeBoards(storage, boards);
@@ -315,7 +345,7 @@ export function startApp(
     const portrait = container.clientHeight > container.clientWidth; // phone held upright: the game rotates by itself (styles.css)
     if (state.screen === 'countdown' && !portrait) dispatch({ type: 'tick', dt }); // in portrait the countdown waits
     // menu music on screens with no match running (during a match the game plays; silence while paused)
-    if (state.screen === 'title' || state.screen === 'choose' || state.screen === 'end' || state.screen === 'ranking') audio.mixer.menu(dt);
+    if (['title', 'choose', 'shop', 'end', 'ranking'].includes(state.screen)) audio.mixer.menu(dt);
     raf = requestAnimationFrame(loop);
   };
   raf = requestAnimationFrame(loop);

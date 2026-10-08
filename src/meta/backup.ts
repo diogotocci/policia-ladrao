@@ -1,6 +1,7 @@
 // Progress backup code (V2 part 1): "PL1-" + base32 (RFC 4648, no padding) of the profile as a compact JSON array + CRC32,
 // in blocks of 4. The CRC catches a code pasted incomplete or mistyped; it does not stop deliberate edits.
 import { parseProfile, type Profile } from './profile';
+import { CAR_IDS, CATALOG, NEON_IDS, SOUND_IDS, defaultEquipped } from './shop';
 
 const PREFIX = 'PL1-';
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -63,22 +64,45 @@ function fromBase32(text: string): Uint8Array | undefined {
 
 const blocks = (s: string) => s.match(/.{1,4}/g)?.join('-') ?? '';
 
-// compact payload: a JSON array instead of the object keeps the code short enough to read and paste
-const pack = (p: Profile) => [
-  p.v,
-  p.coins,
-  p.stats.matches,
-  p.stats.wins,
-  p.stats.escapes,
-  p.stats.arrests,
-  p.stats.coinsEarned,
-  p.welcomeGranted ? 1 : 0,
-];
+// compact payload: a JSON array instead of the object keeps the code short enough to read and paste.
+// v1: 8 fields. v2 (shop) adds the catalog positions bought and what is in use, as indexes.
+const pack = (p: Profile) => {
+  const side = (r: 'police' | 'thief') => [
+    CAR_IDS.indexOf(p.equipped[r].car),
+    p.equipped[r].neon ? NEON_IDS.indexOf(p.equipped[r].neon) : -1,
+    p.equipped[r].sound ? SOUND_IDS.indexOf(p.equipped[r].sound) : -1,
+  ];
+  const base = [
+    p.v,
+    p.coins,
+    p.stats.matches,
+    p.stats.wins,
+    p.stats.escapes,
+    p.stats.arrests,
+    p.stats.coinsEarned,
+    p.welcomeGranted ? 1 : 0,
+  ];
+  // nothing bought and the defaults in use: the short form (same length as before the shop)
+  if (p.owned.length === 0 && JSON.stringify(p.equipped) === JSON.stringify(defaultEquipped())) return base;
+  return [
+    ...base,
+    p.owned.map((id) => CATALOG.findIndex((i) => i.id === id)).filter((i) => i >= 0),
+    [...side('police'), ...side('thief'), CAR_IDS.map((c) => p.equipped.paint[c] ?? 0).join(''), p.equipped.plate],
+  ];
+};
+const at = <T>(list: readonly T[], i: unknown): T | null =>
+  typeof i === 'number' && Number.isInteger(i) && i >= 0 && i < list.length ? list[i]! : null;
 function unpack(a: unknown): unknown {
-  if (!Array.isArray(a) || a.length !== 8) return undefined;
-  const [v, coins, matches, wins, escapes, arrests, coinsEarned, welcome] = a as unknown[];
+  if (!Array.isArray(a) || (a.length !== 8 && a.length !== 10)) return undefined;
+  const [v, coins, matches, wins, escapes, arrests, coinsEarned, welcome, ownedIdx, eq] = a as unknown[];
   if (welcome !== 0 && welcome !== 1) return undefined;
-  return { v, coins, stats: { matches, wins, escapes, arrests, coinsEarned }, welcomeGranted: welcome === 1 };
+  const base = { v, coins, stats: { matches, wins, escapes, arrests, coinsEarned }, welcomeGranted: welcome === 1 };
+  if (a.length === 8) return v === 2 ? { ...base, owned: [] } : base; // v1, or v2 with nothing from the shop
+  if (!Array.isArray(ownedIdx) || !Array.isArray(eq) || eq.length !== 8 || typeof eq[6] !== 'string') return undefined;
+  const owned = ownedIdx.map((i) => at(CATALOG, i)?.id).filter((x) => x !== undefined);
+  const side = (o: number) => ({ car: at(CAR_IDS, eq[o]), neon: at(NEON_IDS, eq[o + 1]), sound: at(SOUND_IDS, eq[o + 2]) });
+  const paint = Object.fromEntries(CAR_IDS.map((c, i) => [c, Number((eq[6] as string)[i] ?? 0)]));
+  return { ...base, owned, equipped: { police: side(0), thief: side(3), paint, plate: eq[7] } };
 }
 
 export function encodeBackup(profile: Profile): string {

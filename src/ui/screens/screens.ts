@@ -11,6 +11,7 @@ import './screens.css';
 export { trapFocus } from './dom';
 export { renderChoose } from './choose';
 export { renderEnd } from './end';
+export { renderShop } from './shop';
 
 // ---------- title ----------
 /** Logo (a blue street-name plate) over the two spinning 3D cars. */
@@ -46,6 +47,8 @@ export function renderTitle(
     onHowToSeen?(): void;
     /** opens the Progresso dialog (stats and backup code) */
     onProgress?(): void;
+    /** V2 part 4: opens the shop */
+    onShop?(): void;
     coins?: number;
     mountToggle(parent: HTMLElement): Disposable;
     version?: string;
@@ -57,7 +60,9 @@ export function renderTitle(
   const play = btn('Jogar', 'is-primary title-play', p.onPlay, SCREEN_ICONS.play);
   const help = btn('Como jogar', '', () => openHowTo(s, () => (p.onHowToSeen?.(), help.focus())), SCREEN_ICONS.help);
   const menu = h('div', 'title-menu');
-  menu.append(play, help, btn('Ranking', '', p.onRanking, SCREEN_ICONS.trophy));
+  menu.append(play);
+  if (p.onShop) menu.append(btn('Loja', 'title-shop', p.onShop, SCREEN_ICONS.shop));
+  menu.append(help, btn('Ranking', '', p.onRanking, SCREEN_ICONS.trophy));
   const sound = h('div', 'title-sound');
   if (p.onProgress) {
     const progress = btn('', 'title-progress', p.onProgress, SCREEN_ICONS.profile);
@@ -179,12 +184,13 @@ export function renderRanking(
       tag.setAttribute('aria-label', said[e.how!]);
       time.append(tag);
     }
-    row.append(
-      h('span', 'ranking-pos', String(i + 1)),
-      h('span', 'ranking-initials', e.initials),
-      time,
-      h('span', 'ranking-date', shortDate(e.date)),
-    );
+    const initials = h('span', 'ranking-initials', e.initials);
+    if (e.plate) {
+      const plate = h('span', 'ranking-plate', e.plate); // V2 part 4: the shop plate in use at the time
+      plate.setAttribute('aria-label', `placa ${e.plate}`);
+      initials.append(plate);
+    }
+    row.append(h('span', 'ranking-pos', String(i + 1)), initials, time, h('span', 'ranking-date', shortDate(e.date)));
     list.append(row);
   });
   const back = btn('Voltar', 'is-quiet', p.onBack);
