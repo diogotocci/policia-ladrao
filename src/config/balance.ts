@@ -184,7 +184,7 @@ export const BALANCE = {
         ram: 2,
         heli: 1,
         pierce: 2,
-        roadblock: 7,
+        roadblock: 4, // playtest 2026-10-07: at 7 it showed up too often (at 2 it was never seen)
         machineGun: 2,
         wingman: 1,
       },
