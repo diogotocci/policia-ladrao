@@ -42,6 +42,9 @@ export function renderChoose(
     /** V2 part 2: Fácil / Médio / Difícil, chosen here */
     difficulty?: Difficulty;
     onDifficulty?(d: Difficulty): void;
+    /** V2 part 4: the name of the car in use on each side and the "trocar" shortcut to the shop */
+    cars?: Record<Role, string>;
+    onShop?(role: Role): void;
   },
 ): Disposable & { previews: Record<Role, HTMLElement> } {
   const s = h('section', 'screen screen-choose');
@@ -63,7 +66,14 @@ export function renderChoose(
   for (const role of ['police', 'thief'] as Role[]) {
     const card = roleCard(role, () => p.onChoose(role));
     previews[role] = card.querySelector<HTMLElement>('.choose-preview')!;
-    cards.append(card);
+    if (p.cars && p.onShop) {
+      // a button cannot sit inside the card (also a button): both go in a slot, the shortcut over the card's corner
+      const slot = h('div', 'choose-slot');
+      const swap = btn(`${p.cars[role]} · trocar`, 'choose-swap', () => p.onShop!(role), SCREEN_ICONS.car);
+      swap.setAttribute('aria-label', `${p.cars[role]}: trocar carro na loja`);
+      slot.append(card, swap);
+      cards.append(slot);
+    } else cards.append(card);
   }
   s.append(top, h('h2', 'screen-heading choose-heading', 'Escolha seu lado'), cards);
   const firstCard = cards.querySelector<HTMLElement>('.choose-card')!;

@@ -143,9 +143,10 @@ function addLamps(body: THREE.Object3D, halfW: number, frontZ: number, rearZ: nu
 }
 
 // ---------- patrol car ----------
-function buildPolice(root: THREE.Group, body: THREE.Group) {
+export function buildPolice(root: THREE.Group, body: THREE.Group) {
   const W = 1.8;
   const WHITE = paint(0xf4f5f7);
+  WHITE.userData.paint = true; // the shop paint recolours it
   const BLUE = paint(0x1c4ac2);
   const shell = sideProfile(
     [
@@ -197,9 +198,10 @@ function buildPolice(root: THREE.Group, body: THREE.Group) {
 }
 
 // ---------- muscle car (red: stands out from the dark asphalt at a distance) ----------
-function buildThief(root: THREE.Group, body: THREE.Group) {
+export function buildThief(root: THREE.Group, body: THREE.Group) {
   const W = 1.88;
   const RED = paint(0xd0151c);
+  RED.userData.paint = true;
   const BLACK = paint(0x0d0e10);
   const shell = sideProfile(
     [
@@ -430,8 +432,14 @@ export function createTrafficModel(model: number): THREE.Group {
 }
 
 export function createCarModel(role: Role): THREE.Group {
-  const root = template(`car-${role}`, role === 'police' ? buildPolice : buildThief).clone(true);
+  const root = instantiate(`car-${role}`, role === 'police' ? buildPolice : buildThief);
   root.name = `car-${role}`;
+  return root;
+}
+
+/** A game car from a template: shared geometry, own materials, own geometry on the parts that dent. */
+export function instantiate(key: string, build: (root: THREE.Group, body: THREE.Group) => void): THREE.Group {
+  const root = template(key, build).clone(true);
   // game car: own materials (gyrophare, dirt, cracked glass, headlight) and own geometry on the parts
   // that dent/bend — the other car and the template are unchanged. Traffic keeps sharing everything.
   const clones = new Map<THREE.Material, THREE.Material>();
@@ -444,7 +452,10 @@ export function createCarModel(role: Role): THREE.Group {
     const m = o as THREE.Mesh;
     if (!m.isMesh || m.name === 'contact-shadow') return;
     m.material = Array.isArray(m.material) ? m.material.map(own) : own(m.material);
-    if (DEFORMABLE.has(m.name)) m.geometry = m.geometry.clone();
+    if (DEFORMABLE.has(m.name)) {
+      m.geometry = m.geometry.clone();
+      m.geometry.userData.own = true; // this car's copy: freed with it (disposeLookModel)
+    }
   });
   return root;
 }
@@ -470,8 +481,9 @@ export function updateCarModel(model: THREE.Group, car: CarState, timeSeconds: n
     set('plate-right', n >= 3);
   }
 
-  const spin = -car.s / WHEEL_RADIUS;
-  for (const child of model.children) if (child.name === 'wheel') child.rotation.x = spin;
+  // each model has its own wheel size (userData.r): a bigger wheel turns slower
+  for (const child of model.children)
+    if (child.name === 'wheel') child.rotation.x = -car.s / ((child.userData.r as number | undefined) ?? WHEEL_RADIUS);
 
   const red = model.getObjectByName('lightbar-red') as THREE.Mesh | undefined;
   const blue = model.getObjectByName('lightbar-blue') as THREE.Mesh | undefined;

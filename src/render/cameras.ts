@@ -7,7 +7,8 @@ const UP = 2.6;
 const LOOK_AHEAD = 10;
 const LATERAL_FOLLOW = 8; // 1/s
 
-export function createChaseCamera(): {
+/** `lift`: extra height for tall cars (V2 part 4), so they do not hide the road ahead. */
+export function createChaseCamera(lift = 0): {
   camera: THREE.PerspectiveCamera;
   update(car: CarState, dt: number, originS?: number): void;
 } {
@@ -21,8 +22,8 @@ export function createChaseCamera(): {
       // behind the car along the road and looking ahead along it: in curves the camera follows the street
       const eye = trackPos(car.s - BACK, camX, originS);
       const at = trackPos(car.s + LOOK_AHEAD, camX + (car.x - camX) * 0.5, originS);
-      camera.position.set(eye.x, UP, eye.z);
-      camera.lookAt(at.x, 1, at.z);
+      camera.position.set(eye.x, UP + lift, eye.z);
+      camera.lookAt(at.x, 1 + lift * 0.4, at.z);
       // tilts slightly into the curve (sense of speed)
       const turn = at.heading - eye.heading;
       camera.rotateZ(Math.max(-0.035, Math.min(0.035, turn * 0.3)));

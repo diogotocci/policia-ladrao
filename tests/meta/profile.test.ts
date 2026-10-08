@@ -13,7 +13,7 @@ describe('parseProfile', () => {
   it('rejects other versions, bad numbers, missing fields and non-objects', () => {
     const ok = emptyProfile() as unknown as Record<string, unknown>;
     for (const bad of [
-      { ...ok, v: 2 },
+      { ...ok, v: 3 },
       { ...ok, coins: -1 },
       { ...ok, coins: 1.5 },
       { ...ok, coins: 2e9 },
@@ -92,5 +92,42 @@ describe('settleMatch with a difficulty', () => {
       'hard',
     );
     expect(r.profile.coins).toBe(168);
+  });
+});
+
+describe('profile v2 (shop, V2 part 4)', () => {
+  it('a v1 profile is migrated: same coins and stats, nothing bought, default cars', () => {
+    const v1 = { v: 1, coins: 900, stats: { matches: 3, wins: 2, escapes: 1, arrests: 1, coinsEarned: 900 }, welcomeGranted: true };
+    const p = parseProfile(v1)!;
+    expect(p.v).toBe(2);
+    expect(p.coins).toBe(900);
+    expect(p.stats).toEqual(v1.stats);
+    expect(p.owned).toEqual([]);
+    expect(p.equipped.police.car).toBe('viatura');
+    expect(p.equipped.thief.car).toBe('seda');
+  });
+
+  it('drops unknown ids and items in use that were not bought', () => {
+    const raw = {
+      ...emptyProfile(),
+      owned: ['car:esportivo', 'car:lamborghini', 42],
+      equipped: {
+        police: { car: 'esportivo', neon: 'azul', sound: 'yelp' },
+        thief: { car: 'van', neon: null, sound: null },
+        paint: { esportivo: 2, viatura: 9 },
+        plate: 'abc-12',
+      },
+    };
+    const p = parseProfile(JSON.parse(JSON.stringify(raw)))!;
+    expect(p.owned).toEqual(['car:esportivo']);
+    expect(p.equipped.police).toEqual({ car: 'esportivo', neon: null, sound: null });
+    expect(p.equipped.thief.car).toBe('seda');
+    expect(p.equipped.paint).toEqual({});
+    expect(p.equipped.plate).toBe(''); // plate not bought
+  });
+
+  it('a v2 profile without the owned list is rejected', () => {
+    const { owned: _owned, ...rest } = emptyProfile();
+    expect(parseProfile(rest)).toBeUndefined();
   });
 });

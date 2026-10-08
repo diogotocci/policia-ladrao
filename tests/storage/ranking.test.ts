@@ -251,3 +251,36 @@ describe('Sobrevivência life in the ranking', () => {
     expect(loadModeBoards(st).survival.normal.thief[0]!.hp).toBe(180);
   });
 });
+
+describe('plate on records (V2 part 4)', () => {
+  const mem = (): Storage => {
+    const m = new Map<string, string>();
+    return {
+      getItem: (k) => m.get(k) ?? null,
+      setItem: (k, v) => void m.set(k, v),
+      removeItem: (k) => void m.delete(k),
+      clear: () => m.clear(),
+      key: () => null,
+      get length() {
+        return m.size;
+      },
+    };
+  };
+
+  it('a record saved with a plate keeps it; without one, no field', () => {
+    expect(recordEntry('police', { winner: 'police', time: 40 }, 'DIO', 'd', 'DIO2026').plate).toBe('DIO2026');
+    expect('plate' in recordEntry('thief', { winner: 'thief', time: 90, reason: 'escape', hp: 50 }, 'DIO', 'd', null)).toBe(false);
+  });
+
+  it('survives save/load; an invalid plate drops the entry', () => {
+    const st = mem();
+    const boards = emptyModeBoards();
+    boards.pursuit.normal.police = [recordEntry('police', { winner: 'police', time: 40 }, 'DIO', 'd', 'ABC1D23')];
+    saveModeBoards(st, boards);
+    expect(loadModeBoards(st).pursuit.normal.police[0]!.plate).toBe('ABC1D23');
+    const bad = JSON.parse(st.getItem(RANKING_V4_KEY)!);
+    bad.pursuit.normal.police[0].plate = 'abc 123!';
+    st.setItem(RANKING_V4_KEY, JSON.stringify(bad));
+    expect(loadModeBoards(st).pursuit.normal.police).toEqual([]);
+  });
+});

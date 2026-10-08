@@ -135,3 +135,21 @@ describe('screen flow', () => {
     expect(reduce(playing, { type: 'play' })).toBe(playing);
   });
 });
+
+describe('shop (V2 part 4)', () => {
+  it('title -> shop (police) -> back to title; side switch keeps the origin', () => {
+    let s = reduce(initialState(), { type: 'openShop' });
+    expect(s).toEqual({ screen: 'shop', side: 'police', from: 'title' });
+    s = reduce(s, { type: 'shopSide', side: 'thief' });
+    expect(s).toEqual({ screen: 'shop', side: 'thief', from: 'title' });
+    expect(reduce(s, { type: 'back' })).toEqual({ screen: 'title' });
+  });
+
+  it('choose -> "trocar" opens the shop on that side -> back to choose', () => {
+    const s = reduce({ screen: 'choose' }, { type: 'openShop', side: 'thief' });
+    expect(s).toEqual({ screen: 'shop', side: 'thief', from: 'choose' });
+    expect(reduce(s, { type: 'back' })).toEqual({ screen: 'choose' });
+    expect(reduce(s, { type: 'quit' })).toEqual({ screen: 'title' });
+    expect(reduce(s, { type: 'play' })).toBe(s);
+  });
+});

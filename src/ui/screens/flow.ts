@@ -1,4 +1,5 @@
 // Screen flow (spec §7) as a pure state machine: title -> choice -> countdown -> game <-> pause -> end -> ranking.
+// The shop (V2 part 4) opens from the title or the side choice and goes back there.
 import type { Difficulty, Mode, Role } from '../../config/balance';
 import type { MatchStats, Reward } from '../../meta/rewards';
 
@@ -21,6 +22,8 @@ export type FlowState =
   | { screen: 'title' }
   | { screen: 'mode' }
   | { screen: 'choose' }
+  /** V2 part 4: the shop, on one side; Back returns to whoever opened it */
+  | { screen: 'shop'; side: Role; from: 'title' | 'choose' }
   | { screen: 'countdown'; role: Role; left: number }
   | { screen: 'playing'; role: Role }
   | { screen: 'paused'; role: Role }
@@ -59,6 +62,9 @@ export type FlowAction =
   /** initials saved on the end screen */
   | { type: 'saved' }
   | { type: 'tab'; tab: Role }
+  /** title: "Loja"; choose: "trocar" under a car (opens on that side) */
+  | { type: 'openShop'; side?: Role }
+  | { type: 'shopSide'; side: Role }
   | { type: 'back' };
 
 export const initialState = (): FlowState => ({ screen: 'title' });
@@ -71,6 +77,12 @@ export function reduce(s: FlowState, a: FlowAction): FlowState {
       if (a.type === 'play') return { screen: 'mode' };
       if (a.type === 'openRanking')
         return { screen: 'ranking', tab: 'police', mode: a.mode ?? 'pursuit', difficulty: a.difficulty ?? 'normal', from: 'title' };
+      if (a.type === 'openShop') return { screen: 'shop', side: a.side ?? 'police', from: 'title' };
+      return s;
+    case 'shop':
+      if (a.type === 'shopSide') return a.side === s.side ? s : { ...s, side: a.side };
+      if (a.type === 'back') return s.from === 'choose' ? { screen: 'choose' } : initialState();
+      if (a.type === 'quit') return initialState();
       return s;
     case 'mode':
       if (a.type === 'pickMode') return { screen: 'choose' };
@@ -78,6 +90,7 @@ export function reduce(s: FlowState, a: FlowAction): FlowState {
       return s;
     case 'choose':
       if (a.type === 'choose') return countdown(a.role);
+      if (a.type === 'openShop') return { screen: 'shop', side: a.side ?? 'police', from: 'choose' };
       if (a.type === 'back') return { screen: 'mode' };
       if (a.type === 'quit') return initialState();
       return s;

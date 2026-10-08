@@ -3,10 +3,13 @@
 import * as THREE from 'three';
 import type { Role } from '../config/balance';
 import { createCar } from '../sim/car';
-import { createCarModel, updateCarModel } from './carFactory';
+import type { CarLook } from '../meta/shop';
+import { updateCarModel } from './carFactory';
+import { createLookModel } from './carLook';
 import { attachGunner, updateGunner } from './gunner';
 
-export function createCarPreview(slots: Record<Role, HTMLElement>): { dispose(): void } {
+/** `looks`: the cars in use from the shop (V2 part 4); default cars without it. */
+export function createCarPreview(slots: Record<Role, HTMLElement>, looks?: Partial<Record<Role, CarLook>>): { dispose(): void } {
   let renderer: THREE.WebGLRenderer;
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -29,7 +32,7 @@ export function createCarPreview(slots: Record<Role, HTMLElement>): { dispose():
     const sun = new THREE.DirectionalLight(0xffffff, 2.2);
     sun.position.set(4, 6, 3);
     scene.add(sun);
-    const model = createCarModel(role);
+    const model = createLookModel(role, looks?.[role]);
     const gunner = attachGunner(model, role);
     scene.add(model);
     scenes[role] = { scene, model, gunner };
@@ -58,6 +61,10 @@ export function createCarPreview(slots: Record<Role, HTMLElement>): { dispose():
       camera.aspect = w / hgt;
       camera.updateProjectionMatrix();
       const { scene, model, gunner } = scenes[role];
+      // tall shop cars (Caveirão, van): a bit further and higher, so the whole car fits
+      const lift = (model.userData.camLift as number | undefined) ?? 0;
+      camera.position.set(0, 2.6 + lift * 1.2, 7.5 + lift * 2.4);
+      camera.lookAt(0, 0.6 + lift * 0.7, 0);
       updateCarModel(model, car[role], t, 0);
       updateGunner(gunner, car[role], { s: 30, x: 0 }, t);
       model.rotation.y = t * 0.6 + (role === 'thief' ? Math.PI : 0);

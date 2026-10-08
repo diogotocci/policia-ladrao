@@ -4,7 +4,8 @@ import type { GameEvent, WorldState } from '../sim/types';
 import { hpPct } from '../sim/car';
 import { MENU_SONG, SONG, createSequencer, stepSeconds, type Song } from './music';
 import type { SoundName } from './sfx';
-import type { AudioBackend } from './synth';
+import type { SoundId } from '../meta/shop';
+import type { AudioBackend, SirenStyle } from './synth';
 
 const SIREN_RANGE = 120; // m
 const BURST_WINDOW = 0.1; // s
@@ -14,6 +15,10 @@ const ROTOR_BEAT = 0.09; // s between rotor beats
 const ROTOR_RANGE = 120; // m
 const SKID_GAP = 0.6; // s between skids of the same car
 const SKID_RANGE = 80; // m
+// V2 part 4: the thief player honks at the traffic just ahead in his lane
+export const HORN_AHEAD = 18; // m
+const HORN_LANE = 1.5; // m
+export const HORN_GAP = 4; // s
 
 export interface Mixer {
   /** paused: game paused (e.g. phone in portrait) — engine and siren go silent, music does not advance */
@@ -28,6 +33,10 @@ export interface Mixer {
   /** UI sound: countdown beep, start, click */
   cue(name: 'beep' | 'go' | 'ui' | 'bomb-hit'): void;
   song(): 'menu' | 'chase';
+  /** the player's shop sound for this match (siren style as police, horn as thief); null = standard */
+  setLook(role: 'police' | 'thief', sound: SoundId | null): void;
+  /** shop "Ouvir": a short sample of a siren or horn */
+  preview(role: 'police' | 'thief', sound: SoundId | null): void;
   reset(): void;
 }
 
@@ -42,6 +51,14 @@ export function createMixer(initial: AudioBackend): Mixer {
   let meS = 0;
   let lastBeep = Infinity; // whole seconds remaining at the last countdown beep
   const lastSkid = { police: -Infinity, thief: -Infinity };
+  let look: { role: 'police' | 'thief'; sound: SoundId | null } = { role: 'police', sound: null };
+  let sirenStyle: SirenStyle = 'padrao';
+  let lastHorn = -Infinity;
+  const setSirenStyle = (st: SirenStyle) => {
+    if (st === sirenStyle) return;
+    sirenStyle = st;
+    be.setSirenStyle(st);
+  };
   const songs = { chase: { song: SONG, seq: createSequencer(SONG) }, menu: { song: MENU_SONG, seq: createSequencer(MENU_SONG) } };
   let current: 'menu' | 'chase' = 'chase';
   let nextNoteTime = -1; // on the backend clock; -1 = restart on the next frame
@@ -99,8 +116,18 @@ export function createMixer(initial: AudioBackend): Mixer {
           siren = d >= SIREN_RANGE ? 0 : 0.22 * (1 - d / SIREN_RANGE);
         }
       }
+      // the player's siren as police; as thief the siren heard is the computer's (standard)
+      const mine = w.playerRole === 'police' && look.role === 'police' && (look.sound === 'yelp' || look.sound === 'choque');
+      setSirenStyle(mine ? (look.sound as SirenStyle) : 'padrao');
       be.setSiren(siren);
       setMusic(over ? 0.3 : 1);
+      if (!quiet && !escaping && w.playerRole === 'thief') {
+        const ahead = w.traffic.some((t) => t.s - me.s > 0 && t.s - me.s < HORN_AHEAD && Math.abs(t.x - me.x) < HORN_LANE);
+        if (ahead && clock - lastHorn >= HORN_GAP) {
+          lastHorn = clock;
+          play(look.role === 'thief' && look.sound ? (`horn-${look.sound}` as SoundName) : 'horn-padrao');
+        }
+      }
       // rotor: helicopter active and nearby (when playing as police, it is always overhead)
       const heliOn = !quiet && !escaping && w.time < police.upgrades.heliUntil && Math.abs(police.s - me.s) < ROTOR_RANGE;
       if (heliOn) {
@@ -142,6 +169,13 @@ export function createMixer(initial: AudioBackend): Mixer {
       be.play(name);
     },
     song: () => current,
+    setLook(role, sound) {
+      look = { role, sound };
+    },
+    preview(role, sound) {
+      if (isMuted || !be.running()) return;
+      be.play((role === 'police' ? `siren-${sound ?? 'padrao'}` : `horn-${sound ?? 'padrao'}`) as SoundName);
+    },
     events(events) {
       for (const e of events) {
         if (e.type === 'shot') play(e.rapid ? 'shot-mg' : e.from === 'police' ? 'shot-police' : 'shot-thief');
@@ -177,11 +211,14 @@ export function createMixer(initial: AudioBackend): Mixer {
     use(next) {
       be = next;
       be.setMaster(isMuted ? 0 : 1);
+      be.setSirenStyle(sirenStyle);
       if (musicGain >= 0) be.setMusic(musicGain);
     },
     reset() {
       be.setEngine(0, 0);
       be.setSiren(0);
+      lastHorn = -Infinity;
+      look = { role: 'police', sound: null };
       songs.chase.seq.reset();
       songs.menu.seq.reset();
       nextNoteTime = -1;

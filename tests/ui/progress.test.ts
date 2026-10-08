@@ -5,7 +5,7 @@ import { emptyProfile, type Profile } from '../../src/meta/profile';
 import { openProgress } from '../../src/ui/screens/progress';
 
 const mine: Profile = {
-  v: 1,
+  ...emptyProfile(),
   coins: 1240,
   stats: { matches: 37, wins: 21, escapes: 14, arrests: 7, coinsEarned: 2890 },
   welcomeGranted: true,
