@@ -186,6 +186,7 @@ export function createMixer(initial: AudioBackend): Mixer {
         else if (e.type === 'oilSkid') play('oil-splash');
         else if (e.type === 'tirePop') play('tire-pop');
         else if (e.type === 'special' && e.kind === 'roadblock') play('roadblock');
+        else if (e.type === 'special' && e.kind === 'nitro') play('go');
         else if (e.type === 'roadblockHit') play('crash');
         else if (e.type === 'policeItem') play(e.item === 'wingman' ? 'wingman' : 'pickup');
         else if (e.type === 'wingmanHit') play('crash');

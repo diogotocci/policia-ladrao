@@ -236,6 +236,12 @@ export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): {
     // roadblock: with the thief ahead, up to 150 m (playtest 2026-10-07: from 40 m on it was almost never used)
     let block = false;
     const gapAhead = foe.s - me.s;
+    // nitro kept for the button (playtest 2026-10-09): used when the thief pulls away
+    const nitro = me.upgrades.special?.kind === 'nitro' && gapAhead > 25 && w.time >= me.upgrades.nitroUntil;
+    if (nitro && w.time >= cb.memory.nextBombAt) {
+      block = !w.policeSpecialHeld;
+      if (block) cb.memory = { ...cb.memory, nextBombAt: w.time + 1 };
+    }
     if (me.upgrades.special?.kind === 'roadblock' && gapAhead > 5 && gapAhead < 150 && w.time >= cb.memory.nextBombAt) {
       block = !w.policeSpecialHeld;
       if (block) cb.memory = { ...cb.memory, nextBombAt: w.time + lerp(5, 2, k) };

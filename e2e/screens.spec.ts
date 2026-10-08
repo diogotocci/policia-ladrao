@@ -32,6 +32,7 @@ const startAs = async (page: Page, side: 'police' | 'thief', extra = '') => {
 test('full product flow: title → choose thief → 3-2-1 → play → escape at the time limit → arcade initials → ranking (kept after reload)', async ({
   page,
 }) => {
+  test.setTimeout(300_000); // a whole match, a reload and two screens: slow with 6 workers on a software GPU
   await page.goto('/?app&quality=low&mute&debug&traffic=0&escape=4'); // escape at 4 s (debug only)
   await expect(page.locator('.screen-title')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Jogar', exact: true })).toBeFocused();

@@ -1,4 +1,4 @@
-// The yellow "?" box (V2 part 3, mockup option B): an opaque golden block with a "?" on each side, a darker rim
+// The yellow "?" box (V2 part 3, mockup option B): an opaque golden block with a black "?" on each side, a darker rim
 // and a pulsing halo, so it reads as something different (and risky) next to the translucent blue and red boxes.
 import * as THREE from 'three';
 
@@ -22,7 +22,7 @@ const GLYPH = [
   '............',
 ];
 
-/** Face texture: gold with a rim and a white "?" with a brown shadow. */
+/** Face texture: gold with a rim and a black "?" with a light edge. */
 function faceTexture(): THREE.DataTexture {
   const S = 32;
   const data = new Uint8Array(S * S * 4);
@@ -39,8 +39,8 @@ function faceTexture(): THREE.DataTexture {
     [...row].forEach((ch, gx) => {
       if (ch !== '#') return;
       for (const [dx, dy, c] of [
-        [1, 2, [138, 74, 0, 255]],
-        [0, 0, [255, 255, 255, 255]],
+        [1, 2, [255, 236, 170, 255]], // light edge under the ink
+        [0, 0, [18, 14, 8, 255]], // black "?" (playtest 2026-10-09: the white one did not show on the gold)
       ] as const)
         for (let k = 0; k < 2; k++) {
           const px = ox + gx * 2 + dx + k;

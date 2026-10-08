@@ -78,8 +78,11 @@ export function applyMatch(
   result: { winner: Role; reason?: 'escape' | 'policeDown' | 'thiefDown' },
   player: Role,
   reward: Reward,
+  mode: Mode = 'pursuit',
 ): Profile {
   const won = result.winner === player;
+  // in Sobrevivência there is no clock: a thief win is his escape (playtest 2026-10-09)
+  const escaped = won && player === 'thief' && (result.reason === 'escape' || mode === 'survival');
   const s = p.stats;
   return {
     ...p,
@@ -87,7 +90,7 @@ export function applyMatch(
     stats: {
       matches: s.matches + 1,
       wins: s.wins + (won ? 1 : 0),
-      escapes: s.escapes + (won && player === 'thief' && result.reason === 'escape' ? 1 : 0),
+      escapes: s.escapes + (escaped ? 1 : 0),
       arrests: s.arrests + (won && player === 'police' ? 1 : 0),
       coinsEarned: Math.min(MAX_VALUE, s.coinsEarned + reward.total),
     },
@@ -110,7 +113,7 @@ export function settleMatch(
   mode: Mode = 'pursuit',
 ): { profile: Profile; reward: Reward } {
   const reward = rewardFor({ time: result.time, won: result.winner === player }, result.stats ?? emptyStats(), difficulty, mode);
-  return { profile: applyMatch(p, result, player, reward), reward };
+  return { profile: applyMatch(p, result, player, reward, mode), reward };
 }
 
 /** Career credit of a finished match (V2 part 5): its coins go to the balance and to the coins earned. */

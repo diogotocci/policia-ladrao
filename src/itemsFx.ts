@@ -23,6 +23,7 @@ export function itemToast(e: GameEvent, me: Role): string | undefined {
     return e.role === me ? 'Pneu furado!' : e.role === 'police' ? 'Pneu furado na viatura!' : 'Pneu furado no ladrão!';
   if (e.type === 'special' && e.kind === 'smoke') return 'Fumaça!';
   if (e.type === 'special' && e.kind === 'roadblock') return me === 'thief' ? 'Bloqueio à frente!' : 'Bloqueio armado!';
+  if (e.type === 'special' && e.kind === 'nitro' && me === 'police') return 'Nitro!';
   if (e.type === 'roadblockNoRoom' && me === 'police') return 'Sem lugar para o bloqueio agora';
   if (e.type === 'policeItem') return { machineGun: 'Metralhadora!', wingman: 'Reforço chegando!' }[e.item];
   return undefined;

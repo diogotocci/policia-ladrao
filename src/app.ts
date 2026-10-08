@@ -33,6 +33,8 @@ declare const __APP_VERSION__: string | undefined;
 const APP_VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : undefined;
 /** "Como jogar" already closed once on this device */
 const HOWTO_KEY = 'pl.howto.v1';
+/** the last initials saved in the ranking (playtest 2026-10-09: the plate starts with them) */
+const INITIALS_KEY = 'pl.initials';
 
 export function startApp(
   container: HTMLElement,
@@ -323,8 +325,21 @@ export function startApp(
           reward: s.reward,
           difficulty,
           animateReward: !rewardShown, // count up only the first time, not when coming back from the ranking
+          lastInitials: (() => {
+            try {
+              const v = storage?.getItem(INITIALS_KEY) ?? '';
+              return /^[A-Z]{3}$/.test(v) ? v : '';
+            } catch {
+              return '';
+            }
+          })(),
           career: s.career,
           onSave: (initials) => {
+            try {
+              storage?.setItem(INITIALS_KEY, initials);
+            } catch {
+              // storage full or blocked: they just start at AAA next time
+            }
             const entry = recordEntry(
               s.role,
               s.result,

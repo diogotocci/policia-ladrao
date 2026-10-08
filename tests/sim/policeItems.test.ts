@@ -244,3 +244,31 @@ describe('police items: edge cases (review)', () => {
     expect(policeOf(end).upgrades).toMatchObject({ mgUntil: 0, wingmanUntil: 0 });
   });
 });
+
+describe('kept nitro (playtest 2026-10-09)', () => {
+  it('the button fires it (3 s of nitro), one charge each press', () => {
+    let w = base();
+    w = withCar(w, 'police', { ...policeOf(w), upgrades: { ...policeOf(w).upgrades, special: { kind: 'nitro', charges: 2 } } });
+    w = usePoliceSpecial(w, PRESS);
+    expect(policeOf(w).upgrades.nitroUntil).toBeCloseTo(w.time + BALANCE.items.police.nitroTime);
+    expect(policeOf(w).upgrades.special).toEqual({ kind: 'nitro', charges: 1 });
+    expect(w.events.some((e) => e.type === 'special' && e.kind === 'nitro')).toBe(true);
+    w = usePoliceSpecial(w, PRESS); // still held: nothing
+    expect(policeOf(w).upgrades.special).toEqual({ kind: 'nitro', charges: 1 });
+  });
+
+  it('the police computer fires it when the thief pulls away', () => {
+    let w = base();
+    w = withCar(w, 'police', {
+      ...policeOf(w),
+      s: thiefOf(w).s - 60,
+      upgrades: { ...policeOf(w).upgrades, special: { kind: 'nitro', charges: 1 } },
+    });
+    let used = false;
+    for (let i = 0; i < 120 && !used; i++) {
+      w = stepWorld(w, 'ai', DT);
+      used = policeOf(w).upgrades.nitroUntil > w.time;
+    }
+    expect(used).toBe(true);
+  });
+});
