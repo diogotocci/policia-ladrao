@@ -2,7 +2,7 @@
 // The coins of a match are credited once, saved before the end screen shows, and survive a reload.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-type Opts = { onEnd: OnEnd; difficulty?: string; mode?: string };
+type Opts = { onEnd: OnEnd; difficulty?: string; mode?: string; opponentLook?: { car: string } };
 type OnEnd = (r: {
   winner: 'police' | 'thief';
   time: number;
@@ -150,6 +150,8 @@ describe('difficulty', () => {
     expect(container.querySelector('[role="radio"][aria-checked="true"]')!.textContent).toContain('Difícil');
     (container.querySelector('[data-role="thief"]') as HTMLButtonElement).click();
     expect(gameOpts[0]!.difficulty).toBe('hard');
+    // the computer drives a random police car (playtest 2026-10-08)
+    expect(['viatura', 'esportivo', 'blazer', 'caveirao']).toContain(gameOpts[0]!.opponentLook!.car);
     frames(60);
     ends[0]!({ winner: 'thief', time: 90, reason: 'escape', hp: 50, level: 6, stats: { damageDealt: 20, rightBoxes: 2 } });
     // (30 + 5 + 4) x 2 x 1.5 = 117, plus the career

@@ -947,8 +947,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "package_devdependencies_eslint_js",
-      "community": 15,
-      "community_name": "devDependencies",
+      "community": 92,
+      "community_name": "@eslint/js",
       "norm_label": "@eslint/js"
     },
     {
@@ -958,8 +958,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "eslint_js",
-      "community": 15,
-      "community_name": "devDependencies",
+      "community": 92,
+      "community_name": "@eslint/js",
       "norm_label": "@eslint/js"
     },
     {
@@ -1211,8 +1211,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "package_devdependencies_typescript7",
-      "community": 59,
-      "community_name": "typescript7",
+      "community": 15,
+      "community_name": "devDependencies",
       "norm_label": "typescript7"
     },
     {
@@ -1222,8 +1222,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "typescript7",
-      "community": 59,
-      "community_name": "typescript7",
+      "community": 15,
+      "community_name": "devDependencies",
       "norm_label": "typescript7"
     },
     {
@@ -1531,8 +1531,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_audio_mixer_mixer_setlook",
-      "community": 78,
-      "community_name": "Role",
+      "community": 22,
+      "community_name": "Mixer",
       "norm_label": ".setlook()"
     },
     {
@@ -1543,8 +1543,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_audio_mixer_mixer_preview",
-      "community": 78,
-      "community_name": "Role",
+      "community": 22,
+      "community_name": "Mixer",
       "norm_label": ".preview()"
     },
     {
@@ -1765,8 +1765,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_audio_session_audiosession",
-      "community": 22,
-      "community_name": "Mixer",
+      "community": 90,
+      "community_name": "AudioSession",
       "norm_label": "audiosession"
     },
     {
@@ -1777,8 +1777,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_audio_session_audiosession_setmuted",
-      "community": 22,
-      "community_name": "Mixer",
+      "community": 90,
+      "community_name": "AudioSession",
       "norm_label": ".setmuted()"
     },
     {
@@ -1789,8 +1789,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_audio_session_audiosession_muted",
-      "community": 22,
-      "community_name": "Mixer",
+      "community": 90,
+      "community_name": "AudioSession",
       "norm_label": ".muted()"
     },
     {
@@ -1801,8 +1801,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_audio_session_audiosession_mounttoggle",
-      "community": 22,
-      "community_name": "Mixer",
+      "community": 90,
+      "community_name": "AudioSession",
       "norm_label": ".mounttoggle()"
     },
     {
@@ -1813,8 +1813,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_audio_session_audiosession_dispose",
-      "community": 22,
-      "community_name": "Mixer",
+      "community": 90,
+      "community_name": "AudioSession",
       "norm_label": ".dispose()"
     },
     {
@@ -2235,8 +2235,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_config_balance_difficulty",
-      "community": 75,
-      "community_name": "h",
+      "community": 86,
+      "community_name": "Difficulty",
       "norm_label": "difficulty"
     },
     {
@@ -2260,7 +2260,7 @@
       "_origin": "ast",
       "id": "src_config_balance_mode",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "mode"
     },
     {
@@ -2352,8 +2352,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_game_gamehandle",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 91,
+      "community_name": "GameHandle",
       "norm_label": "gamehandle"
     },
     {
@@ -2364,8 +2364,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_game_gamehandle_pause",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 91,
+      "community_name": "GameHandle",
       "norm_label": ".pause()"
     },
     {
@@ -2376,8 +2376,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_game_gamehandle_resume",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 91,
+      "community_name": "GameHandle",
       "norm_label": ".resume()"
     },
     {
@@ -2388,8 +2388,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_game_gamehandle_ispaused",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 91,
+      "community_name": "GameHandle",
       "norm_label": ".ispaused()"
     },
     {
@@ -2400,8 +2400,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_game_gamehandle_stop",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 91,
+      "community_name": "GameHandle",
       "norm_label": ".stop()"
     },
     {
@@ -2779,8 +2779,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_meta_backup_backup_error_text",
-      "community": 80,
-      "community_name": "progress.ts",
+      "community": 49,
+      "community_name": "backup.ts",
       "norm_label": "backup_error_text"
     },
     {
@@ -3000,8 +3000,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_meta_career_counter_keys",
-      "community": 49,
-      "community_name": "backup.ts",
+      "community": 72,
+      "community_name": "career.ts",
       "norm_label": "counter_keys"
     },
     {
@@ -3012,8 +3012,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_career_emptycounters",
-      "community": 17,
-      "community_name": "ui/shop.test.ts",
+      "community": 72,
+      "community_name": "career.ts",
       "norm_label": "emptycounters()"
     },
     {
@@ -3036,8 +3036,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "src_meta_career_achievements",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 49,
+      "community_name": "backup.ts",
       "norm_label": "achievements"
     },
     {
@@ -3155,8 +3155,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "src_meta_career_streak_coins",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "streak_coins"
     },
     {
@@ -3191,8 +3191,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_career_localdate",
-      "community": 58,
-      "community_name": "app.ts",
+      "community": 72,
+      "community_name": "career.ts",
       "norm_label": "localdate()"
     },
     {
@@ -3240,8 +3240,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_career_progressof",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "progressof()"
     },
     {
@@ -3336,8 +3336,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_career_meets",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 72,
+      "community_name": "career.ts",
       "norm_label": "meets()"
     },
     {
@@ -3575,8 +3575,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_rewards_matchstats",
-      "community": 58,
-      "community_name": "app.ts",
+      "community": 86,
+      "community_name": "Difficulty",
       "norm_label": "matchstats"
     },
     {
@@ -3588,8 +3588,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_rewards_reward",
-      "community": 75,
-      "community_name": "h",
+      "community": 86,
+      "community_name": "Difficulty",
       "norm_label": "reward"
     },
     {
@@ -3648,8 +3648,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_shop_carid",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "carid"
     },
     {
@@ -3661,8 +3661,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_shop_neoncolor",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 50,
+      "community_name": "meta/shop.ts",
       "norm_label": "neoncolor"
     },
     {
@@ -3674,8 +3674,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_shop_soundid",
-      "community": 78,
-      "community_name": "Role",
+      "community": 22,
+      "community_name": "Mixer",
       "norm_label": "soundid"
     },
     {
@@ -3711,8 +3711,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_meta_shop_cars",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "cars"
     },
     {
@@ -3756,8 +3756,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "src_meta_shop_neons",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "neons"
     },
     {
@@ -3778,8 +3778,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "src_meta_shop_sounds",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "sounds"
     },
     {
@@ -3846,8 +3846,8 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "src_meta_shop_catalog",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 49,
+      "community_name": "backup.ts",
       "norm_label": "catalog"
     },
     {
@@ -3895,8 +3895,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_shop_equipped",
-      "community": 78,
-      "community_name": "Role",
+      "community": 50,
+      "community_name": "meta/shop.ts",
       "norm_label": "equipped"
     },
     {
@@ -3907,8 +3907,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shop_defaultequipped",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 49,
+      "community_name": "backup.ts",
       "norm_label": "defaultequipped()"
     },
     {
@@ -4053,8 +4053,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_shop_carlook",
-      "community": 78,
-      "community_name": "Role",
+      "community": 51,
+      "community_name": "gunner.ts",
       "norm_label": "carlook"
     },
     {
@@ -4065,8 +4065,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shop_lookfor",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "lookfor()"
     },
     {
@@ -4078,8 +4078,20 @@
       "_origin": "ast",
       "id": "src_meta_shop_defaultlook",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "defaultlook()"
+    },
+    {
+      "label": "randomLook()",
+      "file_type": "code",
+      "source_file": "src/meta/shop.ts",
+      "source_location": "L318",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_meta_shop_randomlook",
+      "community": 50,
+      "community_name": "meta/shop.ts",
+      "norm_label": "randomlook()"
     },
     {
       "label": "register.ts",
@@ -4322,8 +4334,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_buildings",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 87,
+      "community_name": "createRng",
       "norm_label": "buildings.ts"
     },
     {
@@ -4335,8 +4347,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_buildings_buildingspec",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 87,
+      "community_name": "createRng",
       "norm_label": "buildingspec"
     },
     {
@@ -4346,8 +4358,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_render_buildings_palette",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 87,
+      "community_name": "createRng",
       "norm_label": "palette"
     },
     {
@@ -4358,8 +4370,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_buildings_buildingsforchunk",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 87,
+      "community_name": "createRng",
       "norm_label": "buildingsforchunk()"
     },
     {
@@ -4369,8 +4381,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_cameras",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 35,
+      "community_name": "car.ts",
       "norm_label": "cameras.ts"
     },
     {
@@ -4381,8 +4393,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_cameras_createchasecamera",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 35,
+      "community_name": "car.ts",
       "norm_label": "createchasecamera()"
     },
     {
@@ -4721,7 +4733,7 @@
       "_origin": "ast",
       "id": "src_render_carfactory_deformable",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "deformable"
     },
     {
@@ -4780,7 +4792,7 @@
       "_origin": "ast",
       "id": "src_render_carfactory_instantiate",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "instantiate()"
     },
     {
@@ -4792,7 +4804,7 @@
       "_origin": "ast",
       "id": "src_render_carfactory_updatecarmodel",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "updatecarmodel()"
     },
     {
@@ -4803,7 +4815,7 @@
       "_origin": "ast",
       "id": "src_render_carlook",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "carlook.ts"
     },
     {
@@ -4815,7 +4827,7 @@
       "_origin": "ast",
       "id": "src_render_carlook_platetexture",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "platetexture()"
     },
     {
@@ -4827,7 +4839,7 @@
       "_origin": "ast",
       "id": "src_render_carlook_glowtexture",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "glowtexture()"
     },
     {
@@ -4839,7 +4851,7 @@
       "_origin": "ast",
       "id": "src_render_carlook_createlookmodel",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "createlookmodel()"
     },
     {
@@ -4851,7 +4863,7 @@
       "_origin": "ast",
       "id": "src_render_carlook_disposelookmodel",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "disposelookmodel()"
     },
     {
@@ -4861,7 +4873,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_carpreview",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "carpreview.ts"
     },
@@ -4873,7 +4885,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_carpreview_createcarpreview",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "createcarpreview()"
     },
@@ -4885,7 +4897,7 @@
       "_origin": "ast",
       "id": "src_render_combatfx",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "combatfx.ts"
     },
     {
@@ -4897,7 +4909,7 @@
       "_origin": "ast",
       "id": "src_render_combatfx_dottexture",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "dottexture()"
     },
     {
@@ -4909,7 +4921,7 @@
       "_origin": "ast",
       "id": "src_render_combatfx_tracerheight",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "tracerheight()"
     },
     {
@@ -4921,7 +4933,7 @@
       "_origin": "ast",
       "id": "src_render_combatfx_createcombatfx",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "createcombatfx()"
     },
     {
@@ -5122,8 +5134,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_damageview_applydamage",
-      "community": 11,
-      "community_name": "damageView.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "applydamage()"
     },
     {
@@ -5133,7 +5145,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_gunner",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "gunner.ts"
     },
@@ -5145,7 +5157,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_box",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "box()"
     },
@@ -5156,7 +5168,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_render_gunner_style",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "style"
     },
@@ -5167,7 +5179,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_render_gunner_geocache",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "geocache"
     },
@@ -5179,7 +5191,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_gunnergeometry",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "gunnergeometry()"
     },
@@ -5190,7 +5202,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "src_render_gunner_body_mat",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "body_mat"
     },
@@ -5201,7 +5213,7 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "src_render_gunner_flash_mat",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "flash_mat"
     },
@@ -5212,7 +5224,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "src_render_gunner_flash_geo",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "flash_geo"
     },
@@ -5224,7 +5236,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_attachgunner",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "attachgunner()"
     },
@@ -5248,7 +5260,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_updategunner",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "updategunner()"
     },
@@ -5306,7 +5318,7 @@
       "_origin": "ast",
       "id": "src_render_heli",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "heli.ts"
     },
     {
@@ -5317,7 +5329,7 @@
       "_origin": "ast",
       "id": "src_render_heli_heli_y",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "heli_y"
     },
     {
@@ -5328,7 +5340,7 @@
       "_origin": "ast",
       "id": "src_render_heli_heli_exit",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "heli_exit"
     },
     {
@@ -5341,7 +5353,7 @@
       "_origin": "ast",
       "id": "src_render_heli_helipose",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "helipose"
     },
     {
@@ -5353,7 +5365,7 @@
       "_origin": "ast",
       "id": "src_render_heli_box",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "box()"
     },
     {
@@ -5365,7 +5377,7 @@
       "_origin": "ast",
       "id": "src_render_heli_createheli",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "createheli()"
     },
     {
@@ -5724,7 +5736,7 @@
       "_origin": "ast",
       "id": "src_render_models_index_models",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "models"
     },
     {
@@ -6041,7 +6053,7 @@
       "_origin": "ast",
       "id": "src_render_models_kit_canvastex",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "canvastex()"
     },
     {
@@ -6202,7 +6214,7 @@
       "label": "RIDER_MAT",
       "file_type": "code",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L310",
+      "source_location": "L304",
       "_origin": "ast",
       "id": "src_render_models_shopcars_rider_mat",
       "community": 20,
@@ -6213,7 +6225,7 @@
       "label": "tinted()",
       "file_type": "code",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L313",
+      "source_location": "L307",
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_models_shopcars_tinted",
@@ -6225,7 +6237,7 @@
       "label": "rider()",
       "file_type": "code",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L325",
+      "source_location": "L319",
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_models_shopcars_rider",
@@ -6237,7 +6249,7 @@
       "label": "buildMoto()",
       "file_type": "code",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L345",
+      "source_location": "L339",
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_models_shopcars_buildmoto",
@@ -6249,7 +6261,7 @@
       "label": "buildVan()",
       "file_type": "code",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L443",
+      "source_location": "L437",
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_models_shopcars_buildvan",
@@ -6335,7 +6347,7 @@
       "_origin": "ast",
       "id": "src_render_opponentmarker",
       "community": 35,
-      "community_name": "createCar",
+      "community_name": "car.ts",
       "norm_label": "opponentmarker.ts"
     },
     {
@@ -6346,7 +6358,7 @@
       "_origin": "ast",
       "id": "src_render_opponentmarker_colors",
       "community": 35,
-      "community_name": "createCar",
+      "community_name": "car.ts",
       "norm_label": "colors"
     },
     {
@@ -6358,7 +6370,7 @@
       "_origin": "ast",
       "id": "src_render_opponentmarker_markertexture",
       "community": 35,
-      "community_name": "createCar",
+      "community_name": "car.ts",
       "norm_label": "markertexture()"
     },
     {
@@ -6370,7 +6382,7 @@
       "_origin": "ast",
       "id": "src_render_opponentmarker_createopponentmarker",
       "community": 35,
-      "community_name": "createCar",
+      "community_name": "car.ts",
       "norm_label": "createopponentmarker()"
     },
     {
@@ -6552,10 +6564,21 @@
       "norm_label": "tier"
     },
     {
+      "label": "MIRROR_NEAR",
+      "file_type": "code",
+      "source_file": "src/render/rearview.ts",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "src_render_rearview_mirror_near",
+      "community": 8,
+      "community_name": "game.ts",
+      "norm_label": "mirror_near"
+    },
+    {
       "label": "rearviewRect()",
       "file_type": "code",
       "source_file": "src/render/rearview.ts",
-      "source_location": "L19",
+      "source_location": "L22",
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_rearview_rearviewrect",
@@ -6567,7 +6590,7 @@
       "label": "isBehind()",
       "file_type": "code",
       "source_file": "src/render/rearview.ts",
-      "source_location": "L25",
+      "source_location": "L28",
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_rearview_isbehind",
@@ -6579,7 +6602,7 @@
       "label": "createRearview()",
       "file_type": "code",
       "source_file": "src/render/rearview.ts",
-      "source_location": "L29",
+      "source_location": "L32",
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_rearview_createrearview",
@@ -6665,8 +6688,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_renderer_smoothtexture",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "smoothtexture()"
     },
     {
@@ -6688,8 +6711,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_roadchunks",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "roadchunks.ts"
     },
     {
@@ -6699,8 +6722,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_render_roadchunks_chunk_length",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "chunk_length"
     },
     {
@@ -6711,8 +6734,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_visiblechunkrange",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "visiblechunkrange()"
     },
     {
@@ -6723,8 +6746,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_renderorigin",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "renderorigin()"
     },
     {
@@ -6736,8 +6759,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_slot",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "slot"
     },
     {
@@ -6748,8 +6771,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_roadchunks_createroad",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "createroad()"
     },
     {
@@ -6829,7 +6852,7 @@
       "_origin": "ast",
       "id": "src_render_shoppreview",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "shoppreview.ts"
     },
     {
@@ -6842,7 +6865,7 @@
       "_origin": "ast",
       "id": "src_render_shoppreview_shoppreview",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "shoppreview"
     },
     {
@@ -6854,7 +6877,7 @@
       "_origin": "ast",
       "id": "src_render_shoppreview_shoppreview_show",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": ".show()"
     },
     {
@@ -6866,7 +6889,7 @@
       "_origin": "ast",
       "id": "src_render_shoppreview_shoppreview_dispose",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": ".dispose()"
     },
     {
@@ -6878,7 +6901,7 @@
       "_origin": "ast",
       "id": "src_render_shoppreview_createshoppreview",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "createshoppreview()"
     },
     {
@@ -6935,8 +6958,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_textures",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "textures.ts"
     },
     {
@@ -6946,8 +6969,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_render_textures_ground_ppm",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "ground_ppm"
     },
     {
@@ -6957,8 +6980,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_render_textures_ground_half_width",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "ground_half_width"
     },
     {
@@ -6968,8 +6991,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_render_textures_facade_tile_meters",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "facade_tile_meters"
     },
     {
@@ -6980,8 +7003,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_canvas",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "canvas()"
     },
     {
@@ -6992,8 +7015,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_makegroundtexture",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "makegroundtexture()"
     },
     {
@@ -7004,8 +7027,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_makefacadetexture",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "makefacadetexture()"
     },
     {
@@ -7016,8 +7039,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_makeskytexture",
-      "community": 54,
-      "community_name": "renderer.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "makeskytexture()"
     },
     {
@@ -7027,8 +7050,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_trackframe",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 19,
+      "community_name": "trackFrame.ts",
       "norm_label": "trackframe.ts"
     },
     {
@@ -7040,8 +7063,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "trackframe"
     },
     {
@@ -7052,8 +7075,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe_toworld",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": ".toworld()"
     },
     {
@@ -7064,8 +7087,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe_headingat",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": ".headingat()"
     },
     {
@@ -7076,8 +7099,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_trackframe_createtrackframe",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 88,
+      "community_name": "curves.ts",
       "norm_label": "createtrackframe()"
     },
     {
@@ -7087,8 +7110,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "src_render_trackframe_active",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 19,
+      "community_name": "trackFrame.ts",
       "norm_label": "active"
     },
     {
@@ -7111,8 +7134,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_trackframe_trackpos",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 19,
+      "community_name": "trackFrame.ts",
       "norm_label": "trackpos()"
     },
     {
@@ -7396,8 +7419,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_car",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 35,
+      "community_name": "car.ts",
       "norm_label": "car.ts"
     },
     {
@@ -7409,8 +7432,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_car_upgrades",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 35,
+      "community_name": "car.ts",
       "norm_label": "upgrades"
     },
     {
@@ -7422,7 +7445,7 @@
       "_origin": "ast",
       "id": "src_sim_car_baseupgrades",
       "community": 35,
-      "community_name": "createCar",
+      "community_name": "car.ts",
       "norm_label": "baseupgrades()"
     },
     {
@@ -7434,8 +7457,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_car_careffects",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 35,
+      "community_name": "car.ts",
       "norm_label": "careffects"
     },
     {
@@ -7445,8 +7468,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "src_sim_car_no_effects",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 35,
+      "community_name": "car.ts",
       "norm_label": "no_effects"
     },
     {
@@ -7471,7 +7494,7 @@
       "_origin": "ast",
       "id": "src_sim_car_createcar",
       "community": 35,
-      "community_name": "createCar",
+      "community_name": "car.ts",
       "norm_label": "createcar()"
     },
     {
@@ -7482,8 +7505,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_car_cornering",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 35,
+      "community_name": "car.ts",
       "norm_label": "cornering()"
     },
     {
@@ -7648,8 +7671,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_curves",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 88,
+      "community_name": "curves.ts",
       "norm_label": "curves.ts"
     },
     {
@@ -7661,8 +7684,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_curves_curve",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 88,
+      "community_name": "curves.ts",
       "norm_label": "curve"
     },
     {
@@ -7674,8 +7697,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_curves_layout",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 87,
+      "community_name": "createRng",
       "norm_label": "layout"
     },
     {
@@ -7685,8 +7708,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_sim_curves_layouts",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 88,
+      "community_name": "curves.ts",
       "norm_label": "layouts"
     },
     {
@@ -7697,8 +7720,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_curves_layoutfor",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 88,
+      "community_name": "curves.ts",
       "norm_label": "layoutfor()"
     },
     {
@@ -7709,8 +7732,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_curves_extend",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 88,
+      "community_name": "curves.ts",
       "norm_label": "extend()"
     },
     {
@@ -7721,8 +7744,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_curves_curvesbetween",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 88,
+      "community_name": "curves.ts",
       "norm_label": "curvesbetween()"
     },
     {
@@ -7733,8 +7756,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_curves_curvatureat",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 88,
+      "community_name": "curves.ts",
       "norm_label": "curvatureat()"
     },
     {
@@ -7744,8 +7767,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_fixedstepper",
-      "community": 87,
-      "community_name": "fixedStepper.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "fixedstepper.ts"
     },
     {
@@ -7757,8 +7780,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_fixedstepper_fixedstepper",
-      "community": 87,
-      "community_name": "fixedStepper.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "fixedstepper"
     },
     {
@@ -7769,8 +7792,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_fixedstepper_fixedstepper_constructor",
-      "community": 87,
-      "community_name": "fixedStepper.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": ".constructor()"
     },
     {
@@ -7781,8 +7804,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_fixedstepper_fixedstepper_advance",
-      "community": 87,
-      "community_name": "fixedStepper.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": ".advance()"
     },
     {
@@ -8040,8 +8063,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_policeitems_freespot",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "freespot()"
     },
     {
@@ -8242,8 +8265,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_rng_rng",
-      "community": 42,
-      "community_name": "ai.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": "rng"
     },
     {
@@ -8254,8 +8277,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_rng_rng_next",
-      "community": 42,
-      "community_name": "ai.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": ".next()"
     },
     {
@@ -8266,8 +8289,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_rng_rng_range",
-      "community": 42,
-      "community_name": "ai.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": ".range()"
     },
     {
@@ -8278,8 +8301,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_rng_rng_int",
-      "community": 42,
-      "community_name": "ai.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": ".int()"
     },
     {
@@ -8290,8 +8313,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_rng_rng_state",
-      "community": 42,
-      "community_name": "ai.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": ".state()"
     },
     {
@@ -8314,8 +8337,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_rng_createrng",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 87,
+      "community_name": "createRng",
       "norm_label": "createrng()"
     },
     {
@@ -8551,8 +8574,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_track",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "track.ts"
     },
     {
@@ -8564,8 +8587,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_track_bump",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "bump"
     },
     {
@@ -8576,8 +8599,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_track_bumpinblock",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "bumpinblock()"
     },
     {
@@ -8588,8 +8611,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_track_bumpsbetween",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "bumpsbetween()"
     },
     {
@@ -8600,8 +8623,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_track_bumpxrange",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "bumpxrange()"
     },
     {
@@ -8612,8 +8635,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_track_crossedbump",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "crossedbump()"
     },
     {
@@ -8624,8 +8647,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_track_stepjump",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "stepjump()"
     },
     {
@@ -8636,8 +8659,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_track_jumpheight",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "jumpheight()"
     },
     {
@@ -8846,8 +8869,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_types_hazard",
-      "community": 77,
-      "community_name": "itemsFx.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": "hazard"
     },
     {
@@ -8946,8 +8969,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_levelof",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 87,
+      "community_name": "createRng",
       "norm_label": "levelof()"
     },
     {
@@ -8958,8 +8981,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_clear",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 87,
+      "community_name": "createRng",
       "norm_label": "clear()"
     },
     {
@@ -8970,8 +8993,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_worksinblock",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 87,
+      "community_name": "createRng",
       "norm_label": "worksinblock()"
     },
     {
@@ -9216,8 +9239,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_storage_profilestore",
-      "community": 17,
-      "community_name": "ui/shop.test.ts",
+      "community": 89,
+      "community_name": "profileStore.ts",
       "norm_label": "profilestore.ts"
     },
     {
@@ -9227,8 +9250,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_storage_profilestore_profile_key",
-      "community": 17,
-      "community_name": "ui/shop.test.ts",
+      "community": 89,
+      "community_name": "profileStore.ts",
       "norm_label": "profile_key"
     },
     {
@@ -9238,8 +9261,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_storage_profilestore_profile_v2_key",
-      "community": 17,
-      "community_name": "ui/shop.test.ts",
+      "community": 89,
+      "community_name": "profileStore.ts",
       "norm_label": "profile_v2_key"
     },
     {
@@ -9249,8 +9272,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_storage_profilestore_profile_v1_key",
-      "community": 17,
-      "community_name": "ui/shop.test.ts",
+      "community": 89,
+      "community_name": "profileStore.ts",
       "norm_label": "profile_v1_key"
     },
     {
@@ -9260,8 +9283,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_storage_profilestore_corrupt_key",
-      "community": 17,
-      "community_name": "ui/shop.test.ts",
+      "community": 89,
+      "community_name": "profileStore.ts",
       "norm_label": "corrupt_key"
     },
     {
@@ -9272,8 +9295,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_profilestore_loadprofile",
-      "community": 17,
-      "community_name": "ui/shop.test.ts",
+      "community": 89,
+      "community_name": "profileStore.ts",
       "norm_label": "loadprofile()"
     },
     {
@@ -9284,8 +9307,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_profilestore_saveprofile",
-      "community": 17,
-      "community_name": "ui/shop.test.ts",
+      "community": 89,
+      "community_name": "profileStore.ts",
       "norm_label": "saveprofile()"
     },
     {
@@ -9403,8 +9426,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_ranking_countrecords",
-      "community": 3,
-      "community_name": "ranking.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "countrecords()"
     },
     {
@@ -9476,8 +9499,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_ranking_qualifies",
-      "community": 3,
-      "community_name": "ranking.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "qualifies()"
     },
     {
@@ -9488,8 +9511,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_ranking_insert",
-      "community": 3,
-      "community_name": "ranking.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "insert()"
     },
     {
@@ -9584,8 +9607,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_storage_ranking_modeboards",
-      "community": 48,
-      "community_name": "screens.ts",
+      "community": 3,
+      "community_name": "ranking.ts",
       "norm_label": "modeboards"
     },
     {
@@ -9608,8 +9631,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_ranking_countmoderecords",
-      "community": 3,
-      "community_name": "ranking.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "countmoderecords()"
     },
     {
@@ -9644,8 +9667,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_ranking_savemodeboards",
-      "community": 3,
-      "community_name": "ranking.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "savemodeboards()"
     },
     {
@@ -9656,8 +9679,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_ranking_recordentry",
-      "community": 3,
-      "community_name": "ranking.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "recordentry()"
     },
     {
@@ -9728,7 +9751,7 @@
       "_origin": "ast",
       "id": "src_ui_hud_formattime",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "formattime()"
     },
     {
@@ -9971,7 +9994,7 @@
       "_origin": "ast",
       "id": "src_ui_mobileshell_gamedelta",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "gamedelta()"
     },
     {
@@ -10029,8 +10052,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_mysteryhud",
-      "community": 77,
-      "community_name": "itemsFx.ts",
+      "community": 52,
+      "community_name": "hud.ts",
       "norm_label": "mysteryhud.ts"
     },
     {
@@ -10040,8 +10063,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_ui_mysteryhud_bad_text",
-      "community": 77,
-      "community_name": "itemsFx.ts",
+      "community": 52,
+      "community_name": "hud.ts",
       "norm_label": "bad_text"
     },
     {
@@ -10051,8 +10074,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_ui_mysteryhud_bad_icon",
-      "community": 77,
-      "community_name": "itemsFx.ts",
+      "community": 52,
+      "community_name": "hud.ts",
       "norm_label": "bad_icon"
     },
     {
@@ -10062,8 +10085,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_ui_mysteryhud_spin",
-      "community": 77,
-      "community_name": "itemsFx.ts",
+      "community": 52,
+      "community_name": "hud.ts",
       "norm_label": "spin"
     },
     {
@@ -10086,8 +10109,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_mysteryhud_mysteryicon",
-      "community": 77,
-      "community_name": "itemsFx.ts",
+      "community": 52,
+      "community_name": "hud.ts",
       "norm_label": "mysteryicon()"
     },
     {
@@ -10109,8 +10132,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "careerscreen.ts"
     },
     {
@@ -10122,8 +10145,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_tab",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "tab"
     },
     {
@@ -10134,8 +10157,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_n",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "n()"
     },
     {
@@ -10146,8 +10169,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_itemname",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "itemname()"
     },
     {
@@ -10157,8 +10180,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_rank_unlocks",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "rank_unlocks"
     },
     {
@@ -10169,8 +10192,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_streakdays",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 58,
+      "community_name": "app.ts",
       "norm_label": "streakdays()"
     },
     {
@@ -10181,8 +10204,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_bar",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "bar()"
     },
     {
@@ -10193,8 +10216,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_challengerow",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "challengerow()"
     },
     {
@@ -10205,8 +10228,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_untilmidnight",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "untilmidnight()"
     },
     {
@@ -10217,8 +10240,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_todaypanel",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "todaypanel()"
     },
     {
@@ -10229,8 +10252,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_achievementspanel",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "achievementspanel()"
     },
     {
@@ -10241,8 +10264,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_rankcolumn",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "rankcolumn()"
     },
     {
@@ -10253,8 +10276,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_rendercareer",
-      "community": 48,
-      "community_name": "screens.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "rendercareer()"
     },
     {
@@ -10265,8 +10288,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_careerstrip",
-      "community": 72,
-      "community_name": "career.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "careerstrip()"
     },
     {
@@ -10277,8 +10300,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_openstreak",
-      "community": 75,
-      "community_name": "h",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "openstreak()"
     },
     {
@@ -10289,7 +10312,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_choose",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "choose.ts"
     },
     {
@@ -10300,7 +10323,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_choose_roles",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "roles"
     },
     {
@@ -10312,7 +10335,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_choose_rolecard",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "rolecard()"
     },
     {
@@ -10324,7 +10347,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_choose_renderchoose",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "renderchoose()"
     },
     {
@@ -10335,7 +10358,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "difficultypicker.ts"
     },
     {
@@ -10346,7 +10369,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_difficulty_label",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "difficulty_label"
     },
     {
@@ -10358,7 +10381,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_coinslabel",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "coinslabel()"
     },
     {
@@ -10370,7 +10393,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_choicepicker",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "choicepicker()"
     },
     {
@@ -10382,7 +10405,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_difficultypicker",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "difficultypicker()"
     },
     {
@@ -10393,7 +10416,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_mode_label",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "mode_label"
     },
     {
@@ -10405,7 +10428,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_modepicker",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "modepicker()"
     },
     {
@@ -10416,7 +10439,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_dom",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "dom.ts"
     },
     {
@@ -10429,7 +10452,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_dom_disposable",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "disposable"
     },
     {
@@ -10441,7 +10464,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_dom_disposable_dispose",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": ".dispose()"
     },
     {
@@ -10452,7 +10475,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_dom_h",
-      "community": 75,
+      "community": 48,
       "community_name": "h",
       "norm_label": "h()"
     },
@@ -10465,7 +10488,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_dom_btn",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "btn()"
     },
     {
@@ -10477,7 +10500,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_dom_trapfocus",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "trapfocus()"
     },
     {
@@ -10489,7 +10512,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_dom_mount",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "mount()"
     },
     {
@@ -10500,8 +10523,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_dom_openmodal",
-      "community": 48,
-      "community_name": "screens.ts",
+      "community": 80,
+      "community_name": "progress.ts",
       "norm_label": "openmodal()"
     },
     {
@@ -10512,7 +10535,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_end",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "end.ts"
     },
     {
@@ -10524,7 +10547,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_end_endreason",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "endreason()"
     },
     {
@@ -10536,7 +10559,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_end_reducedmotion",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "reducedmotion()"
     },
     {
@@ -10548,7 +10571,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_end_rewardbox",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "rewardbox()"
     },
     {
@@ -10560,7 +10583,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_end_countup",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "countup()"
     },
     {
@@ -10572,7 +10595,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_end_resultcard",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "resultcard()"
     },
     {
@@ -10584,7 +10607,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_end_savednote",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "savednote()"
     },
     {
@@ -10596,7 +10619,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_end_padbtn",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "padbtn()"
     },
     {
@@ -10608,7 +10631,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_end_initialspad",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "initialspad()"
     },
     {
@@ -10620,7 +10643,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_end_recordpanel",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "recordpanel()"
     },
     {
@@ -10632,7 +10655,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_end_renderend",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "renderend()"
     },
     {
@@ -10642,8 +10665,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_flow",
-      "community": 58,
-      "community_name": "app.ts",
+      "community": 86,
+      "community_name": "Difficulty",
       "norm_label": "flow.ts"
     },
     {
@@ -10654,8 +10677,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_countdown",
-      "community": 58,
-      "community_name": "app.ts",
+      "community": 86,
+      "community_name": "Difficulty",
       "norm_label": "countdown"
     },
     {
@@ -10667,8 +10690,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_matchresult",
-      "community": 58,
-      "community_name": "app.ts",
+      "community": 86,
+      "community_name": "Difficulty",
       "norm_label": "matchresult"
     },
     {
@@ -10680,8 +10703,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_flowstate",
-      "community": 58,
-      "community_name": "app.ts",
+      "community": 86,
+      "community_name": "Difficulty",
       "norm_label": "flowstate"
     },
     {
@@ -10693,8 +10716,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_endstate",
-      "community": 58,
-      "community_name": "app.ts",
+      "community": 86,
+      "community_name": "Difficulty",
       "norm_label": "endstate"
     },
     {
@@ -10706,8 +10729,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_flowaction",
-      "community": 58,
-      "community_name": "app.ts",
+      "community": 86,
+      "community_name": "Difficulty",
       "norm_label": "flowaction"
     },
     {
@@ -10718,8 +10741,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_initialstate",
-      "community": 58,
-      "community_name": "app.ts",
+      "community": 86,
+      "community_name": "Difficulty",
       "norm_label": "initialstate()"
     },
     {
@@ -10730,8 +10753,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_reduce",
-      "community": 58,
-      "community_name": "app.ts",
+      "community": 86,
+      "community_name": "Difficulty",
       "norm_label": "reduce()"
     },
     {
@@ -10742,7 +10765,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "howto.ts"
     },
     {
@@ -10754,7 +10777,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_clock",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "clock()"
     },
     {
@@ -10765,7 +10788,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_escape",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "escape"
     },
     {
@@ -10778,7 +10801,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_tip",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "tip"
     },
     {
@@ -10789,7 +10812,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_pages",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "pages"
     },
     {
@@ -10801,7 +10824,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_tipel",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "tipel()"
     },
     {
@@ -10813,7 +10836,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_pagedots",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "pagedots()"
     },
     {
@@ -10825,7 +10848,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_dragtoturn",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "dragtoturn()"
     },
     {
@@ -10837,7 +10860,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_openhowto",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "openhowto()"
     },
     {
@@ -10848,7 +10871,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_icons",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "screens/icons.ts"
     },
     {
@@ -10860,7 +10883,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_icons_svg",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "svg()"
     },
     {
@@ -10871,7 +10894,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_icons_screen_icons",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "screen_icons"
     },
     {
@@ -10882,7 +10905,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_mode",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "screens/mode.ts"
     },
     {
@@ -10893,7 +10916,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_mode_mode_info",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "mode_info"
     },
     {
@@ -10905,7 +10928,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_mode_rendermode",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "rendermode()"
     },
     {
@@ -10987,7 +11010,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "screens.ts"
     },
     {
@@ -10999,7 +11022,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens_titlehero",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "titlehero()"
     },
     {
@@ -11011,7 +11034,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens_walletchip",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "walletchip()"
     },
     {
@@ -11023,7 +11046,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens_rendertitle",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "rendertitle()"
     },
     {
@@ -11034,8 +11057,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_screens_rendercountdown",
-      "community": 3,
-      "community_name": "ranking.ts",
+      "community": 48,
+      "community_name": "h",
       "norm_label": "rendercountdown()"
     },
     {
@@ -11047,7 +11070,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens_renderpause",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "renderpause()"
     },
     {
@@ -11058,7 +11081,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens_tab_label",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "tab_label"
     },
     {
@@ -11069,7 +11092,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_screens_shortdate",
-      "community": 75,
+      "community": 48,
       "community_name": "h",
       "norm_label": "shortdate()"
     },
@@ -11081,7 +11104,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_screens_renderranking",
-      "community": 75,
+      "community": 48,
       "community_name": "h",
       "norm_label": "renderranking()"
     },
@@ -11092,8 +11115,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_shop",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "screens/shop.ts"
     },
     {
@@ -11105,8 +11128,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_tab",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "tab"
     },
     {
@@ -11117,8 +11140,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_n",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 78,
+      "community_name": "Role",
       "norm_label": "n()"
     },
     {
@@ -11129,8 +11152,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_hex",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 78,
+      "community_name": "Role",
       "norm_label": "hex()"
     },
     {
@@ -11154,8 +11177,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_shopprops_onside",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 78,
+      "community_name": "Role",
       "norm_label": ".onside()"
     },
     {
@@ -11239,8 +11262,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_row",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 59,
+      "community_name": "careerScreen.ts",
       "norm_label": "row"
     },
     {
@@ -11251,8 +11274,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_rendershop",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 78,
+      "community_name": "Role",
       "norm_label": "rendershop()"
     },
     {
@@ -11458,8 +11481,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_meta_backup_test",
-      "community": 76,
-      "community_name": "profile.ts",
+      "community": 49,
+      "community_name": "backup.ts",
       "norm_label": "backup.test.ts"
     },
     {
@@ -11469,8 +11492,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "tests_meta_backup_test_sample",
-      "community": 76,
-      "community_name": "profile.ts",
+      "community": 49,
+      "community_name": "backup.ts",
       "norm_label": "sample"
     },
     {
@@ -11481,8 +11504,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_meta_backup_test_legacycode",
-      "community": 76,
-      "community_name": "profile.ts",
+      "community": 49,
+      "community_name": "backup.ts",
       "norm_label": "legacycode()"
     },
     {
@@ -11549,8 +11572,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_meta_shop_test",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 17,
+      "community_name": "ui/shop.test.ts",
       "norm_label": "meta/shop.test.ts"
     },
     {
@@ -11595,8 +11618,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_buildings_test",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 87,
+      "community_name": "createRng",
       "norm_label": "buildings.test.ts"
     },
     {
@@ -11606,8 +11629,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_cameras_test",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 35,
+      "community_name": "car.ts",
       "norm_label": "cameras.test.ts"
     },
     {
@@ -11618,7 +11641,7 @@
       "_origin": "ast",
       "id": "tests_render_carfactory_test",
       "community": 35,
-      "community_name": "createCar",
+      "community_name": "car.ts",
       "norm_label": "carfactory.test.ts"
     },
     {
@@ -11630,7 +11653,7 @@
       "_origin": "ast",
       "id": "tests_render_carfactory_test_emissive",
       "community": 35,
-      "community_name": "createCar",
+      "community_name": "car.ts",
       "norm_label": "emissive()"
     },
     {
@@ -11642,7 +11665,7 @@
       "_origin": "ast",
       "id": "tests_render_carfactory_test_body",
       "community": 35,
-      "community_name": "createCar",
+      "community_name": "car.ts",
       "norm_label": "body()"
     },
     {
@@ -11653,7 +11676,7 @@
       "_origin": "ast",
       "id": "tests_render_carlook_test",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "carlook.test.ts"
     },
     {
@@ -11665,7 +11688,7 @@
       "_origin": "ast",
       "id": "tests_render_carlook_test_meshes",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "meshes()"
     },
     {
@@ -11677,7 +11700,7 @@
       "_origin": "ast",
       "id": "tests_render_carlook_test_look",
       "community": 51,
-      "community_name": "carLook.ts",
+      "community_name": "gunner.ts",
       "norm_label": "look()"
     },
     {
@@ -11804,7 +11827,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_gunner_test",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "gunner.test.ts"
     },
@@ -11816,7 +11839,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_gunner_test_setup",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "setup()"
     },
@@ -11828,7 +11851,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_gunner_test_aimx",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "aimx()"
     },
@@ -11840,7 +11863,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_gunner_test_visiblemeshes",
-      "community": 70,
+      "community": 51,
       "community_name": "gunner.ts",
       "norm_label": "visiblemeshes()"
     },
@@ -11863,7 +11886,7 @@
       "_origin": "ast",
       "id": "tests_render_heli_test",
       "community": 19,
-      "community_name": "combatFx.ts",
+      "community_name": "trackFrame.ts",
       "norm_label": "heli.test.ts"
     },
     {
@@ -11874,7 +11897,7 @@
       "_origin": "ast",
       "id": "tests_render_opponentmarker_test",
       "community": 35,
-      "community_name": "createCar",
+      "community_name": "car.ts",
       "norm_label": "opponentmarker.test.ts"
     },
     {
@@ -11929,8 +11952,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_roadchunks_test",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 70,
+      "community_name": "roadChunks.ts",
       "norm_label": "roadchunks.test.ts"
     },
     {
@@ -11962,8 +11985,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_trackframe_test",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 88,
+      "community_name": "curves.ts",
       "norm_label": "trackframe.test.ts"
     },
     {
@@ -12055,8 +12078,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_ai_test_bumpdodgerate",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "bumpdodgerate()"
     },
     {
@@ -12251,8 +12274,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_curves_test",
-      "community": 67,
-      "community_name": "worldProps.ts",
+      "community": 88,
+      "community_name": "curves.ts",
       "norm_label": "curves.test.ts"
     },
     {
@@ -12287,7 +12310,7 @@
       "_origin": "ast",
       "id": "tests_sim_curvesphysics_test_atspeed",
       "community": 35,
-      "community_name": "createCar",
+      "community_name": "car.ts",
       "norm_label": "atspeed()"
     },
     {
@@ -12354,8 +12377,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_fixedstepper_test",
-      "community": 87,
-      "community_name": "fixedStepper.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "fixedstepper.test.ts"
     },
     {
@@ -12378,7 +12401,7 @@
       "_origin": "ast",
       "id": "tests_sim_items_test_police",
       "community": 35,
-      "community_name": "createCar",
+      "community_name": "car.ts",
       "norm_label": "police()"
     },
     {
@@ -12390,7 +12413,7 @@
       "_origin": "ast",
       "id": "tests_sim_items_test_thief",
       "community": 35,
-      "community_name": "createCar",
+      "community_name": "car.ts",
       "norm_label": "thief()"
     },
     {
@@ -12665,8 +12688,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_rng_test",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 87,
+      "community_name": "createRng",
       "norm_label": "rng.test.ts"
     },
     {
@@ -12677,8 +12700,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_rng_test_take",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 87,
+      "community_name": "createRng",
       "norm_label": "take()"
     },
     {
@@ -12755,8 +12778,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_track_test",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "track.test.ts"
     },
     {
@@ -12767,8 +12790,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_track_test_drive",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "drive()"
     },
     {
@@ -12779,8 +12802,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_track_test_coveredcentre",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "coveredcentre()"
     },
     {
@@ -12791,8 +12814,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_track_test_freelanex",
-      "community": 0,
-      "community_name": "world.ts",
+      "community": 84,
+      "community_name": "track.ts",
       "norm_label": "freelanex()"
     },
     {
@@ -12905,8 +12928,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_storage_profilestore_test",
-      "community": 17,
-      "community_name": "ui/shop.test.ts",
+      "community": 89,
+      "community_name": "profileStore.ts",
       "norm_label": "profilestore.test.ts"
     },
     {
@@ -12917,8 +12940,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_storage_profilestore_test_memory",
-      "community": 17,
-      "community_name": "ui/shop.test.ts",
+      "community": 89,
+      "community_name": "profileStore.ts",
       "norm_label": "memory()"
     },
     {
@@ -12929,8 +12952,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_storage_profilestore_test_length",
-      "community": 17,
-      "community_name": "ui/shop.test.ts",
+      "community": 89,
+      "community_name": "profileStore.ts",
       "norm_label": "length()"
     },
     {
@@ -13256,7 +13279,7 @@
       "_origin": "ast",
       "id": "tests_ui_difficultypicker_test",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "difficultypicker.test.ts"
     },
     {
@@ -13268,7 +13291,7 @@
       "_origin": "ast",
       "id": "tests_ui_difficultypicker_test_mount",
       "community": 75,
-      "community_name": "h",
+      "community_name": "end.ts",
       "norm_label": "mount()"
     },
     {
@@ -13289,8 +13312,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_flow_test",
-      "community": 58,
-      "community_name": "app.ts",
+      "community": 86,
+      "community_name": "Difficulty",
       "norm_label": "flow.test.ts"
     },
     {
@@ -13301,8 +13324,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_flow_test_run",
-      "community": 58,
-      "community_name": "app.ts",
+      "community": 86,
+      "community_name": "Difficulty",
       "norm_label": "run()"
     },
     {
@@ -13312,8 +13335,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_hud_test",
-      "community": 52,
-      "community_name": "hud.ts",
+      "community": 0,
+      "community_name": "world.ts",
       "norm_label": "hud.test.ts"
     },
     {
@@ -13370,7 +13393,7 @@
       "_origin": "ast",
       "id": "tests_ui_mode_test",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "ui/mode.test.ts"
     },
     {
@@ -13382,7 +13405,7 @@
       "_origin": "ast",
       "id": "tests_ui_mode_test_button",
       "community": 48,
-      "community_name": "screens.ts",
+      "community_name": "h",
       "norm_label": "button()"
     },
     {
@@ -13460,8 +13483,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_screens_test",
-      "community": 3,
-      "community_name": "ranking.ts",
+      "community": 48,
+      "community_name": "h",
       "norm_label": "screens.test.ts"
     },
     {
@@ -13472,8 +13495,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_screens_test_button",
-      "community": 3,
-      "community_name": "ranking.ts",
+      "community": 48,
+      "community_name": "h",
       "norm_label": "button()"
     },
     {
@@ -13484,8 +13507,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_screens_test_dispose",
-      "community": 3,
-      "community_name": "ranking.ts",
+      "community": 48,
+      "community_name": "h",
       "norm_label": "dispose()"
     },
     {
@@ -18787,6 +18810,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app",
+      "target": "src_meta_shop_randomlook",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app",
       "target": "src_meta_shop_setplate",
       "confidence_score": 1.0
     },
@@ -19372,7 +19407,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L322",
+      "source_location": "L324",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19396,7 +19431,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L160",
+      "source_location": "L162",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19408,7 +19443,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L157",
+      "source_location": "L159",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19420,7 +19455,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L271",
+      "source_location": "L273",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19444,7 +19479,19 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L280",
+      "source_location": "L153",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_startapp",
+      "target": "src_meta_shop_randomlook"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app.ts",
+      "source_location": "L282",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19456,7 +19503,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L279",
+      "source_location": "L281",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19468,7 +19515,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L220",
+      "source_location": "L222",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19480,7 +19527,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L282",
+      "source_location": "L284",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19516,7 +19563,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L245",
+      "source_location": "L247",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19540,7 +19587,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L230",
+      "source_location": "L232",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19588,7 +19635,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L324",
+      "source_location": "L326",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19612,7 +19659,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L185",
+      "source_location": "L187",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19624,7 +19671,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L316",
+      "source_location": "L318",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19636,7 +19683,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L326",
+      "source_location": "L328",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19648,7 +19695,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L257",
+      "source_location": "L259",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19660,7 +19707,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L216",
+      "source_location": "L218",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19672,7 +19719,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L238",
+      "source_location": "L240",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19684,7 +19731,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L306",
+      "source_location": "L308",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19708,7 +19755,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L328",
+      "source_location": "L330",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19720,7 +19767,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L226",
+      "source_location": "L228",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19744,7 +19791,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L288",
+      "source_location": "L290",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19756,7 +19803,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L297",
+      "source_location": "L299",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19768,7 +19815,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L338",
+      "source_location": "L340",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19780,7 +19827,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L207",
+      "source_location": "L209",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -19792,7 +19839,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app.ts",
-      "source_location": "L265",
+      "source_location": "L267",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_startapp",
@@ -20956,7 +21003,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L238",
+      "source_location": "L240",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -24581,7 +24628,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L290",
+      "source_location": "L292",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -24821,18 +24868,6 @@
       "_origin": "ast",
       "source": "src_game",
       "target": "src_render_carfactory",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/game.ts",
-      "source_location": "L18",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_game",
-      "target": "src_render_carfactory_createcarmodel",
       "confidence_score": 1.0
     },
     {
@@ -25560,7 +25595,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/game.ts",
-      "source_location": "L368",
+      "source_location": "L370",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25572,7 +25607,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/game.ts",
-      "source_location": "L288",
+      "source_location": "L290",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25628,7 +25663,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/game.ts",
-      "source_location": "L209",
+      "source_location": "L211",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25641,7 +25676,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L180",
+      "source_location": "L182",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25653,7 +25688,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L284",
+      "source_location": "L286",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25665,7 +25700,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L181",
+      "source_location": "L183",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25677,7 +25712,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L215",
+      "source_location": "L217",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25689,7 +25724,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L280",
+      "source_location": "L282",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25701,7 +25736,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L311",
+      "source_location": "L313",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25713,7 +25748,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L305",
+      "source_location": "L307",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25725,7 +25760,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L154",
+      "source_location": "L156",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25737,19 +25772,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L120",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_game_startgame",
-      "target": "src_render_carfactory_createcarmodel"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/game.ts",
-      "source_location": "L371",
+      "source_location": "L373",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25761,7 +25784,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L119",
+      "source_location": "L121",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25773,7 +25796,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L128",
+      "source_location": "L130",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25785,7 +25808,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L375",
+      "source_location": "L377",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25797,7 +25820,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L138",
+      "source_location": "L140",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25809,7 +25832,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L125",
+      "source_location": "L127",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25821,7 +25844,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L415",
+      "source_location": "L417",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25833,7 +25856,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L377",
+      "source_location": "L379",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25845,7 +25868,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L158",
+      "source_location": "L160",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25857,7 +25880,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L150",
+      "source_location": "L152",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25869,7 +25892,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L129",
+      "source_location": "L131",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25881,7 +25904,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L151",
+      "source_location": "L153",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25893,7 +25916,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L444",
+      "source_location": "L446",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25905,7 +25928,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L449",
+      "source_location": "L451",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25917,7 +25940,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L106",
+      "source_location": "L108",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25929,7 +25952,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L100",
+      "source_location": "L102",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25941,7 +25964,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L111",
+      "source_location": "L113",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25953,7 +25976,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L369",
+      "source_location": "L371",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25965,7 +25988,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L104",
+      "source_location": "L106",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25977,7 +26000,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L109",
+      "source_location": "L111",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -25989,7 +26012,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L110",
+      "source_location": "L112",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -26001,7 +26024,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L429",
+      "source_location": "L431",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -26013,7 +26036,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L153",
+      "source_location": "L155",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -26025,7 +26048,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L138",
+      "source_location": "L140",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -26037,7 +26060,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L367",
+      "source_location": "L369",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -26049,7 +26072,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L160",
+      "source_location": "L162",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -26061,7 +26084,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L308",
+      "source_location": "L310",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -26073,7 +26096,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L282",
+      "source_location": "L284",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -26085,7 +26108,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L206",
+      "source_location": "L208",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -26097,7 +26120,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L280",
+      "source_location": "L282",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -26109,7 +26132,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/game.ts",
-      "source_location": "L249",
+      "source_location": "L251",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_game_startgame",
@@ -30543,6 +30566,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/meta/shop.ts",
+      "source_location": "L318",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_meta_shop",
+      "target": "src_meta_shop_randomlook",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/meta/shop.ts",
       "source_location": "L178",
       "weight": 1.0,
       "_origin": "ast",
@@ -30877,6 +30911,18 @@
       "_origin": "ast",
       "source": "tests_render_carlook_test",
       "target": "src_meta_shop_car_ids",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/meta/shop.ts",
+      "source_location": "L320",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_meta_shop_randomlook",
+      "target": "src_meta_shop_carsof",
       "confidence_score": 1.0
     },
     {
@@ -31693,6 +31739,18 @@
       "_origin": "ast",
       "source": "tests_render_carlook_test",
       "target": "src_meta_shop_defaultlook",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/meta/shop.test.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_meta_shop_test",
+      "target": "src_meta_shop_randomlook",
       "confidence_score": 1.0
     },
     {
@@ -35823,7 +35881,7 @@
       "context": "collection",
       "confidence": "INFERRED",
       "source_file": "src/render/models/index.ts",
-      "source_location": "L49",
+      "source_location": "L57",
       "weight": 1.0,
       "_origin": "ast",
       "confidence_score": 0.8,
@@ -35835,7 +35893,7 @@
       "context": "collection",
       "confidence": "INFERRED",
       "source_file": "src/render/models/index.ts",
-      "source_location": "L47",
+      "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
       "confidence_score": 0.8,
@@ -35847,7 +35905,7 @@
       "context": "collection",
       "confidence": "INFERRED",
       "source_file": "src/render/models/index.ts",
-      "source_location": "L58",
+      "source_location": "L66",
       "weight": 1.0,
       "_origin": "ast",
       "confidence_score": 0.8,
@@ -36329,7 +36387,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L375",
+      "source_location": "L369",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildmoto",
@@ -36353,7 +36411,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L482",
+      "source_location": "L476",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildvan",
@@ -36364,7 +36422,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L331",
+      "source_location": "L325",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_rider",
@@ -36425,7 +36483,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L381",
+      "source_location": "L375",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildmoto",
@@ -36449,7 +36507,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L501",
+      "source_location": "L495",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildvan",
@@ -36472,7 +36530,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L329",
+      "source_location": "L323",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_rider",
@@ -36533,7 +36591,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L392",
+      "source_location": "L386",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildmoto",
@@ -36545,7 +36603,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L278",
+      "source_location": "L272",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildpicape",
@@ -36605,7 +36663,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L385",
+      "source_location": "L379",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildmoto",
@@ -36629,7 +36687,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L485",
+      "source_location": "L479",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildvan",
@@ -36652,7 +36710,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L332",
+      "source_location": "L326",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_rider",
@@ -36749,7 +36807,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L353",
+      "source_location": "L347",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildmoto",
@@ -36773,7 +36831,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L488",
+      "source_location": "L482",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildvan",
@@ -36796,7 +36854,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L340",
+      "source_location": "L334",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_rider",
@@ -36905,7 +36963,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L352",
+      "source_location": "L346",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildmoto",
@@ -36929,7 +36987,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L464",
+      "source_location": "L458",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildvan",
@@ -36952,7 +37010,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L340",
+      "source_location": "L334",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_rider",
@@ -37049,7 +37107,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L346",
+      "source_location": "L340",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildmoto",
@@ -37073,7 +37131,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L448",
+      "source_location": "L442",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildvan",
@@ -37097,7 +37155,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L381",
+      "source_location": "L375",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildmoto",
@@ -37121,7 +37179,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L449",
+      "source_location": "L443",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildvan",
@@ -37169,7 +37227,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L389",
+      "source_location": "L383",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildmoto",
@@ -37181,7 +37239,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L304",
+      "source_location": "L298",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildpicape",
@@ -37193,7 +37251,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L528",
+      "source_location": "L522",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildvan",
@@ -37397,7 +37455,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L465",
+      "source_location": "L459",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildvan",
@@ -37457,7 +37515,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L355",
+      "source_location": "L349",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildmoto",
@@ -37517,7 +37575,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L304",
+      "source_location": "L298",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildpicape",
@@ -37529,7 +37587,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L528",
+      "source_location": "L522",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildvan",
@@ -37697,7 +37755,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L410",
+      "source_location": "L404",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildmoto",
@@ -37709,7 +37767,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L303",
+      "source_location": "L297",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildpicape",
@@ -37721,7 +37779,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L527",
+      "source_location": "L521",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildvan",
@@ -37753,7 +37811,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L345",
+      "source_location": "L339",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars",
@@ -37775,7 +37833,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L443",
+      "source_location": "L437",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars",
@@ -37797,7 +37855,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L325",
+      "source_location": "L319",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars",
@@ -37808,7 +37866,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L310",
+      "source_location": "L304",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars",
@@ -37819,7 +37877,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L313",
+      "source_location": "L307",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars",
@@ -37855,7 +37913,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L302",
+      "source_location": "L296",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildpicape",
@@ -37867,7 +37925,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L329",
+      "source_location": "L323",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_rider",
@@ -37879,7 +37937,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/render/models/shopCars.ts",
-      "source_location": "L412",
+      "source_location": "L406",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_shopcars_buildmoto",
@@ -38374,7 +38432,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/render/rearview.ts",
-      "source_location": "L29",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_rearview",
@@ -38385,7 +38443,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/render/rearview.ts",
-      "source_location": "L25",
+      "source_location": "L28",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_rearview",
@@ -38396,7 +38454,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/render/rearview.ts",
-      "source_location": "L19",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_render_rearview",
+      "target": "src_render_rearview_mirror_near",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/render/rearview.ts",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_rearview",
@@ -43120,7 +43189,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/sim/collisions.ts",
-      "source_location": "L76",
+      "source_location": "L86",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_sim_collisions_resolvecollisions",
@@ -63460,5 +63529,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "f1148ea64ef2216ee274c1dbc66d56c5a6b4ac3b"
+  "built_at_commit": "ae87741586efdaa45dea5bc123094f3cc39a9846"
 }

@@ -5,7 +5,7 @@ import { createAudioSession } from './audio/session';
 import { startGame, type GameHandle } from './game';
 import { createCarPreview } from './render/carPreview';
 import { createShopPreview } from './render/shopPreview';
-import { CARS, buy, lookFor, setPlate, use } from './meta/shop';
+import { CARS, buy, lookFor, randomLook, setPlate, use } from './meta/shop';
 import type { QualityTier } from './render/renderer';
 import { grantWelcome, settleCareer, settleMatch } from './meta/profile';
 import { localDate, rankOf } from './meta/career';
@@ -149,6 +149,8 @@ export function startApp(
       mode,
       chaosEvery: opts.chaosEvery,
       look: lookFor(profile, role),
+      // the computer drives a random car of its side (debug/e2e keep the default one: stable draw calls)
+      opponentLook: opts.debug ? undefined : randomLook(role === 'police' ? 'thief' : 'police'),
       audio,
       startPaused: true,
       onPauseRequest: () => dispatch({ type: 'pause' }),

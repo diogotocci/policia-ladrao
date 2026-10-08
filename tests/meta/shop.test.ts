@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ACHIEVEMENTS, emptyCareer } from '../../src/meta/career';
 import { emptyProfile, type Profile } from '../../src/meta/profile';
-import { CATALOG, CARS, buy, canBuy, inUse, lookFor, normalizePlate, owns, setPlate, use } from '../../src/meta/shop';
+import { CATALOG, CARS, buy, canBuy, inUse, lookFor, normalizePlate, owns, randomLook, setPlate, use } from '../../src/meta/shop';
 
 /** everything unlocked by the career (part 5), so these tests only look at coins and ownership */
 const unlockedCareer = () => ({ ...emptyCareer(), xp: { police: 99_999, thief: 99_999 }, achieved: ACHIEVEMENTS.map((a) => a.id) });
@@ -183,5 +183,23 @@ describe('unlocking (part 5, spec §4)', () => {
     const p: Profile = { ...emptyProfile(), owned: ['car:caveirao'] };
     expect(canBuy(p, 'car:caveirao')).toEqual({ ok: false, reason: 'owned' });
     expect(use(p, 'car:caveirao').equipped.police.car).toBe('caveirao');
+  });
+});
+
+describe('random computer car (playtest 2026-10-08)', () => {
+  it('any car of the side, one of its 4 colours, a side sound or none, and a Mercosul plate when there is one', () => {
+    const seen = new Set<string>();
+    let seed = 1;
+    const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+    for (let i = 0; i < 300; i++) {
+      const l = randomLook('thief', rand);
+      seen.add(l.car);
+      expect(CARS[l.car].role).toBe('thief');
+      expect(CARS[l.car].colors).toContain(l.paint);
+      if (l.sound) expect(['corneta', 'grave', 'dupla']).toContain(l.sound);
+      if (l.plate) expect(l.plate).toMatch(/^[A-Z]{3}\d[A-Z]\d{2}$/);
+    }
+    expect(seen).toEqual(new Set(['seda', 'picape', 'moto', 'van']));
+    expect(CARS[randomLook('police').car].role).toBe('police');
   });
 });
