@@ -35,4 +35,8 @@ export const SCREEN_ICONS = {
   mystery: svg('<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/>'),
   oil: svg('<path d="M12 3c4 6 6 9 6 12a6 6 0 0 1-12 0c0-3 2-6 6-12z"/>'),
   smoke: svg('<path d="M7 17a4 4 0 0 1 .5-8 5.5 5.5 0 0 1 10.5 1.5A3.5 3.5 0 0 1 17 17z"/><path d="M5 21h6M14 21h5"/>'),
+  // V2 part 3: police items
+  barrier: svg('<path d="M3 8h18v6H3z"/><path d="M7 8l-4 6M12 8l-4 6M17 8l-4 6M21 8l-4 6"/><path d="M6 14v6M18 14v6"/>'),
+  siren: svg('<path d="M7 18v-5a5 5 0 0 1 10 0v5"/><path d="M5 18h14v3H5zM12 3v2M4.5 6l1.5 1.5M19.5 6 18 7.5"/>'),
+  light: svg('<path d="M9 3h6l-1 5h-4z"/><path d="M10 8 5 21h14l-5-13"/>'),
 } as const;

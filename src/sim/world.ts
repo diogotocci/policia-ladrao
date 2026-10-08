@@ -16,6 +16,7 @@ import { applyItem, stepBoxes } from './items';
 import { stepBombs } from './bombs';
 import { stepMystery } from './mystery';
 import { clearForScene, policeSlowed, stepHazards, useSpecial } from './specials';
+import { stepWingman, usePoliceSpecial } from './policeItems';
 import type { ItemId, WorldState } from './types';
 
 export type { Bomb, Box, GameEvent, Hazard, ItemId, MatchState, Projectile, TrafficCar, WorldState } from './types';
@@ -55,7 +56,7 @@ export function createWorld(opts: {
   const police: CarState = { ...createCar('police', 1, 0), hasGun: true, maxHp, hp: Math.min(maxHp, opts.debugHp?.police ?? maxHp) };
   const thief: CarState = { ...createCar('thief', 2, 40), maxHp, hp: Math.min(maxHp, opts.debugHp?.thief ?? maxHp) };
   let player = opts.playerRole === 'police' ? police : thief;
-  for (const item of opts.debugGive ?? []) player = applyItem(player, item, 0);
+  for (const item of opts.debugGive ?? []) player = applyItem(player, item, 0, { mode, chaos: 1 });
   const opponent = opts.playerRole === 'police' ? thief : police;
   return {
     seed: opts.seed,
@@ -86,6 +87,8 @@ export function createWorld(opts: {
     hazards: [],
     nextHazardId: 1,
     bombHeld: false,
+    policeSpecialHeld: false,
+    wingman: null,
     policeTurboOffUntil: 0,
     nextBoxId: 1,
     nextBoxAt: BALANCE.items.firstBoxAt,
@@ -170,7 +173,9 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   const kT = curvatureAt(w.seed, t0.s, w.curvesOn);
   const kP = curvatureAt(w.seed, p0.s, w.curvesOn);
   const time0 = out.time;
-  out = withCar(out, 'thief', stepJump(stepCar(t0, intents.thief, dt, { curvature: kT, time: time0 }), t0.s, w.seed, dt));
+  // helicopter spotlight (police item): the thief 15% slower
+  const spot = time0 < p0.upgrades.spotUntil ? -BALANCE.items.spotlight.slow : 0;
+  out = withCar(out, 'thief', stepJump(stepCar(t0, intents.thief, dt, { curvature: kT, time: time0, speedBonus: spot }), t0.s, w.seed, dt));
   out = withCar(
     out,
     'police',
@@ -189,8 +194,10 @@ export function stepWorld(w: WorldState, playerIntents: Intents | 'ai', dt: numb
   out = stepBoxes(out);
   out = stepMystery(out);
   out = useSpecial(out, intents.thief);
+  out = usePoliceSpecial(out, intents.police);
   out = stepBombs(out);
   out = stepHazards(out);
+  out = stepWingman(out, dt);
   // whoever reached zero life this step (crash, bomb, item box) no longer shoots
   if (policeOf(out).hp > 0 && thiefOf(out).hp > 0) {
     out = fireWeapons(out, intents, dt);

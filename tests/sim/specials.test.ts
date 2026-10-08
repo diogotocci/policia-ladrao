@@ -142,7 +142,7 @@ describe('computer', () => {
         w = withCar(w, 'thief', { ...thiefOf(w), s: p.s + 300, x: p.x + 3, speed: 33 });
         w = {
           ...w,
-          hazards: [{ id: 1, kind: 'spikes', s: p.s + 70, length: 2, xFrom: p.x - 1.5, xTo: p.x + 1.5, expiresAt: 99 }],
+          hazards: [{ id: 1, kind: 'spikes', target: 'police', s: p.s + 70, length: 2, xFrom: p.x - 1.5, xTo: p.x + 1.5, expiresAt: 99 }],
           nextHazardId: 2,
         };
         for (let i = 0; i < 180; i++) w = stepWorld(w, 'ai', DT);

@@ -5,6 +5,7 @@ import { hurt, scaledDamage } from './chaos';
 import { createRngFromState, type Rng } from './rng';
 import { bumpsBetween } from './track';
 import { pickMystery } from './mystery';
+import { applyPoliceItem } from './policeItems';
 import { addSpecial, specialRoom } from './specials';
 import { SPECIALS, type Box, type GameEvent, type ItemId, type SpecialKind, type WorldState } from './types';
 import { policeOf, thiefOf, withCar } from './world';
@@ -25,7 +26,8 @@ function available(car: CarState): ItemId[] {
     if (u.fireInterval > P.fireIntervalMin + 1e-9) out.push('fireRate');
     if (u.power < P.powerMax - 1e-9) out.push('power');
     if (car.hp < car.maxHp) out.push('heal');
-    out.push('nitro', 'ram', 'heli', 'pierce');
+    out.push('nitro', 'ram', 'heli', 'pierce', 'machineGun', 'wingman', 'spotlight');
+    if (specialRoom(car, 'roadblock')) out.push('roadblock');
   } else {
     const T = I.thief;
     if (u.plates < T.platesMax) out.push('plate');
@@ -62,7 +64,9 @@ export function rollItem(car: CarState, rng: Rng): ItemId | null {
 
 const round = (v: number) => Math.round(v * 1000) / 1000;
 
-export function applyItem(car: CarState, item: ItemId, time: number): CarState {
+/** `w` (mode and chaos) gives the "strong" times of the V2 part 3 items; without it, the normal ones. */
+export function applyItem(car: CarState, item: ItemId, time: number, w?: Pick<WorldState, 'mode' | 'chaos'>): CarState {
+  if (item === 'machineGun' || item === 'wingman' || item === 'spotlight') return applyPoliceItem(car, item, time, w);
   const u = { ...car.upgrades };
   let hp = car.hp;
   let hasGun = car.hasGun;
@@ -97,6 +101,7 @@ export function applyItem(car: CarState, item: ItemId, time: number): CarState {
     case 'oil':
     case 'spikes':
     case 'smoke':
+    case 'roadblock':
       return addSpecial({ ...car, hp, hasGun, upgrades: u }, item);
     case 'gun':
       if (!hasGun) hasGun = true;
@@ -178,7 +183,8 @@ export function stepBoxes(w: WorldState): WorldState {
     }
     const item = rollItem(car, rng);
     events.push({ type: 'pickup', role: car.role, item: item ?? 'none' });
-    return item ? applyItem(car, item, w.time) : car;
+    if (item === 'machineGun' || item === 'wingman' || item === 'spotlight') events.push({ type: 'policeItem', item });
+    return item ? applyItem(car, item, w.time, w) : car;
   };
   police = take(police);
   thief = take(thief);

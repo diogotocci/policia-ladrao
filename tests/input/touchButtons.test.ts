@@ -182,6 +182,8 @@ describe('special button (V2 part 3)', () => {
     tb.setSpecial({ kind: 'smoke', charges: 1 });
     expect(b.getAttribute('aria-label')).toBe('Especial: fumaça (1)');
     expect(b.querySelector('svg')).not.toBeNull();
+    tb.setSpecial({ kind: 'roadblock', charges: 1 }); // the police special
+    expect(b.getAttribute('aria-label')).toBe('Especial: bloqueio (1)');
     tb.setSpecial(null);
     expect(b.hidden).toBe(true);
   });

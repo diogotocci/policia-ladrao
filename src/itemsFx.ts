@@ -1,21 +1,31 @@
 // Game-side presentation of the V2 part 3 items (kept out of game.ts): the special button, the yellow box roulette,
-// screen effects (mud, double damage), warnings, oil and spikes on the road, and particles (smoke screen, engine
-// smoke, sparks from a flat tire).
-import type * as THREE from 'three';
+// screen effects (mud, double damage, spotlight glow), warnings, oil, spikes and roadblocks on the road, the backup
+// patrol car, the spotlight beam, and particles (smoke screen, engine smoke, sparks from a flat tire).
+import * as THREE from 'three';
 import type { Role } from './config/balance';
 import type { createTouchButtons } from './input/touchButtons';
 import type { createCombatFx } from './render/combatFx';
 import type { Particles } from './render/particles';
+import { createCarModel, updateCarModel } from './render/carFactory';
 import { createSpecialsView } from './render/specialsView';
+import { trackPos } from './render/trackFrame';
+import { createCar } from './sim/car';
 import type { CarState } from './sim/car';
 import type { GameEvent, WorldState } from './sim/types';
 import { createMysteryHud } from './ui/mysteryHud';
 
+/** Police items that act at once: their own warning and sound ("Metralhadora!"), not the normal pickup ones. */
+export const INSTANT_POLICE: ReadonlySet<string> = new Set(['machineGun', 'wingman', 'spotlight']);
+
 /** Warnings (toast) for the new events, from the player's side. Pure. */
 export function itemToast(e: GameEvent, me: Role): string | undefined {
-  if (e.type === 'oilSkid') return me === 'police' ? 'Óleo!' : 'A viatura derrapou no óleo!';
-  if (e.type === 'tirePop') return me === 'police' ? 'Pneu furado!' : 'Pneu furado na viatura!';
+  if (e.type === 'oilSkid') return e.role === me ? 'Óleo!' : 'A viatura derrapou no óleo!';
+  if (e.type === 'tirePop')
+    return e.role === me ? 'Pneu furado!' : e.role === 'police' ? 'Pneu furado na viatura!' : 'Pneu furado no ladrão!';
   if (e.type === 'special' && e.kind === 'smoke') return 'Fumaça!';
+  if (e.type === 'special' && e.kind === 'roadblock') return me === 'thief' ? 'Bloqueio à frente!' : 'Bloqueio armado!';
+  if (e.type === 'roadblockNoRoom' && me === 'police') return 'Sem lugar para o bloqueio agora';
+  if (e.type === 'policeItem') return { machineGun: 'Metralhadora!', wingman: 'Reforço chegando!', spotlight: 'Holofote!' }[e.item];
   return undefined;
 }
 
@@ -35,7 +45,28 @@ export function createItemsFx(p: {
   mud.className = 'fx-mud';
   const double = document.createElement('div');
   double.className = 'fx-double';
-  p.ui.prepend(mud, double); // under the HUD and the buttons
+  const spotGlow = document.createElement('div');
+  spotGlow.className = 'fx-spot';
+  p.ui.prepend(mud, double, spotGlow); // under the HUD and the buttons
+  // backup patrol car
+  const wingman = createCarModel('police');
+  wingman.name = 'wingman';
+  wingman.visible = false;
+  p.scene.add(wingman);
+  const wingCar = createCar('police', 1);
+  // helicopter spotlight: a soft cone of light from above onto the thief
+  const beamMat = new THREE.MeshBasicMaterial({
+    color: 0xfff6d0,
+    transparent: true,
+    opacity: 0.3,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide,
+  });
+  const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 3, 14, 20, 1, true), beamMat);
+  beam.name = 'spotlight';
+  beam.visible = false;
+  p.scene.add(beam);
   const mystery = createMysteryHud(p.ui);
   const view = createSpecialsView(p.scene);
   let lastSpecial = '';
@@ -44,14 +75,22 @@ export function createItemsFx(p: {
   return {
     frame(w, car, foe, events, originS, dt, frozen) {
       const me = w.player;
-      if (me.role === 'thief') {
-        const sp = me.upgrades.special;
-        const sig = sp ? `${sp.kind}:${sp.charges}` : '';
-        if (sig !== lastSpecial) {
-          lastSpecial = sig;
-          p.touch.setSpecial(sp);
-        }
+      const sp = me.upgrades.special;
+      const sig = sp ? `${sp.kind}:${sp.charges}` : '';
+      if (sig !== lastSpecial) {
+        lastSpecial = sig;
+        p.touch.setSpecial(sp);
       }
+      const thief = car.role === 'thief' ? car : foe;
+      const spot = w.time < (w.player.role === 'police' ? w.player : w.opponent).upgrades.spotUntil;
+      spotGlow.classList.toggle('is-on', spot && p.role === 'thief');
+      beam.visible = spot;
+      if (spot) {
+        const bp = trackPos(thief.s, thief.x, originS);
+        beam.position.set(bp.x, 7, bp.z);
+      }
+      wingman.visible = !!w.wingman;
+      if (w.wingman) updateCarModel(wingman, { ...wingCar, s: w.wingman.s, x: w.wingman.x }, w.time, originS);
       const noBrake = w.time < me.effects.noBrakeUntil;
       if (noBrake !== lastNoBrake) {
         lastNoBrake = noBrake;
@@ -67,14 +106,16 @@ export function createItemsFx(p: {
       }
       // the roulette was dropped without a result (end scene): no "Sorte!" for an item never received
       if (mystery.spinning && !me.mystery && !events.some((e) => e.type === 'mysteryReveal')) mystery.cancel();
-      view.update(w.hazards, originS);
+      view.update(w.hazards, originS, w.time);
       if (frozen) return;
       const k = p.particles.emissionScale();
       for (const c of [car, foe]) {
         // the thief's smoke screen: thick dark cloud behind him
         if (w.time < c.effects.smokeUntil) {
-          acc.smoke += dt * 40 * k;
-          for (; acc.smoke >= 1; acc.smoke--) p.particles.emitSmoke(c.x + (acc.side = -acc.side) * 1.1, 0.8, c.s - 2.4, 'black');
+          // a thick cloud left behind the thief that hides it from the police (playtest 2026-10-07: the thin trail
+          // did not show); more puffs on low quality too, it is the whole point of the item
+          acc.smoke += dt * 30 * Math.max(0.7, k);
+          for (; acc.smoke >= 1; acc.smoke--) p.particles.emitCloud(c.x, c.s - 2.6);
         }
         // engine failing: gray smoke from the hood
         if (w.time < c.effects.slowUntil) {
@@ -91,6 +132,10 @@ export function createItemsFx(p: {
     dispose() {
       mystery.dispose();
       view.dispose();
+      p.scene.remove(wingman, beam);
+      beam.geometry.dispose();
+      beamMat.dispose();
+      spotGlow.remove();
       mud.remove();
       double.remove();
     },

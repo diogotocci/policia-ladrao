@@ -24,7 +24,25 @@ const hpParam = (name: string) => {
 };
 const debugHp = debug ? { police: hpParam('policeHp'), thief: hpParam('thiefHp') } : undefined;
 
-const ITEMS: ItemId[] = ['fireRate', 'power', 'heal', 'nitro', 'ram', 'heli', 'pierce', 'plate', 'bomb', 'gun', 'oil', 'spikes', 'smoke'];
+const ITEMS: ItemId[] = [
+  'fireRate',
+  'power',
+  'heal',
+  'nitro',
+  'ram',
+  'heli',
+  'pierce',
+  'plate',
+  'bomb',
+  'gun',
+  'oil',
+  'spikes',
+  'smoke',
+  'roadblock',
+  'machineGun',
+  'wingman',
+  'spotlight',
+];
 const debugGive = debug ? (params.get('give') ?? '').split(',').filter((x): x is ItemId => (ITEMS as string[]).includes(x)) : undefined;
 const traffic = debug && params.get('traffic') === '0' ? false : undefined;
 const curves = params.get('curves') === '0' ? false : undefined;

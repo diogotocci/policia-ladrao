@@ -88,6 +88,31 @@ const PAGES: { tips: Tip[] }[] = [
       },
     ],
   },
+  {
+    // V2 part 3: the police items (blue boxes)
+    tips: [
+      {
+        icon: 'barrier',
+        title: 'Bloqueio',
+        text: `A polícia aperta o especial: uma viatura atravessada ${BALANCE.items.roadblock.ahead} m à frente do ladrão, com miguelito ao lado.`,
+      },
+      {
+        icon: 'shot',
+        title: 'Metralhadora',
+        text: `Por ${BALANCE.items.machineGun.time} s a polícia atira muito mais rápido, com tiros mais fracos.`,
+      },
+      {
+        icon: 'siren',
+        title: 'Reforço',
+        text: `Uma segunda viatura chega por trás e bate na lateral do ladrão por ${BALANCE.items.wingman.time} s.`,
+      },
+      {
+        icon: 'light',
+        title: 'Holofote',
+        text: `Por ${BALANCE.items.spotlight.time} s o ladrão fica mais lento e a fumaça dele não funciona.`,
+      },
+    ],
+  },
 ];
 
 function tipEl(t: Tip): HTMLElement {

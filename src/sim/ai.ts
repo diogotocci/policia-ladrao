@@ -90,10 +90,11 @@ function laneBlocked(w: WorldState, role: Role, s: number, laneX: number, mem?: 
     w.bombs.some((b) => mem?.bombDodge[b.id] && (inLane(b.x) || (b.x2 !== undefined && inLane(b.x2))) && b.s > s && b.s - s < 60)
   )
     return true;
-  // oil and spikes the police decided to avoid
+  // hazards aimed at this car that it decided to avoid (thief's oil and spikes; police roadblock and its spikes)
   if (
-    role === 'police' &&
-    w.hazards.some((h) => mem?.hazardDodge[h.id] && laneX + W > h.xFrom && laneX - W < h.xTo && h.s + h.length > s && h.s - s < 60)
+    w.hazards.some(
+      (h) => h.target === role && mem?.hazardDodge[h.id] && laneX + W > h.xFrom && laneX - W < h.xTo && h.s + h.length > s && h.s - s < 60,
+    )
   )
     return true;
   // roadworks: seen earlier the better the computer (20 m at level 1, 60 m at level 10)
@@ -143,14 +144,18 @@ function considerBombs(w: WorldState, s: number, rng: Rng, mem: AiMemory, k: num
   return { ...mem, bombDodge: next };
 }
 
-/** Same for oil and spikes (V2 part 3). */
-function considerHazards(w: WorldState, s: number, rng: Rng, mem: AiMemory, k: number): AiMemory {
+/**
+ * Same for the hazards aimed at this car (V2 part 3): oil and spikes for the police, the roadblock for the thief
+ * (a whole patrol car with a sign before it: seen more easily).
+ */
+function considerHazards(w: WorldState, role: Role, s: number, rng: Rng, mem: AiMemory, k: number): AiMemory {
   let changed = false;
   const next: Record<number, boolean> = {};
   for (const h of w.hazards) {
+    if (h.target !== role) continue;
     if (h.id in mem.hazardDodge) next[h.id] = mem.hazardDodge[h.id]!;
     else if (h.s > s && h.s - s < 60) {
-      next[h.id] = rng.next() < lerp(0.4, 0.92, k);
+      next[h.id] = rng.next() < (h.group !== undefined ? lerp(0.6, 0.97, k) : lerp(0.4, 0.92, k));
       changed = true;
     }
   }
@@ -186,7 +191,8 @@ export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): {
   const foe = role === 'police' ? thiefOf(w) : policeOf(w);
   const k = skill(w.level);
   let mem = considerBump(w, me.s, rng, memory, k);
-  if (role === 'police') mem = considerHazards(w, me.s, rng, considerBombs(w, me.s, rng, mem, k), k);
+  if (role === 'police') mem = considerBombs(w, me.s, rng, mem, k);
+  mem = considerHazards(w, role, me.s, rng, mem, k);
 
   // danger in the current lane (or the target one): reacts now, without waiting for the next decision
   const myLane = nearestLane(mem.targetX);
@@ -224,7 +230,14 @@ export function aiStep(w: WorldState, role: Role, rng: Rng, memory: AiMemory): {
       else mem = { ...mem, targetX: Math.max(-EDGE + 0.3, Math.min(EDGE - 0.3, foe.x)) };
     }
     const cb = curveBraking(w, me.s, me.speed, rng, mem, k);
-    return { intents: { ...NO_INTENTS, ...steerTo(me.x, mem.targetX), fire: true, brake: cb.brake }, memory: cb.memory };
+    // roadblock: with the thief 40-150 m ahead
+    let block = false;
+    const gapAhead = foe.s - me.s;
+    if (me.upgrades.special?.kind === 'roadblock' && gapAhead > 40 && gapAhead < 150 && w.time >= cb.memory.nextBombAt) {
+      block = !w.policeSpecialHeld;
+      if (block) cb.memory = { ...cb.memory, nextBombAt: w.time + lerp(5, 2, k) };
+    }
+    return { intents: { ...NO_INTENTS, ...steerTo(me.x, mem.targetX), fire: true, brake: cb.brake, bomb: block }, memory: cb.memory };
   }
 
   // thief

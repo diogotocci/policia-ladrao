@@ -31,10 +31,27 @@ export interface TrafficCar {
 }
 
 export type ItemId =
-  'fireRate' | 'power' | 'heal' | 'nitro' | 'ram' | 'heli' | 'pierce' | 'plate' | 'bomb' | 'gun' | 'oil' | 'spikes' | 'smoke';
+  | 'fireRate'
+  | 'power'
+  | 'heal'
+  | 'nitro'
+  | 'ram'
+  | 'heli'
+  | 'pierce'
+  | 'plate'
+  | 'bomb'
+  | 'gun'
+  | 'oil'
+  | 'spikes'
+  | 'smoke'
+  | 'roadblock'
+  | 'machineGun'
+  | 'wingman'
+  | 'spotlight';
 
-/** the thief's specials (V2 part 3), used with the special button */
-export type SpecialKind = 'bomb' | 'oil' | 'spikes' | 'smoke';
+/** specials (V2 part 3), used with the special button: the thief's four and the police roadblock */
+export type SpecialKind = 'bomb' | 'oil' | 'spikes' | 'smoke' | 'roadblock';
+/** the thief's specials (they share one weight in the box mix) */
 export const SPECIALS: readonly SpecialKind[] = ['bomb', 'oil', 'spikes', 'smoke'];
 
 /** bad outcomes of the yellow box */
@@ -60,15 +77,33 @@ export interface Bomb {
   expiresAt: number;
 }
 
-/** Things on the road from the thief's specials: oil (skid) and spikes (flat tire). Hit only the police. */
+/**
+ * Things on the road from the specials. Thief: oil (skid) and spikes (flat tire), they hit only the police.
+ * Police roadblock: a patrol car across a lane (crash) and spike strips, they hit only the thief.
+ */
 export interface Hazard {
   id: number;
-  kind: 'oil' | 'spikes';
+  kind: 'oil' | 'spikes' | 'roadblock';
+  /** the only car it hits */
+  target: Role;
+  /** roadblock pieces share the id of the patrol car (removed together) */
+  group?: number;
   s: number;
   length: number;
   xFrom: number;
   xTo: number;
   expiresAt: number;
+}
+
+/** Backup patrol car (V2 part 3): comes from behind on a lane next to the thief and hits its side. */
+export interface Wingman {
+  s: number;
+  x: number;
+  speed: number;
+  /** leaves after this */
+  until: number;
+  /** next side hit allowed */
+  nextHitAt: number;
 }
 
 export type GameEvent =
@@ -78,7 +113,7 @@ export type GameEvent =
   | { type: 'pickup'; role: Role; item: ItemId | 'wrong' | 'none' }
   | { type: 'bombDropped'; s: number; x: number }
   | { type: 'explosion'; s: number; x: number }
-  | { type: 'shot'; from: Role; s: number; x: number; /** from the helicopter */ air?: true }
+  | { type: 'shot'; from: Role; s: number; x: number; /** from the helicopter */ air?: true; /** machine gun */ rapid?: true }
   | { type: 'noTarget'; from: Role }
   | { type: 'skid'; role: Role; s: number; x: number }
   | { type: 'special'; role: Role; kind: SpecialKind; s: number; x: number }
@@ -86,6 +121,10 @@ export type GameEvent =
   | { type: 'tirePop'; role: Role; s: number; x: number }
   | { type: 'mystery'; role: Role; outcome: MysteryOutcome; s: number; x: number }
   | { type: 'mysteryReveal'; role: Role; outcome: MysteryOutcome }
+  | { type: 'roadblockHit'; s: number; x: number }
+  | { type: 'roadblockNoRoom' }
+  | { type: 'policeItem'; item: 'machineGun' | 'wingman' | 'spotlight' }
+  | { type: 'wingmanHit'; s: number; x: number }
   | { type: 'end'; winner: Role }
   | { type: 'escape' }
   | { type: 'arrest' };
@@ -146,6 +185,10 @@ export interface WorldState {
   nextHazardId: number;
   /** the thief's special button was pressed in the previous step (rising edge) */
   bombHeld: boolean;
+  /** same for the police (roadblock) */
+  policeSpecialHeld: boolean;
+  /** the backup patrol car (police item), null when not on the road */
+  wingman: Wingman | null;
   /** after hitting the thief, the police has no catch-up turbo until this instant */
   policeTurboOffUntil: number;
   nextBoxId: number;

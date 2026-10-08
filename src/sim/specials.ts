@@ -1,4 +1,5 @@
-// The thief's specials (V2 part 3, spec §4.1): one button, the kind kept in upgrades.special (up to 3 charges).
+// Specials (V2 part 3, spec §4.1): one button, the kind kept in upgrades.special (up to 3 charges).
+// Thief:
 // Bomb (2 lanes in Sobrevivência from chaos 2), oil, spikes and smoke. Oil and spikes stay on the road and hit only
 // the police: oil makes it skid, spikes give it a flat tire.
 import { BALANCE, type Role } from '../config/balance';
@@ -7,6 +8,7 @@ import type { Intents } from './intents';
 import { createRngFromState } from './rng';
 import type { Bomb, GameEvent, Hazard, SpecialKind, WorldState } from './types';
 import { policeOf, thiefOf, withCar } from './world';
+import { clearPassedRoadblocks, hitRoadblock } from './policeItems';
 
 const I = BALANCE.items;
 const LANES = BALANCE.road.laneCenters;
@@ -64,6 +66,7 @@ export function useSpecial(w: WorldState, intents: Intents): WorldState {
       const h: Hazard = {
         id: w.nextHazardId,
         kind: sp.kind,
+        target: 'police',
         s: thief.s - cfg.dropBehind - cfg.length,
         length: cfg.length,
         xFrom: Math.min(lane, other) - LANE_HALF,
@@ -82,6 +85,8 @@ export function useSpecial(w: WorldState, intents: Intents): WorldState {
       const smoked: CarState = { ...spent, effects: { ...spent.effects, smokeUntil: w.time + time } };
       return { ...withCar(out, 'thief', smoked), events: [...w.events, event] };
     }
+    default:
+      return out; // the roadblock is the police's (policeItems.ts)
   }
 }
 
@@ -92,32 +97,40 @@ const over = (car: CarState, h: Hazard) =>
   car.x + BALANCE.car.halfWidth > h.xFrom &&
   car.x - BALANCE.car.halfWidth < h.xTo;
 
-/** Oil and spikes: expire; the police driving over them skids or gets a flat tire (once per effect, no damage). */
+/**
+ * Hazards expire; each one hits only its target. Thief's oil and spikes on the police (skid, flat tire, no damage);
+ * police roadblock on the thief (crash into the patrol car, flat tire on the spikes). Once per effect.
+ */
 export function stepHazards(w: WorldState): WorldState {
-  const hazards = w.hazards.filter((h) => w.time < h.expiresAt);
-  if (hazards.length === 0) return hazards.length === w.hazards.length ? w : { ...w, hazards };
+  const live = w.hazards.filter((h) => w.time < h.expiresAt);
+  if (live.length === 0) return live.length === w.hazards.length ? w : { ...w, hazards: live };
   const rng = createRngFromState(w.itemRng);
-  let police = policeOf(w);
-  const events: GameEvent[] = [...w.events];
-  for (const h of hazards) {
-    const fx = police.effects; // current: two overlapping pools never hit twice in the same step
-    if (!over(police, h)) continue;
+  let out: WorldState = { ...w, hazards: live, events: [...w.events] };
+  for (const h of live) {
+    let car = h.target === 'police' ? policeOf(out) : thiefOf(out);
+    const fx = car.effects; // current: two overlapping pools never hit twice in the same step
+    if (!over(car, h)) continue;
     const side: -1 | 1 = rng.next() < 0.5 ? -1 : 1;
-    if (h.kind === 'oil' && w.time >= fx.skidUntil) {
+    if (h.kind === 'roadblock') {
+      const hit = hitRoadblock(out, car, h);
+      out = hit.w;
+      car = hit.car;
+    } else if (h.kind === 'oil' && w.time >= fx.skidUntil) {
       // skids (no damage) and loses grip: 30% of its speed, like hitting the curb
-      police = {
-        ...police,
-        speed: police.speed * (1 - I.oil.speedLoss),
-        effects: { ...police.effects, skidUntil: w.time + I.oil.skidTime, skidSide: side },
+      car = {
+        ...car,
+        speed: car.speed * (1 - I.oil.speedLoss),
+        effects: { ...car.effects, skidUntil: w.time + I.oil.skidTime, skidSide: side },
       };
-      events.push({ type: 'oilSkid', role: 'police', s: police.s, x: police.x });
+      out.events.push({ type: 'oilSkid', role: car.role, s: car.s, x: car.x });
     } else if (h.kind === 'spikes' && w.time >= fx.flatUntil) {
       const time = strong(w) ? I.spikes.flatTimeStrong : I.spikes.flatTime;
-      police = { ...police, effects: { ...police.effects, flatUntil: w.time + time, flatSide: side } };
-      events.push({ type: 'tirePop', role: 'police', s: police.s, x: police.x });
+      car = { ...car, effects: { ...car.effects, flatUntil: w.time + time, flatSide: side } };
+      out.events.push({ type: 'tirePop', role: car.role, s: car.s, x: car.x });
     }
+    out = withCar(out, car.role, car);
   }
-  return { ...withCar(w, 'police', police), hazards, events, itemRng: rng.state() };
+  return clearPassedRoadblocks({ ...out, itemRng: rng.state() });
 }
 
 /**
@@ -133,7 +146,13 @@ export const policeSlowed = (w: WorldState): boolean => {
 export function clearForScene(w: WorldState): WorldState {
   const clean = (r: Role) => {
     const c = r === 'police' ? policeOf(w) : thiefOf(w);
-    return { ...c, effects: NO_EFFECTS, mystery: null };
+    return { ...c, effects: NO_EFFECTS, mystery: null, upgrades: { ...c.upgrades, mgUntil: 0, wingmanUntil: 0, spotUntil: 0 } };
   };
-  return { ...withCar(withCar(w, 'police', clean('police')), 'thief', clean('thief')), hazards: [], bombs: [], projectiles: [] };
+  return {
+    ...withCar(withCar(w, 'police', clean('police')), 'thief', clean('thief')),
+    hazards: [],
+    bombs: [],
+    projectiles: [],
+    wingman: null,
+  };
 }

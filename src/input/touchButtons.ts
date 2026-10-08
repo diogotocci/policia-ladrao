@@ -32,12 +32,22 @@ export const SPECIAL_ICONS: Record<SpecialKind, string> = {
   ),
   // a row of nails
   spikes: svg('<path d="M6 38h36"/><path d="M10 38l4-14 4 14M20 38l4-14 4 14M30 38l4-14 4 14" fill="currentColor" stroke-width="2.5"/>'),
+  // police roadblock: a barrier with stripes on two legs
+  roadblock: svg(
+    '<path d="M6 16h36v10H6z"/><path d="M12 16l-6 10M22 16l-6 10M32 16l-6 10M42 16l-6 10" stroke-width="3"/><path d="M12 26v14M36 26v14"/>',
+  ),
   // cloud of smoke
   smoke: svg(
     '<path d="M14 34a7 7 0 0 1 1-14 9 9 0 0 1 17-2 7 7 0 0 1 3 14z" fill="currentColor" stroke="none"/><path d="M10 40h10M26 40h12" stroke-width="3"/>',
   ),
 };
-export const SPECIAL_NAMES: Record<SpecialKind, string> = { bomb: 'bomba', oil: 'óleo', spikes: 'miguelito', smoke: 'fumaça' };
+export const SPECIAL_NAMES: Record<SpecialKind, string> = {
+  bomb: 'bomba',
+  oil: 'óleo',
+  spikes: 'miguelito',
+  smoke: 'fumaça',
+  roadblock: 'bloqueio',
+};
 
 const BUTTONS: { name: IntentName; label: string; side: 'left' | 'right' }[] = [
   { name: 'left', label: 'Esquerda', side: 'left' },

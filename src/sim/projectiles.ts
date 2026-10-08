@@ -26,7 +26,8 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
   const projectiles: Projectile[] = [...w.projectiles];
   const c = BALANCE.combat;
   // the thief's smoke (V2 part 3): police shots spread up to ±12° and the helicopter does not fire
-  const smoke = w.time < thiefOf(w).effects.smokeUntil;
+  // ...unless the helicopter spotlight is on him (police item): then the smoke does nothing
+  const smoke = w.time < thiefOf(w).effects.smokeUntil && w.time >= policeOf(w).upgrades.spotUntil;
   const rng = createRngFromState(w.itemRng);
   const spread = (vs: number, vx: number): [number, number] => {
     if (!smoke) return [vs, vx];
@@ -50,8 +51,16 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
         const len = Math.hypot(aimS - car.s, aimX - car.x) || 1;
         const d = Math.abs(target.s - car.s);
         const falloff = distanceFactor(d);
+        // machine gun (police item): a shot every 0.2 s at 40% damage
+        const mg = role === 'police' && w.time < car.upgrades.mgUntil;
         const damage =
-          role === 'police' ? c.policeDamage * car.upgrades.power * falloff * armorFactor(target.upgrades.plates) : c.thiefDamage * falloff;
+          role === 'police'
+            ? c.policeDamage *
+              car.upgrades.power *
+              falloff *
+              armorFactor(target.upgrades.plates) *
+              (mg ? BALANCE.items.machineGun.damageFactor : 1)
+            : c.thiefDamage * falloff;
         const piercing = role === 'police' && w.time < car.upgrades.pierceUntil;
         const [vs, vx] =
           role === 'police'
@@ -67,8 +76,8 @@ export function fireWeapons(w: WorldState, intents: Record<Role, Intents>, dt: n
           damage,
           piercing,
         });
-        events.push({ type: 'shot', from: role, s: car.s, x: car.x });
-        car = { ...car, fireCooldown: car.upgrades.fireInterval };
+        events.push(mg ? { type: 'shot', from: role, s: car.s, x: car.x, rapid: true } : { type: 'shot', from: role, s: car.s, x: car.x });
+        car = { ...car, fireCooldown: mg ? BALANCE.items.machineGun.interval : car.upgrades.fireInterval };
       } else {
         events.push({ type: 'noTarget', from: role });
       }

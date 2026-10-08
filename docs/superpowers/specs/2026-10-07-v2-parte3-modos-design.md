@@ -73,6 +73,14 @@ Todos os números ficam em `BALANCE.items`. "Caos N+" vale só no Sobrevivência
 | **Segunda viatura** | na hora | uma viatura do computador entra por trás, na faixa vizinha, por 8 s. Quando fica lado a lado, dá uma batida lateral no ladrão (−6, empurra 1,5 m), no máximo 1 a cada 2 s. Depois vai embora. | caos 4+: 12 s |
 | **Holofote** | na hora | por 3 s o ladrão fica 15% mais lento e a fumaça dele não tem efeito; o jogador ladrão vê um brilho branco nas bordas da tela | caos 3+: 5 s |
 
+#### 4.2.1 Ajustes da implementação (0.15.0)
+
+- **Bloqueio:** a viatura fica na faixa do ladrão; com 2 faixas livres, o spike vai na faixa vizinha do lado do centro; com 1 livre, nas duas vizinhas (ou nas duas do lado com espaço). Lugar livre: fora de quebra-mola (10 m), de curva fechada, de obra, de caixa e de outro perigo (6 m). Sem lugar em 60 m, a carga fica e a polícia vê "Sem lugar para o bloqueio agora". Bater na viatura segura o ladrão logo antes dela (como nas obras). Some 15 m depois que o ladrão passa. Só acerta o ladrão.
+- **Segunda viatura:** depois do tempo, ela desacelera e some quando a polícia passa por ela.
+- **Avisos:** o ladrão vê "Bloqueio à frente!"; os dois veem "Metralhadora!", "Reforço chegando!" e "Holofote!". O ladrão vê um selo vermelho "Holofote" e o brilho branco nas bordas.
+- **Equilíbrio (0.15.0):** com todos os itens, entre computadores o ladrão vence ~37% na Perseguição e ~42% no Sobrevivência.
+- **Como jogar:** quinta página com os itens da polícia.
+
 ### 4.3 Botão de especial
 
 - O botão de bomba vira o **botão de especial**, com o ícone e as cargas do item guardado. Tecla **B**, como hoje.
