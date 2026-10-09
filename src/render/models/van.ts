@@ -26,6 +26,7 @@ import {
 export function buildVan(root: THREE.Group, body: THREE.Group): void {
   // high-roof panel van (playtest 2026-10-08, reference photos): long and plain, short sloped nose, windows only in
   // the cab, grey lower trim, blank rear doors with tall lamps. Not armoured: smaller and smoother than the Caveirão.
+  // Playtest 2026-10-09: roof lowered to 1.75 m, taller than the Picape and smaller than the Caveirão.
   const W = 1.9;
   const HALF = W / 2;
   const BLACK = mainPaint(0x101114, 0.3);
@@ -35,12 +36,12 @@ export function buildVan(root: THREE.Group, body: THREE.Group): void {
     [2.45, 0.48],
     [2.45, 0.86],
     [2.3, 1.02], // nose
-    [1.95, 1.12], // short hood
-    [1.38, 1.74], // raked windshield
-    [1.15, 1.9],
-    [0.9, 1.95],
-    [-2.32, 1.95],
-    [-2.45, 1.82],
+    [1.95, 1.1], // short hood
+    [1.38, 1.58], // raked windshield
+    [1.15, 1.71],
+    [0.9, 1.75],
+    [-2.32, 1.75],
+    [-2.45, 1.64],
     [-2.45, 0.48],
   ];
   body.add(
@@ -60,22 +61,22 @@ export function buildVan(root: THREE.Group, body: THREE.Group): void {
       'shell',
     ),
   );
-  const lean = Math.atan2(1.95 - 1.38, 1.74 - 1.12);
+  const lean = Math.atan2(1.95 - 1.38, 1.58 - 1.1);
   const glass = [
-    box(W - 0.3, 0.78, 0.03)
+    box(W - 0.3, 0.7, 0.03)
       .rotateX(lean)
-      .translate(0, 1.43, -1.66 - 0.03), // windshield
-    ...both((sd) => box(0.03, 0.42, 0.62, sd * (HALF + 0.004), 1.5, -0.95)), // cab door
-    ...both((sd) => box(0.03, 0.34, 0.22, sd * (HALF + 0.004), 1.46, -1.38)), // small front quarter window
+      .translate(0, 1.34, -1.66 - 0.03), // windshield
+    ...both((sd) => box(0.03, 0.34, 0.62, sd * (HALF + 0.004), 1.38, -0.95)), // cab door
+    ...both((sd) => box(0.03, 0.28, 0.22, sd * (HALF + 0.004), 1.35, -1.38)), // small front quarter window
   ];
   body.add(mesh(merge(glass), TINT, 'greenhouse'));
   const SEAMS = matte(0x050506, 0.9);
   const seams = [
-    ...both((sd) => box(0.012, 1.35, 0.025, sd * (HALF + 0.004), 1.12, -0.55)), // cab door
-    ...both((sd) => box(0.012, 1.35, 0.025, sd * (HALF + 0.004), 1.12, 0.65)), // sliding door
-    ...both((sd) => box(0.012, 0.025, 3.7, sd * (HALF + 0.004), 1.12, 0.6)), // character line
-    ...both((sd) => box(0.012, 0.025, 2.6, sd * (HALF + 0.004), 1.72, 1.0)), // sliding door rail
-    box(0.025, 1.3, 0.012, 0, 1.15, 2.452), // rear doors split
+    ...both((sd) => box(0.012, 1.18, 0.025, sd * (HALF + 0.004), 1.04, -0.55)), // cab door
+    ...both((sd) => box(0.012, 1.18, 0.025, sd * (HALF + 0.004), 1.04, 0.65)), // sliding door
+    ...both((sd) => box(0.012, 0.025, 3.7, sd * (HALF + 0.004), 1.08, 0.6)), // character line
+    ...both((sd) => box(0.012, 0.025, 2.6, sd * (HALF + 0.004), 1.56, 1.0)), // sliding door rail
+    box(0.025, 1.13, 0.012, 0, 1.07, 2.452), // rear doors split
   ];
   body.add(mesh(merge(seams), SEAMS, 'seams'));
   // grey lower trim, bumpers and big mirrors
@@ -87,8 +88,8 @@ export function buildVan(root: THREE.Group, body: THREE.Group): void {
   body.add(mesh(merge(trim), TRIM, 'bumpers'));
   const dark = [
     rb(1.2, 0.26, 0.05, 0.03, 0, 0.88, -2.46), // grille
-    ...both((sd) => rb(0.06, 0.3, 0.16, 0.02, sd * (HALF + 0.14), 1.48, -1.45)), // mirrors
-    ...both((sd) => box(0.14, 0.03, 0.03, sd * (HALF + 0.07), 1.48, -1.45)),
+    ...both((sd) => rb(0.06, 0.28, 0.16, 0.02, sd * (HALF + 0.14), 1.36, -1.45)), // mirrors
+    ...both((sd) => box(0.14, 0.03, 0.03, sd * (HALF + 0.07), 1.36, -1.45)),
   ];
   body.add(mesh(merge(dark), PLASTIC, 'grille'));
   // angled headlights at the nose corners; tall lamps on the rear corners
@@ -105,7 +106,7 @@ export function buildVan(root: THREE.Group, body: THREE.Group): void {
       'headlights',
     ),
   );
-  body.add(mesh(merge(both((sd) => rb(0.14, 0.5, 0.06, 0.03, sd * (HALF - 0.08), 1.02, 2.46))), TAIL, 'taillights'));
+  body.add(mesh(merge(both((sd) => rb(0.14, 0.44, 0.06, 0.03, sd * (HALF - 0.08), 0.99, 2.46))), TAIL, 'taillights'));
   body.add(mesh(merge(both((sd) => box(0.12, 0.08, 0.04, sd * (HALF - 0.16), 0.78, -2.47))), AMBER, 'indicators'));
   addArmorPlates(body, { halfW: HALF, rearZ: 2.45, y: 0.85, w: 1.5, h: 0.42, sideLen: 2.8, sideZ: 0.3 });
   addWheels(root, { r: R, width: 0.27, rim: metal(0xb5b9bf, 0.35), spokes: 8, rimR: 0.62 }, HALF - 0.1, [-1.55, 1.6]);

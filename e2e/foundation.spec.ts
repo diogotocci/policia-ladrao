@@ -88,6 +88,7 @@ test('touch brake slows the car (mobile)', async ({ page }, info) => {
 });
 
 test('draw calls stay under budget and stable over time (high quality, shadows on)', async ({ page }) => {
+  test.setTimeout(360_000); // high quality on a software GPU with 6 workers: the simulation runs slowly
   await page.goto('/?debug&seed=1&quality=high');
   await page.waitForFunction(() => '__game' in window);
   // short bursts (sparks, smoke, a box coming into view) add a few calls for a moment;
