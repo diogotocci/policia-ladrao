@@ -1,6 +1,8 @@
 // Shop and Carreira actions on the profile: each one changes it, saves it and clicks; the screen gets the result.
 import { claimReward, type Profile } from './meta/profile';
-import { buy, setPlate, use } from './meta/shop';
+import { CARS, CAR_IDS, buy, lookOfCar, owns, setPlate, use } from './meta/shop';
+import { carThumb } from './render/carThumbs';
+import type { GarageCar } from './ui/screens/garage';
 
 export function profileActions(p: {
   get(): Profile;
@@ -30,4 +32,17 @@ export function profileActions(p: {
       return { career: p.get().career, coins: p.get().coins };
     },
   };
+}
+
+/** The cars owned, police first, for Carreira › Garagem (V2 part 6); their pictures are drawn when shown. */
+export function garageCars(profile: Profile): GarageCar[] {
+  return CAR_IDS.filter((c) => owns(profile, `car:${c}`))
+    .sort((a, b) => Number(CARS[a].role === 'thief') - Number(CARS[b].role === 'thief'))
+    .map((c) => ({
+      id: c,
+      name: CARS[c].name,
+      role: CARS[c].role,
+      color: lookOfCar(profile, c).paint,
+      thumb: () => carThumb(CARS[c].role, lookOfCar(profile, c)),
+    }));
 }

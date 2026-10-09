@@ -3,11 +3,12 @@
 import type { Role } from '../config/balance';
 import type { Profile } from './profile';
 import { meets, requirementText, unlockOf } from './career';
+import { FINISHES, MASTERY_CARS, STICKERS, masteryLevel, type FinishId } from './mastery';
 
 export type CarId = 'viatura' | 'esportivo' | 'blazer' | 'caveirao' | 'seda' | 'picape' | 'moto' | 'van';
 export type NeonColor = 'azul' | 'roxo' | 'verde' | 'rosa';
 export type SoundId = 'yelp' | 'choque' | 'corneta' | 'grave' | 'dupla';
-export type ItemKind = 'car' | 'paint' | 'neon' | 'sound' | 'plate';
+export type ItemKind = 'car' | 'paint' | 'neon' | 'sound' | 'plate' | 'finish' | 'sticker';
 
 export interface CarInfo {
   role: Role;
@@ -100,7 +101,7 @@ export const SOUND_IDS = Object.keys(SOUNDS) as SoundId[];
 export const DEFAULT_SOUND_NAME: Record<Role, string> = { police: 'Sirene padrão', thief: 'Buzina padrão' };
 
 // V2 part 5: ~3x the 0.16 prices, and every item needs to be unlocked first (career.ts unlockOf)
-export const PRICES = { paint: 900, neon: 1800, sound: 1500, plate: 1200 } as const;
+export const PRICES = { paint: 900, neon: 1800, sound: 1500, plate: 1200, finish: 1200, sticker: 900 } as const;
 export const PLATE_MAX = 7;
 
 export interface ShopItem {
@@ -113,6 +114,9 @@ export interface ShopItem {
   index?: number;
   neon?: NeonColor;
   sound?: SoundId;
+  /** V2 part 6 */
+  finish?: FinishId;
+  sticker?: number;
 }
 
 /**
@@ -135,6 +139,26 @@ export const CATALOG: readonly ShopItem[] = [
   ),
   ...SOUND_IDS.map((s): ShopItem => ({ id: `sound:${s}`, kind: 'sound', price: PRICES.sound, role: SOUNDS[s].role, sound: s })),
   { id: 'plate', kind: 'plate', price: PRICES.plate },
+  // V2 part 6: per car, the 4 finishes, the legendary one (free, from mastery 10) and the 4 stickers. A fixed car
+  // list (MASTERY_CARS): new cars get their own group at the end
+  ...(MASTERY_CARS as readonly CarId[]).flatMap((c): ShopItem[] => [
+    ...[...FINISHES, 'lendaria' as const].map((f): ShopItem => ({
+      id: `finish:${c}:${f}`,
+      kind: 'finish',
+      price: f === 'lendaria' ? 0 : PRICES.finish,
+      role: CARS[c].role,
+      car: c,
+      finish: f,
+    })),
+    ...[1, 2, 3, 4].map((n): ShopItem => ({
+      id: `sticker:${c}:${n}`,
+      kind: 'sticker',
+      price: PRICES.sticker,
+      role: CARS[c].role,
+      car: c,
+      sticker: n,
+    })),
+  ]),
 ];
 const BY_ID = new Map(CATALOG.map((i) => [i.id, i]));
 export const itemById = (id: string): ShopItem | undefined => BY_ID.get(id);
@@ -152,6 +176,9 @@ export interface Equipped {
   paint: Partial<Record<CarId, number>>;
   /** '' = no plate */
   plate: string;
+  /** V2 part 6, per car: the finish in use (none = normal) and the sticker (1..4; none = no sticker) */
+  finish?: Partial<Record<CarId, FinishId>>;
+  sticker?: Partial<Record<CarId, number>>;
 }
 
 export const defaultEquipped = (): Equipped => ({
@@ -159,6 +186,8 @@ export const defaultEquipped = (): Equipped => ({
   thief: { car: 'seda', neon: null, sound: null },
   paint: {},
   plate: '',
+  finish: {},
+  sticker: {},
 });
 
 /** Uppercase, only A-Z and 0-9, at most 7 characters. */
@@ -195,6 +224,14 @@ export function sanitizeShop(ownedRaw: readonly unknown[], eq: Partial<Equipped>
       if (typeof i === 'number' && Number.isInteger(i) && i >= 1 && i <= 3 && has(owned, `paint:${car}:${i}`)) out.paint[car] = i;
     }
   if (typeof eq?.plate === 'string' && has(owned, 'plate')) out.plate = normalizePlate(eq.plate);
+  const finish = eq?.finish as Record<string, unknown> | undefined;
+  const sticker = eq?.sticker as Record<string, unknown> | undefined;
+  for (const car of CAR_IDS) {
+    const f = finish?.[car];
+    if (typeof f === 'string' && has(owned, `finish:${car}:${f}`)) out.finish![car] = f as FinishId;
+    const n = sticker?.[car];
+    if (typeof n === 'number' && has(owned, `sticker:${car}:${n}`)) out.sticker![car] = n;
+  }
   return { owned, equipped: out };
 }
 
@@ -214,7 +251,8 @@ export function canBuy(p: Profile, id: string, mode: ShopMode = {}): BuyCheck {
   const item = BY_ID.get(id);
   if (!item) return { ok: false, reason: 'unknown' };
   if (has(p.owned, id)) return { ok: false, reason: 'owned' };
-  if (item.kind === 'paint' && !ownsCar(p.owned, item.car!)) return { ok: false, reason: 'locked', need: 'Compre o carro primeiro' };
+  if (item.car && item.kind !== 'car' && !ownsCar(p.owned, item.car))
+    return { ok: false, reason: 'locked', need: 'Compre o carro primeiro' };
   if (mode.admin) return { ok: true, price: 0 };
   const req = unlockOf(id);
   if (req && !meets(p.career, req)) return { ok: false, reason: 'locked', need: requirementText(p.career, req) };
@@ -251,6 +289,18 @@ export function use(p: Profile, id: string): Profile {
     if (has(p.owned, id)) return { ...p, equipped: { ...eq, [a]: { ...eq[a], neon: b as NeonColor } } };
     return p;
   }
+  if (kind === 'finish' && a && a in CARS && b) {
+    const car = a as CarId;
+    if (b === 'normal') return { ...p, equipped: { ...eq, finish: without(eq.finish, car) } };
+    if (has(p.owned, id)) return { ...p, equipped: { ...eq, finish: { ...(eq.finish ?? {}), [car]: b as FinishId } } };
+    return p;
+  }
+  if (kind === 'sticker' && a && a in CARS && b) {
+    const car = a as CarId;
+    if (b === '0') return { ...p, equipped: { ...eq, sticker: without(eq.sticker, car) } };
+    if (has(p.owned, id)) return { ...p, equipped: { ...eq, sticker: { ...(eq.sticker ?? {}), [car]: Number(b) } } };
+    return p;
+  }
   if (kind === 'sound' && a) {
     if ((a === 'police' || a === 'thief') && b === 'padrao') return { ...p, equipped: { ...eq, [a]: { ...eq[a], sound: null } } };
     if (a in SOUNDS && has(p.owned, id)) {
@@ -262,6 +312,9 @@ export function use(p: Profile, id: string): Profile {
   return p;
 }
 
+const without = <T>(o: Partial<Record<CarId, T>> | undefined, car: CarId): Partial<Record<CarId, T>> =>
+  Object.fromEntries(Object.entries(o ?? {}).filter(([k]) => k !== car)) as Partial<Record<CarId, T>>;
+
 /** Is this choice the one in use? (same ids as `use`) */
 export function inUse(p: Profile, id: string): boolean {
   const [kind, a, b] = id.split(':');
@@ -269,6 +322,8 @@ export function inUse(p: Profile, id: string): boolean {
   if (kind === 'car' && a && a in CARS) return eq[CARS[a as CarId].role].car === a;
   if (kind === 'paint' && a) return a in CARS && ownsCar(p.owned, a as CarId) && (eq.paint[a as CarId] ?? 0) === Number(b);
   if (kind === 'neon' && (a === 'police' || a === 'thief')) return (eq[a].neon ?? 'off') === b;
+  if (kind === 'finish' && a) return (eq.finish?.[a as CarId] ?? 'normal') === b;
+  if (kind === 'sticker' && a) return String(eq.sticker?.[a as CarId] ?? 0) === b;
   if (kind === 'sound' && a) {
     if (a === 'police' || a === 'thief') return b === 'padrao' && eq[a].sound === null;
     return a in SOUNDS && eq[SOUNDS[a as SoundId].role].sound === a;
@@ -282,6 +337,8 @@ export function owns(p: Profile, id: string): boolean {
   if (kind === 'car') return a !== undefined && a in CARS && ownsCar(p.owned, a as CarId);
   if (kind === 'paint' && b === '0') return a !== undefined && a in CARS && ownsCar(p.owned, a as CarId); // original colour of an owned car
   if (kind === 'neon' && b === 'off') return true;
+  if ((kind === 'finish' && b === 'normal') || (kind === 'sticker' && b === '0'))
+    return a !== undefined && a in CARS && ownsCar(p.owned, a as CarId); // the plain car
   if (kind === 'sound' && b === 'padrao') return true;
   return has(p.owned, id);
 }
@@ -300,19 +357,36 @@ export interface CarLook {
   neon: number | null;
   plate: string | null;
   sound: SoundId | null;
+  /** V2 part 6: finish (none = normal) and sticker kind ('faixas', 'chamas'...) with the car's mastery level for "número" */
+  finish?: FinishId | null;
+  sticker?: { kind: string; number: number } | null;
 }
 
-export function lookFor(p: Pick<Profile, 'equipped'>, role: Role): CarLook {
+export function lookFor(p: Pick<Profile, 'equipped'> & { career?: Profile['career'] }, role: Role): CarLook {
   const side = p.equipped[role];
-  const info = CARS[side.car];
-  const paintIndex = p.equipped.paint[side.car] ?? 0;
+  return { ...lookOfCar(p, side.car), neon: side.neon ? NEONS[side.neon].color : null, sound: side.sound };
+}
+
+/** The look of one car with its paint, finish and sticker (neon and sound belong to the side: none here). */
+export function lookOfCar(p: Pick<Profile, 'equipped'> & { career?: Profile['career'] }, car: CarId): CarLook {
+  const info = CARS[car];
+  const paintIndex = p.equipped.paint[car] ?? 0;
   return {
-    car: side.car,
+    car,
     paint: info.colors[paintIndex] ?? info.colors[0],
-    neon: side.neon ? NEONS[side.neon].color : null,
+    neon: null,
     plate: p.equipped.plate || null,
-    sound: side.sound,
+    sound: null,
+    finish: p.equipped.finish?.[car] ?? null,
+    sticker: stickerOf(p, car),
   };
+}
+
+function stickerOf(p: Pick<Profile, 'equipped'> & { career?: Profile['career'] }, car: CarId): CarLook['sticker'] {
+  const n = p.equipped.sticker?.[car];
+  if (!n) return null;
+  const kind = STICKERS[CARS[car].role][n - 1];
+  return kind ? { kind, number: Math.max(1, masteryLevel(p.career?.carXp[car] ?? 0)) } : null;
 }
 
 export const defaultLook = (role: Role): CarLook => lookFor({ equipped: defaultEquipped() }, role);

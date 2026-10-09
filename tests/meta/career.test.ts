@@ -311,3 +311,35 @@ describe('bigger daily pool (playtest 2026-10-08)', () => {
     expect(DAILIES.find((d) => d.id === 'kill1')!.side).toBe('thief');
   });
 });
+
+describe('mastery per car (V2 part 6)', () => {
+  it('the coins of a match with a car are its XP; each level up is an event with what it unlocks', () => {
+    let c = { ...emptyCareer(), streak: { last: DAY, days: 1 } };
+    let r = careerAfterMatch(c, match({ car: 'esportivo', coins: 250 }), DAY);
+    expect(r.career.carXp).toEqual({ esportivo: 250 });
+    expect(r.events.filter((e) => e.kind === 'mastery')).toEqual([]);
+    c = r.career;
+    r = careerAfterMatch(c, match({ car: 'esportivo', coins: 600 }), DAY); // 850: levels 2 and 3
+    expect(r.events.filter((e) => e.kind === 'mastery')).toEqual([
+      { kind: 'mastery', car: 'esportivo', level: 2, gained: 600, unlock: 'finish:esportivo:metalico' },
+      { kind: 'mastery', car: 'esportivo', level: 3, gained: 600, unlock: 'sticker:esportivo:1' },
+    ]);
+    expect(careerAfterMatch(c, match({ coins: 600 }), DAY).career.carXp).toEqual({ esportivo: 250 }); // no car: nothing
+  });
+
+  it('finishes and stickers need the level of that car; level 10 waits for Resgatar (the legendary paint)', () => {
+    const c = { ...emptyCareer(), carXp: { esportivo: 900 } };
+    expect(unlockOf('finish:esportivo:metalico')).toEqual({ kind: 'mastery', car: 'esportivo', level: 2 });
+    expect(meets(c, unlockOf('finish:esportivo:metalico')!)).toBe(true);
+    expect(meets(c, unlockOf('finish:esportivo:fosco')!)).toBe(false);
+    expect(requirementText(c, unlockOf('finish:esportivo:fosco')!)).toBe('Maestria 4');
+    expect(meets(c, unlockOf('sticker:seda:1')!)).toBe(false);
+    const top = careerAfterMatch({ ...emptyCareer(), carXp: { seda: 14_900 } }, match({ role: 'thief', car: 'seda', coins: 200 }), DAY);
+    expect(top.career.claims).toContain('mast:seda');
+    expect(meets(top.career, unlockOf('finish:seda:lendaria')!)).toBe(false);
+    expect(requirementText(top.career, unlockOf('finish:seda:lendaria')!)).toBe('Resgate na Carreira');
+    expect(claim(top.career, 'mast:seda').coins).toBe(0);
+    expect(parseCareer(JSON.parse(JSON.stringify(top.career))).claims).toContain('mast:seda');
+    expect(parseCareer({ ...top.career, carXp: { seda: 100 } }).claims).not.toContain('mast:seda'); // tampered
+  });
+});

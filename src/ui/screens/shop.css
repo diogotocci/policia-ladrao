@@ -353,3 +353,50 @@
   text-transform: uppercase;
   vertical-align: middle;
 }
+
+/* V2 part 6: section headings in the list (Cor, Acabamento) and the mastery of the car on the showcase */
+.shop-section {
+  margin: 0.4em 0.2em 0;
+  color: var(--muted);
+  font-size: 0.8em;
+  font-weight: 800;
+}
+.shop-mastery {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  margin: 0 0 0.3em;
+  padding: 0.35em 0.6em;
+  border-radius: 0.7em;
+  background: rgb(0 0 0 / 0.3);
+  font-weight: 700;
+  font-size: 0.85em;
+}
+.shop-mastery[hidden] {
+  display: none;
+}
+.shop-mastery-level {
+  padding: 0.1em 0.5em;
+  border-radius: 0.45em;
+  background: var(--sign);
+  color: var(--sign-ink);
+  white-space: nowrap;
+}
+.shop-mastery-bar {
+  flex: 1;
+  min-width: 4em;
+  height: 0.55em;
+  border-radius: 0.3em;
+  background: #3a3f48;
+  overflow: hidden;
+}
+.shop-mastery-bar > i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--sign), #ffe07a);
+}
+.shop-mastery-xp {
+  color: var(--muted);
+  white-space: nowrap;
+}

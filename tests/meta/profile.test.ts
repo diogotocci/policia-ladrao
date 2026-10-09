@@ -152,3 +152,15 @@ describe('escapes stat in Sobrevivência (playtest 2026-10-09)', () => {
     expect(settleMatch(emptyProfile(), { winner: 'thief', time: 60, reason: 'policeDown' }, 'thief').profile.stats.escapes).toBe(0);
   });
 });
+
+describe('legendary paint (V2 part 6)', () => {
+  it('Resgatar at mastery 10 gives the legendary paint of that car, in use', () => {
+    const p = { ...emptyProfile(), career: { ...emptyProfile().career, carXp: { seda: 15_000 }, claims: ['mast:seda'] } };
+    const r = claimReward(p, 'mast:seda');
+    expect(r.coins).toBe(0);
+    expect(r.profile.owned).toContain('finish:seda:lendaria');
+    expect(r.profile.equipped.finish).toEqual({ seda: 'lendaria' });
+    expect(r.profile.career.claims).toEqual([]);
+    expect(claimReward(r.profile, 'mast:seda').profile).toBe(r.profile); // only once
+  });
+});
