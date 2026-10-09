@@ -66,9 +66,41 @@ function restorePanel(current: Profile, onRestore: (next: Profile) => void): HTM
   return panel;
 }
 
+/** Admin mode (testing): password to turn it on, one button to turn it off. */
+function adminPanel(onAdmin: (password: string) => Promise<boolean>): HTMLElement {
+  const panel = h('form', 'progress-restore progress-admin');
+  const label = h('label', 'progress-label', 'Senha de admin');
+  const input = h('input', 'progress-input');
+  input.id = 'progress-admin';
+  input.type = 'password';
+  input.autocomplete = 'off';
+  label.htmlFor = input.id;
+  const error = h('p', 'progress-error');
+  error.setAttribute('role', 'alert');
+  const enter = h('button', 'screen-btn', 'Entrar');
+  enter.type = 'submit';
+  panel.addEventListener('submit', (e) => {
+    e.preventDefault();
+    enter.disabled = true;
+    void onAdmin(input.value).then((ok) => {
+      enter.disabled = false;
+      if (!ok) error.textContent = 'Senha errada (ou sem conexão).';
+    });
+  });
+  panel.append(label, input, enter, error);
+  return panel;
+}
+
 export function openProgress(
   host: HTMLElement,
-  p: { profile: Profile; persistent: boolean; onRestore(next: Profile): void; onClose(): void },
+  p: {
+    profile: Profile;
+    persistent: boolean;
+    onRestore(next: Profile): void;
+    onClose(): void;
+    /** admin mode (testing): on now, and how to turn it on (true when the password is right) or off */
+    admin?: { on: boolean; enter(password: string): Promise<boolean>; leave(): void };
+  },
 ): void {
   const dialog = h('div', 'progress-dialog');
   const note = p.persistent
@@ -83,11 +115,23 @@ export function openProgress(
     panel.querySelector('textarea')!.focus();
   });
   const actions = h('div', 'progress-actions');
-  actions.append(
-    copy,
-    restore,
-    btn('Fechar', 'is-quiet', () => close()),
-  );
+  actions.append(copy, restore);
+  const admin = p.admin;
+  if (admin?.on) actions.append(btn('Sair do admin', '', () => (admin.leave(), close())));
+  else if (admin) {
+    const open = btn('Admin', '', () => {
+      open.disabled = true;
+      const panel = adminPanel(async (password) => {
+        const ok = await admin.enter(password);
+        if (ok) close();
+        return ok;
+      });
+      actions.after(panel);
+      panel.querySelector('input')!.focus();
+    });
+    actions.append(open);
+  }
+  actions.append(btn('Fechar', 'is-quiet', () => close()));
   dialog.append(h('h2', 'screen-heading', 'Seu progresso'), statsGrid(p.profile), h('p', 'progress-note', note), code, actions);
   const close = openModal(host, dialog, 'Seu progresso', p.onClose);
   copy.focus();

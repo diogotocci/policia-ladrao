@@ -3,7 +3,9 @@ import type * as THREE from 'three';
 import type { CarId } from '../../meta/shop';
 import { buildPolice, buildThief } from '../carFactory';
 import { buildCaveirao } from './caveirao';
-import { buildBlazer, buildEsportivo, buildMoto, buildPicape, buildVan } from './shopCars';
+import { buildMoto } from './moto';
+import { buildBlazer, buildEsportivo, buildPicape } from './shopCars';
+import { buildVan } from './van';
 
 export interface ModelSpec {
   build(root: THREE.Group, body: THREE.Group): void;
@@ -32,7 +34,8 @@ export const MODELS: Record<CarId, ModelSpec> = {
     plate: { y: 0.56, z: 2.4, w: 0.5 },
     neon: { w: 2.2, l: 4.8 },
   },
-  blazer: { build: buildBlazer, camLift: 0.25, gunner: [0.9, 0.98, -0.2], plate: { y: 0.71, z: 2.45, w: 0.5 }, neon: { w: 2.1, l: 4.9 } },
+  // playtest 2026-10-09: a pickup with a closed bed, as tall as the Picape
+  blazer: { build: buildBlazer, camLift: 0, gunner: [0.88, 0.9, -0.1], plate: { y: 0.62, z: 2.35, w: 0.5 }, neon: { w: 2.1, l: 4.8 } },
   // playtest 2026-10-08: drawn 12% smaller, camera further back, the gunner at the passenger window (not on the roof)
   caveirao: {
     build: buildCaveirao,

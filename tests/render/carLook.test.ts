@@ -127,3 +127,21 @@ describe('thief items on shop cars', () => {
     expect(disposed).toBe(false);
   });
 });
+
+describe('Blazer (playtest 2026-10-09)', () => {
+  it('is a pickup with a closed bed: as tall as the Picape (lightbar apart), well below the Caveirão', () => {
+    const roof = (car: CarLook['car'], role: 'police' | 'thief') => {
+      const m = createLookModel(role, look(car));
+      m.updateMatrixWorld(true);
+      const shell = new THREE.Box3();
+      for (const name of ['shell', 'greenhouse', 'roof']) {
+        const o = m.getObjectByName(name);
+        if (o) shell.expandByObject(o);
+      }
+      return shell.max.y;
+    };
+    const blazer = roof('blazer', 'police');
+    expect(Math.abs(blazer - roof('picape', 'thief'))).toBeLessThan(0.1);
+    expect(blazer).toBeLessThan(roof('caveirao', 'police') - 0.4);
+  });
+});

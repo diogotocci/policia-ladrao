@@ -48,7 +48,8 @@ export function addEvents(stats: MatchStats, events: readonly GameEvent[], playe
     } else if (e.type === 'mystery' && e.role === player) {
       out.mysteryBoxes++;
       out.boxes++;
-    } else if (e.type === 'shot' && e.from === player && !e.air) out.shots++;
+    } else if (e.type === 'mysteryBusy' && e.role === player) out.boxes++;
+    else if (e.type === 'shot' && e.from === player && !e.air) out.shots++;
     else if (e.type === 'special' && e.role === 'police' && e.kind === 'roadblock' && player === 'police') out.roadblocks++;
     else if (e.type === 'explosion' && player === 'thief') out.bombHits++; // a bomb only explodes when it hits the police
   }

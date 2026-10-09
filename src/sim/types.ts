@@ -121,6 +121,8 @@ export type GameEvent =
   | { type: 'tirePop'; role: Role; s: number; x: number }
   | { type: 'mystery'; role: Role; outcome: MysteryOutcome; s: number; x: number }
   | { type: 'mysteryReveal'; role: Role; outcome: MysteryOutcome }
+  /** a yellow box taken while the roulette still spins: gone, nothing more (it still counts as a box picked) */
+  | { type: 'mysteryBusy'; role: Role }
   | { type: 'roadblockHit'; s: number; x: number }
   | { type: 'roadblockNoRoom' }
   | { type: 'policeItem'; item: 'machineGun' | 'wingman' }

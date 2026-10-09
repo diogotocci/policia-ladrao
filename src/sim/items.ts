@@ -169,7 +169,10 @@ export function stepBoxes(w: WorldState): WorldState {
     const box = boxes[idx]!;
     boxes = boxes.filter((_, i) => i !== idx);
     if (box.color === 'yellow') {
-      if (car.mystery) return car; // one roulette at a time: the box is gone, nothing more
+      if (car.mystery) {
+        events.push({ type: 'mysteryBusy', role: car.role }); // one roulette at a time: the box is gone, nothing more
+        return car;
+      }
       const picked = pickMystery(car, w, rng);
       events.push({ type: 'mystery', role: car.role, outcome: picked.mystery!.outcome, s: box.s, x: box.x });
       return picked;

@@ -85,6 +85,19 @@ describe('yellow "?" box (both modes)', () => {
     expect(applyBad(car, 'mud', 2).effects.mudUntil).toBe(2 + M.mud.time);
   });
 
+  it('a second yellow box while the roulette spins is gone with no new roulette, but is reported (counts as a box picked)', () => {
+    let w = { ...createWorld({ seed: 4, playerRole: 'police', traffic: false, curves: false }), nextBoxAt: 1e9 };
+    const p = policeOf(w);
+    const spinning = { at: 99, outcome: { good: false, effect: 'double' } } as const;
+    w = withCar(w, 'police', { ...p, mystery: spinning });
+    w = { ...w, boxes: [{ id: 1, s: p.s + 1, x: p.x, color: 'yellow' }] };
+    w = stepWorld(w, NO_INTENTS, DT);
+    expect(w.boxes).toHaveLength(0);
+    expect(w.events.filter((e) => e.type === 'mystery')).toHaveLength(0);
+    expect(w.events).toContainEqual({ type: 'mysteryBusy', role: 'police' });
+    expect(policeOf(w).mystery).toEqual(spinning);
+  });
+
   it('end scenes cancel a roulette still spinning', () => {
     let w = { ...createWorld({ seed: 4, playerRole: 'police', traffic: false, curves: false }), nextBoxAt: 1e9 };
     const t = thiefOf(w);

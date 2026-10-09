@@ -1,33 +1,33 @@
 import * as THREE from 'three';
-import { BALANCE, type Difficulty, type Mode, type Role } from './config/balance';
-import { createAudioSession, type AudioSession } from './audio/session';
+import { BALANCE, type Role } from './config/balance';
+import { createAudioSession } from './audio/session';
 import { createDebug } from './debug';
+import type { GameHandle, GameOptions } from './gameTypes';
 import { createKeyboardInput } from './input/keyboard';
 import { createTouchButtons } from './input/touchButtons';
 import { createChaseCamera } from './render/cameras';
 import { createLookModel } from './render/carLook';
-import type { CarLook } from './meta/shop';
 import { createCombatFx } from './render/combatFx';
 import { applyDamage, damageLook } from './render/damageView';
 import { attachGunner, flashGunner, updateGunner } from './render/gunner';
 import { createHeli } from './render/heli';
 import { createParticles } from './render/particles';
+import { createCarSmoke } from './render/carSmoke';
 import { createOpponentMarker } from './render/opponentMarker';
 import { createRearview, isBehind, rearviewRect } from './render/rearview';
 import { createWorldProps } from './render/worldProps';
 import { updateCarModel } from './render/carFactory';
-import { createQualityGovernor, createRenderer, type QualityTier } from './render/renderer';
+import { createQualityGovernor, createRenderer } from './render/renderer';
 import { createLighting } from './render/scene';
 import { createRoad, renderOrigin } from './render/roadChunks';
 import { createTrackFrame, setActiveTrackFrame, trackPos } from './render/trackFrame';
 import { hpPct, type CarState } from './sim/car';
 import { FixedStepper } from './sim/fixedStepper';
 import type { Intents } from './sim/intents';
-import { addEvents, emptyStats, type MatchStats } from './meta/rewards';
-import { createWorld, stepWorld, type GameEvent, type ItemId, type WorldState } from './sim/world';
+import { addEvents, emptyStats } from './meta/rewards';
+import { createWorld, stepWorld, type GameEvent, type WorldState } from './sim/world';
 import { feedbackForFrame } from './ui/feedback';
-import { ICONS } from './ui/icons';
-import { onTap } from './ui/mobileShell';
+import { buzz, createGameChrome, createPauseButton } from './ui/gameChrome';
 import { createHud, pickupToast } from './ui/hud';
 import { createItemsFx, INSTANT_POLICE } from './itemsFx';
 
@@ -46,59 +46,7 @@ const anyOf = (a: Intents, b: Intents): Intents => ({
   bomb: a.bomb || b.bomb,
 });
 
-export interface GameHandle {
-  pause(): void;
-  resume(): void;
-  isPaused(): boolean;
-  stop(): void;
-}
-
-export function startGame(
-  container: HTMLElement,
-  opts: {
-    role: Role;
-    seed: number;
-    debug: boolean;
-    quality?: QualityTier;
-    debugHp?: { police?: number; thief?: number };
-    debugGive?: ItemId[];
-    traffic?: boolean;
-    /** curves (Delivery 6); false = straight road (?curves=0) */
-    curves?: boolean;
-    /** shorter escape time (debug/e2e only: ?escape=N) */
-    escapeTime?: number;
-    /** V2 part 2: Fácil / Médio / Difícil (default Médio) */
-    difficulty?: Difficulty;
-    /** V2 part 3: Perseguição (default) / Sobrevivência; chaosEvery only in debug */
-    mode?: Mode;
-    chaosEvery?: number;
-    /** V2 part 4: the player's car from the shop (visual and sound only); default car without it */
-    look?: CarLook;
-    /** the computer's car (random in the app); default car without it (debug/e2e) */
-    opponentLook?: CarLook;
-    /** debug/e2e only: share of yellow boxes (?mystery=1) */
-    mysteryShare?: number;
-    /** starts muted (?mute), without touching the saved preference */
-    mute?: boolean;
-    /** app audio session (without it the game creates its own) */
-    audio?: AudioSession;
-    /** starts frozen (3-2-1 countdown); the app calls resume() at the start */
-    startPaused?: boolean;
-    /** the app decides what the pause shows; without it the game pauses/resumes by itself (Esc/P/⏸) */
-    onPauseRequest?: () => void;
-    /** match end (the app shows the end screen; without it the HUD shows the end card) */
-    onEnd?: (result: {
-      winner: Role;
-      time: number;
-      reason?: 'escape' | 'policeDown' | 'thiefDown';
-      hp: number;
-      /** player's life left, 0..1 (career: escape with more than 80%) */
-      hpFrac?: number;
-      level: number;
-      stats: MatchStats;
-    }) => void;
-  },
-): GameHandle {
+export function startGame(container: HTMLElement, opts: GameOptions): GameHandle {
   const view = createRenderer(container, opts.quality ?? 'high');
   const { renderer } = view;
   renderer.info.autoReset = false;
@@ -130,25 +78,8 @@ export function startGame(
   const fx = createCombatFx(scene);
   const particles = createParticles(scene);
   particles.setQuality(view.quality);
-  // continuous smoke/spark emission from damaged cars (per-car accumulators)
-  const emitAcc: Record<Role, { smoke: number; spark: number; skid: number; side: number; wreck: number }> = {
-    police: { smoke: 0, spark: 0, skid: 0, side: 1, wreck: 0 },
-    thief: { smoke: 0, spark: 0, skid: 0, side: 1, wreck: 0 },
-  };
+  const smoke = createCarSmoke(particles, fx);
   let clock = 0; // render clock (muzzle flash)
-  const damageFx = (c: CarState, dt: number) => {
-    const look = damageLook(hpPct(c));
-    const acc = emitAcc[c.role];
-    if (look.whiteSmoke || look.blackSmoke) {
-      acc.smoke += dt * (look.blackSmoke ? 20 : 12) * particles.emissionScale();
-      for (; acc.smoke >= 1; acc.smoke--) particles.emitSmoke(c.x, 1.0, c.s + 1.9, look.blackSmoke ? 'black' : 'white');
-    }
-    if (look.sparks) {
-      acc.spark += dt * 3;
-      for (; acc.spark >= 1; acc.spark--) fx.sparkAt(c.s + 1.6, c.x);
-    }
-    return look;
-  };
   const marker = createOpponentMarker(scene, opponentRole);
   const rearview = createRearview();
   rearview.setQuality(view.quality);
@@ -181,29 +112,7 @@ export function startGame(
   container.append(ui);
   const keyboard = createKeyboardInput(window);
   const touch = createTouchButtons(ui, { role: opts.role });
-  // upright window on a computer (on phones the game rotates by itself — styles.css): asks to rotate
-  const hint = document.createElement('div');
-  hint.className = 'rotate-hint';
-  hint.textContent = 'Deixe a tela deitada';
-  hint.hidden = true;
-  ui.append(hint);
-  const flashEl = document.createElement('div');
-  flashEl.className = 'damage-flash';
-  ui.append(flashEl);
-  const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
-  /** red border for 0.25 s (weaker with reduced motion) */
-  const flash = (amount: number) => {
-    const a = reducedMotion ? amount * 0.5 : amount;
-    if (typeof flashEl.animate === 'function') flashEl.animate([{ opacity: a }, { opacity: 0 }], { duration: 250, easing: 'ease-out' });
-    else {
-      flashEl.style.opacity = String(a);
-      setTimeout(() => (flashEl.style.opacity = '0'), 250);
-    }
-  };
-  const mirrorFrame = document.createElement('div');
-  mirrorFrame.className = 'rearview-frame';
-  mirrorFrame.hidden = true;
-  ui.append(mirrorFrame);
+  const { hint, flash, mirrorFrame } = createGameChrome(ui);
   // without the app (debug/e2e): "Jogar de novo" restarts right here, without reloading the page (no network in between)
   const hud = createHud(ui, opts.role, {
     showEnd: !opts.onEnd,
@@ -242,19 +151,12 @@ export function startGame(
   mixer.setLook(opts.role, opts.look?.sound ?? null, opts.opponentLook?.sound ?? null);
   const hudCenter = (ui.querySelector('.hud-center') as HTMLElement | null) ?? ui;
   const soundToggle = audioSession.mountToggle(hudCenter);
-  const pauseBtn = document.createElement('button');
-  pauseBtn.type = 'button';
-  pauseBtn.className = 'pause-toggle';
-  pauseBtn.innerHTML = ICONS.pause;
-  pauseBtn.setAttribute('aria-label', 'Pausar');
   // on touch (not click): right after releasing an arrow the click could be swallowed (pause hard to press)
-  onTap(pauseBtn, () => {
-    pauseBtn.blur();
+  const pauseBtn = createPauseButton(hudCenter, () => {
     if (paused && !opts.onPauseRequest)
       setPaused(false); // without the app: the same button resumes
     else requestPause();
   });
-  hudCenter.append(pauseBtn);
   let fireVisible = false;
   const syncFireButton = () => {
     const me = world.player;
@@ -264,16 +166,6 @@ export function startGame(
     }
     if (me.role === 'thief') {
       touch.setLocked('fire', me.speed < BALANCE.combat.thiefMinSpeedToFire);
-    }
-  };
-  const buzz = (ms: number) => {
-    // the browser blocks vibration (and complains in the console) before the user's first touch/key
-    const activation = (navigator as Navigator & { userActivation?: { hasBeenActive: boolean } }).userActivation;
-    if (activation && !activation.hasBeenActive) return;
-    try {
-      navigator.vibrate?.(ms);
-    } catch {
-      /* no vibration */
     }
   };
   const onEvents = (events: GameEvent[]) => {
@@ -374,8 +266,8 @@ export function startGame(
     const foe = frozen ? world.opponent : lerpCar(prev.opponent, world.opponent, alpha);
     updateCarModel(opponentModel, foe, world.time, origin);
     clock += dt;
-    applyDamage(model, frozen ? damageLook(hpPct(car)) : damageFx(car, dt), world.time);
-    applyDamage(opponentModel, frozen ? damageLook(hpPct(foe)) : damageFx(foe, dt), world.time);
+    applyDamage(model, frozen ? damageLook(hpPct(car)) : smoke.damage(car, dt), world.time);
+    applyDamage(opponentModel, frozen ? damageLook(hpPct(foe)) : smoke.damage(foe, dt), world.time);
     updateGunner(gunners[car.role], car, foe, clock);
     updateGunner(gunners[foe.role], foe, car, clock);
     marker.update(foe, Math.abs(foe.s - car.s), origin);
@@ -396,20 +288,9 @@ export function startGame(
         : world.match.escapeAt !== undefined && world.match.reason === 'policeDown'
           ? 'police'
           : undefined;
-    if (wreckRole && !frozen) {
-      const wc = car.role === wreckRole ? car : foe;
-      const acc = emitAcc[wreckRole];
-      acc.wreck += dt * 28 * particles.emissionScale();
-      for (; acc.wreck >= 1; acc.wreck--) particles.emitSmoke(wc.x + (acc.side = -acc.side) * 0.5, 1.1, wc.s + 1.6, 'black');
-    }
+    if (wreckRole && !frozen) smoke.wreck(car.role === wreckRole ? car : foe, dt);
     // tire squeal: white smoke from the rear wheels while skidding
-    for (let k = 0; k < 2 && !frozen; k++) {
-      const c = k === 0 ? car : foe;
-      if (!c.skidding) continue;
-      const acc = emitAcc[c.role];
-      acc.skid += dt * 26 * particles.emissionScale();
-      for (; acc.skid >= 1; acc.skid--) particles.emitSmoke(c.x + (acc.side = -acc.side) * 0.8, 0.25, c.s - 1.5, 'white');
-    }
+    if (!frozen) for (const c of [car, foe]) if (c.skidding) smoke.skid(c, dt);
     props.update(world, origin, world.time, frozen ? undefined : prev, alpha);
     itemsFx.frame(world, car, foe, frameEvents, origin, dt, frozen);
     fx.update(world, frameEvents, origin, dt);
