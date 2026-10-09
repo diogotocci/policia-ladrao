@@ -117,12 +117,17 @@
   gap: 4px;
   overflow-x: auto;
   flex: none;
+  scrollbar-width: none; /* 6 tabs do not fit on a phone: they scroll sideways (playtest 2026-10-09: they overlapped) */
+}
+.shop-tabs::-webkit-scrollbar {
+  display: none;
 }
 .shop-tab.screen-btn {
+  flex: none;
   min-width: 0;
   min-height: 38px;
-  padding: 0 12px;
-  font-size: 14px;
+  padding: 0 8px;
+  font-size: 13px;
   border-radius: 10px;
 }
 .shop-tab.is-on {

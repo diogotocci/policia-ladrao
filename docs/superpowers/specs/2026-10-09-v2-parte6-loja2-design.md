@@ -67,6 +67,14 @@ Preços seguem a Parte 5 (~3x). Tudo bloqueado mostra o que falta, como hoje.
 - 1.200 moedas cada. Valem para todos os carros do ladrão; a moto só mostra a antena e o escapamento.
 - Liberados por conquistas novas do ladrão: "Fuja 30 vezes" (aerofólio), "Pegue 100 caixas" (rack), "Destrua a viatura 25 vezes" (antena) e "Sobreviva 5 min no Sobrevivência" (escapamento).
 
+### 3.6 Onde vai cada adesivo (playtest 2026-10-09)
+
+Os adesivos são posicionados carro a carro (`src/render/stickers.ts`), nunca em cima dos grafismos do próprio carro:
+
+- **Polícia** (as laterais já têm POLÍCIA e faixas): tudo em cima. Faixas no capô, teto e porta-malas; brasão no capô (na Viatura, sobre o painel azul; no Caveirão, no teto, longe do símbolo da lateral); número no teto, atrás do giroflex, lido pela câmera de trás; xadrez na frente do capô e na traseira.
+- **Ladrão**: Sedã (já tem a faixa no teto), Picape e Van nas laterais: faixas acima das rodas, chamas saindo do para-lama da frente, número na porta, caveira na lateral (Sedã), no capô (Picape) ou no teto (Van). Moto: no tanque e na rabeta.
+- As faixas mudam de cor para aparecer: escuras num carro claro, brancas num escuro.
+
 ## 4. Carros novos
 
 | Lado | Carro | Preço | Libera |
