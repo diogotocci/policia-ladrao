@@ -128,20 +128,26 @@ describe('thief items on shop cars', () => {
   });
 });
 
-describe('Blazer (playtest 2026-10-09)', () => {
-  it('is a pickup with a closed bed: as tall as the Picape (lightbar apart), well below the Caveirão', () => {
-    const roof = (car: CarLook['car'], role: 'police' | 'thief') => {
-      const m = createLookModel(role, look(car));
-      m.updateMatrixWorld(true);
-      const shell = new THREE.Box3();
-      for (const name of ['shell', 'greenhouse', 'roof']) {
-        const o = m.getObjectByName(name);
-        if (o) shell.expandByObject(o);
-      }
-      return shell.max.y;
-    };
+describe('car heights (playtest 2026-10-09)', () => {
+  const roof = (car: CarLook['car'], role: 'police' | 'thief') => {
+    const m = createLookModel(role, look(car));
+    m.updateMatrixWorld(true);
+    const shell = new THREE.Box3();
+    for (const name of ['shell', 'greenhouse', 'roof']) {
+      const o = m.getObjectByName(name);
+      if (o) shell.expandByObject(o);
+    }
+    return shell.max.y;
+  };
+  it('Blazer: a pickup with a closed bed, as tall as the Picape (lightbar apart), well below the Caveirão', () => {
     const blazer = roof('blazer', 'police');
     expect(Math.abs(blazer - roof('picape', 'thief'))).toBeLessThan(0.1);
     expect(blazer).toBeLessThan(roof('caveirao', 'police') - 0.4);
+  });
+
+  it('Van: taller than the Picape, smaller than the Caveirão', () => {
+    const van = roof('van', 'thief');
+    expect(van).toBeGreaterThan(roof('picape', 'thief') + 0.1);
+    expect(van).toBeLessThan(roof('caveirao', 'police') - 0.2);
   });
 });

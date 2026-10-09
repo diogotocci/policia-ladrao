@@ -65,10 +65,11 @@ export const MODELS: Record<CarId, ModelSpec> = {
     neon: { w: 0.9, l: 2.2 },
     scale: 1.15,
   },
+  // playtest 2026-10-09: lower roof (taller than the Picape, smaller than the Caveirão)
   van: {
     build: buildVan,
-    camLift: 0.2,
-    camBack: 0.6,
+    camLift: 0.1,
+    camBack: 0.3,
     gunner: [0.92, 1.0, 0.4],
     plate: { y: 0.78, z: 2.58, w: 0.5 },
     neon: { w: 2.1, l: 5.0 },

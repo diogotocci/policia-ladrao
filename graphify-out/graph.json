@@ -410,7 +410,7 @@
       "label": "intents()",
       "file_type": "code",
       "source_file": "e2e/foundation.spec.ts",
-      "source_location": "L181",
+      "source_location": "L182",
       "_callable": true,
       "_origin": "ast",
       "id": "e2e_foundation_spec_intents",
@@ -436,8 +436,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "e2e_screens_spec",
-      "community": 49,
-      "community_name": "backup.ts",
+      "community": 83,
+      "community_name": "profile.ts",
       "norm_label": "screens.spec.ts"
     },
     {
@@ -449,8 +449,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "e2e_screens_spec_g",
-      "community": 49,
-      "community_name": "backup.ts",
+      "community": 83,
+      "community_name": "profile.ts",
       "norm_label": "g"
     },
     {
@@ -461,8 +461,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "e2e_screens_spec_simtime",
-      "community": 49,
-      "community_name": "backup.ts",
+      "community": 83,
+      "community_name": "profile.ts",
       "norm_label": "simtime()"
     },
     {
@@ -472,8 +472,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "e2e_screens_spec_errors",
-      "community": 49,
-      "community_name": "backup.ts",
+      "community": 83,
+      "community_name": "profile.ts",
       "norm_label": "errors"
     },
     {
@@ -484,8 +484,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "e2e_screens_spec_startas",
-      "community": 49,
-      "community_name": "backup.ts",
+      "community": 83,
+      "community_name": "profile.ts",
       "norm_label": "startas()"
     },
     {
@@ -495,8 +495,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "e2e_shop_spec",
-      "community": 58,
-      "community_name": "ui/shop.test.ts",
+      "community": 83,
+      "community_name": "profile.ts",
       "norm_label": "shop.spec.ts"
     },
     {
@@ -506,8 +506,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "e2e_shop_spec_errors",
-      "community": 58,
-      "community_name": "ui/shop.test.ts",
+      "community": 83,
+      "community_name": "profile.ts",
       "norm_label": "errors"
     },
     {
@@ -3819,8 +3819,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_profile_emptyprofile",
-      "community": 58,
-      "community_name": "ui/shop.test.ts",
+      "community": 83,
+      "community_name": "profile.ts",
       "norm_label": "emptyprofile()"
     },
     {
@@ -4393,8 +4393,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shop_inuse",
-      "community": 50,
-      "community_name": "meta/shop.ts",
+      "community": 58,
+      "community_name": "ui/shop.test.ts",
       "norm_label": "inuse()"
     },
     {
@@ -12537,8 +12537,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_gunner_test",
-      "community": 35,
-      "community_name": "createCar",
+      "community": 51,
+      "community_name": "gunner.ts",
       "norm_label": "gunner.test.ts"
     },
     {
@@ -12549,8 +12549,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_gunner_test_setup",
-      "community": 35,
-      "community_name": "createCar",
+      "community": 51,
+      "community_name": "gunner.ts",
       "norm_label": "setup()"
     },
     {
@@ -12561,8 +12561,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_gunner_test_aimx",
-      "community": 35,
-      "community_name": "createCar",
+      "community": 51,
+      "community_name": "gunner.ts",
       "norm_label": "aimx()"
     },
     {
@@ -12573,8 +12573,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_gunner_test_visiblemeshes",
-      "community": 35,
-      "community_name": "createCar",
+      "community": 51,
+      "community_name": "gunner.ts",
       "norm_label": "visiblemeshes()"
     },
     {
@@ -18397,7 +18397,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "e2e/foundation.spec.ts",
-      "source_location": "L181",
+      "source_location": "L182",
       "weight": 1.0,
       "_origin": "ast",
       "source": "e2e_foundation_spec",
@@ -39078,7 +39078,7 @@
       "context": "collection",
       "confidence": "INFERRED",
       "source_file": "src/render/models/index.ts",
-      "source_location": "L69",
+      "source_location": "L70",
       "weight": 1.0,
       "_origin": "ast",
       "confidence_score": 0.8,
@@ -39667,7 +39667,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/van.ts",
-      "source_location": "L65",
+      "source_location": "L66",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_van_buildvan",
@@ -39799,7 +39799,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/van.ts",
-      "source_location": "L84",
+      "source_location": "L85",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_van_buildvan",
@@ -40003,7 +40003,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/van.ts",
-      "source_location": "L68",
+      "source_location": "L69",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_van_buildvan",
@@ -40171,7 +40171,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/van.ts",
-      "source_location": "L71",
+      "source_location": "L72",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_van_buildvan",
@@ -40351,7 +40351,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/van.ts",
-      "source_location": "L47",
+      "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_van_buildvan",
@@ -40495,7 +40495,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/van.ts",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_van_buildvan",
@@ -40567,7 +40567,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/van.ts",
-      "source_location": "L32",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_van_buildvan",
@@ -40663,7 +40663,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/van.ts",
-      "source_location": "L111",
+      "source_location": "L112",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_van_buildvan",
@@ -40987,7 +40987,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/van.ts",
-      "source_location": "L48",
+      "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_van_buildvan",
@@ -41143,7 +41143,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/van.ts",
-      "source_location": "L111",
+      "source_location": "L112",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_van_buildvan",
@@ -41359,7 +41359,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/render/models/van.ts",
-      "source_location": "L110",
+      "source_location": "L111",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_render_models_van_buildvan",
@@ -67667,5 +67667,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "f384a963d1d40e3ead22e1698058dcf5dc288495"
+  "built_at_commit": "ce19d1d0080039e25d8893c777c5d20c70249583"
 }

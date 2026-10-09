@@ -112,14 +112,14 @@ Uma partida rende ~75 moedas na Perseguição e ~120 no Sobrevivência.
   | Carro | Câmera sobe | Câmera recua |
   |---|---|---|
   | Caveirão | +0,35 m | +1,5 m |
-  | Van | +0,2 m | +0,6 m |
+  | Van | +0,1 m | +0,3 m |
   | Demais | 0 | 0 |
 
 - **Blazer** (playtest 2026-10-09): picape cabine dupla com a caçamba fechada por uma capota, da mesma altura da Picape do ladrão (antes estava do tamanho do Caveirão). A câmera não sobe mais.
 - **Caveirão** (playtest 2026-10-08): desenhado 12% menor. O atirador fica na janela do carona, não em cima do teto.
 - **Atirador:** a posição dele é definida por carro.
 - **Moto:** fica 15% maior que o tamanho real, para ser vista na pista. A área de batida continua a de um carro. O carona é o atirador desde o começo da partida: sem arma, só vai na garupa; com arma, atira. Não existe uma segunda figura para trocar de lugar.
-- **Van** (playtest 2026-10-08, fotos de referência): van de teto alto, comprida e lisa, não blindada. Tem nariz curto inclinado, janelas só na cabine, faixa cinza embaixo e portas traseiras sem janela, com lanternas altas nos cantos. Fica menor que o Caveirão.
+- **Van** (playtest 2026-10-08, fotos de referência): van de teto alto, comprida e lisa, não blindada. Tem nariz curto inclinado, janelas só na cabine, faixa cinza embaixo e portas traseiras sem janela, com lanternas altas nos cantos. Fica menor que o Caveirão. Playtest 2026-10-09: teto baixado para 1,75 m, mais alta que a Picape e menor que o Caveirão.
 - **Roda:** gira conforme o raio de cada carro (`userData.r`).
 - **Placas de titânio** (item do ladrão): todos os carros do ladrão têm as três placas, com os mesmos nomes do Sedã.
 
