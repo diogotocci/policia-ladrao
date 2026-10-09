@@ -1,7 +1,7 @@
 # Graph Report - policia-ladrao  (2026-10-09)
 
 ## Corpus Check
-- 235 files · ~174,968 words
+- 235 files · ~175,057 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f384a963`
+- Built from commit: `ce19d1d0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -132,16 +132,16 @@
   src/ui/feedback.ts → tests/storage/ranking.test.ts
 
 ## Import Cycles
-- 3-file cycle: `src/sim/chaos.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/chaos.ts`
-- 3-file cycle: `src/sim/car.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/car.ts`
 - 3-file cycle: `src/sim/types.ts -> src/sim/works.ts -> src/sim/world.ts -> src/sim/types.ts`
-- 4-file cycle: `src/sim/car.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/chaos.ts -> src/sim/car.ts`
-- 4-file cycle: `src/sim/chaos.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/world.ts -> src/sim/chaos.ts`
-- 4-file cycle: `src/sim/car.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/track.ts -> src/sim/car.ts`
+- 3-file cycle: `src/sim/car.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/car.ts`
+- 3-file cycle: `src/sim/chaos.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/chaos.ts`
 - 4-file cycle: `src/sim/car.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/world.ts -> src/sim/car.ts`
+- 4-file cycle: `src/sim/chaos.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/world.ts -> src/sim/chaos.ts`
+- 4-file cycle: `src/sim/car.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/chaos.ts -> src/sim/car.ts`
+- 4-file cycle: `src/sim/car.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/track.ts -> src/sim/car.ts`
 - 5-file cycle: `src/sim/car.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/world.ts -> src/sim/chaos.ts -> src/sim/car.ts`
-- 5-file cycle: `src/sim/car.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/curves.ts -> src/sim/track.ts -> src/sim/car.ts`
 - 5-file cycle: `src/sim/car.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/world.ts -> src/sim/track.ts -> src/sim/car.ts`
+- 5-file cycle: `src/sim/car.ts -> src/sim/types.ts -> src/sim/works.ts -> src/sim/curves.ts -> src/sim/track.ts -> src/sim/car.ts`
 
 ## Communities (95 total, 17 thin omitted)
 
@@ -282,8 +282,8 @@ Cohesion: 0.29
 Nodes (6): buildCommand, framework, headers, installCommand, outputDirectory, $schema
 
 ### Community 35 - "createCar"
-Cohesion: 0.14
-Nodes (14): createItemsFx(), itemToast(), createCarModel(), blockSign(), createSpecialsView(), nailsGeometry(), baseUpgrades(), createCar() (+6 more)
+Cohesion: 0.18
+Nodes (13): createItemsFx(), itemToast(), createCarModel(), blockSign(), createSpecialsView(), nailsGeometry(), baseUpgrades(), createCar() (+5 more)
 
 ### Community 36 - "Pendente"
 Cohesion: 0.29
@@ -318,16 +318,16 @@ Cohesion: 0.38
 Nodes (8): applyPoliceItem(), freeSpot(), laneIndex(), placeRoadblock(), roadblockLanes(), strongAt(), usePoliceSpecial(), PRESS
 
 ### Community 49 - "backup.ts"
-Cohesion: 0.11
-Nodes (23): RFC-4648, errors, G, at(), BACKUP_ERROR_TEXT, BackupError, BackupResult, blocks() (+15 more)
+Cohesion: 0.14
+Nodes (21): RFC-4648, at(), BACKUP_ERROR_TEXT, BackupError, BackupResult, blocks(), crc32(), CRC_TABLE (+13 more)
 
 ### Community 50 - "meta/shop.ts"
 Cohesion: 0.10
-Nodes (29): BuyCheck, BY_ID, canBuy(), CarId, CarInfo, carsOf(), DEFAULT_CAR, DEFAULT_SOUND_NAME (+21 more)
+Nodes (28): BuyCheck, BY_ID, canBuy(), CarId, CarInfo, carsOf(), DEFAULT_CAR, DEFAULT_SOUND_NAME (+20 more)
 
 ### Community 51 - "gunner.ts"
-Cohesion: 0.14
-Nodes (21): CARS, defaultLook(), updateCarModel(), createLookModel(), disposeLookModel(), glowTexture(), plateTexture(), createCarPreview() (+13 more)
+Cohesion: 0.12
+Nodes (22): CARS, defaultLook(), updateCarModel(), createLookModel(), disposeLookModel(), glowTexture(), plateTexture(), createCarPreview() (+14 more)
 
 ### Community 52 - "hud.ts"
 Cohesion: 0.14
@@ -343,7 +343,7 @@ Nodes (11): computeRenderSize(), createQualityGovernor(), createRenderer(), ORDE
 
 ### Community 58 - "ui/shop.test.ts"
 Cohesion: 0.19
-Nodes (13): errors, profileActions(), emptyCareer(), emptyCounters(), emptyProfile(), buy(), normalizePlate(), setPlate() (+5 more)
+Nodes (12): profileActions(), emptyCareer(), emptyCounters(), buy(), inUse(), normalizePlate(), setPlate(), use() (+4 more)
 
 ### Community 59 - "car.ts"
 Cohesion: 0.15
@@ -414,8 +414,8 @@ Cohesion: 0.20
 Nodes (9): 1. Objetivo, 2. Catálogo e preços, 3. Regras, 4. Visual dos carros, 5. Perfil e backup, 6. Loja (layout A, "garagem"), 7. Testes, Modo admin (playtest 2026-10-09) (+1 more)
 
 ### Community 83 - "profile.ts"
-Cohesion: 0.15
-Nodes (16): careerFromStats(), applyMatch(), claimReward(), isCount(), isObject(), parseProfile(), PROFILE_VERSION, ProfileStats (+8 more)
+Cohesion: 0.11
+Nodes (20): errors, G, errors, careerFromStats(), applyMatch(), claimReward(), emptyProfile(), isCount() (+12 more)
 
 ### Community 84 - "session.ts"
 Cohesion: 0.23
