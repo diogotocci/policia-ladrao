@@ -3,6 +3,7 @@
 // earned and what to show on the end screen. Rewards are coins and shop unlocks (meta/shop.ts asks unlockOf here).
 import type { Role } from '../config/balance';
 import { DAILY_COINS, arrested, dailiesFor, escaped, type MatchSummary } from './dailies';
+import { MASTERY_CARS, MASTERY_MAX, masteryLevel, masteryLevelFor, rewardId } from './mastery';
 
 // ---------- ranks ----------
 export const RANK_XP = [0, 300, 900, 2000, 4000, 7000, 12000] as const;
@@ -111,6 +112,8 @@ export interface Career {
    * `rank:<side>:<2..7>`. Their coins (and what they unlock in the shop) come only when claimed.
    */
   claims: string[];
+  /** V2 part 6: mastery XP per car (the coins of the matches played with it) */
+  carXp: Partial<Record<string, number>>;
 }
 
 export const emptyCareer = (): Career => ({
@@ -120,6 +123,7 @@ export const emptyCareer = (): Career => ({
   daily: { date: '', progress: [0, 0, 0] },
   streak: { last: '', days: 0 },
   claims: [],
+  carXp: {},
 });
 
 /** Today's progress (a new day starts at zero). */
@@ -133,7 +137,9 @@ export type CareerEvent =
   | { kind: 'xp'; side: Role; gained: number; xp: number }
   | { kind: 'rank'; side: Role; rank: number; coins: number }
   | { kind: 'daily'; title: string; coins: number }
-  | { kind: 'achievement'; title: string; unlock?: string; coins: number };
+  | { kind: 'achievement'; title: string; unlock?: string; coins: number }
+  /** V2 part 6: the car of the match went up a mastery level; `unlock` is the shop id it frees */
+  | { kind: 'mastery'; car: string; level: number; gained: number; unlock: string | null };
 
 /** Credits one finished match: XP, counters, challenges, achievements and the streak. */
 export function careerAfterMatch(c: Career, m: MatchSummary, today: string): { career: Career; coins: number; events: CareerEvent[] } {
@@ -162,6 +168,18 @@ export function careerAfterMatch(c: Career, m: MatchSummary, today: string): { c
   for (let r = rankOf(before) + 1; r <= rankOf(xp[m.role]); r++) {
     claims.push(`rank:${m.role}:${r}`);
     events.push({ kind: 'rank', side: m.role, rank: r, coins: RANK_COINS[r] ?? 0 });
+  }
+
+  // mastery of the car played (V2 part 6)
+  const carXp = { ...c.carXp };
+  if (m.car) {
+    const was = carXp[m.car] ?? 0;
+    const now = was + Math.max(0, Math.floor(m.coins));
+    carXp[m.car] = now;
+    for (let l = masteryLevel(was) + 1; l <= masteryLevel(now); l++) {
+      events.push({ kind: 'mastery', car: m.car, level: l, gained: now - was, unlock: rewardId(m.car, l) });
+      if (l === MASTERY_MAX) claims.push(`mast:${m.car}`); // the legendary paint waits for "Resgatar"
+    }
   }
 
   // lifetime counters
@@ -207,14 +225,17 @@ export function careerAfterMatch(c: Career, m: MatchSummary, today: string): { c
   }
 
   return {
-    career: { xp, counters: k, achieved, daily: past ? c.daily : { date: today, progress }, streak, claims },
+    career: { xp, counters: k, achieved, daily: past ? c.daily : { date: today, progress }, streak, claims, carXp },
     coins,
     events,
   };
 }
 
 // ---------- shop unlocks (spec §4) ----------
-export type Requirement = { kind: 'achievement'; achievement: Achievement } | { kind: 'rank'; side: Role | 'any'; rank: number };
+export type Requirement =
+  | { kind: 'achievement'; achievement: Achievement }
+  | { kind: 'rank'; side: Role | 'any'; rank: number }
+  | { kind: 'mastery'; car: string; level: number };
 
 const NEON_FIRST: Record<Role, string[]> = { police: ['azul', 'roxo'], thief: ['verde', 'rosa'] };
 
@@ -222,6 +243,8 @@ const NEON_FIRST: Record<Role, string[]> = { police: ['azul', 'roxo'], thief: ['
 export function unlockOf(id: string): Requirement | null {
   const a = ACHIEVEMENTS.find((x) => x.unlock === id);
   if (a) return { kind: 'achievement', achievement: a };
+  const m = masteryLevelFor(id);
+  if (m) return { kind: 'mastery', car: m.car, level: m.level };
   const [kind, x, y] = id.split(':');
   if (id === 'plate') return { kind: 'rank', side: 'any', rank: 2 };
   if (kind === 'paint') return { kind: 'rank', side: paintSide(x!), rank: [0, 2, 4, 6][Number(y)] ?? 2 };
@@ -238,6 +261,8 @@ const rankClaimed = (c: Career, side: Role, rank: number) =>
 /** Requirement met: the achievement done and claimed, or the rank reached and claimed. */
 export function meets(c: Career, r: Requirement): boolean {
   if (r.kind === 'achievement') return c.achieved.includes(r.achievement.id) && !c.claims.includes(`ach:${r.achievement.id}`);
+  if (r.kind === 'mastery')
+    return masteryLevel(c.carXp[r.car] ?? 0) >= r.level && !(r.level === MASTERY_MAX && c.claims.includes(`mast:${r.car}`));
   return r.side === 'any' ? rankClaimed(c, 'police', r.rank) || rankClaimed(c, 'thief', r.rank) : rankClaimed(c, r.side, r.rank);
 }
 
@@ -245,6 +270,7 @@ export function meets(c: Career, r: Requirement): boolean {
 export function awaitingClaim(c: Career, r: Requirement): boolean {
   if (meets(c, r)) return false;
   if (r.kind === 'achievement') return c.achieved.includes(r.achievement.id);
+  if (r.kind === 'mastery') return masteryLevel(c.carXp[r.car] ?? 0) >= r.level;
   const sides: Role[] = r.side === 'any' ? ['police', 'thief'] : [r.side];
   return sides.some((s) => rankOf(c.xp[s]) >= r.rank);
 }
@@ -252,6 +278,7 @@ export function awaitingClaim(c: Career, r: Requirement): boolean {
 /** Player-facing text of what is missing: "Prenda 30 ladrões (14/30)" or "Patente Sargento". */
 export function requirementText(c: Career, r: Requirement): string {
   if (awaitingClaim(c, r)) return 'Resgate na Carreira';
+  if (r.kind === 'mastery') return `Maestria ${r.level}`;
   if (r.kind === 'achievement') {
     const a = r.achievement;
     return a.target > 1 ? `${a.title} (${progressOf(c, a)}/${a.target})` : a.title;
@@ -279,6 +306,8 @@ export function parseCareer(raw: unknown): Career {
     out.daily = { date: d.date, progress: d.progress as [number, number, number] };
   const s = r.streak as Record<string, unknown> | undefined;
   if (s && isDate(s.last) && isCount(s.days)) out.streak = { last: s.last, days: s.days };
+  const cx = r.carXp as Record<string, unknown> | undefined;
+  if (cx && typeof cx === 'object') for (const car of MASTERY_CARS) if (isCount(cx[car]) && cx[car] > 0) out.carXp[car] = cx[car];
   if (Array.isArray(r.claims)) out.claims = [...new Set(r.claims.filter((x): x is string => typeof x === 'string' && validClaim(out, x)))];
   return out;
 }
@@ -302,6 +331,7 @@ function validClaim(c: Career, id: string): boolean {
   if (kind === 'daily') return isDate(a) && a !== '' && (b === '0' || b === '1' || b === '2');
   if (kind === 'ach') return c.achieved.includes(a!);
   if (kind === 'rank' && (a === 'police' || a === 'thief')) return Number(b) >= 2 && Number(b) <= rankOf(c.xp[a]);
+  if (kind === 'mast') return masteryLevel(c.carXp[a!] ?? 0) >= MASTERY_MAX;
   return false;
 }
 

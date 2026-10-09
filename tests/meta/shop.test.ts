@@ -23,8 +23,9 @@ describe('catalog (spec §2)', () => {
     expect(new Set(ids).size).toBe(ids.length);
     // the first and last positions never move; new items only go at the end
     expect(ids.slice(0, 6)).toEqual(['car:esportivo', 'car:blazer', 'car:caveirao', 'car:picape', 'car:moto', 'car:van']);
-    expect(ids.length).toBe(6 + 24 + 8 + 5 + 1);
-    expect(ids[ids.length - 1]).toBe('plate');
+    expect(ids.length).toBe(6 + 24 + 8 + 5 + 1 + 8 * 9);
+    expect(ids[43]).toBe('plate');
+    expect(ids[ids.length - 1]).toBe('sticker:van:4'); // V2 part 6 group after the plate
   });
 
   it('the whole order is pinned: changing it would make old backup codes restore the wrong items', () => {
@@ -35,6 +36,10 @@ describe('catalog (spec §2)', () => {
       ...['police', 'thief'].flatMap((r) => ['azul', 'roxo', 'verde', 'rosa'].map((n) => `neon:${r}:${n}`)),
       ...['yelp', 'choque', 'corneta', 'grave', 'dupla'].map((x) => `sound:${x}`),
       'plate',
+      ...cars.flatMap((c) => [
+        ...['metalico', 'fosco', 'perolizado', 'camuflado', 'lendaria'].map((f) => `finish:${c}:${f}`),
+        ...[1, 2, 3, 4].map((n) => `sticker:${c}:${n}`),
+      ]),
     ];
     expect(CATALOG.map((i) => i.id)).toEqual(expected);
   });
@@ -155,6 +160,8 @@ describe('lookFor', () => {
       neon: null,
       plate: null,
       sound: null,
+      finish: null,
+      sticker: null,
     });
     expect(lookFor(emptyProfile(), 'thief').car).toBe('seda');
   });

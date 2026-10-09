@@ -4,7 +4,7 @@
 // started from the stats already kept.
 import { BALANCE, type Difficulty, type Mode, type Role } from '../config/balance';
 import { emptyStats, rewardFor, type MatchStats, type Reward } from './rewards';
-import { defaultEquipped, sanitizeShop, type Equipped } from './shop';
+import { defaultEquipped, sanitizeShop, use, type Equipped } from './shop';
 import {
   careerAfterMatch,
   careerFromStats,
@@ -135,9 +135,13 @@ export function settleCareer(p: Profile, m: MatchSummary, today: string): { prof
 export function claimReward(p: Profile, id: string): { profile: Profile; coins: number } {
   const r = claim(p.career, id);
   if (r.career === p.career) return { profile: p, coins: 0 };
+  // V2 part 6: mastery 10 gives the car its legendary paint, owned and put in use
+  const [kind, car] = id.split(':');
+  const legendary = kind === 'mast' ? `finish:${car}:lendaria` : null;
+  const withPaint = legendary && !p.owned.includes(legendary) ? use({ ...p, owned: [...p.owned, legendary] }, legendary) : p;
   return {
     profile: {
-      ...p,
+      ...withPaint,
       career: r.career,
       coins: Math.min(MAX_VALUE, p.coins + r.coins),
       stats: { ...p.stats, coinsEarned: Math.min(MAX_VALUE, p.stats.coinsEarned + r.coins) },

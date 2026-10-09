@@ -3,6 +3,10 @@
 import { parseProfile, type Profile } from './profile';
 import { CAR_IDS, CATALOG, NEON_IDS, SOUND_IDS, defaultEquipped } from './shop';
 import { ACHIEVEMENTS, COUNTER_KEYS, emptyCareer } from './career';
+import { FINISHES, MASTERY_CARS, type FinishId } from './mastery';
+
+/** finish codes in the backup: 0 = normal */
+const FINISH_CODES: readonly (FinishId | 'normal')[] = ['normal', ...FINISHES, 'lendaria'];
 
 const PREFIX = 'PL1-';
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -94,7 +98,15 @@ const pack = (p: Profile) => {
   return [
     ...base,
     p.owned.map((id) => CATALOG.findIndex((i) => i.id === id)).filter((i) => i >= 0),
-    [...side('police'), ...side('thief'), CAR_IDS.map((x) => p.equipped.paint[x] ?? 0).join(''), p.equipped.plate],
+    [
+      ...side('police'),
+      ...side('thief'),
+      CAR_IDS.map((x) => p.equipped.paint[x] ?? 0).join(''),
+      p.equipped.plate,
+      // V2 part 6: finish and sticker per car
+      CAR_IDS.map((x) => FINISH_CODES.indexOf(p.equipped.finish?.[x] ?? 'normal')).join(''),
+      CAR_IDS.map((x) => p.equipped.sticker?.[x] ?? 0).join(''),
+    ],
     // v3 (career): xp, counters, achievements (positions), today's challenges, streak, rewards waiting to be claimed
     [
       c.xp.police,
@@ -106,6 +118,7 @@ const pack = (p: Profile) => {
       c.streak.last,
       c.streak.days,
       c.claims,
+      MASTERY_CARS.map((x) => c.carXp[x] ?? 0), // V2 part 6: mastery XP per car
     ],
   ];
 };
@@ -117,13 +130,18 @@ function unpack(a: unknown): unknown {
   if (welcome !== 0 && welcome !== 1) return undefined;
   const base = { v, coins, stats: { matches, wins, escapes, arrests, coinsEarned }, welcomeGranted: welcome === 1 };
   if (a.length === 8) return v === 1 ? base : { ...base, owned: [] }; // v1, or later with nothing from the shop or career
-  if (!Array.isArray(ownedIdx) || !Array.isArray(eq) || eq.length !== 8 || typeof eq[6] !== 'string') return undefined;
+  if (!Array.isArray(ownedIdx) || !Array.isArray(eq) || (eq.length !== 8 && eq.length !== 10) || typeof eq[6] !== 'string')
+    return undefined;
   const owned = ownedIdx.map((i) => at(CATALOG, i)?.id).filter((x) => x !== undefined);
   const side = (o: number) => ({ car: at(CAR_IDS, eq[o]), neon: at(NEON_IDS, eq[o + 1]), sound: at(SOUND_IDS, eq[o + 2]) });
   const paint = Object.fromEntries(CAR_IDS.map((c, i) => [c, Number((eq[6] as string)[i] ?? 0)]));
-  const out = { ...base, owned, equipped: { police: side(0), thief: side(3), paint, plate: eq[7] } };
+  const perCar = (text: unknown, value: (code: number) => unknown) =>
+    typeof text === 'string' ? Object.fromEntries(CAR_IDS.map((c, i) => [c, value(Number(text[i] ?? 0))]).filter(([, v]) => v)) : {};
+  const finish = perCar(eq[8], (code) => (code > 0 ? FINISH_CODES[code] : undefined));
+  const sticker = perCar(eq[9], (code) => (code > 0 ? code : undefined));
+  const out = { ...base, owned, equipped: { police: side(0), thief: side(3), paint, plate: eq[7], finish, sticker } };
   if (a.length === 10) return out; // v2: the career starts from the stats
-  if (!Array.isArray(car) || car.length !== 9 || !Array.isArray(car[2]) || !Array.isArray(car[3])) return undefined;
+  if (!Array.isArray(car) || (car.length !== 9 && car.length !== 10) || !Array.isArray(car[2]) || !Array.isArray(car[3])) return undefined;
   const career = {
     xp: { police: car[0], thief: car[1] },
     counters: Object.fromEntries(COUNTER_KEYS.map((k, i) => [k, (car[2] as unknown[])[i]])),
@@ -131,6 +149,7 @@ function unpack(a: unknown): unknown {
     daily: { date: car[4], progress: car[5] },
     streak: { last: car[6], days: car[7] },
     claims: Array.isArray(car[8]) ? car[8] : [], // 0.17.0 kept a number here (no claims then)
+    carXp: Array.isArray(car[9]) ? Object.fromEntries(MASTERY_CARS.map((c, i) => [c, (car[9] as unknown[])[i]])) : {},
   };
   return { ...out, career };
 }

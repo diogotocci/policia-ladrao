@@ -8,7 +8,7 @@ import { createCarPreview } from './render/carPreview';
 import { createShopPreview } from './render/shopPreview';
 import { CARS, lookFor, randomLook } from './meta/shop';
 import { grantWelcome } from './meta/profile';
-import { profileActions } from './appProfile';
+import { garageCars, profileActions } from './appProfile';
 import { localDate } from './meta/career';
 import { streakDays } from './ui/screens/careerScreen';
 import { loadProfile, saveProfile } from './storage/profileStore';
@@ -230,6 +230,7 @@ export function startApp(
           today: today(),
           onBack: () => press({ type: 'back' }),
           onClaim: actions.onClaim,
+          cars: () => garageCars(profile), // V2 part 6: Garagem tab
         });
         break;
       case 'shop':

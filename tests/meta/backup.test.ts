@@ -78,6 +78,8 @@ describe('backup code v2 (shop, V2 part 4)', () => {
         thief: { car: 'moto', neon: null, sound: 'dupla' },
         paint: { caveirao: 2 },
         plate: 'DIO2026',
+        finish: {},
+        sticker: {},
       },
     };
     const back = decodeBackup(encodeBackup(p));
@@ -146,9 +148,54 @@ describe('backup code v3 (career, V2 part 5)', () => {
         daily: { date: '2026-10-08', progress: [2, 0, 7] },
         streak: { last: '2026-10-08', days: 3 },
         claims: ['ach:arrest10', 'daily:2026-10-08:0'],
+        carXp: {},
       },
     };
     const r = decodeBackup(encodeBackup(p));
     expect(r.ok && r.profile.career).toEqual(p.career);
+  });
+});
+
+describe('backup code with mastery (V2 part 6)', () => {
+  it('round-trips mastery XP, finishes and stickers; a code from before (no such fields) still restores', () => {
+    const p: Profile = {
+      ...sample,
+      owned: ['car:esportivo', 'finish:esportivo:fosco', 'sticker:seda:2', 'finish:seda:lendaria'],
+      equipped: {
+        ...sample.equipped,
+        police: { car: 'esportivo', neon: null, sound: null },
+        finish: { esportivo: 'fosco', seda: 'lendaria' },
+        sticker: { seda: 2 },
+      },
+      career: { ...sample.career, carXp: { esportivo: 2600, seda: 15000 }, claims: [] },
+    };
+    const back = decodeBackup(encodeBackup(p));
+    expect(back.ok).toBe(true);
+    if (!back.ok) return;
+    expect(back.profile.equipped.finish).toEqual({ esportivo: 'fosco', seda: 'lendaria' });
+    expect(back.profile.equipped.sticker).toEqual({ seda: 2 });
+    expect(back.profile.career.carXp).toEqual({ esportivo: 2600, seda: 15000 });
+    // a code written by 0.20.x: 8 entries in use and 9 in the career
+    const zeros = Array(13).fill(0);
+    const legacy = [
+      3,
+      500,
+      4,
+      2,
+      1,
+      1,
+      900,
+      1,
+      [0],
+      [1, -1, -1, 0, -1, -1, '00000000', ''],
+      [300, 200, zeros, [], '', [0, 0, 0], '', 0, []],
+    ];
+    const old = decodeBackup(legacyCode(new TextEncoder().encode(JSON.stringify(legacy))));
+    expect(old.ok).toBe(true);
+    if (!old.ok) return;
+    expect(old.profile.equipped.police.car).toBe('esportivo');
+    expect(old.profile.equipped.finish).toEqual({});
+    expect(old.profile.career.carXp).toEqual({});
+    expect(old.profile.career.xp).toEqual({ police: 300, thief: 200 });
   });
 });

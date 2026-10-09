@@ -151,3 +151,34 @@ describe('car heights (playtest 2026-10-09)', () => {
     expect(van).toBeLessThan(roof('caveirao', 'police') - 0.2);
   });
 });
+
+describe('finishes and stickers (V2 part 6)', () => {
+  const paintMats = (m: THREE.Object3D) => {
+    const out = new Set<THREE.MeshPhysicalMaterial>();
+    m.traverse((o) => {
+      const mat = (o as THREE.Mesh).material as THREE.MeshPhysicalMaterial | undefined;
+      if (mat && !Array.isArray(mat) && mat.userData?.paint) out.add(mat);
+    });
+    return [...out];
+  };
+  it('each finish changes the paint material (once, even when shared); the legendary one sets its colour', () => {
+    const base = paintMats(createLookModel('police', look('esportivo')))[0]!;
+    const fosco = paintMats(createLookModel('police', look('esportivo', { finish: 'fosco' })))[0]!;
+    expect(fosco.roughness).toBeGreaterThan(base.roughness);
+    expect(fosco.clearcoat).toBe(0);
+    const metal = paintMats(createLookModel('police', look('esportivo', { finish: 'metalico' })));
+    for (const m of metal) expect(m.metalness).toBeCloseTo(0.5);
+    expect(metal[0]!.color.r).toBeCloseTo(base.color.r * 1.25, 3); // brightened once, not once per mesh
+    const pearl = paintMats(createLookModel('thief', look('seda', { finish: 'perolizado' })))[0]!;
+    expect(pearl.iridescence).toBe(1);
+    const gold = paintMats(createLookModel('thief', look('seda', { finish: 'lendaria' })))[0]!;
+    expect(gold.color.getHex()).toBe(new THREE.Color(0xd4a32a).getHex());
+    // the template keeps its material: the next plain car is unchanged
+    expect(paintMats(createLookModel('police', look('esportivo')))[0]!.roughness).toBeCloseTo(base.roughness);
+  });
+
+  it('a sticker without a canvas (tests) is skipped without errors; the mesh budget holds', () => {
+    const m = createLookModel('thief', look('picape', { sticker: { kind: 'chamas', number: 3 } }));
+    expect(meshes(m).length).toBeLessThanOrEqual(meshes(createLookModel('thief', look('picape'))).length + 2);
+  });
+});

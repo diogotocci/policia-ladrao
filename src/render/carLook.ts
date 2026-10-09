@@ -5,6 +5,7 @@ import { defaultLook, type CarLook } from '../meta/shop';
 import { instantiate } from './carFactory';
 import { MODELS } from './models';
 import { canvasTex } from './models/kit';
+import { addSticker, applyFinish } from './finish';
 
 /** Mercosul plate: white, blue "BRASIL" band, black letters. */
 function plateTexture(text: string): THREE.Texture | null {
@@ -55,12 +56,18 @@ export function createLookModel(role: Role, look: CarLook = defaultLook(role)): 
   if (spec.gunner) root.userData.gunnerAt = spec.gunner;
   if (spec.scale) root.scale.setScalar(spec.scale);
   // paint: the materials are this car's own copies (instantiate), so the template and other cars keep theirs
+  const painted = new Set<THREE.Material>(); // a material shared by several meshes gets its finish once
   root.traverse((o) => {
     const m = o as THREE.Mesh;
     if (!m.isMesh) return;
     for (const mat of Array.isArray(m.material) ? m.material : [m.material])
-      if (mat.userData.paint) (mat as THREE.MeshStandardMaterial).color.setHex(look.paint);
+      if (mat.userData.paint && !painted.has(mat)) {
+        painted.add(mat);
+        (mat as THREE.MeshStandardMaterial).color.setHex(look.paint);
+        if (look.finish) applyFinish(mat as THREE.MeshStandardMaterial, look.finish, look.paint, role);
+      }
   });
+  if (look.sticker) addSticker(root, look.sticker.kind, look.sticker.number);
   if (look.neon !== null) {
     const glow = new THREE.Mesh(
       new THREE.PlaneGeometry(spec.neon.w, spec.neon.l).rotateX(-Math.PI / 2),

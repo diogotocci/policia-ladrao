@@ -22,11 +22,13 @@ import {
   type CarLook,
   type SoundId,
 } from '../../meta/shop';
+import { STICKERS, STICKER_NAMES, masteryLevel, type FinishId } from '../../meta/mastery';
+import { drawMasteryBar, finishRowsFor } from './shopMastery';
 import { btn, h, mount, openModal, type Disposable } from './dom';
 import { SCREEN_ICONS } from './icons';
 import './shop.css';
 
-type Tab = 'cars' | 'paint' | 'neon' | 'sound' | 'plate';
+type Tab = 'cars' | 'paint' | 'sticker' | 'neon' | 'sound' | 'plate';
 const n = (v: number) => v.toLocaleString('pt-BR');
 const hex = (c: number) => `#${c.toString(16).padStart(6, '0')}`;
 
@@ -47,11 +49,13 @@ export interface ShopProps {
   mountPreview?(slot: HTMLElement): { show(role: Role, look: CarLook): void; dispose(): void };
 }
 
-interface Row {
+export interface Row {
   id: string;
   name: string;
   swatch: string; // CSS colour or '' (car icon)
   price: number;
+  /** V2 part 6: a heading above this row ("Cor", "Acabamento") */
+  section?: string;
 }
 
 export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
@@ -86,7 +90,10 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
   const view3d = h('div', 'shop-3d');
   const stageName = h('p', 'shop-name');
   const action = btn('', 'is-primary shop-action', () => act());
-  stage.append(view3d, stageName, action);
+  // V2 part 6: mastery of the car on the showcase (owned cars only)
+  const mastery = h('div', 'shop-mastery');
+  const drawMastery = () => drawMasteryBar(mastery, profile, stageCar);
+  stage.append(mastery, view3d, stageName, action);
   const preview = p.mountPreview?.(view3d);
   // ----- list -----
   const panel = h('div', 'shop-panel');
@@ -103,6 +110,7 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
   const TABS: [Tab, string][] = [
     ['cars', 'Carros'],
     ['paint', 'Pintura'],
+    ['sticker', 'Adesivos'],
     ['neon', 'Neon'],
     ['sound', side === 'police' ? 'Sirene' : 'Buzina'],
     ['plate', 'Placa'],
@@ -113,12 +121,26 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
       case 'cars':
         return carsOf(side).map((c) => ({ id: `car:${c}`, name: CARS[c].name, swatch: '', price: CARS[c].price }));
       case 'paint':
-        return CARS[stageCar].colors.map((c, i) => ({
-          id: `paint:${stageCar}:${i}`,
-          name: CARS[stageCar].colorNames[i]!,
-          swatch: hex(c),
-          price: i === 0 ? 0 : PRICES.paint,
-        }));
+        return [
+          ...CARS[stageCar].colors.map((c, i) => ({
+            id: `paint:${stageCar}:${i}`,
+            name: CARS[stageCar].colorNames[i]!,
+            swatch: hex(c),
+            price: i === 0 ? 0 : PRICES.paint,
+            section: i === 0 ? 'Cor' : undefined,
+          })),
+          ...finishRows(),
+        ];
+      case 'sticker':
+        return [
+          { id: `sticker:${stageCar}:0`, name: 'Sem adesivo', swatch: 'transparent', price: 0 },
+          ...STICKERS[side].map((k, i) => ({
+            id: `sticker:${stageCar}:${i + 1}`,
+            name: STICKER_NAMES[k]!,
+            swatch: '',
+            price: PRICES.sticker,
+          })),
+        ];
       case 'neon':
         return [
           { id: `neon:${side}:off`, name: 'Sem neon', swatch: 'transparent', price: 0 },
@@ -139,13 +161,20 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
     }
   };
 
+  const finishRows = (): Row[] => finishRowsFor(profile, side, stageCar);
+
   /** what the showcase shows for the selection (tried on before buying) */
   const lookOf = (): CarLook => {
     const base = lookFor(profile, side);
     const car = stageCar;
     const paintIndex = profile.equipped.paint[car] ?? 0;
-    const look: CarLook = { ...base, car, paint: CARS[car].colors[paintIndex]! };
+    const look: CarLook = { ...base, car, paint: CARS[car].colors[paintIndex]!, finish: profile.equipped.finish?.[car] ?? null };
+    const stickerN = profile.equipped.sticker?.[car];
+    const level = Math.max(1, masteryLevel(profile.career.carXp[car] ?? 0));
+    look.sticker = stickerN ? { kind: STICKERS[side][stickerN - 1]!, number: level } : null;
     const [kind, a, b] = selected.split(':');
+    if (kind === 'finish' && a === car) look.finish = b === 'normal' ? null : (b as FinishId);
+    if (kind === 'sticker' && a === car) look.sticker = b === '0' ? null : { kind: STICKERS[side][Number(b) - 1]!, number: level };
     if (kind === 'paint' && a === car) look.paint = CARS[car].colors[Number(b)]!;
     if (kind === 'neon') look.neon = b === 'off' ? null : NEONS[b as keyof typeof NEONS].color;
     if (tab === 'plate') look.plate = normalizePlate(plateDraft) || null;
@@ -304,7 +333,12 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
         return b;
       }),
     );
-    list.replaceChildren(...(tab === 'plate' ? [platePanel()] : rows().map(rowEl)));
+    list.replaceChildren(
+      ...(tab === 'plate'
+        ? [platePanel()]
+        : rows().flatMap((r) => (r.section ? [h('p', 'shop-section', r.section), rowEl(r)] : [rowEl(r)]))),
+    );
+    drawMastery();
     const st = stateOf(selected);
     action.hidden = tab === 'plate';
     action.textContent = tab === 'plate' ? '' : st.label; // the plate tab has its own buttons

@@ -22,8 +22,11 @@ import { btn, h, mount, type Disposable } from './dom';
 import { SCREEN_ICONS } from './icons';
 import { insignia } from './insignia';
 import './career.css';
+import './garage.css';
+import { garagePanel, type GarageCar } from './garage';
+import { MASTERY_MAX, rewardName } from '../../meta/mastery';
 
-type Tab = 'today' | 'achievements' | 'ranks';
+type Tab = 'today' | 'achievements' | 'ranks' | 'garage';
 const n = (v: number) => v.toLocaleString('pt-BR');
 
 /** Player-facing name of a shop item ("Esportivo", "sirene Choque", "neon Rosa"...). */
@@ -219,6 +222,8 @@ export function renderCareer(
     /** "Resgatar": the app pays it and returns the new career and balance */
     onClaim(id: string): { career: Career; coins: number };
     tab?: Tab;
+    /** V2 part 6: the cars owned, for the Garagem tab (asked on every redraw: a claim changes their paint) */
+    cars?: () => readonly GarageCar[];
   },
 ): Disposable {
   let tab: Tab = p.tab ?? 'today';
@@ -244,9 +249,7 @@ export function renderCareer(
     (body.querySelector<HTMLElement>('.career-claim') ?? tabs.querySelector<HTMLElement>('.is-on'))?.focus();
   };
   const waitingIn = (t: Tab) =>
-    career.claims.some((x) =>
-      t === 'today' ? x.startsWith('daily:') : t === 'achievements' ? x.startsWith('ach:') : x.startsWith('rank:'),
-    );
+    career.claims.some((x) => x.startsWith(t === 'today' ? 'daily:' : t === 'achievements' ? 'ach:' : t === 'garage' ? 'mast:' : 'rank:'));
   function draw() {
     wallet.replaceChildren();
     wallet.insertAdjacentHTML('afterbegin', SCREEN_ICONS.coin);
@@ -258,6 +261,7 @@ export function renderCareer(
           ['today', 'Hoje'],
           ['achievements', 'Conquistas'],
           ['ranks', 'Patente'],
+          ['garage', 'Garagem'],
         ] as const
       ).map(([t, label]) => {
         const b = btn(label, `career-tab${t === tab ? ' is-on' : ''}${waitingIn(t) ? ' has-claim' : ''}`, () => {
@@ -285,6 +289,7 @@ export function renderCareer(
           onClaim,
         ),
       );
+    else if (tab === 'garage') body.replaceChildren(garagePanel(p.cars?.() ?? [], career, onClaim));
     else {
       const two = h('div', 'career-today');
       two.append(rankCard(career, 'police', onClaim), rankCard(career, 'thief', onClaim));
@@ -313,7 +318,16 @@ export function careerStrip(events: readonly CareerEvent[], role: Role): HTMLEle
   box.append(head, bar(r < MAX_RANK ? xp.xp - RANK_XP[r - 1]! : 1, r < MAX_RANK ? RANK_XP[r]! - RANK_XP[r - 1]! : 1, `is-${role}`));
   if (up)
     box.append(h('small', 'end-career-note', `Nova patente! Resgate na Carreira: ${ups.map((u) => RANK_UNLOCKS[u.rank - 1]).join(', ')}`));
-  const lines = events.filter((e) => e.kind === 'daily' || e.kind === 'achievement').slice(0, 3);
+  // V2 part 6: the car went up a mastery level (the last one reached)
+  const mastery = events.filter((e): e is Extract<CareerEvent, { kind: 'mastery' }> => e.kind === 'mastery').at(-1);
+  const lines = events.filter((e) => e.kind === 'daily' || e.kind === 'achievement').slice(0, mastery ? 2 : 3);
+  if (mastery) {
+    const car = CARS[mastery.car as CarId];
+    const line = h('p', 'end-career-line');
+    const what = mastery.level >= MASTERY_MAX ? 'Resgate na Garagem' : `${rewardName(car.role, mastery.level)} na Loja`;
+    line.append(h('span', '', `${car.name}: maestria ${mastery.level}!`), h('b', '', what));
+    box.append(line);
+  }
   for (const e of lines) {
     const line = h('p', 'end-career-line');
     // completed here, paid in Carreira ("Resgatar", playtest 2026-10-08)
