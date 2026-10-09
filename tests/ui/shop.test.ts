@@ -158,3 +158,27 @@ describe('locked items (part 5)', () => {
     expect(action().disabled).toBe(true);
   });
 });
+
+describe('admin shop (playtest 2026-10-09)', () => {
+  it('shows the admin tag; a locked car with no coins can be taken for free', () => {
+    let profile: Profile = { ...emptyProfile(), coins: 0 };
+    renderShop(root, {
+      profile,
+      side: 'police',
+      admin: true,
+      onSide: vi.fn(),
+      onBack: vi.fn(),
+      onBuy: (id) => (profile = buy(profile, id, { admin: true }).profile),
+      onUse: (id) => (profile = use(profile, id)),
+      onPlate: (t) => (profile = setPlate(profile, t)),
+      onListen: vi.fn(),
+    });
+    expect(root.querySelector('.shop-admin')?.textContent).toBe('admin');
+    row('Caveirão').click();
+    expect(action().textContent).toContain('Pegar (admin)');
+    expect(action().disabled).toBe(false);
+    action().click();
+    expect(profile.owned).toContain('car:caveirao');
+    expect(profile.coins).toBe(0);
+  });
+});

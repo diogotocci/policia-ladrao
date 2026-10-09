@@ -41,6 +41,8 @@ export interface ShopProps {
   onPlate(text: string): Profile;
   /** "Ouvir" */
   onListen(role: Role, sound: SoundId | null): void;
+  /** admin mode (testing): everything unlocked and free */
+  admin?: boolean;
   /** 3D showcase in `slot`; absent in tests */
   mountPreview?(slot: HTMLElement): { show(role: Role, look: CarLook): void; dispose(): void };
 }
@@ -76,7 +78,9 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
     sides.append(b);
   }
   const wallet = h('p', 'shop-wallet');
-  top.append(back, h('h2', 'screen-heading shop-heading', 'Loja'), sides, wallet);
+  const heading = h('h2', 'screen-heading shop-heading', 'Loja');
+  if (p.admin) heading.append(h('span', 'shop-admin', 'admin'));
+  top.append(back, heading, sides, wallet);
   // ----- showcase -----
   const stage = h('div', 'shop-stage');
   const view3d = h('div', 'shop-3d');
@@ -152,8 +156,8 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
   const stateOf = (id: string): State => {
     if (owns(profile, id))
       return inUse(profile, id) ? { label: 'Em uso', enabled: false, kind: 'none' } : { label: 'Usar', enabled: true, kind: 'use' };
-    const c = canBuy(profile, id);
-    if (c.ok) return { label: `Comprar · ${n(c.price)}`, enabled: true, kind: 'buy' };
+    const c = canBuy(profile, id, { admin: p.admin });
+    if (c.ok) return { label: c.price > 0 ? `Comprar · ${n(c.price)}` : 'Pegar (admin)', enabled: true, kind: 'buy' };
     if (c.reason === 'coins') return { label: `Faltam ${n(c.missing!)}`, enabled: false, kind: 'none' };
     if (c.reason === 'locked') return { label: c.need, enabled: false, kind: 'none' };
     return { label: '', enabled: false, kind: 'none' };
@@ -166,6 +170,9 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
     if (!st.enabled) return;
     if (st.kind === 'use') {
       profile = p.onUse(selected);
+      draw();
+    } else if (st.kind === 'buy' && p.admin) {
+      profile = p.onBuy(selected); // admin: free, no confirmation
       draw();
     } else if (st.kind === 'buy') confirmBuy(selected, nameOf(selected), () => (profile = p.onBuy(selected)));
   }
@@ -210,7 +217,7 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
     );
     const name = h('span', 'shop-row-name', r.name);
     // V2 part 5: still locked by the career (or the car not bought): what is missing, under the name
-    const check = owns(profile, r.id) ? null : canBuy(profile, r.id);
+    const check = owns(profile, r.id) ? null : canBuy(profile, r.id, { admin: p.admin });
     const locked = check !== null && !check.ok && check.reason === 'locked';
     if (locked) name.append(h('small', 'shop-row-need', check.need));
     if (!owns(profile, r.id) && r.price > 0) state.insertAdjacentHTML('afterbegin', locked ? SCREEN_ICONS.lock : SCREEN_ICONS.coin);

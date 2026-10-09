@@ -112,10 +112,10 @@ Uma partida rende ~75 moedas na Perseguição e ~120 no Sobrevivência.
   | Carro | Câmera sobe | Câmera recua |
   |---|---|---|
   | Caveirão | +0,35 m | +1,5 m |
-  | Blazer | +0,25 m | 0 |
   | Van | +0,2 m | +0,6 m |
   | Demais | 0 | 0 |
 
+- **Blazer** (playtest 2026-10-09): picape cabine dupla com a caçamba fechada por uma capota, da mesma altura da Picape do ladrão (antes estava do tamanho do Caveirão). A câmera não sobe mais.
 - **Caveirão** (playtest 2026-10-08): desenhado 12% menor. O atirador fica na janela do carona, não em cima do teto.
 - **Atirador:** a posição dele é definida por carro.
 - **Moto:** fica 15% maior que o tamanho real, para ser vista na pista. A área de batida continua a de um carro. O carona é o atirador desde o começo da partida: sem arma, só vai na garupa; com arma, atira. Não existe uma segunda figura para trocar de lugar.
@@ -196,3 +196,8 @@ interface ProfileV2 {
   - aparência: pintura, neon e placa aplicados, e a câmera sobe.
 - **e2e:** com moedas no perfil, abrir a loja, comprar o Esportivo, voltar e ver "Esportivo" na escolha de lado. A partida começa com o carro novo.
 - **Equilíbrio:** os testes atuais, sem mudar limites. A simulação não importa nada da loja.
+
+## Modo admin (playtest 2026-10-09)
+
+- Em "Progresso", o botão **Admin** pede uma senha. Certa: a loja fica toda liberada (sem pedir patente ou conquista) e grátis, sem a confirmação de compra, com a etiqueta "admin" no título. "Sair do admin" volta ao normal; o que foi pego continua no perfil.
+- A senha é só a variável de ambiente `ADMIN_PASSWORD` na Vercel. A função `api/admin.ts` confere no servidor (`POST /api/admin`, resposta `{ ok }`); a senha nunca vai para o código do jogo. Sem a variável, sem rede ou no `pnpm dev`, o admin não liga. O estado fica em `pl.admin` no aparelho.

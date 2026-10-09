@@ -1,46 +1,24 @@
 # Backlog — ideias para próximas versões
 
-Ideias anotadas durante o desenvolvimento. **Nada aqui está aprovado nem implementado**: cada item passa por brainstorming e entra na spec antes de virar código.
+Ideias anotadas durante o desenvolvimento. Cada item passa por brainstorming e entra na spec antes de virar código.
 
-## Parte 5 (gamificação): desbloquear a loja (anotado em 2026-10-08)
+## Pendente
 
-Pedido do Diogo no playtest da loja (0.16.x), para retomar na Parte 5:
-
-- **Preços mais altos.** Os itens devem ficar mais caros, para o jogador precisar jogar para comprar.
-- **Desbloqueio.** Nem tudo fica disponível ao mesmo tempo: carros, cores, sons etc. são desbloqueados.
-- **Desafios.** Completar desafios libera itens (carros, cores, sons...).
-
-## Progressão e retenção (anotado em 2026-10-04)
-
-**Objetivo (Diogo):** manter os jogadores interessados; gamificar.
-
-**Ideia original:** cada partida rende uma recompensa: **dinheiro** jogando de ladrão, **medalhas** jogando de polícia. Acumulando, o jogador troca por:
-
-- melhorias;
-- carros novos;
-- especiais;
-- resistência a quebra-mola;
-- etc.
-
-**Pontos para decidir no brainstorming** (só levantados, sem decisão):
-
-- **Quanto ganha.** Fixo por partida ou proporcional ao desempenho? Por exemplo: tempo de fuga, dano causado, caixinhas, quebra-molas evitados, vitória.
-- **Moedas.** Separadas por lado (dinheiro só compra coisas de ladrão, medalha só de polícia) ou conversíveis?
-- **Equilíbrio contra a IA.** Melhorias permanentes deixam o jogo mais fácil com o tempo. Talvez a dificuldade da IA acompanhe, ou as melhorias sejam pequenas e os itens das caixinhas continuem decidindo.
-- **Ranking.** Partidas com carro melhorado contam no mesmo top 10 ou num separado?
-- **Persistência.** Hoje é tudo local (`localStorage`). Progresso de longo prazo pode pedir backup ou conta; sem conta, limpar o navegador perde tudo.
-- **Cosméticos × poder.** Pinturas, giroscópios, buzinas e fumaça não mexem no equilíbrio e podem ser boa parte da loja.
-- **Outros ganchos.**
-  - desafios diários;
-  - conquistas (ex.: "fugir 5 min sem levar bomba");
-  - sequência de dias jogando;
-  - níveis de patente (recruta → delegado / batedor de carteira → chefão).
-
-## Fases (anotado em 2026-10-05)
+### Fases (anotado em 2026-10-05)
 
 **Ideia (Diogo):** com a gamificação, o jogador vai passando de fase e fica mais difícil. A primeira regra que escala é o **tempo de fuga do ladrão** (hoje 1:30, em `BALANCE.match.escapeTime`): cada fase vencida aumenta o tempo que o ladrão precisa sobreviver. Decidir no brainstorming: o que mais escala por fase (nível inicial da IA, tráfego, curvas fechadas), se a fase é por lado e como ela conversa com o ranking.
 
-## Reforço da polícia: bloqueio de via (anotado em 2026-10-05)
+### Mais coisas na loja (anotado em 2026-10-09)
 
-**Ideia (Diogo):** caixinha azul nova, **Reforço**, guardada para usar quando quiser (como a bomba do ladrão, com botão próprio). Ao usar, aparece um **bloqueio de via** à frente do ladrão: uma viatura atravessada num dos cantos da pista com um policial em pé ao lado. Se o ladrão bater: **perde muita velocidade e leva 15 de dano** (valores a balancear). Decidir: onde surge (distância à frente, qual faixa), quanto tempo fica, aviso visual para o ladrão desviar, quantos dá para guardar, e como a IA de polícia usa.
+**Pedido (Diogo):** mais carros, modelos e cosméticos, para o jogador ter motivo para continuar jogando depois de comprar tudo. Em brainstorming (lista de ideias enviada em 2026-10-09).
 
+### V3: conta, servidor e dinheiro de verdade
+
+Fora da V2 desde a Parte 1. O formato do progresso e o código de backup já foram feitos pensando nisso.
+
+## Feito
+
+- **Progressão e retenção (anotado em 2026-10-04):** moedas por partida (V2 Parte 1), dificuldade com multiplicador (Parte 2), loja só de cosméticos (Parte 4) e Carreira com desafios do dia, conquistas, patentes por lado e sequência de dias (Parte 5). Progresso no aparelho com código de backup.
+- **Loja com desbloqueio (anotado em 2026-10-08):** preços ~3x mais altos, carros, cores, neon, sons e placa liberados pela Carreira e depois comprados (Parte 5).
+- **Reforço da polícia: bloqueio de via (anotado em 2026-10-05):** entrou como o especial "Bloqueio" da polícia na Parte 3, com viatura atravessada, spike e batida de verdade.
+- **Desafios do dia sem repetir (playtest 2026-10-08):** 21 desafios, 7 por nível, sem repetir o do dia anterior (0.19.0).

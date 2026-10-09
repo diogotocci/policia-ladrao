@@ -2,19 +2,24 @@
 // here we only wire each state to what appears on screen (and to the game).
 import type { Difficulty, Mode, Role } from './config/balance';
 import { createAudioSession } from './audio/session';
-import { startGame, type GameHandle } from './game';
+import { startGame } from './game';
+import type { GameHandle, GameOptions } from './gameTypes';
 import { createCarPreview } from './render/carPreview';
 import { createShopPreview } from './render/shopPreview';
-import { CARS, buy, lookFor, randomLook, setPlate, use } from './meta/shop';
-import type { QualityTier } from './render/renderer';
-import { claimReward, grantWelcome, settleCareer, settleMatch } from './meta/profile';
-import { localDate, rankOf } from './meta/career';
+import { CARS, lookFor, randomLook } from './meta/shop';
+import { grantWelcome } from './meta/profile';
+import { profileActions } from './appProfile';
+import { localDate } from './meta/career';
 import { streakDays } from './ui/screens/careerScreen';
 import { loadProfile, saveProfile } from './storage/profileStore';
 import { loadDifficulty, saveDifficulty } from './storage/difficulty';
 import { loadMode, saveMode } from './storage/mode';
 import { renderMode } from './ui/screens/mode';
-import { countModeRecords, insert, loadModeBoards, qualifies, recordEntry, saveModeBoards, type ModeBoards } from './storage/ranking';
+import { countModeRecords, loadModeBoards, qualifies, saveModeBoards, type ModeBoards } from './storage/ranking';
+import { ADMIN_KEY, HOWTO_KEY, INITIALS_KEY, openStorage, readPref, writePref } from './storage/prefs';
+import { addRecord, settleEnd } from './appMatch';
+import { wireAppEvents } from './appEvents';
+import { checkAdminPassword } from './admin';
 import { initialState, reduce, type FlowAction, type FlowState } from './ui/screens/flow';
 import { openProgress } from './ui/screens/progress';
 import {
@@ -31,33 +36,15 @@ import {
 declare const __APP_VERSION__: string | undefined;
 /** injected by Vite (package.json version); absent when the module runs outside a Vite build (unit tests) */
 const APP_VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : undefined;
-/** "Como jogar" already closed once on this device */
-const HOWTO_KEY = 'pl.howto.v1';
-/** the last initials saved in the ranking (playtest 2026-10-09: the plate starts with them) */
-const INITIALS_KEY = 'pl.initials';
 
 export function startApp(
   container: HTMLElement,
-  opts: {
-    quality?: QualityTier;
+  /** debug/e2e only: mode, chaosEvery and the debug options */
+  opts: Pick<GameOptions, 'quality' | 'debugHp' | 'traffic' | 'mute' | 'curves' | 'escapeTime' | 'mode' | 'chaosEvery'> & {
     debug?: boolean;
-    debugHp?: { police?: number; thief?: number };
-    traffic?: boolean;
-    mute?: boolean;
-    curves?: boolean;
-    escapeTime?: number;
-    /** debug/e2e only */
-    mode?: Mode;
-    chaosEvery?: number;
   } = {},
 ): { stop(): void } {
-  const storage = (() => {
-    try {
-      return window.localStorage;
-    } catch {
-      return undefined;
-    }
-  })();
+  const storage = openStorage();
   const audio = createAudioSession({ forceMute: opts.mute });
   const layer = document.createElement('div');
   layer.className = 'screens-root';
@@ -77,20 +64,10 @@ export function startApp(
   const persist = () => (persistent = saveProfile(storage, profile) && persistent);
   if (profile !== loaded.profile) persist();
   // "Como jogar" opens by itself until the player closes it once
-  const howToSeen = () => {
-    try {
-      return storage?.getItem(HOWTO_KEY) === '1';
-    } catch {
-      return false;
-    }
-  };
-  const markHowToSeen = () => {
-    try {
-      storage?.setItem(HOWTO_KEY, '1');
-    } catch {
-      // storage full or blocked: the tips just open again next time
-    }
-  };
+  const howToSeen = () => readPref(storage, HOWTO_KEY) === '1';
+  const markHowToSeen = () => writePref(storage, HOWTO_KEY, '1');
+  // admin mode (testing): the whole shop unlocked and free
+  let admin = readPref(storage, ADMIN_KEY) === '1';
   // "Seu progresso" over the title screen; restoring a code replaces the profile and redraws the balance
   const openProgressDialog = () => {
     const host = layer.querySelector<HTMLElement>('.screen-title');
@@ -104,8 +81,23 @@ export function startApp(
         show(state);
       },
       onClose: () => host.querySelector<HTMLElement>('.title-progress')?.focus(),
+      admin: {
+        on: admin,
+        enter: async (password) => {
+          admin = await checkAdminPassword(password);
+          if (admin) writePref(storage, ADMIN_KEY, '1');
+          return admin;
+        },
+        leave: () => ((admin = false), writePref(storage, ADMIN_KEY, '')),
+      },
     });
   };
+  const actions = profileActions({
+    get: () => profile,
+    set: (next) => ((profile = next), persist()),
+    cue: () => audio.mixer.cue('ui'),
+    admin: () => admin,
+  });
   /** the player's calendar day (challenges renew at local midnight) */
   const today = () => localDate(new Date());
   /** the cars in use (shop), for the spinning previews */
@@ -139,17 +131,12 @@ export function startApp(
   const newGame = (role: Role) => {
     stopGame();
     game = startGame(container, {
+      ...opts,
       role,
       seed: Date.now() >>> 0,
       debug: opts.debug === true,
-      quality: opts.quality,
-      debugHp: opts.debugHp,
-      traffic: opts.traffic,
-      curves: opts.curves,
-      escapeTime: opts.escapeTime,
       difficulty,
       mode,
-      chaosEvery: opts.chaosEvery,
       look: lookFor(profile, role),
       // the computer drives a random car of its side (debug/e2e keep the default one: stable draw calls)
       opponentLook: opts.debug ? undefined : randomLook(role === 'police' ? 'thief' : 'police'),
@@ -158,32 +145,8 @@ export function startApp(
       onPauseRequest: () => dispatch({ type: 'pause' }),
       onEnd: (r) => {
         // credited and saved before the end screen shows: a reload right after cannot lose or repeat it
-        const settled = settleMatch(profile, r, role, difficulty, mode);
-        // V2 part 5: XP (= the coins of the match), challenges, achievements and the streak
-        const st = r.stats ?? { damageDealt: 0, rightBoxes: 0 };
-        const career = settleCareer(
-          settled.profile,
-          {
-            role,
-            mode,
-            difficulty,
-            won: r.winner === role,
-            reason: r.reason,
-            time: r.time,
-            hpFrac: r.hpFrac ?? 0,
-            rightBoxes: st.rightBoxes,
-            mysteryBoxes: st.mysteryBoxes ?? 0,
-            damageDealt: st.damageDealt,
-            roadblocks: st.roadblocks ?? 0,
-            bombHits: st.bombHits ?? 0,
-            wrongBoxes: st.wrongBoxes ?? 0,
-            shots: st.shots ?? 0,
-            boxes: st.boxes ?? 0,
-            coins: settled.reward.total,
-          },
-          today(),
-        );
-        profile = career.profile;
+        const settled = settleEnd(profile, r, { role, mode, difficulty, today: today() });
+        profile = settled.profile;
         persist();
         rewardShown = false;
         dispatch({
@@ -191,7 +154,7 @@ export function startApp(
           result: r,
           qualifies: qualifies(boards[mode][difficulty], role, r.time, r.winner === role, r.hp, mode),
           reward: settled.reward,
-          career: career.events,
+          career: settled.events,
         });
       },
     });
@@ -266,15 +229,7 @@ export function startApp(
           coins: profile.coins,
           today: today(),
           onBack: () => press({ type: 'back' }),
-          onClaim: (id) => {
-            const r = claimReward(profile, id);
-            if (r.coins > 0 || r.profile !== profile) {
-              profile = r.profile;
-              persist();
-              audio.mixer.cue('ui');
-            }
-            return { career: profile.career, coins: profile.coins };
-          },
+          onClaim: actions.onClaim,
         });
         break;
       case 'shop':
@@ -284,19 +239,12 @@ export function startApp(
           side: s.side,
           onSide: (side) => press({ type: 'shopSide', side }),
           onBack: () => press({ type: 'back' }),
-          onBuy: (id) => {
-            const r = buy(profile, id);
-            if (r.ok) {
-              profile = r.profile;
-              persist();
-              audio.mixer.cue('ui');
-            }
-            return profile;
-          },
-          onUse: (id) => ((profile = use(profile, id)), persist(), profile),
-          onPlate: (text) => ((profile = setPlate(profile, text)), persist(), profile),
+          onBuy: actions.onBuy,
+          onUse: actions.onUse,
+          onPlate: actions.onPlate,
           onListen: (role, sound) => audio.mixer.preview(role, sound),
           mountPreview: (slot) => createShopPreview(slot),
+          admin,
         });
         break;
       case 'countdown':
@@ -328,31 +276,12 @@ export function startApp(
           reward: s.reward,
           difficulty,
           animateReward: !rewardShown, // count up only the first time, not when coming back from the ranking
-          lastInitials: (() => {
-            try {
-              const v = storage?.getItem(INITIALS_KEY) ?? '';
-              return /^[A-Z]{3}$/.test(v) ? v : '';
-            } catch {
-              return '';
-            }
-          })(),
+          lastInitials: /^[A-Z]{3}$/.test(readPref(storage, INITIALS_KEY)) ? readPref(storage, INITIALS_KEY) : '',
           career: s.career,
           onSave: (initials) => {
-            try {
-              storage?.setItem(INITIALS_KEY, initials);
-            } catch {
-              // storage full or blocked: they just start at AAA next time
-            }
-            const entry = recordEntry(
-              s.role,
-              s.result,
-              initials,
-              new Date().toISOString(),
-              profile.equipped.plate || null,
-              rankOf(profile.career.xp[s.role]),
-            );
-            const r = insert(boards[mode][difficulty], s.role, entry, mode);
-            boards = { ...boards, [mode]: { ...boards[mode], [difficulty]: r.board } };
+            writePref(storage, INITIALS_KEY, initials); // the plate starts with them next time
+            const r = addRecord(boards, profile, s, initials, { mode, difficulty });
+            boards = r.boards;
             saveModeBoards(storage, boards);
             if (r.rank > 0) highlight = { mode, difficulty, role: s.role, rank: r.rank };
             state = reduce(state, { type: 'saved' }); // no redraw: the screen already shows "Recorde salvo!"
@@ -420,47 +349,21 @@ export function startApp(
     show(next);
   }
 
-  // app clock: countdown and menu music (during a match the game plays the music)
-  let raf = 0;
-  let last = performance.now();
-  const loop = (now: number) => {
-    const dt = Math.min(0.1, (now - last) / 1000);
-    last = now;
-    const portrait = container.clientHeight > container.clientWidth; // phone held upright: the game rotates by itself (styles.css)
-    if (state.screen === 'countdown' && !portrait) dispatch({ type: 'tick', dt }); // in portrait the countdown waits
-    // menu music on screens with no match running (during a match the game plays; silence while paused)
-    if (['title', 'choose', 'shop', 'career', 'end', 'ranking'].includes(state.screen)) audio.mixer.menu(dt);
-    raf = requestAnimationFrame(loop);
-  };
-  raf = requestAnimationFrame(loop);
-
-  // Esc/P while paused resumes (in-game, the game itself requests the pause)
-  const onKey = (e: KeyboardEvent) => {
-    if (state.screen === 'paused' && (e.code === 'Escape' || e.code === 'KeyP') && !e.repeat) {
-      e.stopImmediatePropagation(); // the same key must not immediately ask the game to pause again
-      press({ type: 'resume' });
-    }
-  };
-  window.addEventListener('keydown', onKey, true); // capture: runs before the game's pause shortcut
-  // Android Back button / history: during a match opens the pause instead of leaving
-  const onPop = () => {
-    if (state.screen === 'playing') dispatch({ type: 'pause' });
-    else if (state.screen === 'paused') dispatch({ type: 'resume' });
-    else if (state.screen !== 'title') dispatch({ type: 'back' });
-    else return; // on the title screen, Back exits normally
-    const now = state as FlowState;
-    if (now.screen !== 'title' && !(history.state as { pl?: boolean } | null)?.pl) trap();
-  };
-  window.addEventListener('popstate', onPop);
+  const unwire = wireAppEvents({
+    container,
+    state: () => state,
+    dispatch,
+    press,
+    menuMusic: (dt) => audio.mixer.menu(dt),
+    trap,
+  });
 
   show(state);
 
   return {
     stop() {
-      cancelAnimationFrame(raf);
+      unwire();
       clearTimeout(goTimer);
-      window.removeEventListener('keydown', onKey, true);
-      window.removeEventListener('popstate', onPop);
       clearView();
       stopGame();
       layer.remove();

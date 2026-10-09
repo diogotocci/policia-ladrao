@@ -46,6 +46,7 @@ A simulação (`src/sim`) é determinística a 60 Hz e não conhece Three.js, DO
 | `src/meta` | moedas, perfil, backup, loja e carreira |
 | `src/storage` | ranking e preferências salvas no aparelho |
 | `src/pwa` | service worker e cache offline |
+| `api` | função da Vercel que confere a senha do modo admin |
 | `tests`, `e2e` | testes unitários (Vitest) e de navegador (Playwright) |
 | `docs/superpowers/specs` | specs de cada parte |
 
@@ -75,6 +76,10 @@ pnpm build        # gera dist/
 | `?curves=0` | pista reta |
 
 Só com `?debug`: `traffic=0` (sem tráfego), `escape=N` (fuga em N segundos), `mode=survival`, `mystery=0..1` (fração de caixas amarelas), `give=item1,item2` (itens no início). Com `?app` o jogo abre pelas telas normais mesmo com esses parâmetros.
+
+### Modo admin (testes)
+
+Em "Progresso" há o botão **Admin**: com a senha, a loja fica toda liberada e grátis (o que for pego fica no perfil). A senha é só a variável de ambiente `ADMIN_PASSWORD` na Vercel (Settings → Environment Variables); a função `api/admin.ts` confere no servidor, e a senha nunca entra no código do jogo. Sem a variável, ou fora da Vercel (`pnpm dev`), o admin não liga.
 
 ## Contribuindo
 

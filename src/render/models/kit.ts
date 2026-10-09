@@ -284,3 +284,18 @@ export function addArmorPlates(
     body.add(m);
   }
 }
+
+/** Head and tail lights of a car body (shop cars): one pair at the front, one at the rear. */
+export const lamps = (
+  body: THREE.Object3D,
+  halfW: number,
+  front: number,
+  rear: number,
+  yHead: number,
+  yTail: number,
+  wHead = 0.42,
+  wTail = 0.5,
+) => {
+  body.add(mesh(merge(both((sd) => rb(wHead, 0.13, 0.08, 0.03, sd * (halfW - wHead / 2 - 0.12), yHead, -front))), HEAD, 'headlights'));
+  body.add(mesh(merge(both((sd) => rb(wTail, 0.2, 0.08, 0.03, sd * (halfW - wTail / 2 - 0.1), yTail, rear))), TAIL, 'taillights'));
+};

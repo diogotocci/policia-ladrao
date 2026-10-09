@@ -90,19 +90,20 @@ describe('career stats (V2 part 5)', () => {
 });
 
 describe('daily challenge stats (playtest 2026-10-08)', () => {
-  it("counts the opponent's boxes, the player's shots (not the helicopter) and every box picked", () => {
+  it("counts the opponent's boxes, the player's shots (not the helicopter) and every box picked (also a yellow one taken while the roulette spins)", () => {
     const ev = [
       { type: 'pickup', role: 'thief', item: 'wrong' },
       { type: 'pickup', role: 'thief', item: 'bomb' },
       { type: 'pickup', role: 'thief', item: 'none' },
       { type: 'pickup', role: 'police', item: 'wrong' },
       { type: 'mystery', role: 'thief', outcome: { good: true }, s: 0, x: 0 },
+      { type: 'mysteryBusy', role: 'thief' },
       { type: 'shot', from: 'thief', s: 0, x: 0 },
       { type: 'shot', from: 'thief', s: 0, x: 0, rapid: true },
       { type: 'shot', from: 'police', s: 0, x: 0 },
       { type: 'shot', from: 'police', s: 0, x: 0, air: true },
     ] as unknown as Parameters<typeof addEvents>[1];
-    expect(addEvents(emptyStats(), ev, 'thief')).toMatchObject({ wrongBoxes: 1, rightBoxes: 1, boxes: 4, shots: 2 });
+    expect(addEvents(emptyStats(), ev, 'thief')).toMatchObject({ wrongBoxes: 1, rightBoxes: 1, boxes: 5, shots: 2, mysteryBoxes: 1 });
     expect(addEvents(emptyStats(), ev, 'police')).toMatchObject({ wrongBoxes: 1, rightBoxes: 0, boxes: 1, shots: 1 });
     // stats saved before these counters existed still add up
     expect(addEvents({ damageDealt: 0, rightBoxes: 2 }, ev, 'thief')).toMatchObject({ rightBoxes: 3, wrongBoxes: 1 });

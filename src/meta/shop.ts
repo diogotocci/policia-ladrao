@@ -205,11 +205,17 @@ export type BuyCheck =
   /** car not owned yet (paints), or the career requirement is not met; `need` is the player-facing text */
   | { ok: false; reason: 'locked'; need: string };
 
-export function canBuy(p: Profile, id: string): BuyCheck {
+/** Admin mode (testing, playtest 2026-10-09): everything unlocked and free. */
+export interface ShopMode {
+  admin?: boolean;
+}
+
+export function canBuy(p: Profile, id: string, mode: ShopMode = {}): BuyCheck {
   const item = BY_ID.get(id);
   if (!item) return { ok: false, reason: 'unknown' };
   if (has(p.owned, id)) return { ok: false, reason: 'owned' };
   if (item.kind === 'paint' && !ownsCar(p.owned, item.car!)) return { ok: false, reason: 'locked', need: 'Compre o carro primeiro' };
+  if (mode.admin) return { ok: true, price: 0 };
   const req = unlockOf(id);
   if (req && !meets(p.career, req)) return { ok: false, reason: 'locked', need: requirementText(p.career, req) };
   if (p.coins < item.price) return { ok: false, reason: 'coins', missing: item.price - p.coins };
@@ -217,8 +223,8 @@ export function canBuy(p: Profile, id: string): BuyCheck {
 }
 
 /** Buys and puts it in use ("Comprar e usar"). Unchanged profile when it cannot. */
-export function buy(p: Profile, id: string): { ok: boolean; profile: Profile } {
-  const check = canBuy(p, id);
+export function buy(p: Profile, id: string, mode: ShopMode = {}): { ok: boolean; profile: Profile } {
+  const check = canBuy(p, id, mode);
   if (!check.ok) return { ok: false, profile: p };
   const bought: Profile = { ...p, coins: p.coins - check.price, owned: [...p.owned, id] };
   return { ok: true, profile: use(bought, id) };
