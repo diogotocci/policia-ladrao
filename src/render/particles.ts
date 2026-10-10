@@ -29,7 +29,8 @@ function puffTexture(): THREE.DataTexture {
 }
 
 export interface Particles {
-  emitSmoke(x: number, y: number, s: number, color: 'white' | 'black'): void;
+  /** a number: coloured smoke (V2 part 6 delivery 2: tire smoke and nitro trail in the side's colour) */
+  emitSmoke(x: number, y: number, s: number, color: 'white' | 'black' | number): void;
   emitBurst(x: number, s: number, kind: 'explosion' | 'crash'): void;
   /** the thief's smoke screen: big dark puffs low over the road, left behind the car */
   emitCloud(x: number, s: number): void;
@@ -63,12 +64,23 @@ export function createParticles(scene: THREE.Scene, max = 160): Particles {
   const total = new Float32Array(max);
   const size = new Float32Array(max * 2); // initial, final
   const kind: Kind[] = new Array(max).fill('white');
+  const tint = Array.from({ length: max }, () => new THREE.Color()); // each particle's colour
   let next = 0;
   let seed = 3;
   const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   let half = false;
 
-  const spawn = (k: Kind, x: number, y: number, s: number, v: [number, number, number], lifeS: number, s0: number, s1: number) => {
+  const spawn = (
+    k: Kind,
+    x: number,
+    y: number,
+    s: number,
+    v: [number, number, number],
+    lifeS: number,
+    s0: number,
+    s1: number,
+    hex?: number,
+  ) => {
     const i = next;
     next = (next + 1) % max;
     pos.set([x, y, s], i * 3);
@@ -77,14 +89,16 @@ export function createParticles(scene: THREE.Scene, max = 160): Particles {
     size[i * 2] = s0;
     size[i * 2 + 1] = s1;
     kind[i] = k;
-    mesh.setColorAt(i, COLORS[k]);
+    if (hex === undefined) tint[i]!.copy(COLORS[k]);
+    else tint[i]!.setHex(hex);
   };
 
   const tmp = new THREE.Object3D();
   return {
     emitSmoke(x, y, s, color) {
+      const k: Kind = color === 'black' ? 'black' : 'white';
       spawn(
-        color,
+        k,
         x + (rand() - 0.5) * 0.3,
         y,
         s,
@@ -92,6 +106,7 @@ export function createParticles(scene: THREE.Scene, max = 160): Particles {
         1.0,
         0.3,
         color === 'black' ? 1.3 : 1.0,
+        typeof color === 'number' ? color : undefined,
       );
     },
     emitCloud(x, s) {
@@ -140,7 +155,7 @@ export function createParticles(scene: THREE.Scene, max = 160): Particles {
         tmp.scale.setScalar(sc);
         tmp.updateMatrix();
         mesh.setMatrixAt(n, tmp.matrix);
-        mesh.setColorAt(n, COLORS[kind[i]!]);
+        mesh.setColorAt(n, tint[i]!);
         n++;
       }
       mesh.count = n;

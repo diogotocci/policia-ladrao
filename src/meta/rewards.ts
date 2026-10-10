@@ -13,6 +13,8 @@ export interface MatchStats {
   wrongBoxes?: number;
   shots?: number;
   boxes?: number;
+  /** V2 part 6: skids of the player's car (achievement "Derrape 100 vezes") */
+  skids?: number;
 }
 
 export interface Reward {
@@ -34,6 +36,7 @@ export const emptyStats = (): Required<MatchStats> => ({
   wrongBoxes: 0,
   shots: 0,
   boxes: 0,
+  skids: 0,
 });
 
 /** Adds one simulation step's events to the running stats of the player's car. */
@@ -51,6 +54,7 @@ export function addEvents(stats: MatchStats, events: readonly GameEvent[], playe
     } else if (e.type === 'mysteryBusy' && e.role === player) out.boxes++;
     else if (e.type === 'shot' && e.from === player && !e.air) out.shots++;
     else if (e.type === 'special' && e.role === 'police' && e.kind === 'roadblock' && player === 'police') out.roadblocks++;
+    else if (e.type === 'skid' && e.role === player) out.skids++;
     else if (e.type === 'explosion' && player === 'thief') out.bombHits++; // a bomb only explodes when it hits the police
   }
   return out;

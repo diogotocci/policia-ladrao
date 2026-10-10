@@ -6,7 +6,6 @@ import {
   CARS,
   DEFAULT_SOUND_NAME,
   NEONS,
-  NEON_IDS,
   PRICES,
   PLATE_MAX,
   SOUNDS,
@@ -24,11 +23,12 @@ import {
 } from '../../meta/shop';
 import { STICKERS, STICKER_NAMES, masteryLevel, type FinishId } from '../../meta/mastery';
 import { drawMasteryBar, finishRowsFor } from './shopMastery';
+import { accessoryOn, effectsRows, partsRows, previewPart } from './shopParts';
 import { btn, h, mount, openModal, type Disposable } from './dom';
 import { SCREEN_ICONS } from './icons';
 import './shop.css';
 
-type Tab = 'cars' | 'paint' | 'sticker' | 'neon' | 'sound' | 'plate';
+type Tab = 'cars' | 'paint' | 'sticker' | 'parts' | 'effects' | 'sound' | 'plate';
 const n = (v: number) => v.toLocaleString('pt-BR');
 const hex = (c: number) => `#${c.toString(16).padStart(6, '0')}`;
 
@@ -111,7 +111,8 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
     ['cars', 'Carros'],
     ['paint', 'Pintura'],
     ['sticker', 'Adesivos'],
-    ['neon', 'Neon'],
+    ['parts', 'Peças'],
+    ['effects', 'Efeitos'],
     ['sound', side === 'police' ? 'Sirene' : 'Buzina'],
     ['plate', 'Placa'],
   ];
@@ -141,11 +142,10 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
             price: PRICES.sticker,
           })),
         ];
-      case 'neon':
-        return [
-          { id: `neon:${side}:off`, name: 'Sem neon', swatch: 'transparent', price: 0 },
-          ...NEON_IDS.map((c) => ({ id: `neon:${side}:${c}`, name: NEONS[c].name, swatch: hex(NEONS[c].color), price: PRICES.neon })),
-        ];
+      case 'parts':
+        return partsRows(side);
+      case 'effects':
+        return effectsRows(side);
       case 'sound':
         return [
           { id: `sound:${side}:padrao`, name: DEFAULT_SOUND_NAME[side], swatch: '', price: 0 },
@@ -178,11 +178,13 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
     if (kind === 'paint' && a === car) look.paint = CARS[car].colors[Number(b)]!;
     if (kind === 'neon') look.neon = b === 'off' ? null : NEONS[b as keyof typeof NEONS].color;
     if (tab === 'plate') look.plate = normalizePlate(plateDraft) || null;
+    previewPart(look, selected);
     return look;
   };
 
   type State = { label: string; enabled: boolean; kind: 'use' | 'buy' | 'none' };
   const stateOf = (id: string): State => {
+    if (accessoryOn(profile, id)) return { label: 'Tirar', enabled: true, kind: 'use' };
     if (owns(profile, id))
       return inUse(profile, id) ? { label: 'Em uso', enabled: false, kind: 'none' } : { label: 'Usar', enabled: true, kind: 'use' };
     const c = canBuy(profile, id, { admin: p.admin });
@@ -198,7 +200,7 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
     const st = stateOf(selected);
     if (!st.enabled) return;
     if (st.kind === 'use') {
-      profile = p.onUse(selected);
+      profile = p.onUse(accessoryOn(profile, selected) ? `${selected}:off` : selected);
       draw();
     } else if (st.kind === 'buy' && p.admin) {
       profile = p.onBuy(selected); // admin: free, no confirmation
@@ -236,7 +238,7 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
     el.dataset.id = r.id;
     const sw = h('span', r.swatch ? 'shop-swatch' : 'shop-swatch is-icon');
     if (r.swatch) sw.style.background = r.swatch;
-    else sw.innerHTML = tab === 'sound' ? SCREEN_ICONS.siren : SCREEN_ICONS.car;
+    else sw.innerHTML = tab === 'sound' ? SCREEN_ICONS.siren : SCREEN_ICONS.car; // accessories: the car icon
     const st = stateOf(r.id);
     const tag = owns(profile, r.id) ? (inUse(profile, r.id) ? 'Em uso' : 'Seu') : r.price > 0 ? n(r.price) : '';
     const state = h(

@@ -3,6 +3,7 @@
 // earned and what to show on the end screen. Rewards are coins and shop unlocks (meta/shop.ts asks unlockOf here).
 import type { Role } from '../config/balance';
 import { DAILY_COINS, arrested, dailiesFor, escaped, type MatchSummary } from './dailies';
+import { WHEEL_RANK, type WheelStyle } from './parts';
 import { MASTERY_CARS, MASTERY_MAX, masteryLevel, masteryLevelFor, rewardId } from './mastery';
 
 // ---------- ranks ----------
@@ -32,6 +33,10 @@ export interface Counters {
   cleanEscape: number; // 1 once the thief escaped with more than 80% life
   bestStreak: number;
   dailiesDone: number;
+  /** V2 part 6 delivery 2 */
+  skids: number;
+  boxes: number;
+  survival5min: number; // 1 once the thief lasted 5 min in Sobrevivência
 }
 /** Fixed order (backup positions): new counters only at the end. */
 export const COUNTER_KEYS: (keyof Counters)[] = [
@@ -48,6 +53,9 @@ export const COUNTER_KEYS: (keyof Counters)[] = [
   'cleanEscape',
   'bestStreak',
   'dailiesDone',
+  'skids',
+  'boxes',
+  'survival5min',
 ];
 export const emptyCounters = (): Counters => Object.fromEntries(COUNTER_KEYS.map((k) => [k, 0])) as unknown as Counters;
 
@@ -79,6 +87,19 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
   { id: 'play200', side: 'any', title: 'Jogue 200 partidas', counter: 'matches', target: 200, coins: 3000 },
   { id: 'streak7', side: 'any', title: '7 dias seguidos', counter: 'bestStreak', target: 7, coins: 1000 },
   { id: 'daily20', side: 'any', title: 'Complete 20 desafios do dia', counter: 'dailiesDone', target: 20, coins: 1500 },
+  // V2 part 6 delivery 2: coloured smoke and the thief's accessories
+  { id: 'skid100', side: 'any', title: 'Derrape 100 vezes', counter: 'skids', target: 100, unlock: 'smoke' },
+  { id: 'escape30', side: 'thief', title: 'Fuja 30 vezes', counter: 'escapes', target: 30, unlock: 'acc:aerofolio' },
+  { id: 'boxes100', side: 'thief', title: 'Pegue 100 caixas', counter: 'boxes', target: 100, unlock: 'acc:rack' },
+  { id: 'kill25', side: 'thief', title: 'Destrua a viatura 25 vezes', counter: 'kills', target: 25, unlock: 'acc:antena' },
+  {
+    id: 'survive5',
+    side: 'thief',
+    title: 'Sobreviva 5 min no Sobrevivência',
+    counter: 'survival5min',
+    target: 1,
+    unlock: 'acc:escapamento',
+  },
 ];
 
 // ---------- daily challenges: meta/dailies.ts ----------
@@ -197,6 +218,9 @@ export function careerAfterMatch(c: Career, m: MatchSummary, today: string): { c
   }
   if (m.role === 'thief' && m.won && m.reason !== 'escape') k.kills++; // the patrol car destroyed (also in Sobrevivência)
   if (m.role === 'thief' && m.mode === 'survival' && m.time >= 180) k.survival3min = 1;
+  if (m.role === 'thief' && m.mode === 'survival' && m.time >= 300) k.survival5min = 1;
+  k.skids += m.skids ?? 0;
+  if (m.role === 'thief') k.boxes += m.boxes ?? 0;
   k.roadblocks += m.roadblocks;
   k.bombHits += m.bombHits;
 
@@ -241,14 +265,23 @@ const NEON_FIRST: Record<Role, string[]> = { police: ['azul', 'roxo'], thief: ['
 
 /** What unlocks a shop item (null: always available). */
 export function unlockOf(id: string): Requirement | null {
-  const a = ACHIEVEMENTS.find((x) => x.unlock === id);
+  const a = ACHIEVEMENTS.find((x) => x.unlock === id || (x.unlock === 'smoke' && id.startsWith('smoke:')));
   if (a) return { kind: 'achievement', achievement: a };
   const m = masteryLevelFor(id);
   if (m) return { kind: 'mastery', car: m.car, level: m.level };
+  return rankUnlock(id);
+}
+const wheelsUnlock = (side: string | undefined, style: string | undefined): Requirement | null =>
+  (side === 'police' || side === 'thief') && style && style in WHEEL_RANK
+    ? { kind: 'rank', side, rank: WHEEL_RANK[style as WheelStyle] }
+    : null;
+/** Items unlocked by a rank (plate, paints, neon, wheels). */
+function rankUnlock(id: string): Requirement | null {
   const [kind, x, y] = id.split(':');
   if (id === 'plate') return { kind: 'rank', side: 'any', rank: 2 };
   if (kind === 'paint') return { kind: 'rank', side: paintSide(x!), rank: [0, 2, 4, 6][Number(y)] ?? 2 };
   if (kind === 'neon' && (x === 'police' || x === 'thief')) return { kind: 'rank', side: x, rank: NEON_FIRST[x].includes(y!) ? 3 : 5 };
+  if (kind === 'wheels') return wheelsUnlock(x, y);
   return null;
 }
 const POLICE_CARS = ['viatura', 'esportivo', 'blazer', 'caveirao'];

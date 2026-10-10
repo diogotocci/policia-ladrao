@@ -110,6 +110,43 @@ describe('shop screen (spec §6)', () => {
     expect(s.listen).toHaveBeenLastCalledWith('thief', null);
   });
 
+  it('Peças tab (V2 part 6 delivery 2): wheels on both sides, accessories only on the thief, put on and taken off', () => {
+    open(unlocked(50_000));
+    button('Peças').click();
+    expect([...root.querySelectorAll('.shop-section')].map((e) => e.textContent)).toEqual(['Rodas']);
+    root.replaceChildren();
+    const s = open(unlocked(50_000), 'thief');
+    button('Peças').click();
+    expect([...root.querySelectorAll('.shop-section')].map((e) => e.textContent)).toEqual([
+      'Rodas',
+      'Acessórios (a moto só usa antena e escapamento)',
+    ]);
+    row('Rodão').click();
+    expect(s.shown.at(-1)!.wheels).toBe('rodao'); // tried on before buying
+    row('Aerofólio').click();
+    expect(s.shown.at(-1)!.acc).toEqual(['aerofolio']);
+    expect(action().textContent).toBe('Comprar · 1.200');
+    action().click();
+    button('Comprar e usar').click();
+    expect(s.profile.equipped.acc).toEqual(['aerofolio']);
+    expect(action().textContent).toBe('Tirar');
+    action().click();
+    expect(s.profile.equipped.acc).toBeUndefined();
+    expect(action().textContent).toBe('Usar');
+  });
+
+  it('Efeitos tab: neon and smoke of the side', () => {
+    const s = open(unlocked(50_000));
+    button('Efeitos').click();
+    expect([...root.querySelectorAll('.shop-section')].map((e) => e.textContent)).toEqual(['Neon', 'Fumaça (derrapagem e nitro)']);
+    expect(row('Branca').textContent).toContain('Em uso');
+    row('Vermelha').click();
+    expect(s.shown.at(-1)!.smoke).toBe(0xff3b3b);
+    action().click();
+    button('Comprar e usar').click();
+    expect(s.profile.equipped.smoke).toEqual({ police: 'vermelha' });
+  });
+
   it('plate tab: buy once, then save and remove for free', async () => {
     const s = open(unlocked(3000));
     button('Placa').click();

@@ -4,6 +4,7 @@ import { parseProfile, type Profile } from './profile';
 import { CAR_IDS, CATALOG, NEON_IDS, SOUND_IDS, defaultEquipped } from './shop';
 import { ACHIEVEMENTS, COUNTER_KEYS, emptyCareer } from './career';
 import { FINISHES, MASTERY_CARS, type FinishId } from './mastery';
+import { ACCESSORY_IDS, SMOKE_COLORS, WHEEL_STYLES } from './parts';
 
 /** finish codes in the backup: 0 = normal */
 const FINISH_CODES: readonly (FinishId | 'normal')[] = ['normal', ...FINISHES, 'lendaria'];
@@ -106,6 +107,14 @@ const pack = (p: Profile) => {
       // V2 part 6: finish and sticker per car
       CAR_IDS.map((x) => FINISH_CODES.indexOf(p.equipped.finish?.[x] ?? 'normal')).join(''),
       CAR_IDS.map((x) => p.equipped.sticker?.[x] ?? 0).join(''),
+      // V2 part 6 delivery 2: wheels and smoke per side (-1 = standard) and the accessories in use as a bit mask
+      [
+        WHEEL_STYLES.indexOf(p.equipped.wheels?.police as never),
+        WHEEL_STYLES.indexOf(p.equipped.wheels?.thief as never),
+        SMOKE_COLORS.indexOf(p.equipped.smoke?.police as never),
+        SMOKE_COLORS.indexOf(p.equipped.smoke?.thief as never),
+        ACCESSORY_IDS.reduce((m, x, i) => (p.equipped.acc?.includes(x) ? m | (1 << i) : m), 0),
+      ],
     ],
     // v3 (career): xp, counters, achievements (positions), today's challenges, streak, rewards waiting to be claimed
     [
@@ -124,13 +133,26 @@ const pack = (p: Profile) => {
 };
 const at = <T>(list: readonly T[], i: unknown): T | null =>
   typeof i === 'number' && Number.isInteger(i) && i >= 0 && i < list.length ? list[i]! : null;
+/** V2 part 6 delivery 2: [wheels police, wheels thief, smoke police, smoke thief, accessory mask] */
+function unpackParts(raw: unknown) {
+  const parts = Array.isArray(raw) ? (raw as unknown[]) : [];
+  const perSide = <T>(list: readonly T[], o: number) =>
+    Object.fromEntries([['police', at(list, parts[o])] as const, ['thief', at(list, parts[o + 1])] as const].filter(([, v]) => v !== null));
+  const mask = typeof parts[4] === 'number' ? parts[4] : 0;
+  return { wheels: perSide(WHEEL_STYLES, 0), smoke: perSide(SMOKE_COLORS, 2), acc: ACCESSORY_IDS.filter((_, i) => mask & (1 << i)) };
+}
 function unpack(a: unknown): unknown {
   if (!Array.isArray(a) || (a.length !== 8 && a.length !== 10 && a.length !== 11)) return undefined;
   const [v, coins, matches, wins, escapes, arrests, coinsEarned, welcome, ownedIdx, eq, car] = a as unknown[];
   if (welcome !== 0 && welcome !== 1) return undefined;
   const base = { v, coins, stats: { matches, wins, escapes, arrests, coinsEarned }, welcomeGranted: welcome === 1 };
   if (a.length === 8) return v === 1 ? base : { ...base, owned: [] }; // v1, or later with nothing from the shop or career
-  if (!Array.isArray(ownedIdx) || !Array.isArray(eq) || (eq.length !== 8 && eq.length !== 10) || typeof eq[6] !== 'string')
+  if (
+    !Array.isArray(ownedIdx) ||
+    !Array.isArray(eq) ||
+    (eq.length !== 8 && eq.length !== 10 && eq.length !== 11) ||
+    typeof eq[6] !== 'string'
+  )
     return undefined;
   const owned = ownedIdx.map((i) => at(CATALOG, i)?.id).filter((x) => x !== undefined);
   const side = (o: number) => ({ car: at(CAR_IDS, eq[o]), neon: at(NEON_IDS, eq[o + 1]), sound: at(SOUND_IDS, eq[o + 2]) });
@@ -139,7 +161,11 @@ function unpack(a: unknown): unknown {
     typeof text === 'string' ? Object.fromEntries(CAR_IDS.map((c, i) => [c, value(Number(text[i] ?? 0))]).filter(([, v]) => v)) : {};
   const finish = perCar(eq[8], (code) => (code > 0 ? FINISH_CODES[code] : undefined));
   const sticker = perCar(eq[9], (code) => (code > 0 ? code : undefined));
-  const out = { ...base, owned, equipped: { police: side(0), thief: side(3), paint, plate: eq[7], finish, sticker } };
+  const out = {
+    ...base,
+    owned,
+    equipped: { police: side(0), thief: side(3), paint, plate: eq[7], finish, sticker, ...unpackParts(eq[10]) },
+  };
   if (a.length === 10) return out; // v2: the career starts from the stats
   if (!Array.isArray(car) || (car.length !== 9 && car.length !== 10) || !Array.isArray(car[2]) || !Array.isArray(car[3])) return undefined;
   const career = {

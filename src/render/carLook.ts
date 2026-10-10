@@ -7,6 +7,8 @@ import { MODELS } from './models';
 import { canvasTex } from './models/kit';
 import { applyFinish } from './finish';
 import { addSticker } from './stickers';
+import { applyWheels } from './wheels';
+import { addAccessory } from './accessories';
 
 /** Mercosul plate: white, blue "BRASIL" band, black letters. */
 function plateTexture(text: string): THREE.Texture | null {
@@ -69,6 +71,7 @@ export function createLookModel(role: Role, look: CarLook = defaultLook(role)): 
       }
   });
   if (look.sticker) addSticker(root, look.car, look.sticker.kind, look.sticker.number, look.paint);
+  addParts(root, look, [...painted][0]);
   if (look.neon !== null) {
     const glow = new THREE.Mesh(
       new THREE.PlaneGeometry(spec.neon.w, spec.neon.l).rotateX(-Math.PI / 2),
@@ -101,6 +104,17 @@ export function createLookModel(role: Role, look: CarLook = defaultLook(role)): 
   return root;
 }
 
+/** V2 part 6 delivery 2: wheel style and the thief's accessories; the flames are listed for updateCarModel. */
+function addParts(root: THREE.Group, look: CarLook, paint: THREE.Material | undefined): void {
+  applyWheels(root, look.wheels ?? null, look.car);
+  for (const id of look.acc ?? []) addAccessory(root, look.car, id, paint ?? new THREE.MeshStandardMaterial({ color: look.paint }));
+  const flames: THREE.Object3D[] = [];
+  root.traverse((o) => {
+    if (o.userData.flame) flames.push(o);
+  });
+  if (flames.length) root.userData.flames = flames;
+}
+
 /**
  * Frees what belongs to one car only: its material copies, its own geometry (dents, neon, plate) and the plate
  * texture. Template geometry and shared textures (decals, glow) stay: other cars use them.
@@ -111,6 +125,7 @@ export function disposeLookModel(root: THREE.Object3D): void {
     if (!m.isMesh) return;
     if (m.geometry.userData.own) m.geometry.dispose();
     for (const mat of Array.isArray(m.material) ? m.material : [m.material]) {
+      if (mat.userData.shared) continue; // wheel styles and accessories: one material for every car
       const map = (mat as THREE.MeshStandardMaterial).map;
       if (map?.userData.own) map.dispose();
       mat.dispose();

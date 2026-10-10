@@ -194,3 +194,81 @@ describe('sticker layout (playtest 2026-10-09: car by car, never over the car de
     }
   });
 });
+
+describe('wheels and accessories (V2 part 6 delivery 2, spec §3.3 and §3.5)', () => {
+  const wheels = (m: THREE.Object3D) => m.children.filter((c) => c.name === 'wheel') as THREE.Mesh[];
+
+  it.each(['viatura', 'caveirao', 'seda', 'van'] as const)('%s: a wheel style replaces every wheel, same place and radius', (car) => {
+    const role = CARS[car].role;
+    const plain = createLookModel(role, look(car));
+    const m = createLookModel(role, look(car, { wheels: 'rodao' }));
+    const before = wheels(plain);
+    const after = wheels(m);
+    expect(after.length).toBe(before.length);
+    after.forEach((w, i) => {
+      expect(w.position.toArray()).toEqual(before[i]!.position.toArray());
+      expect(w.geometry).not.toBe(before[i]!.geometry);
+      expect(Array.isArray(w.material)).toBe(true);
+      expect(w.geometry.groups.length).toBe(2); // tire, rim
+    });
+    expect(meshes(m).length).toBe(meshes(plain).length);
+  });
+
+  it('moto: keeps its wheels and recolours the rim', () => {
+    const plain = createLookModel('thief', look('moto'));
+    const m = createLookModel('thief', look('moto', { wheels: 'cromadas' }));
+    wheels(m).forEach((w, i) => {
+      expect(w.geometry).toBe(wheels(plain)[i]!.geometry);
+      const rim = w.getObjectByName('rim') as THREE.Mesh;
+      expect((rim.material as THREE.MeshStandardMaterial).color.getHex()).not.toBe(
+        ((wheels(plain)[i]!.getObjectByName('rim') as THREE.Mesh).material as THREE.MeshStandardMaterial).color.getHex(),
+      );
+    });
+    expect(meshes(m).length).toBe(meshes(plain).length);
+  });
+
+  it.each(['seda', 'picape', 'van'] as const)('%s: all four accessories, within the mesh budget', (car) => {
+    const all = ['aerofolio', 'rack', 'antena', 'escapamento'] as const;
+    const m = createLookModel('thief', look(car, { acc: [...all] }));
+    for (const name of ['acc-wing', 'acc-wing-struts', 'acc-rack', 'acc-rack-lamps', 'acc-antenna', 'acc-pennant', 'acc-pipe', 'acc-flame'])
+      expect(m.getObjectByName(name), name).toBeDefined();
+    if (car === 'seda') expect(m.getObjectByName('spoiler')).toBeDefined(); // keeps its own spoiler under the wing
+    expect(meshes(m).length).toBeLessThanOrEqual(meshes(createLookModel('thief', look(car))).length + 10);
+    expect((m.userData.flames as THREE.Object3D[]).length).toBe(2);
+  });
+
+  it('moto: only the antenna and the exhaust', () => {
+    const m = createLookModel('thief', look('moto', { acc: ['aerofolio', 'rack', 'antena', 'escapamento'] }));
+    expect(m.getObjectByName('acc-wing')).toBeUndefined();
+    expect(m.getObjectByName('acc-rack')).toBeUndefined();
+    expect(m.getObjectByName('acc-antenna')).toBeDefined();
+    expect(m.getObjectByName('acc-flame')).toBeDefined();
+  });
+
+  it('the flame always flickers and grows while the car speeds up', () => {
+    const m = createLookModel('thief', look('seda', { acc: ['escapamento'] }));
+    const flame = (m.userData.flames as THREE.Object3D[])[0]!;
+    const car = { ...createCar('thief', 1), speed: 20 };
+    const sizes = [0.1, 0.2, 0.3].map((t) => (updateCarModel(m, car, t), flame.scale.z));
+    expect(new Set(sizes).size).toBe(3);
+    updateCarModel(m, car, 0.4);
+    const steady = flame.scale.z;
+    updateCarModel(m, { ...car, speed: 21 }, 0.4);
+    expect(flame.scale.z).toBeGreaterThan(steady * 1.5);
+  });
+
+  it('disposing a car leaves the shared wheel and accessory materials', () => {
+    const m = createLookModel('thief', look('seda', { wheels: 'cromadas', acc: ['rack'] }));
+    const shared = [
+      ...(wheels(m)[0]!.material as THREE.Material[]),
+      (m.getObjectByName('acc-rack') as THREE.Mesh).material as THREE.Material,
+    ];
+    const spies = shared.map((mat) => {
+      let n = 0;
+      mat.addEventListener('dispose', () => n++);
+      return () => n;
+    });
+    disposeLookModel(m);
+    expect(spies.map((f) => f())).toEqual([0, 0, 0]);
+  });
+});

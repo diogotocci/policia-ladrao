@@ -22,6 +22,8 @@ export interface MatchSummary {
   wrongBoxes?: number;
   shots?: number;
   boxes?: number;
+  /** V2 part 6: skids of the player's car */
+  skids?: number;
   /** V2 part 6: the car played (mastery) */
   car?: string;
   /** coins the match paid (= XP for that side) */

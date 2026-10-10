@@ -4,11 +4,22 @@ import type { Role } from '../config/balance';
 import type { Profile } from './profile';
 import { meets, requirementText, unlockOf } from './career';
 import { FINISHES, MASTERY_CARS, STICKERS, masteryLevel, type FinishId } from './mastery';
+import {
+  freePart,
+  partInUse,
+  partItems,
+  partsLook,
+  sanitizeParts,
+  useParts,
+  PART_PRICES,
+  type PartsEquip,
+  type PartsLook,
+} from './shopParts';
 
 export type CarId = 'viatura' | 'esportivo' | 'blazer' | 'caveirao' | 'seda' | 'picape' | 'moto' | 'van';
 export type NeonColor = 'azul' | 'roxo' | 'verde' | 'rosa';
 export type SoundId = 'yelp' | 'choque' | 'corneta' | 'grave' | 'dupla';
-export type ItemKind = 'car' | 'paint' | 'neon' | 'sound' | 'plate' | 'finish' | 'sticker';
+export type ItemKind = 'car' | 'paint' | 'neon' | 'sound' | 'plate' | 'finish' | 'sticker' | 'wheels' | 'smoke' | 'acc';
 
 export interface CarInfo {
   role: Role;
@@ -101,7 +112,7 @@ export const SOUND_IDS = Object.keys(SOUNDS) as SoundId[];
 export const DEFAULT_SOUND_NAME: Record<Role, string> = { police: 'Sirene padrão', thief: 'Buzina padrão' };
 
 // V2 part 5: ~3x the 0.16 prices, and every item needs to be unlocked first (career.ts unlockOf)
-export const PRICES = { paint: 900, neon: 1800, sound: 1500, plate: 1200, finish: 1200, sticker: 900 } as const;
+export const PRICES = { paint: 900, neon: 1800, sound: 1500, plate: 1200, finish: 1200, sticker: 900, ...PART_PRICES } as const;
 export const PLATE_MAX = 7;
 
 export interface ShopItem {
@@ -159,6 +170,7 @@ export const CATALOG: readonly ShopItem[] = [
       sticker: n,
     })),
   ]),
+  ...partItems(PRICES), // V2 part 6 delivery 2: wheels and smoke per side, the thief's accessories
 ];
 const BY_ID = new Map(CATALOG.map((i) => [i.id, i]));
 export const itemById = (id: string): ShopItem | undefined => BY_ID.get(id);
@@ -169,7 +181,8 @@ export interface SideEquip {
   neon: NeonColor | null;
   sound: SoundId | null;
 }
-export interface Equipped {
+/** V2 part 6 delivery 2 adds the parts (wheels, smoke, accessories): see shopParts.ts */
+export interface Equipped extends PartsEquip {
   police: SideEquip;
   thief: SideEquip;
   /** per car: 0 = original colour, 1..3 = paint */
@@ -232,6 +245,7 @@ export function sanitizeShop(ownedRaw: readonly unknown[], eq: Partial<Equipped>
     const n = sticker?.[car];
     if (typeof n === 'number' && has(owned, `sticker:${car}:${n}`)) out.sticker![car] = n;
   }
+  Object.assign(out, sanitizeParts(owned, eq));
   return { owned, equipped: out };
 }
 
@@ -270,7 +284,8 @@ export function buy(p: Profile, id: string, mode: ShopMode = {}): { ok: boolean;
 
 /**
  * Puts an owned item in use. Free choices: `car:<default>`, `paint:<car>:0` (original colour), `neon:<role>:off`,
- * `sound:<role>:padrao`. Anything not owned leaves the profile as it is.
+ * `sound:<role>:padrao`, `wheels:<role>:padrao`, `smoke:<role>:branca`, `acc:<id>:off` (takes it off). Anything not
+ * owned leaves the profile as it is.
  */
 export function use(p: Profile, id: string): Profile {
   const [kind, a, b] = id.split(':');
@@ -301,6 +316,8 @@ export function use(p: Profile, id: string): Profile {
     if (has(p.owned, id)) return { ...p, equipped: { ...eq, sticker: { ...(eq.sticker ?? {}), [car]: Number(b) } } };
     return p;
   }
+  const parts = useParts(eq, p.owned, id);
+  if (parts) return parts === eq ? p : { ...p, equipped: parts };
   if (kind === 'sound' && a) {
     if ((a === 'police' || a === 'thief') && b === 'padrao') return { ...p, equipped: { ...eq, [a]: { ...eq[a], sound: null } } };
     if (a in SOUNDS && has(p.owned, id)) {
@@ -324,6 +341,8 @@ export function inUse(p: Profile, id: string): boolean {
   if (kind === 'neon' && (a === 'police' || a === 'thief')) return (eq[a].neon ?? 'off') === b;
   if (kind === 'finish' && a) return (eq.finish?.[a as CarId] ?? 'normal') === b;
   if (kind === 'sticker' && a) return String(eq.sticker?.[a as CarId] ?? 0) === b;
+  const part = partInUse(eq, id);
+  if (part !== undefined) return part;
   if (kind === 'sound' && a) {
     if (a === 'police' || a === 'thief') return b === 'padrao' && eq[a].sound === null;
     return a in SOUNDS && eq[SOUNDS[a as SoundId].role].sound === a;
@@ -337,6 +356,7 @@ export function owns(p: Profile, id: string): boolean {
   if (kind === 'car') return a !== undefined && a in CARS && ownsCar(p.owned, a as CarId);
   if (kind === 'paint' && b === '0') return a !== undefined && a in CARS && ownsCar(p.owned, a as CarId); // original colour of an owned car
   if (kind === 'neon' && b === 'off') return true;
+  if (freePart(id)) return true;
   if ((kind === 'finish' && b === 'normal') || (kind === 'sticker' && b === '0'))
     return a !== undefined && a in CARS && ownsCar(p.owned, a as CarId); // the plain car
   if (kind === 'sound' && b === 'padrao') return true;
@@ -350,7 +370,8 @@ export function setPlate(p: Profile, text: string): Profile {
 }
 
 // ---------- what the renderer and the audio use ----------
-export interface CarLook {
+/** V2 part 6 delivery 2 adds wheels, smoke colour and accessories: see shopParts.ts */
+export interface CarLook extends Partial<PartsLook> {
   car: CarId;
   /** main body colour */
   paint: number;
@@ -379,6 +400,7 @@ export function lookOfCar(p: Pick<Profile, 'equipped'> & { career?: Profile['car
     sound: null,
     finish: p.equipped.finish?.[car] ?? null,
     sticker: stickerOf(p, car),
+    ...partsLook(p.equipped, info.role),
   };
 }
 
@@ -390,23 +412,3 @@ function stickerOf(p: Pick<Profile, 'equipped'> & { career?: Profile['career'] }
 }
 
 export const defaultLook = (role: Role): CarLook => lookFor({ equipped: defaultEquipped() }, role);
-
-/**
- * The computer's car (playtest 2026-10-08): any car of its side with a random paint, neon, plate and siren/horn,
- * drawn once per match. Visual and sound only, like the player's.
- */
-export function randomLook(role: Role, rand: () => number = Math.random): CarLook {
-  const pick = <T>(list: readonly T[]): T => list[Math.min(list.length - 1, Math.floor(rand() * list.length))]!;
-  const car = pick(carsOf(role));
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const digits = '0123456789';
-  // Mercosul pattern: 3 letters, digit, letter, 2 digits
-  const plate = [letters, letters, letters, digits, letters, digits, digits].map((set) => pick(set.split(''))).join('');
-  return {
-    car,
-    paint: pick(CARS[car].colors),
-    neon: rand() < 0.5 ? null : NEONS[pick(NEON_IDS)].color,
-    plate: rand() < 0.5 ? plate : null,
-    sound: rand() < 0.3 ? null : pick(SOUND_IDS.filter((x) => SOUNDS[x].role === role)),
-  };
-}

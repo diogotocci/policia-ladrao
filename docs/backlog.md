@@ -10,7 +10,7 @@ Ideias anotadas durante o desenvolvimento. Cada item passa por brainstorming e e
 
 ### Mais coisas na loja (anotado em 2026-10-09)
 
-**Pedido (Diogo):** mais carros, modelos e cosméticos, para o jogador ter motivo para continuar jogando depois de comprar tudo. Em brainstorming (lista de ideias enviada em 2026-10-09).
+**Pedido (Diogo):** mais carros, modelos e cosméticos, para o jogador ter motivo para continuar jogando depois de comprar tudo. Virou a V2 Parte 6 (`docs/superpowers/specs/2026-10-09-v2-parte6-loja2-design.md`): entrega 1 (maestria, acabamentos, adesivos, 0.21) e entrega 2 (rodas, fumaça colorida, acessórios do ladrão, 0.22) feitas; falta a entrega 3, os 4 carros novos (mockups antes).
 
 ### V3: conta, servidor e dinheiro de verdade
 

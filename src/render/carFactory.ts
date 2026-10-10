@@ -369,6 +369,11 @@ export function updateCarModel(model: THREE.Group, car: CarState, timeSeconds: n
   for (const child of model.children)
     if (child.name === 'wheel') child.rotation.x = -car.s / ((child.userData.r as number | undefined) ?? WHEEL_RADIUS);
 
+  flickerFlames(model, car, timeSeconds);
+  blinkLightbar(model, timeSeconds);
+}
+
+function blinkLightbar(model: THREE.Group, timeSeconds: number): void {
   const red = model.getObjectByName('lightbar-red') as THREE.Mesh | undefined;
   const blue = model.getObjectByName('lightbar-blue') as THREE.Mesh | undefined;
   if (red && blue) {
@@ -376,4 +381,19 @@ export function updateCarModel(model: THREE.Group, car: CarState, timeSeconds: n
     (red.material as THREE.MeshStandardMaterial).emissiveIntensity = redOn ? 3 : 0;
     (blue.material as THREE.MeshStandardMaterial).emissiveIntensity = redOn ? 0 : 3;
   }
+}
+
+/**
+ * Exhaust flames (thief accessory): always flickering, longer while the car speeds up (after a crash or a slow-down).
+ */
+function flickerFlames(model: THREE.Group, car: CarState, t: number): void {
+  const flames = model.userData.flames as THREE.Object3D[] | undefined;
+  if (!flames) return;
+  const prev = (model.userData.prevSpeed as number | undefined) ?? car.speed;
+  model.userData.prevSpeed = car.speed;
+  const boost = car.speed - prev > 0.001 ? 1.7 : 1;
+  flames.forEach((f, i) => {
+    const flick = 0.75 + 0.18 * Math.sin(t * 37 + i * 1.7) + 0.12 * Math.sin(t * 61 + i * 0.9);
+    f.scale.set(1, 1, boost * flick);
+  });
 }
