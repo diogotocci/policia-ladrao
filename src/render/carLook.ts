@@ -5,7 +5,8 @@ import { defaultLook, type CarLook } from '../meta/shop';
 import { instantiate } from './carFactory';
 import { MODELS } from './models';
 import { canvasTex } from './models/kit';
-import { addSticker, applyFinish } from './finish';
+import { applyFinish } from './finish';
+import { addSticker } from './stickers';
 
 /** Mercosul plate: white, blue "BRASIL" band, black letters. */
 function plateTexture(text: string): THREE.Texture | null {
@@ -67,7 +68,7 @@ export function createLookModel(role: Role, look: CarLook = defaultLook(role)): 
         if (look.finish) applyFinish(mat as THREE.MeshStandardMaterial, look.finish, look.paint, role);
       }
   });
-  if (look.sticker) addSticker(root, look.sticker.kind, look.sticker.number);
+  if (look.sticker) addSticker(root, look.car, look.sticker.kind, look.sticker.number, look.paint);
   if (look.neon !== null) {
     const glow = new THREE.Mesh(
       new THREE.PlaneGeometry(spec.neon.w, spec.neon.l).rotateX(-Math.PI / 2),
