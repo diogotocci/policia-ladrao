@@ -20,6 +20,20 @@ describe('createParticles', () => {
     expect(meshes).toHaveLength(1);
   });
 
+  it('coloured smoke (V2 part 6 delivery 2): each puff keeps its own colour', () => {
+    const scene = new THREE.Scene();
+    const p = createParticles(scene, 40);
+    p.emitSmoke(0, 1, 100, 0xff3b3b);
+    p.emitSmoke(0, 1, 100, 'white');
+    p.update(0.01, 100, cam());
+    const mesh = scene.getObjectByName('particles') as THREE.InstancedMesh;
+    const c = new THREE.Color();
+    mesh.getColorAt(0, c);
+    expect(c.getHex()).toBe(0xff3b3b);
+    mesh.getColorAt(1, c);
+    expect(c.getHex()).toBe(0xdcdcdc);
+  });
+
   it('expired particles disappear', () => {
     const scene = new THREE.Scene();
     const p = createParticles(scene, 40);

@@ -1,6 +1,6 @@
 # V2 Parte 6 — Loja 2: maestria por carro, cosméticos novos e 4 carros
 
-Status: aprovado (2026-10-09). Entrega 1 implementada na 0.21.0.
+Status: aprovado (2026-10-09). Entrega 1 implementada na 0.21.0, entrega 2 na 0.22.0.
 
 ## 1. Objetivo
 
@@ -53,17 +53,18 @@ Preços seguem a Parte 5 (~3x). Tudo bloqueado mostra o que falta, como hoje.
 
 ### 3.3 Rodas (por lado)
 
-- Padrão, cromadas, esportivas pretas e rodão. Valem para todos os carros do lado (a moto só troca a cor do aro).
+- Padrão, cromadas, esportivas pretas e rodão. Valem para todos os carros do lado (a moto só troca a cor do aro). Mesma roda e mesmo lugar, só o aro muda (`src/render/wheels.ts`).
 - 1.500 moedas cada. Liberadas por patente: cromadas na 2, esportivas na 4, rodão na 6.
 
 ### 3.4 Fumaça colorida (por lado)
 
-- Cor da fumaça do pneu ao derrapar e do nitro da polícia: branca (grátis), azul, vermelha, verde, rosa, amarela.
-- 1.000 moedas cada. Liberadas pela conquista nova "Derrape 100 curvas fechadas" (vale para os dois lados).
+- Cor da fumaça do pneu ao derrapar, do rastro do nitro da polícia e do rastro do ladrão quando ele foge no fim (mockup aprovado em 2026-10-09): branca (grátis), azul, vermelha, verde, rosa, amarela.
+- 1.000 moedas cada. Liberadas pela conquista nova "Derrape 100 vezes" (cada derrapagem conta uma vez; vale para os dois lados).
 
 ### 3.5 Acessórios (só ladrão)
 
-- Aerofólio, rack de teto, antena com bandeirinha e escapamento soltando chama. Podem ser usados juntos.
+- Aerofólio, rack de teto, antena com bandeirinha e escapamento soltando chama. Podem ser usados juntos ("Usar" / "Tirar" na loja).
+- Posição carro a carro (`src/render/accessories.ts`). O Sedã mantém o aerofólio de fábrica embaixo do novo. A chama pisca o tempo todo e fica maior quando o carro acelera (depois de uma batida, por exemplo).
 - 1.200 moedas cada. Valem para todos os carros do ladrão; a moto só mostra a antena e o escapamento.
 - Liberados por conquistas novas do ladrão: "Fuja 30 vezes" (aerofólio), "Pegue 100 caixas" (rack), "Destrua a viatura 25 vezes" (antena) e "Sobreviva 5 min no Sobrevivência" (escapamento).
 
@@ -89,9 +90,9 @@ Os adesivos são posicionados carro a carro (`src/render/stickers.ts`), nunca em
 
 ## 5. Loja e perfil
 
-- Abas da loja: Carros, Pintura (seções "Cor" e "Acabamento"), Adesivos, Neon, Sirene/Buzina, Placa; Rodas, Fumaça e Acessórios entram na entrega 2.
-- O catálogo só cresce no fim (o código de backup guarda posições): por carro (lista fixa da Parte 4), os 4 acabamentos, a lendária (grátis, só pelo "Resgatar") e os 4 adesivos.
-- O perfil continua v3, com campos novos opcionais: `career.carXp` (XP por carro) e, em `equipped`, `finish` e `sticker` por carro. O código de backup ganha esses campos no fim das listas; os códigos antigos continuam valendo.
+- Abas da loja: Carros, Pintura (seções "Cor" e "Acabamento"), Adesivos, Peças (seções "Rodas" e, no ladrão, "Acessórios"), Efeitos (seções "Neon" e "Fumaça"), Sirene/Buzina, Placa.
+- O catálogo só cresce no fim (o código de backup guarda posições): por carro (lista fixa da Parte 4), os 4 acabamentos, a lendária (grátis, só pelo "Resgatar") e os 4 adesivos; depois (entrega 2), por lado, as 3 rodas e as 5 fumaças, e por fim os 4 acessórios.
+- O perfil continua v3, com campos novos opcionais: `career.carXp` (XP por carro) e, em `equipped`, `finish` e `sticker` por carro. Entrega 2: `equipped.wheels` e `equipped.smoke` por lado e `equipped.acc` (lista). O código de backup ganha esses campos no fim das listas; os códigos antigos continuam valendo.
 
 ## 6. Entregas
 

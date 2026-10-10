@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { ACHIEVEMENTS, emptyCareer } from '../../src/meta/career';
 import { emptyProfile, type Profile } from '../../src/meta/profile';
-import { CATALOG, CARS, buy, canBuy, inUse, lookFor, normalizePlate, owns, randomLook, setPlate, use } from '../../src/meta/shop';
+import { CATALOG, CARS, buy, canBuy, inUse, lookFor, normalizePlate, owns, setPlate, use } from '../../src/meta/shop';
+import { randomLook } from '../../src/meta/randomLook';
 
 /** everything unlocked by the career (part 5), so these tests only look at coins and ownership */
 const unlockedCareer = () => ({ ...emptyCareer(), xp: { police: 99_999, thief: 99_999 }, achieved: ACHIEVEMENTS.map((a) => a.id) });
@@ -23,9 +24,10 @@ describe('catalog (spec §2)', () => {
     expect(new Set(ids).size).toBe(ids.length);
     // the first and last positions never move; new items only go at the end
     expect(ids.slice(0, 6)).toEqual(['car:esportivo', 'car:blazer', 'car:caveirao', 'car:picape', 'car:moto', 'car:van']);
-    expect(ids.length).toBe(6 + 24 + 8 + 5 + 1 + 8 * 9);
+    expect(ids.length).toBe(6 + 24 + 8 + 5 + 1 + 8 * 9 + 2 * 8 + 4);
     expect(ids[43]).toBe('plate');
-    expect(ids[ids.length - 1]).toBe('sticker:van:4'); // V2 part 6 group after the plate
+    expect(ids[115]).toBe('sticker:van:4'); // V2 part 6 group after the plate
+    expect(ids[ids.length - 1]).toBe('acc:escapamento'); // delivery 2 group after it
   });
 
   it('the whole order is pinned: changing it would make old backup codes restore the wrong items', () => {
@@ -40,6 +42,11 @@ describe('catalog (spec §2)', () => {
         ...['metalico', 'fosco', 'perolizado', 'camuflado', 'lendaria'].map((f) => `finish:${c}:${f}`),
         ...[1, 2, 3, 4].map((n) => `sticker:${c}:${n}`),
       ]),
+      ...['police', 'thief'].flatMap((r) => [
+        ...['cromadas', 'esportivas', 'rodao'].map((w) => `wheels:${r}:${w}`),
+        ...['azul', 'vermelha', 'verde', 'rosa', 'amarela'].map((c) => `smoke:${r}:${c}`),
+      ]),
+      ...['aerofolio', 'rack', 'antena', 'escapamento'].map((a) => `acc:${a}`),
     ];
     expect(CATALOG.map((i) => i.id)).toEqual(expected);
   });
@@ -162,6 +169,9 @@ describe('lookFor', () => {
       sound: null,
       finish: null,
       sticker: null,
+      wheels: null,
+      smoke: null,
+      acc: [],
     });
     expect(lookFor(emptyProfile(), 'thief').car).toBe('seda');
   });

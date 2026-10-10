@@ -27,7 +27,7 @@ Itens: tiros, bombas, óleo, miguelito e fumaça do ladrão; bloqueio, nitro, me
 ## Progresso, loja e carreira
 
 - Cada partida paga moedas (tempo, dano, caixas, vitória; o Difícil paga mais).
-- **Loja:** carros novos para cada lado, pinturas, neon, sirenes e buzinas, e placa personalizada. Os itens são desbloqueados na Carreira e depois comprados.
+- **Loja:** carros novos para cada lado, pinturas e acabamentos, adesivos, rodas, neon, fumaça colorida, acessórios do ladrão (aerofólio, rack, antena, escapamento com chama), sirenes e buzinas, e placa personalizada. Os itens são desbloqueados na Carreira (patentes, conquistas e maestria de cada carro) e depois comprados.
 - **Carreira:** 3 desafios por dia (sorteados entre 21, sem repetir o do dia anterior), conquistas, patentes por lado (Recruta a Delegado, Pivete a Chefão) e sequência de dias. Recompensas são resgatadas na tela da Carreira.
 - O progresso fica no aparelho. Em "Progresso" há um código de backup para levar para outro aparelho.
 

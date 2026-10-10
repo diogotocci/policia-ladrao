@@ -1,5 +1,6 @@
 // Carreira (V2 part 5, spec §5): today's challenges and the streak, achievements, ranks per side.
 // Plus the pieces shown on the end screen: the career strip and the streak dialog.
+import { ACCESSORY_NAMES, WHEEL_NAMES, type AccessoryId, type WheelStyle } from '../../meta/parts';
 import type { Role } from '../../config/balance';
 import {
   ACHIEVEMENTS,
@@ -36,18 +37,24 @@ export function itemName(id: string): string {
   if (kind === 'sound') return `${SOUNDS[a as SoundId].role === 'police' ? 'sirene' : 'buzina'} ${SOUNDS[a as SoundId].name}`;
   if (kind === 'neon') return `neon ${NEONS[b as NeonColor].name}`;
   if (kind === 'paint') return `pintura ${CARS[a as CarId].colorNames[Number(b)]}`;
-  if (id === 'plate') return 'placa';
-  return id;
+  return OTHER_NAMES[id] ?? partName(kind, a, b) ?? id;
+}
+const OTHER_NAMES: Record<string, string> = { plate: 'placa', smoke: 'fumaça colorida' };
+/** V2 part 6 delivery 2: accessories and wheels */
+function partName(kind?: string, a?: string, b?: string): string | undefined {
+  if (kind === 'acc') return ACCESSORY_NAMES[a as AccessoryId]?.toLowerCase();
+  if (kind === 'wheels') return `rodas ${WHEEL_NAMES[b as WheelStyle]?.toLowerCase()}`;
+  return undefined;
 }
 
 /** What each rank unlocks on its side (text of the Patente tab and of the end strip). */
 export const RANK_UNLOCKS = [
   'carro padrão',
-  '+200 · placa e 1ª pintura',
+  '+200 · placa, 1ª pintura e rodas cromadas',
   '+400 · 2 cores de neon',
-  '+600 · 2ª pintura',
+  '+600 · 2ª pintura e rodas esportivas',
   '+1.000 · as outras 2 cores de neon',
-  '+1.500 · 3ª pintura',
+  '+1.500 · 3ª pintura e rodão',
   '+2.000 · patente no ranking',
 ];
 

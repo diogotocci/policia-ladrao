@@ -119,7 +119,7 @@ describe('end strip with several ranks in one match (review)', () => {
       'police',
     )!;
     expect(strip.textContent).toContain('Recruta → Cabo!');
-    expect(strip.textContent).toContain('Resgate na Carreira: +200 · placa e 1ª pintura, +400 · 2 cores de neon');
+    expect(strip.textContent).toContain('Resgate na Carreira: +200 · placa, 1ª pintura e rodas cromadas, +400 · 2 cores de neon');
   });
 });
 

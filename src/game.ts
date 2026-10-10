@@ -79,6 +79,7 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
   const particles = createParticles(scene);
   particles.setQuality(view.quality);
   const smoke = createCarSmoke(particles, fx);
+  smoke.setColors({ [opts.role]: opts.look?.smoke ?? null, [opponentRole]: opts.opponentLook?.smoke ?? null });
   let clock = 0; // render clock (muzzle flash)
   const marker = createOpponentMarker(scene, opponentRole);
   const rearview = createRearview();
@@ -289,8 +290,8 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
           ? 'police'
           : undefined;
     if (wreckRole && !frozen) smoke.wreck(car.role === wreckRole ? car : foe, dt);
-    // tire squeal: white smoke from the rear wheels while skidding
-    if (!frozen) for (const c of [car, foe]) if (c.skidding) smoke.skid(c, dt);
+    // tire squeal while skidding, nitro trail and the thief's escape run, in each side's smoke colour
+    if (!frozen) smoke.tires([car, foe], world, dt);
     props.update(world, origin, world.time, frozen ? undefined : prev, alpha);
     itemsFx.frame(world, car, foe, frameEvents, origin, dt, frozen);
     fx.update(world, frameEvents, origin, dt);
