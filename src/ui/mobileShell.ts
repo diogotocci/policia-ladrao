@@ -96,3 +96,37 @@ export function onTap(el: HTMLElement, fn: () => void): () => void {
     el.removeEventListener('click', click);
   };
 }
+
+/**
+ * iPhone home-screen app opened in landscape (playtest 2026-10-11): iOS sometimes lays the page out shorter than the
+ * screen (a black bar at the bottom) until the phone is rotated. In landscape the app fills the whole screen, so
+ * when the window comes out shorter than the screen's short side, the game is sized to the screen instead.
+ * Re-checked on every resize, rotation and return to the app. Only for the installed iPhone app
+ * (`navigator.standalone`): elsewhere a shorter window is real (browser bars, Android navigation bar).
+ */
+export function installViewportFix(app: HTMLElement, win: Window = window): () => void {
+  const nav = win.navigator as Navigator & { standalone?: boolean };
+  if (nav.standalone !== true) return () => {};
+  const apply = () => {
+    const short = Math.min(win.screen.width, win.screen.height);
+    const landscape = win.innerWidth > win.innerHeight;
+    const cut = landscape && win.innerHeight < short - 1;
+    app.style.height = cut ? `${short}px` : '';
+    app.style.bottom = cut ? 'auto' : '';
+    if (cut) win.scrollTo(0, 0);
+  };
+  const later = () => {
+    apply();
+    win.setTimeout(apply, 250); // iOS reports the final size a moment after the event
+  };
+  const events = ['resize', 'orientationchange', 'pageshow'] as const;
+  for (const e of events) win.addEventListener(e, later);
+  win.visualViewport?.addEventListener('resize', later);
+  win.document.addEventListener('visibilitychange', later);
+  later();
+  return () => {
+    for (const e of events) win.removeEventListener(e, later);
+    win.visualViewport?.removeEventListener('resize', later);
+    win.document.removeEventListener('visibilitychange', later);
+  };
+}

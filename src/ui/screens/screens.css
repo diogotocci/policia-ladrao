@@ -130,6 +130,23 @@
 .screen-title {
   flex-direction: row;
   gap: clamp(18px, 4vw, 40px);
+  /* playtest 2026-10-11: room for the corner row (coins and streak, profile and sound) and the version line, so the
+     plate and the Jogar button never sit under them */
+  padding-top: calc(max(12px, var(--safe-top)) + 54px);
+  padding-bottom: calc(max(8px, var(--safe-bottom)) + 16px);
+}
+@media (max-height: 400px) {
+  .title-menu {
+    gap: 7px;
+  }
+  .title-menu .screen-btn {
+    min-height: 42px;
+    font-size: 18px;
+  }
+  .title-play.screen-btn {
+    min-height: 52px;
+    font-size: 26px;
+  }
 }
 .title-hero {
   display: flex;
