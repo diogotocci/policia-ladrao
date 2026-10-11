@@ -189,8 +189,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_admin",
-      "community": 91,
-      "community_name": "admin.test.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "api/admin.ts"
     },
     {
@@ -201,8 +201,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "api_admin_passwordmatches",
-      "community": 91,
-      "community_name": "admin.test.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "passwordmatches()"
     },
     {
@@ -213,8 +213,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "api_admin_post",
-      "community": 91,
-      "community_name": "admin.test.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "post()"
     },
     {
@@ -436,8 +436,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "e2e_screens_spec",
-      "community": 72,
-      "community_name": "emptyProfile",
+      "community": 49,
+      "community_name": "backup.ts",
       "norm_label": "screens.spec.ts"
     },
     {
@@ -449,8 +449,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "e2e_screens_spec_g",
-      "community": 72,
-      "community_name": "emptyProfile",
+      "community": 49,
+      "community_name": "backup.ts",
       "norm_label": "g"
     },
     {
@@ -461,8 +461,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "e2e_screens_spec_simtime",
-      "community": 72,
-      "community_name": "emptyProfile",
+      "community": 49,
+      "community_name": "backup.ts",
       "norm_label": "simtime()"
     },
     {
@@ -472,8 +472,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "e2e_screens_spec_errors",
-      "community": 72,
-      "community_name": "emptyProfile",
+      "community": 49,
+      "community_name": "backup.ts",
       "norm_label": "errors"
     },
     {
@@ -484,8 +484,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "e2e_screens_spec_startas",
-      "community": 72,
-      "community_name": "emptyProfile",
+      "community": 49,
+      "community_name": "backup.ts",
       "norm_label": "startas()"
     },
     {
@@ -495,8 +495,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "e2e_shop_spec",
-      "community": 72,
-      "community_name": "emptyProfile",
+      "community": 45,
+      "community_name": "parts.test.ts",
       "norm_label": "shop.spec.ts"
     },
     {
@@ -506,8 +506,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "e2e_shop_spec_errors",
-      "community": 72,
-      "community_name": "emptyProfile",
+      "community": 45,
+      "community_name": "parts.test.ts",
       "norm_label": "errors"
     },
     {
@@ -1070,8 +1070,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "package_devdependencies_eslint",
-      "community": 97,
-      "community_name": "eslint",
+      "community": 15,
+      "community_name": "devDependencies",
       "norm_label": "eslint"
     },
     {
@@ -1081,8 +1081,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "eslint",
-      "community": 97,
-      "community_name": "eslint",
+      "community": 15,
+      "community_name": "devDependencies",
       "norm_label": "eslint"
     },
     {
@@ -1202,8 +1202,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "package_devdependencies_typescript",
-      "community": 15,
-      "community_name": "devDependencies",
+      "community": 92,
+      "community_name": "typescript",
       "norm_label": "typescript"
     },
     {
@@ -1213,8 +1213,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "typescript",
-      "community": 15,
-      "community_name": "devDependencies",
+      "community": 92,
+      "community_name": "typescript",
       "norm_label": "typescript"
     },
     {
@@ -1400,8 +1400,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_admin",
-      "community": 91,
-      "community_name": "admin.test.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "src/admin.ts"
     },
     {
@@ -1412,8 +1412,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_admin_checkadminpassword",
-      "community": 91,
-      "community_name": "admin.test.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "checkadminpassword()"
     },
     {
@@ -1423,7 +1423,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "app.ts"
     },
@@ -1435,7 +1435,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_app_startapp",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "startapp()"
     },
@@ -1446,8 +1446,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_appevents",
-      "community": 88,
-      "community_name": "flow.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "appevents.ts"
     },
     {
@@ -1457,8 +1457,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_appevents_menu_music",
-      "community": 88,
-      "community_name": "flow.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "menu_music"
     },
     {
@@ -1469,8 +1469,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_appevents_wireappevents",
-      "community": 88,
-      "community_name": "flow.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "wireappevents()"
     },
     {
@@ -1480,8 +1480,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_appmatch",
-      "community": 66,
-      "community_name": "Role",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "appmatch.ts"
     },
     {
@@ -1493,8 +1493,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_appmatch_ctx",
-      "community": 84,
-      "community_name": "session.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "ctx"
     },
     {
@@ -1505,8 +1505,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_appmatch_settleend",
-      "community": 83,
-      "community_name": "profile.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "settleend()"
     },
     {
@@ -1517,8 +1517,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_appmatch_addrecord",
-      "community": 66,
-      "community_name": "Role",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "addrecord()"
     },
     {
@@ -1528,8 +1528,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_appprofile",
-      "community": 45,
-      "community_name": "parts.test.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "appprofile.ts"
     },
     {
@@ -1540,8 +1540,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_appprofile_profileactions",
-      "community": 45,
-      "community_name": "parts.test.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "profileactions()"
     },
     {
@@ -1552,7 +1552,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_appprofile_garagecars",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "garagecars()"
     },
@@ -1940,8 +1940,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_audio_session_audiosession",
-      "community": 96,
-      "community_name": "AudioSession",
+      "community": 22,
+      "community_name": "Mixer",
       "norm_label": "audiosession"
     },
     {
@@ -1952,8 +1952,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_audio_session_audiosession_setmuted",
-      "community": 96,
-      "community_name": "AudioSession",
+      "community": 22,
+      "community_name": "Mixer",
       "norm_label": ".setmuted()"
     },
     {
@@ -1964,8 +1964,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_audio_session_audiosession_muted",
-      "community": 96,
-      "community_name": "AudioSession",
+      "community": 22,
+      "community_name": "Mixer",
       "norm_label": ".muted()"
     },
     {
@@ -1976,8 +1976,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_audio_session_audiosession_mounttoggle",
-      "community": 96,
-      "community_name": "AudioSession",
+      "community": 22,
+      "community_name": "Mixer",
       "norm_label": ".mounttoggle()"
     },
     {
@@ -1988,8 +1988,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_audio_session_audiosession_dispose",
-      "community": 96,
-      "community_name": "AudioSession",
+      "community": 22,
+      "community_name": "Mixer",
       "norm_label": ".dispose()"
     },
     {
@@ -2384,7 +2384,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_config_balance",
-      "community": 71,
+      "community": 80,
       "community_name": "balance.ts",
       "norm_label": "balance.ts"
     },
@@ -2397,7 +2397,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_config_balance_role",
-      "community": 66,
+      "community": 50,
       "community_name": "Role",
       "norm_label": "role"
     },
@@ -2410,8 +2410,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_config_balance_difficulty",
-      "community": 66,
-      "community_name": "Role",
+      "community": 75,
+      "community_name": "screens.ts",
       "norm_label": "difficulty"
     },
     {
@@ -2421,7 +2421,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_config_balance_difficulties",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "difficulties"
     },
@@ -2434,8 +2434,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_config_balance_mode",
-      "community": 66,
-      "community_name": "Role",
+      "community": 75,
+      "community_name": "screens.ts",
       "norm_label": "mode"
     },
     {
@@ -2445,7 +2445,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_config_balance_modes",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "modes"
     },
@@ -2456,7 +2456,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_config_balance_balance",
-      "community": 71,
+      "community": 80,
       "community_name": "balance.ts",
       "norm_label": "balance"
     },
@@ -2468,7 +2468,7 @@
       "_origin": "ast",
       "id": "src_debug",
       "community": 71,
-      "community_name": "balance.ts",
+      "community_name": "car.ts",
       "norm_label": "debug.ts"
     },
     {
@@ -2537,8 +2537,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_gametypes",
-      "community": 66,
-      "community_name": "Role",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "gametypes.ts"
     },
     {
@@ -2550,8 +2550,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_gametypes_gamehandle",
-      "community": 90,
-      "community_name": "GameHandle",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "gamehandle"
     },
     {
@@ -2562,8 +2562,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_gametypes_gamehandle_pause",
-      "community": 90,
-      "community_name": "GameHandle",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": ".pause()"
     },
     {
@@ -2574,8 +2574,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_gametypes_gamehandle_resume",
-      "community": 90,
-      "community_name": "GameHandle",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": ".resume()"
     },
     {
@@ -2586,8 +2586,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_gametypes_gamehandle_ispaused",
-      "community": 90,
-      "community_name": "GameHandle",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": ".ispaused()"
     },
     {
@@ -2598,8 +2598,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_gametypes_gamehandle_stop",
-      "community": 90,
-      "community_name": "GameHandle",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": ".stop()"
     },
     {
@@ -2611,8 +2611,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_gametypes_matchend",
-      "community": 66,
-      "community_name": "Role",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "matchend"
     },
     {
@@ -2624,8 +2624,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_gametypes_gameoptions",
-      "community": 66,
-      "community_name": "Role",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "gameoptions"
     },
     {
@@ -2797,8 +2797,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_itemsfx_instant_police",
-      "community": 48,
-      "community_name": "createCar",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "instant_police"
     },
     {
@@ -3260,7 +3260,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_career_achievement",
-      "community": 66,
+      "community": 50,
       "community_name": "Role",
       "norm_label": "achievement"
     },
@@ -3282,7 +3282,7 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "src_meta_career_streak_coins",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "streak_coins"
     },
@@ -3318,7 +3318,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_career_localdate",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "localdate()"
     },
@@ -3332,7 +3332,7 @@
       "_origin": "ast",
       "id": "src_meta_career_career",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "career"
     },
     {
@@ -3381,7 +3381,7 @@
       "_origin": "ast",
       "id": "src_meta_career_careerevent",
       "community": 66,
-      "community_name": "Role",
+      "community_name": "careerScreen.ts",
       "norm_label": "careerevent"
     },
     {
@@ -3631,8 +3631,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_dailies_matchsummary",
-      "community": 66,
-      "community_name": "Role",
+      "community": 28,
+      "community_name": "career.ts",
       "norm_label": "matchsummary"
     },
     {
@@ -3819,7 +3819,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "mastery.ts"
     },
     {
@@ -3830,7 +3830,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery_mastery_xp",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "mastery_xp"
     },
     {
@@ -3841,7 +3841,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery_mastery_max",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "mastery_max"
     },
     {
@@ -3852,8 +3852,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_mastery_masterylevel",
-      "community": 42,
-      "community_name": "garage.ts",
+      "community": 28,
+      "community_name": "career.ts",
       "norm_label": "masterylevel()"
     },
     {
@@ -3865,7 +3865,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery_nextmasteryxp",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "nextmasteryxp()"
     },
     {
@@ -3876,7 +3876,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery_mastery_cars",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "mastery_cars"
     },
     {
@@ -3887,7 +3887,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery_finishes",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "finishes"
     },
     {
@@ -3899,8 +3899,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_mastery_finishid",
-      "community": 77,
-      "community_name": "meta/shop.ts",
+      "community": 56,
+      "community_name": "meta/shopParts.ts",
       "norm_label": "finishid"
     },
     {
@@ -3911,7 +3911,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery_finish_names",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "finish_names"
     },
     {
@@ -3922,7 +3922,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery_stickers",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "stickers"
     },
     {
@@ -3933,7 +3933,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery_sticker_names",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "sticker_names"
     },
     {
@@ -3944,7 +3944,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery_legendary",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "legendary"
     },
     {
@@ -3957,7 +3957,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery_masteryreward",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "masteryreward"
     },
     {
@@ -3968,7 +3968,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery_mastery_rewards",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "mastery_rewards"
     },
     {
@@ -3992,7 +3992,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery_rewardname",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "rewardname()"
     },
     {
@@ -4004,7 +4004,7 @@
       "_origin": "ast",
       "id": "src_meta_mastery_masterylevelfor",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "masterylevelfor()"
     },
     {
@@ -4015,7 +4015,7 @@
       "_origin": "ast",
       "id": "src_meta_parts",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "parts.ts"
     },
     {
@@ -4026,7 +4026,7 @@
       "_origin": "ast",
       "id": "src_meta_parts_wheel_styles",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "wheel_styles"
     },
     {
@@ -4039,7 +4039,7 @@
       "_origin": "ast",
       "id": "src_meta_parts_wheelstyle",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "wheelstyle"
     },
     {
@@ -4049,8 +4049,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_meta_parts_wheel_names",
-      "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community": 66,
+      "community_name": "careerScreen.ts",
       "norm_label": "wheel_names"
     },
     {
@@ -4060,8 +4060,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_meta_parts_wheel_rank",
-      "community": 28,
-      "community_name": "career.ts",
+      "community": 56,
+      "community_name": "meta/shopParts.ts",
       "norm_label": "wheel_rank"
     },
     {
@@ -4072,7 +4072,7 @@
       "_origin": "ast",
       "id": "src_meta_parts_smoke_colors",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "smoke_colors"
     },
     {
@@ -4085,7 +4085,7 @@
       "_origin": "ast",
       "id": "src_meta_parts_smokecolor",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "smokecolor"
     },
     {
@@ -4096,7 +4096,7 @@
       "_origin": "ast",
       "id": "src_meta_parts_smokes",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "smokes"
     },
     {
@@ -4106,8 +4106,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "src_meta_parts_accessory_ids",
-      "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community": 49,
+      "community_name": "backup.ts",
       "norm_label": "accessory_ids"
     },
     {
@@ -4120,7 +4120,7 @@
       "_origin": "ast",
       "id": "src_meta_parts_accessoryid",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "accessoryid"
     },
     {
@@ -4130,8 +4130,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "src_meta_parts_accessory_names",
-      "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community": 66,
+      "community_name": "careerScreen.ts",
       "norm_label": "accessory_names"
     },
     {
@@ -4179,7 +4179,7 @@
       "_origin": "ast",
       "id": "src_meta_profile_profile",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "profile"
     },
     {
@@ -4201,8 +4201,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_profile_emptyprofile",
-      "community": 72,
-      "community_name": "emptyProfile",
+      "community": 45,
+      "community_name": "parts.test.ts",
       "norm_label": "emptyprofile()"
     },
     {
@@ -4261,8 +4261,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_profile_grantwelcome",
-      "community": 83,
-      "community_name": "profile.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "grantwelcome()"
     },
     {
@@ -4285,8 +4285,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_profile_settlecareer",
-      "community": 83,
-      "community_name": "profile.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "settlecareer()"
     },
     {
@@ -4297,8 +4297,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_profile_claimreward",
-      "community": 45,
-      "community_name": "parts.test.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "claimreward()"
     },
     {
@@ -4308,8 +4308,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_meta_randomlook",
-      "community": 50,
-      "community_name": "screens/shop.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "randomlook.ts"
     },
     {
@@ -4320,8 +4320,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_randomlook_randomlook",
-      "community": 50,
-      "community_name": "screens/shop.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "randomlook()"
     },
     {
@@ -4344,8 +4344,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_rewards_matchstats",
-      "community": 66,
-      "community_name": "Role",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "matchstats"
     },
     {
@@ -4357,8 +4357,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_rewards_reward",
-      "community": 83,
-      "community_name": "profile.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "reward"
     },
     {
@@ -4418,7 +4418,7 @@
       "_origin": "ast",
       "id": "src_meta_shop_carid",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "carid"
     },
     {
@@ -4469,8 +4469,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_shop_carinfo",
-      "community": 77,
-      "community_name": "meta/shop.ts",
+      "community": 50,
+      "community_name": "Role",
       "norm_label": "carinfo"
     },
     {
@@ -4480,8 +4480,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_meta_shop_cars",
-      "community": 50,
-      "community_name": "screens/shop.ts",
+      "community": 42,
+      "community_name": "shopMastery.ts",
       "norm_label": "cars"
     },
     {
@@ -4491,8 +4491,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "src_meta_shop_car_ids",
-      "community": 49,
-      "community_name": "backup.ts",
+      "community": 2,
+      "community_name": "carLook.ts",
       "norm_label": "car_ids"
     },
     {
@@ -4514,8 +4514,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shop_carsof",
-      "community": 50,
-      "community_name": "screens/shop.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "carsof()"
     },
     {
@@ -4526,7 +4526,7 @@
       "_origin": "ast",
       "id": "src_meta_shop_neons",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "neons"
     },
     {
@@ -4536,8 +4536,8 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "src_meta_shop_neon_ids",
-      "community": 49,
-      "community_name": "backup.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "neon_ids"
     },
     {
@@ -4547,8 +4547,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "src_meta_shop_sounds",
-      "community": 50,
-      "community_name": "screens/shop.ts",
+      "community": 66,
+      "community_name": "careerScreen.ts",
       "norm_label": "sounds"
     },
     {
@@ -4558,8 +4558,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "src_meta_shop_sound_ids",
-      "community": 50,
-      "community_name": "screens/shop.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "sound_ids"
     },
     {
@@ -4580,8 +4580,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "src_meta_shop_prices",
-      "community": 42,
-      "community_name": "garage.ts",
+      "community": 50,
+      "community_name": "Role",
       "norm_label": "prices"
     },
     {
@@ -4604,8 +4604,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_shop_shopitem",
-      "community": 77,
-      "community_name": "meta/shop.ts",
+      "community": 56,
+      "community_name": "meta/shopParts.ts",
       "norm_label": "shopitem"
     },
     {
@@ -4664,8 +4664,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_meta_shop_equipped",
-      "community": 77,
-      "community_name": "meta/shop.ts",
+      "community": 56,
+      "community_name": "meta/shopParts.ts",
       "norm_label": "equipped"
     },
     {
@@ -4676,8 +4676,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shop_defaultequipped",
-      "community": 77,
-      "community_name": "meta/shop.ts",
+      "community": 83,
+      "community_name": "profile.ts",
       "norm_label": "defaultequipped()"
     },
     {
@@ -4689,7 +4689,7 @@
       "_origin": "ast",
       "id": "src_meta_shop_normalizeplate",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "normalizeplate()"
     },
     {
@@ -4724,8 +4724,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shop_sanitizeshop",
-      "community": 77,
-      "community_name": "meta/shop.ts",
+      "community": 83,
+      "community_name": "profile.ts",
       "norm_label": "sanitizeshop()"
     },
     {
@@ -4774,8 +4774,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shop_buy",
-      "community": 45,
-      "community_name": "parts.test.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "buy()"
     },
     {
@@ -4786,8 +4786,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shop_use",
-      "community": 45,
-      "community_name": "parts.test.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "use()"
     },
     {
@@ -4798,8 +4798,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shop_without",
-      "community": 45,
-      "community_name": "parts.test.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "without()"
     },
     {
@@ -4811,7 +4811,7 @@
       "_origin": "ast",
       "id": "src_meta_shop_inuse",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "inuse()"
     },
     {
@@ -4823,7 +4823,7 @@
       "_origin": "ast",
       "id": "src_meta_shop_owns",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "owns()"
     },
     {
@@ -4834,8 +4834,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shop_setplate",
-      "community": 45,
-      "community_name": "parts.test.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "setplate()"
     },
     {
@@ -4859,8 +4859,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shop_lookfor",
-      "community": 50,
-      "community_name": "screens/shop.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "lookfor()"
     },
     {
@@ -4907,7 +4907,7 @@
       "_origin": "ast",
       "id": "src_meta_shopparts",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "meta/shopparts.ts"
     },
     {
@@ -4920,7 +4920,7 @@
       "_origin": "ast",
       "id": "src_meta_shopparts_partsequip",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "partsequip"
     },
     {
@@ -4931,7 +4931,7 @@
       "_origin": "ast",
       "id": "src_meta_shopparts_roles",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "roles"
     },
     {
@@ -4943,7 +4943,7 @@
       "_origin": "ast",
       "id": "src_meta_shopparts_isrole",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "isrole()"
     },
     {
@@ -4955,7 +4955,7 @@
       "_origin": "ast",
       "id": "src_meta_shopparts_isaccessory",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "isaccessory()"
     },
     {
@@ -4966,7 +4966,7 @@
       "_origin": "ast",
       "id": "src_meta_shopparts_free",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "free"
     },
     {
@@ -4976,8 +4976,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "src_meta_shopparts_part_prices",
-      "community": 77,
-      "community_name": "meta/shop.ts",
+      "community": 56,
+      "community_name": "meta/shopParts.ts",
       "norm_label": "part_prices"
     },
     {
@@ -4990,7 +4990,7 @@
       "_origin": "ast",
       "id": "src_meta_shopparts_partslook",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "partslook"
     },
     {
@@ -5001,8 +5001,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shopparts_partitems",
-      "community": 77,
-      "community_name": "meta/shop.ts",
+      "community": 56,
+      "community_name": "meta/shopParts.ts",
       "norm_label": "partitems()"
     },
     {
@@ -5013,8 +5013,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shopparts_sanitizeparts",
-      "community": 77,
-      "community_name": "meta/shop.ts",
+      "community": 56,
+      "community_name": "meta/shopParts.ts",
       "norm_label": "sanitizeparts()"
     },
     {
@@ -5026,7 +5026,7 @@
       "_origin": "ast",
       "id": "src_meta_shopparts_useparts",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "useparts()"
     },
     {
@@ -5038,7 +5038,7 @@
       "_origin": "ast",
       "id": "src_meta_shopparts_useaccessory",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "useaccessory()"
     },
     {
@@ -5050,7 +5050,7 @@
       "_origin": "ast",
       "id": "src_meta_shopparts_partinuse",
       "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community_name": "meta/shopParts.ts",
       "norm_label": "partinuse()"
     },
     {
@@ -5061,8 +5061,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_meta_shopparts_freepart",
-      "community": 77,
-      "community_name": "meta/shop.ts",
+      "community": 56,
+      "community_name": "meta/shopParts.ts",
       "norm_label": "freepart()"
     },
     {
@@ -5519,7 +5519,7 @@
       "_origin": "ast",
       "id": "src_render_buildings",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "buildings.ts"
     },
     {
@@ -5532,7 +5532,7 @@
       "_origin": "ast",
       "id": "src_render_buildings_buildingspec",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "buildingspec"
     },
     {
@@ -5543,7 +5543,7 @@
       "_origin": "ast",
       "id": "src_render_buildings_palette",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "palette"
     },
     {
@@ -5555,7 +5555,7 @@
       "_origin": "ast",
       "id": "src_render_buildings_buildingsforchunk",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "buildingsforchunk()"
     },
     {
@@ -5728,8 +5728,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_carfactory_createtrafficmodel",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "createtrafficmodel()"
     },
     {
@@ -5764,8 +5764,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_carfactory_updatecarmodel",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 2,
+      "community_name": "carLook.ts",
       "norm_label": "updatecarmodel()"
     },
     {
@@ -6137,8 +6137,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_carpreview",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 2,
+      "community_name": "carLook.ts",
       "norm_label": "carpreview.ts"
     },
     {
@@ -6149,8 +6149,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_carpreview_createcarpreview",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 2,
+      "community_name": "carLook.ts",
       "norm_label": "createcarpreview()"
     },
     {
@@ -6160,8 +6160,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_carsmoke",
-      "community": 30,
-      "community_name": "carSmoke.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "carsmoke.ts"
     },
     {
@@ -6172,8 +6172,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_carsmoke_createcarsmoke",
-      "community": 30,
-      "community_name": "carSmoke.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "createcarsmoke()"
     },
     {
@@ -6230,7 +6230,7 @@
       "_origin": "ast",
       "id": "src_render_combatfx",
       "community": 19,
-      "community_name": "trackFrame.ts",
+      "community_name": "combatFx.ts",
       "norm_label": "combatfx.ts"
     },
     {
@@ -6242,7 +6242,7 @@
       "_origin": "ast",
       "id": "src_render_combatfx_dottexture",
       "community": 19,
-      "community_name": "trackFrame.ts",
+      "community_name": "combatFx.ts",
       "norm_label": "dottexture()"
     },
     {
@@ -6254,7 +6254,7 @@
       "_origin": "ast",
       "id": "src_render_combatfx_tracerheight",
       "community": 19,
-      "community_name": "trackFrame.ts",
+      "community_name": "combatFx.ts",
       "norm_label": "tracerheight()"
     },
     {
@@ -6265,8 +6265,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_combatfx_createcombatfx",
-      "community": 19,
-      "community_name": "trackFrame.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "createcombatfx()"
     },
     {
@@ -6289,8 +6289,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_damageview_damagelook",
-      "community": 11,
-      "community_name": "damageView.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "damagelook"
     },
     {
@@ -6627,8 +6627,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_flashgunner",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "flashgunner()"
     },
     {
@@ -6639,8 +6639,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_updategunner",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 2,
+      "community_name": "carLook.ts",
       "norm_label": "updategunner()"
     },
     {
@@ -6650,8 +6650,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_hazardsview",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "hazardsview.ts"
     },
     {
@@ -6661,8 +6661,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_render_hazardsview_cones_per_works",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "cones_per_works"
     },
     {
@@ -6673,8 +6673,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_hazardsview_signtexture",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "signtexture()"
     },
     {
@@ -6685,8 +6685,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_hazardsview_createworksview",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "createworksview()"
     },
     {
@@ -6697,7 +6697,7 @@
       "_origin": "ast",
       "id": "src_render_heli",
       "community": 19,
-      "community_name": "trackFrame.ts",
+      "community_name": "combatFx.ts",
       "norm_label": "heli.ts"
     },
     {
@@ -6708,7 +6708,7 @@
       "_origin": "ast",
       "id": "src_render_heli_heli_y",
       "community": 19,
-      "community_name": "trackFrame.ts",
+      "community_name": "combatFx.ts",
       "norm_label": "heli_y"
     },
     {
@@ -6719,7 +6719,7 @@
       "_origin": "ast",
       "id": "src_render_heli_heli_exit",
       "community": 19,
-      "community_name": "trackFrame.ts",
+      "community_name": "combatFx.ts",
       "norm_label": "heli_exit"
     },
     {
@@ -6732,7 +6732,7 @@
       "_origin": "ast",
       "id": "src_render_heli_helipose",
       "community": 19,
-      "community_name": "trackFrame.ts",
+      "community_name": "combatFx.ts",
       "norm_label": "helipose"
     },
     {
@@ -6744,7 +6744,7 @@
       "_origin": "ast",
       "id": "src_render_heli_box",
       "community": 19,
-      "community_name": "trackFrame.ts",
+      "community_name": "combatFx.ts",
       "norm_label": "box()"
     },
     {
@@ -6756,7 +6756,7 @@
       "_origin": "ast",
       "id": "src_render_heli_createheli",
       "community": 19,
-      "community_name": "trackFrame.ts",
+      "community_name": "combatFx.ts",
       "norm_label": "createheli()"
     },
     {
@@ -7688,8 +7688,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_mysterybox",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "mysterybox.ts"
     },
     {
@@ -7699,8 +7699,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_render_mysterybox_glyph",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "glyph"
     },
     {
@@ -7711,8 +7711,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_mysterybox_facetexture",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "facetexture()"
     },
     {
@@ -7723,8 +7723,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_mysterybox_halotexture",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "halotexture()"
     },
     {
@@ -7735,8 +7735,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_mysterybox_createmysterybox",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "createmysterybox()"
     },
     {
@@ -7747,8 +7747,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_mysterybox_pulsemysteryhalo",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "pulsemysteryhalo()"
     },
     {
@@ -7758,8 +7758,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_opponentmarker",
-      "community": 19,
-      "community_name": "trackFrame.ts",
+      "community": 90,
+      "community_name": "opponentMarker.ts",
       "norm_label": "opponentmarker.ts"
     },
     {
@@ -7769,8 +7769,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_render_opponentmarker_colors",
-      "community": 19,
-      "community_name": "trackFrame.ts",
+      "community": 90,
+      "community_name": "opponentMarker.ts",
       "norm_label": "colors"
     },
     {
@@ -7781,8 +7781,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_opponentmarker_markertexture",
-      "community": 19,
-      "community_name": "trackFrame.ts",
+      "community": 90,
+      "community_name": "opponentMarker.ts",
       "norm_label": "markertexture()"
     },
     {
@@ -7793,8 +7793,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_opponentmarker_createopponentmarker",
-      "community": 19,
-      "community_name": "trackFrame.ts",
+      "community": 90,
+      "community_name": "opponentMarker.ts",
       "norm_label": "createopponentmarker()"
     },
     {
@@ -7805,7 +7805,7 @@
       "_origin": "ast",
       "id": "src_render_particles",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": "particles.ts"
     },
     {
@@ -7818,7 +7818,7 @@
       "_origin": "ast",
       "id": "src_render_particles_kind",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": "kind"
     },
     {
@@ -7829,7 +7829,7 @@
       "_origin": "ast",
       "id": "src_render_particles_colors",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": "colors"
     },
     {
@@ -7841,7 +7841,7 @@
       "_origin": "ast",
       "id": "src_render_particles_pufftexture",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": "pufftexture()"
     },
     {
@@ -7854,7 +7854,7 @@
       "_origin": "ast",
       "id": "src_render_particles_particles",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": "particles"
     },
     {
@@ -7866,7 +7866,7 @@
       "_origin": "ast",
       "id": "src_render_particles_particles_emitsmoke",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": ".emitsmoke()"
     },
     {
@@ -7878,7 +7878,7 @@
       "_origin": "ast",
       "id": "src_render_particles_particles_emitburst",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": ".emitburst()"
     },
     {
@@ -7890,7 +7890,7 @@
       "_origin": "ast",
       "id": "src_render_particles_particles_emitcloud",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": ".emitcloud()"
     },
     {
@@ -7902,7 +7902,7 @@
       "_origin": "ast",
       "id": "src_render_particles_particles_update",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": ".update()"
     },
     {
@@ -7914,7 +7914,7 @@
       "_origin": "ast",
       "id": "src_render_particles_particles_setquality",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": ".setquality()"
     },
     {
@@ -7926,7 +7926,7 @@
       "_origin": "ast",
       "id": "src_render_particles_particles_emissionscale",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": ".emissionscale()"
     },
     {
@@ -7938,7 +7938,7 @@
       "_origin": "ast",
       "id": "src_render_particles_particles_alive",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": ".alive()"
     },
     {
@@ -7949,8 +7949,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_particles_createparticles",
-      "community": 30,
-      "community_name": "carSmoke.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "createparticles()"
     },
     {
@@ -8029,7 +8029,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_renderer",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "renderer.ts"
     },
@@ -8042,8 +8042,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_renderer_qualitytier",
-      "community": 66,
-      "community_name": "Role",
+      "community": 30,
+      "community_name": "scene.ts",
       "norm_label": "qualitytier"
     },
     {
@@ -8053,7 +8053,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_render_renderer_quality",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "quality"
     },
@@ -8064,7 +8064,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_render_renderer_order",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "order"
     },
@@ -8076,7 +8076,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_renderer_computerendersize",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "computerendersize()"
     },
@@ -8088,7 +8088,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_renderer_createqualitygovernor",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "createqualitygovernor()"
     },
@@ -8101,7 +8101,7 @@
       "_origin": "ast",
       "id": "src_render_renderer_smoothtexture",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "smoothtexture()"
     },
     {
@@ -8112,7 +8112,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_renderer_createrenderer",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "createrenderer()"
     },
@@ -8124,7 +8124,7 @@
       "_origin": "ast",
       "id": "src_render_roadchunks",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "roadchunks.ts"
     },
     {
@@ -8135,7 +8135,7 @@
       "_origin": "ast",
       "id": "src_render_roadchunks_chunk_length",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "chunk_length"
     },
     {
@@ -8147,7 +8147,7 @@
       "_origin": "ast",
       "id": "src_render_roadchunks_visiblechunkrange",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "visiblechunkrange()"
     },
     {
@@ -8159,7 +8159,7 @@
       "_origin": "ast",
       "id": "src_render_roadchunks_renderorigin",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "renderorigin()"
     },
     {
@@ -8172,7 +8172,7 @@
       "_origin": "ast",
       "id": "src_render_roadchunks_slot",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "slot"
     },
     {
@@ -8184,7 +8184,7 @@
       "_origin": "ast",
       "id": "src_render_roadchunks_createroad",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "createroad()"
     },
     {
@@ -8194,7 +8194,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_scene",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "scene.ts"
     },
@@ -8206,7 +8206,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_scene_createlighting",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "createlighting()"
     },
@@ -8217,7 +8217,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "src_render_scene_shadow_box",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "shadow_box"
     },
@@ -8228,7 +8228,7 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "src_render_scene_sun_dir",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "sun_dir"
     },
@@ -8240,7 +8240,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_scene_snaptogrid",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "snaptogrid()"
     },
@@ -8252,7 +8252,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_scene_makestreetenvironment",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "makestreetenvironment()"
     },
@@ -8382,8 +8382,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_stickers",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 76,
+      "community_name": "stickers.ts",
       "norm_label": "stickers.ts"
     },
     {
@@ -8395,8 +8395,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_stickers_top",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 76,
+      "community_name": "stickers.ts",
       "norm_label": "top"
     },
     {
@@ -8408,8 +8408,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_stickers_side",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 76,
+      "community_name": "stickers.ts",
       "norm_label": "side"
     },
     {
@@ -8421,8 +8421,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_stickers_spot",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 76,
+      "community_name": "stickers.ts",
       "norm_label": "spot"
     },
     {
@@ -8434,8 +8434,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_stickers_layout",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 76,
+      "community_name": "stickers.ts",
       "norm_label": "layout"
     },
     {
@@ -8446,8 +8446,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_stickers_topsq",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 76,
+      "community_name": "stickers.ts",
       "norm_label": "topsq()"
     },
     {
@@ -8458,8 +8458,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_stickers_sidesq",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 76,
+      "community_name": "stickers.ts",
       "norm_label": "sidesq()"
     },
     {
@@ -8469,8 +8469,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "src_render_stickers_sticker_layout",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 76,
+      "community_name": "stickers.ts",
       "norm_label": "sticker_layout"
     },
     {
@@ -8482,8 +8482,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_render_stickers_draw",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 76,
+      "community_name": "stickers.ts",
       "norm_label": "draw"
     },
     {
@@ -8493,8 +8493,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "src_render_stickers_directional",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 76,
+      "community_name": "stickers.ts",
       "norm_label": "directional"
     },
     {
@@ -8504,8 +8504,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "src_render_stickers_art",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 76,
+      "community_name": "stickers.ts",
       "norm_label": "art"
     },
     {
@@ -8516,8 +8516,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_stickers_material",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 76,
+      "community_name": "stickers.ts",
       "norm_label": "material()"
     },
     {
@@ -8528,8 +8528,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_stickers_addsticker",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 76,
+      "community_name": "stickers.ts",
       "norm_label": "addsticker()"
     },
     {
@@ -8540,7 +8540,7 @@
       "_origin": "ast",
       "id": "src_render_textures",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "textures.ts"
     },
     {
@@ -8551,7 +8551,7 @@
       "_origin": "ast",
       "id": "src_render_textures_ground_ppm",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "ground_ppm"
     },
     {
@@ -8562,7 +8562,7 @@
       "_origin": "ast",
       "id": "src_render_textures_ground_half_width",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "ground_half_width"
     },
     {
@@ -8573,7 +8573,7 @@
       "_origin": "ast",
       "id": "src_render_textures_facade_tile_meters",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "facade_tile_meters"
     },
     {
@@ -8585,7 +8585,7 @@
       "_origin": "ast",
       "id": "src_render_textures_canvas",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "canvas()"
     },
     {
@@ -8597,7 +8597,7 @@
       "_origin": "ast",
       "id": "src_render_textures_makegroundtexture",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "makegroundtexture()"
     },
     {
@@ -8609,7 +8609,7 @@
       "_origin": "ast",
       "id": "src_render_textures_makefacadetexture",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "makefacadetexture()"
     },
     {
@@ -8620,8 +8620,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_textures_makeskytexture",
-      "community": 54,
-      "community_name": "scene.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "makeskytexture()"
     },
     {
@@ -8631,8 +8631,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_trackframe",
-      "community": 19,
-      "community_name": "trackFrame.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "trackframe.ts"
     },
     {
@@ -8645,7 +8645,7 @@
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "trackframe"
     },
     {
@@ -8657,7 +8657,7 @@
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe_toworld",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": ".toworld()"
     },
     {
@@ -8669,7 +8669,7 @@
       "_origin": "ast",
       "id": "src_render_trackframe_trackframe_headingat",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": ".headingat()"
     },
     {
@@ -8681,7 +8681,7 @@
       "_origin": "ast",
       "id": "src_render_trackframe_createtrackframe",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "createtrackframe()"
     },
     {
@@ -8691,8 +8691,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "src_render_trackframe_active",
-      "community": 19,
-      "community_name": "trackFrame.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "active"
     },
     {
@@ -8716,7 +8716,7 @@
       "_origin": "ast",
       "id": "src_render_trackframe_trackpos",
       "community": 19,
-      "community_name": "trackFrame.ts",
+      "community_name": "combatFx.ts",
       "norm_label": "trackpos()"
     },
     {
@@ -8817,8 +8817,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_worldprops",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "worldprops.ts"
     },
     {
@@ -8829,8 +8829,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_worldprops_stripetexture",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "stripetexture()"
     },
     {
@@ -8841,8 +8841,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_worldprops_bumpsigntexture",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "bumpsigntexture()"
     },
     {
@@ -8853,8 +8853,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_worldprops_chevrontexture",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "chevrontexture()"
     },
     {
@@ -8865,8 +8865,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_worldprops_createworldprops",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "createworldprops()"
     },
     {
@@ -8889,8 +8889,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_ai_aimemory",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "aimemory"
     },
     {
@@ -9068,8 +9068,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_bombs",
-      "community": 89,
-      "community_name": "policeItems.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "bombs.ts"
     },
     {
@@ -9080,8 +9080,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_bombs_stepbombs",
-      "community": 89,
-      "community_name": "policeItems.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "stepbombs()"
     },
     {
@@ -9091,8 +9091,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_car",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 71,
+      "community_name": "car.ts",
       "norm_label": "car.ts"
     },
     {
@@ -9104,8 +9104,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_car_upgrades",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 71,
+      "community_name": "car.ts",
       "norm_label": "upgrades"
     },
     {
@@ -9129,8 +9129,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_car_careffects",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 71,
+      "community_name": "car.ts",
       "norm_label": "careffects"
     },
     {
@@ -9140,8 +9140,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "src_sim_car_no_effects",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 89,
+      "community_name": "specials.ts",
       "norm_label": "no_effects"
     },
     {
@@ -9153,8 +9153,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_car_carstate",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 71,
+      "community_name": "car.ts",
       "norm_label": "carstate"
     },
     {
@@ -9177,8 +9177,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_car_cornering",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 71,
+      "community_name": "car.ts",
       "norm_label": "cornering()"
     },
     {
@@ -9189,8 +9189,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_car_stepcar",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 71,
+      "community_name": "car.ts",
       "norm_label": "stepcar()"
     },
     {
@@ -9201,8 +9201,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_car_hppct",
-      "community": 52,
-      "community_name": "hud.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "hppct()"
     },
     {
@@ -9212,8 +9212,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_chaos",
-      "community": 89,
-      "community_name": "policeItems.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "chaos.ts"
     },
     {
@@ -9224,8 +9224,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_chaos_chaosat",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "chaosat()"
     },
     {
@@ -9236,8 +9236,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_chaos_damagescale",
-      "community": 89,
-      "community_name": "policeItems.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "damagescale()"
     },
     {
@@ -9249,8 +9249,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_chaos_scaling",
-      "community": 89,
-      "community_name": "policeItems.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "scaling"
     },
     {
@@ -9261,8 +9261,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_chaos_takenfactor",
-      "community": 89,
-      "community_name": "policeItems.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "takenfactor()"
     },
     {
@@ -9273,8 +9273,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_chaos_doubled",
-      "community": 89,
-      "community_name": "policeItems.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "doubled()"
     },
     {
@@ -9285,8 +9285,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_chaos_scaleddamage",
-      "community": 89,
-      "community_name": "policeItems.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "scaleddamage()"
     },
     {
@@ -9297,8 +9297,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_chaos_hurt",
-      "community": 89,
-      "community_name": "policeItems.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "hurt()"
     },
     {
@@ -9308,8 +9308,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_collisions",
-      "community": 41,
-      "community_name": "thiefOf",
+      "community": 80,
+      "community_name": "balance.ts",
       "norm_label": "collisions.ts"
     },
     {
@@ -9320,8 +9320,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_collisions_slow",
-      "community": 41,
-      "community_name": "thiefOf",
+      "community": 80,
+      "community_name": "balance.ts",
       "norm_label": "slow()"
     },
     {
@@ -9332,8 +9332,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_collisions_resolvecollisions",
-      "community": 41,
-      "community_name": "thiefOf",
+      "community": 80,
+      "community_name": "balance.ts",
       "norm_label": "resolvecollisions()"
     },
     {
@@ -9343,8 +9343,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_curves",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "curves.ts"
     },
     {
@@ -9356,8 +9356,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_curves_curve",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "curve"
     },
     {
@@ -9369,8 +9369,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_curves_layout",
-      "community": 78,
-      "community_name": "items.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "layout"
     },
     {
@@ -9380,8 +9380,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_sim_curves_layouts",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "layouts"
     },
     {
@@ -9392,8 +9392,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_curves_layoutfor",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "layoutfor()"
     },
     {
@@ -9404,8 +9404,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_curves_extend",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "extend()"
     },
     {
@@ -9416,8 +9416,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_curves_curvesbetween",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "curvesbetween()"
     },
     {
@@ -9428,8 +9428,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_curves_curvatureat",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "curvatureat()"
     },
     {
@@ -9439,8 +9439,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_fixedstepper",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 91,
+      "community_name": "fixedStepper.ts",
       "norm_label": "fixedstepper.ts"
     },
     {
@@ -9452,8 +9452,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_fixedstepper_fixedstepper",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 91,
+      "community_name": "fixedStepper.ts",
       "norm_label": "fixedstepper"
     },
     {
@@ -9464,8 +9464,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_fixedstepper_fixedstepper_constructor",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 91,
+      "community_name": "fixedStepper.ts",
       "norm_label": ".constructor()"
     },
     {
@@ -9476,8 +9476,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_fixedstepper_fixedstepper_advance",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 91,
+      "community_name": "fixedStepper.ts",
       "norm_label": ".advance()"
     },
     {
@@ -9488,7 +9488,7 @@
       "_origin": "ast",
       "id": "src_sim_intents",
       "community": 71,
-      "community_name": "balance.ts",
+      "community_name": "car.ts",
       "norm_label": "intents.ts"
     },
     {
@@ -9501,7 +9501,7 @@
       "_origin": "ast",
       "id": "src_sim_intents_intents",
       "community": 71,
-      "community_name": "balance.ts",
+      "community_name": "car.ts",
       "norm_label": "intents"
     },
     {
@@ -9512,7 +9512,7 @@
       "_origin": "ast",
       "id": "src_sim_intents_no_intents",
       "community": 71,
-      "community_name": "balance.ts",
+      "community_name": "car.ts",
       "norm_label": "no_intents"
     },
     {
@@ -9688,7 +9688,7 @@
       "_origin": "ast",
       "id": "src_sim_policeitems",
       "community": 89,
-      "community_name": "policeItems.ts",
+      "community_name": "specials.ts",
       "norm_label": "policeitems.ts"
     },
     {
@@ -9700,7 +9700,7 @@
       "_origin": "ast",
       "id": "src_sim_policeitems_laneindex",
       "community": 89,
-      "community_name": "policeItems.ts",
+      "community_name": "specials.ts",
       "norm_label": "laneindex()"
     },
     {
@@ -9712,7 +9712,7 @@
       "_origin": "ast",
       "id": "src_sim_policeitems_strongat",
       "community": 89,
-      "community_name": "policeItems.ts",
+      "community_name": "specials.ts",
       "norm_label": "strongat()"
     },
     {
@@ -9724,7 +9724,7 @@
       "_origin": "ast",
       "id": "src_sim_policeitems_roadblocklanes",
       "community": 89,
-      "community_name": "policeItems.ts",
+      "community_name": "specials.ts",
       "norm_label": "roadblocklanes()"
     },
     {
@@ -9736,7 +9736,7 @@
       "_origin": "ast",
       "id": "src_sim_policeitems_freespot",
       "community": 89,
-      "community_name": "policeItems.ts",
+      "community_name": "specials.ts",
       "norm_label": "freespot()"
     },
     {
@@ -9748,7 +9748,7 @@
       "_origin": "ast",
       "id": "src_sim_policeitems_placeroadblock",
       "community": 89,
-      "community_name": "policeItems.ts",
+      "community_name": "specials.ts",
       "norm_label": "placeroadblock()"
     },
     {
@@ -9760,7 +9760,7 @@
       "_origin": "ast",
       "id": "src_sim_policeitems_usepolicespecial",
       "community": 89,
-      "community_name": "policeItems.ts",
+      "community_name": "specials.ts",
       "norm_label": "usepolicespecial()"
     },
     {
@@ -9772,7 +9772,7 @@
       "_origin": "ast",
       "id": "src_sim_policeitems_hitroadblock",
       "community": 89,
-      "community_name": "policeItems.ts",
+      "community_name": "specials.ts",
       "norm_label": "hitroadblock()"
     },
     {
@@ -9783,8 +9783,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_policeitems_clearpassedroadblocks",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 89,
+      "community_name": "specials.ts",
       "norm_label": "clearpassedroadblocks()"
     },
     {
@@ -9796,7 +9796,7 @@
       "_origin": "ast",
       "id": "src_sim_policeitems_applypoliceitem",
       "community": 89,
-      "community_name": "policeItems.ts",
+      "community_name": "specials.ts",
       "norm_label": "applypoliceitem()"
     },
     {
@@ -9807,8 +9807,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_policeitems_stepwingman",
-      "community": 89,
-      "community_name": "policeItems.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "stepwingman()"
     },
     {
@@ -9819,7 +9819,7 @@
       "_origin": "ast",
       "id": "src_sim_projectiles",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "projectiles.ts"
     },
     {
@@ -9831,7 +9831,7 @@
       "_origin": "ast",
       "id": "src_sim_projectiles_other",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "other()"
     },
     {
@@ -9843,7 +9843,7 @@
       "_origin": "ast",
       "id": "src_sim_projectiles_carof",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "carof()"
     },
     {
@@ -9855,7 +9855,7 @@
       "_origin": "ast",
       "id": "src_sim_projectiles_canshoot",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "canshoot()"
     },
     {
@@ -9867,7 +9867,7 @@
       "_origin": "ast",
       "id": "src_sim_projectiles_fireweapons",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "fireweapons()"
     },
     {
@@ -9879,7 +9879,7 @@
       "_origin": "ast",
       "id": "src_sim_projectiles_stepprojectiles",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "stepprojectiles()"
     },
     {
@@ -9889,8 +9889,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_pursuit",
-      "community": 41,
-      "community_name": "thiefOf",
+      "community": 80,
+      "community_name": "balance.ts",
       "norm_label": "pursuit.ts"
     },
     {
@@ -9924,8 +9924,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_rng",
-      "community": 78,
-      "community_name": "items.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "rng.ts"
     },
     {
@@ -9997,8 +9997,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_rng_createrngfromstate",
-      "community": 78,
-      "community_name": "items.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "createrngfromstate()"
     },
     {
@@ -10009,8 +10009,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_rng_createrng",
-      "community": 78,
-      "community_name": "items.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "createrng()"
     },
     {
@@ -10021,8 +10021,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_rng_makerng",
-      "community": 78,
-      "community_name": "items.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "makerng()"
     },
     {
@@ -10033,7 +10033,7 @@
       "_origin": "ast",
       "id": "src_sim_rules",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "rules.ts"
     },
     {
@@ -10045,7 +10045,7 @@
       "_origin": "ast",
       "id": "src_sim_rules_clamp01",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "clamp01()"
     },
     {
@@ -10057,7 +10057,7 @@
       "_origin": "ast",
       "id": "src_sim_rules_distancefactor",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "distancefactor()"
     },
     {
@@ -10069,7 +10069,7 @@
       "_origin": "ast",
       "id": "src_sim_rules_catchupbonus",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "catchupbonus()"
     },
     {
@@ -10081,7 +10081,7 @@
       "_origin": "ast",
       "id": "src_sim_rules_armorfactor",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "armorfactor()"
     },
     {
@@ -10093,7 +10093,7 @@
       "_origin": "ast",
       "id": "src_sim_rules_infirecone",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "infirecone()"
     },
     {
@@ -10105,7 +10105,7 @@
       "_origin": "ast",
       "id": "src_sim_rules_levelat",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "levelat()"
     },
     {
@@ -10115,8 +10115,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_specials",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 89,
+      "community_name": "specials.ts",
       "norm_label": "specials.ts"
     },
     {
@@ -10127,8 +10127,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_specials_nearestlane",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 89,
+      "community_name": "specials.ts",
       "norm_label": "nearestlane()"
     },
     {
@@ -10139,8 +10139,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_specials_innerneighbor",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 89,
+      "community_name": "specials.ts",
       "norm_label": "innerneighbor()"
     },
     {
@@ -10151,8 +10151,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_specials_strong",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 89,
+      "community_name": "specials.ts",
       "norm_label": "strong()"
     },
     {
@@ -10163,8 +10163,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_specials_addspecial",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 78,
+      "community_name": "items.ts",
       "norm_label": "addspecial()"
     },
     {
@@ -10187,8 +10187,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_specials_usespecial",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 89,
+      "community_name": "specials.ts",
       "norm_label": "usespecial()"
     },
     {
@@ -10199,8 +10199,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_specials_over",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 89,
+      "community_name": "specials.ts",
       "norm_label": "over()"
     },
     {
@@ -10211,8 +10211,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_specials_stephazards",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 89,
+      "community_name": "specials.ts",
       "norm_label": "stephazards()"
     },
     {
@@ -10223,8 +10223,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_specials_policeslowed",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 89,
+      "community_name": "specials.ts",
       "norm_label": "policeslowed()"
     },
     {
@@ -10342,8 +10342,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_traffic",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "traffic.ts"
     },
     {
@@ -10354,8 +10354,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_traffic_traffictarget",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "traffictarget()"
     },
     {
@@ -10366,8 +10366,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_traffic_samelane",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "samelane()"
     },
     {
@@ -10378,8 +10378,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_traffic_closedahead",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "closedahead()"
     },
     {
@@ -10390,8 +10390,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_traffic_besideworks",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "besideworks()"
     },
     {
@@ -10402,8 +10402,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_traffic_steptraffic",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "steptraffic()"
     },
     {
@@ -10465,8 +10465,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_types_specialkind",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 71,
+      "community_name": "car.ts",
       "norm_label": "specialkind"
     },
     {
@@ -10502,8 +10502,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_types_mysteryoutcome",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 71,
+      "community_name": "car.ts",
       "norm_label": "mysteryoutcome"
     },
     {
@@ -10593,8 +10593,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_types_worldstate",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "worldstate"
     },
     {
@@ -10604,8 +10604,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_sim_works",
-      "community": 0,
-      "community_name": "works.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "works.ts"
     },
     {
@@ -10617,8 +10617,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_sim_works_works",
-      "community": 0,
-      "community_name": "works.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "works"
     },
     {
@@ -10629,8 +10629,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_workslanex",
-      "community": 0,
-      "community_name": "works.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "workslanex()"
     },
     {
@@ -10641,8 +10641,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_levelof",
-      "community": 0,
-      "community_name": "works.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "levelof()"
     },
     {
@@ -10653,8 +10653,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_clear",
-      "community": 0,
-      "community_name": "works.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "clear()"
     },
     {
@@ -10665,8 +10665,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_worksinblock",
-      "community": 0,
-      "community_name": "works.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "worksinblock()"
     },
     {
@@ -10677,8 +10677,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_worksbetween",
-      "community": 0,
-      "community_name": "works.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "worksbetween()"
     },
     {
@@ -10689,8 +10689,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_stepworks",
-      "community": 0,
-      "community_name": "works.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "stepworks()"
     },
     {
@@ -10701,8 +10701,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_inside",
-      "community": 0,
-      "community_name": "works.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "inside()"
     },
     {
@@ -10713,8 +10713,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_works_hitworks",
-      "community": 0,
-      "community_name": "works.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "hitworks()"
     },
     {
@@ -10784,8 +10784,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_sim_world_stepworld",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "stepworld()"
     },
     {
@@ -10819,7 +10819,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_storage_difficulty",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "difficulty.ts"
     },
@@ -10830,7 +10830,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_storage_difficulty_difficulty_key",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "difficulty_key"
     },
@@ -10842,7 +10842,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_difficulty_loaddifficulty",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "loaddifficulty()"
     },
@@ -10854,7 +10854,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_difficulty_savedifficulty",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "savedifficulty()"
     },
@@ -10865,7 +10865,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_storage_mode",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "storage/mode.ts"
     },
@@ -10876,7 +10876,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_storage_mode_mode_key",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "mode_key"
     },
@@ -10888,7 +10888,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_mode_loadmode",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "loadmode()"
     },
@@ -10900,7 +10900,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_mode_savemode",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "savemode()"
     },
@@ -10911,7 +10911,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_storage_prefs",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "prefs.ts"
     },
@@ -10922,7 +10922,7 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "src_storage_prefs_howto_key",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "howto_key"
     },
@@ -10933,7 +10933,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_storage_prefs_initials_key",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "initials_key"
     },
@@ -10944,7 +10944,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_storage_prefs_admin_key",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "admin_key"
     },
@@ -10956,7 +10956,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_prefs_openstorage",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "openstorage()"
     },
@@ -10968,7 +10968,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_prefs_readpref",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "readpref()"
     },
@@ -10980,7 +10980,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_prefs_writepref",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "writepref()"
     },
@@ -10992,7 +10992,7 @@
       "_origin": "ast",
       "id": "src_storage_profilestore",
       "community": 72,
-      "community_name": "emptyProfile",
+      "community_name": "profileStore.ts",
       "norm_label": "profilestore.ts"
     },
     {
@@ -11003,7 +11003,7 @@
       "_origin": "ast",
       "id": "src_storage_profilestore_profile_key",
       "community": 72,
-      "community_name": "emptyProfile",
+      "community_name": "profileStore.ts",
       "norm_label": "profile_key"
     },
     {
@@ -11014,7 +11014,7 @@
       "_origin": "ast",
       "id": "src_storage_profilestore_profile_v2_key",
       "community": 72,
-      "community_name": "emptyProfile",
+      "community_name": "profileStore.ts",
       "norm_label": "profile_v2_key"
     },
     {
@@ -11025,7 +11025,7 @@
       "_origin": "ast",
       "id": "src_storage_profilestore_profile_v1_key",
       "community": 72,
-      "community_name": "emptyProfile",
+      "community_name": "profileStore.ts",
       "norm_label": "profile_v1_key"
     },
     {
@@ -11036,7 +11036,7 @@
       "_origin": "ast",
       "id": "src_storage_profilestore_corrupt_key",
       "community": 72,
-      "community_name": "emptyProfile",
+      "community_name": "profileStore.ts",
       "norm_label": "corrupt_key"
     },
     {
@@ -11048,7 +11048,7 @@
       "_origin": "ast",
       "id": "src_storage_profilestore_loadprofile",
       "community": 72,
-      "community_name": "emptyProfile",
+      "community_name": "profileStore.ts",
       "norm_label": "loadprofile()"
     },
     {
@@ -11060,7 +11060,7 @@
       "_origin": "ast",
       "id": "src_storage_profilestore_saveprofile",
       "community": 72,
-      "community_name": "emptyProfile",
+      "community_name": "profileStore.ts",
       "norm_label": "saveprofile()"
     },
     {
@@ -11071,7 +11071,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "ranking.ts"
     },
     {
@@ -11082,7 +11082,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_ranking_key",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "ranking_key"
     },
     {
@@ -11093,7 +11093,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_max_hp",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "max_hp"
     },
     {
@@ -11106,7 +11106,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_entry",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "entry"
     },
     {
@@ -11119,7 +11119,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_board",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "board"
     },
     {
@@ -11131,7 +11131,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_emptyboard",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "emptyboard()"
     },
     {
@@ -11142,7 +11142,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_ranking_v3_key",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "ranking_v3_key"
     },
     {
@@ -11155,7 +11155,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_boards",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "boards"
     },
     {
@@ -11167,7 +11167,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_emptyboards",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "emptyboards()"
     },
     {
@@ -11179,7 +11179,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_countrecords",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "countrecords()"
     },
     {
@@ -11192,7 +11192,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_result",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "result"
     },
     {
@@ -11204,7 +11204,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_better",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "better()"
     },
     {
@@ -11216,7 +11216,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_same",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "same()"
     },
     {
@@ -11228,7 +11228,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_valid",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "valid()"
     },
     {
@@ -11240,7 +11240,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_normalize",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "normalize()"
     },
     {
@@ -11252,7 +11252,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_qualifies",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "qualifies()"
     },
     {
@@ -11263,8 +11263,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_ranking_insert",
-      "community": 66,
-      "community_name": "Role",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "insert()"
     },
     {
@@ -11276,7 +11276,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_parseboard",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "parseboard()"
     },
     {
@@ -11288,7 +11288,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_loadboard",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "loadboard()"
     },
     {
@@ -11300,7 +11300,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_saveboard",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "saveboard()"
     },
     {
@@ -11312,7 +11312,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_sanitizeinitials",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "sanitizeinitials()"
     },
     {
@@ -11324,7 +11324,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_loadboards",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "loadboards()"
     },
     {
@@ -11336,7 +11336,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_saveboards",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "saveboards()"
     },
     {
@@ -11347,7 +11347,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_ranking_v4_key",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "ranking_v4_key"
     },
     {
@@ -11359,8 +11359,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_storage_ranking_modeboards",
-      "community": 66,
-      "community_name": "Role",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "modeboards"
     },
     {
@@ -11372,7 +11372,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_emptymodeboards",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "emptymodeboards()"
     },
     {
@@ -11384,7 +11384,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_countmoderecords",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "countmoderecords()"
     },
     {
@@ -11396,7 +11396,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_parseboards",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "parseboards()"
     },
     {
@@ -11408,7 +11408,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_loadmodeboards",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "loadmodeboards()"
     },
     {
@@ -11420,7 +11420,7 @@
       "_origin": "ast",
       "id": "src_storage_ranking_savemodeboards",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "savemodeboards()"
     },
     {
@@ -11431,8 +11431,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_storage_ranking_recordentry",
-      "community": 66,
-      "community_name": "Role",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "recordentry()"
     },
     {
@@ -11549,8 +11549,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_hud_formattime",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "formattime()"
     },
     {
@@ -11596,8 +11596,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "src_ui_hud_item_icon",
-      "community": 48,
-      "community_name": "createCar",
+      "community": 52,
+      "community_name": "hud.ts",
       "norm_label": "item_icon"
     },
     {
@@ -11655,8 +11655,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_hud_pickuptoast",
-      "community": 52,
-      "community_name": "hud.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "pickuptoast()"
     },
     {
@@ -11757,8 +11757,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_mobileshell",
-      "community": 92,
-      "community_name": "mobileShell.ts",
+      "community": 7,
+      "community_name": "main.ts",
       "norm_label": "mobileshell.ts"
     },
     {
@@ -11769,8 +11769,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_mobileshell_installnozoom",
-      "community": 92,
-      "community_name": "mobileShell.ts",
+      "community": 7,
+      "community_name": "main.ts",
       "norm_label": "installnozoom()"
     },
     {
@@ -11780,8 +11780,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_ui_mobileshell_rotated_query",
-      "community": 92,
-      "community_name": "mobileShell.ts",
+      "community": 7,
+      "community_name": "main.ts",
       "norm_label": "rotated_query"
     },
     {
@@ -11793,7 +11793,7 @@
       "_origin": "ast",
       "id": "src_ui_mobileshell_gamedelta",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "gamedelta()"
     },
     {
@@ -11804,8 +11804,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_mobileshell_isstandalone",
-      "community": 92,
-      "community_name": "mobileShell.ts",
+      "community": 7,
+      "community_name": "main.ts",
       "norm_label": "isstandalone()"
     },
     {
@@ -11816,8 +11816,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_mobileshell_locklandscape",
-      "community": 92,
-      "community_name": "mobileShell.ts",
+      "community": 7,
+      "community_name": "main.ts",
       "norm_label": "locklandscape()"
     },
     {
@@ -11828,8 +11828,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_mobileshell_installfullscreenonfirsttap",
-      "community": 92,
-      "community_name": "mobileShell.ts",
+      "community": 7,
+      "community_name": "main.ts",
       "norm_label": "installfullscreenonfirsttap()"
     },
     {
@@ -11840,8 +11840,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_mobileshell_ontap",
-      "community": 92,
-      "community_name": "mobileShell.ts",
+      "community": 7,
+      "community_name": "main.ts",
       "norm_label": "ontap()"
     },
     {
@@ -11851,8 +11851,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_mysteryhud",
-      "community": 48,
-      "community_name": "createCar",
+      "community": 52,
+      "community_name": "hud.ts",
       "norm_label": "mysteryhud.ts"
     },
     {
@@ -11862,8 +11862,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_ui_mysteryhud_bad_text",
-      "community": 48,
-      "community_name": "createCar",
+      "community": 52,
+      "community_name": "hud.ts",
       "norm_label": "bad_text"
     },
     {
@@ -11873,8 +11873,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_ui_mysteryhud_bad_icon",
-      "community": 48,
-      "community_name": "createCar",
+      "community": 52,
+      "community_name": "hud.ts",
       "norm_label": "bad_icon"
     },
     {
@@ -11884,8 +11884,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_ui_mysteryhud_spin",
-      "community": 48,
-      "community_name": "createCar",
+      "community": 52,
+      "community_name": "hud.ts",
       "norm_label": "spin"
     },
     {
@@ -11908,8 +11908,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_mysteryhud_mysteryicon",
-      "community": 48,
-      "community_name": "createCar",
+      "community": 52,
+      "community_name": "hud.ts",
       "norm_label": "mysteryicon()"
     },
     {
@@ -11931,7 +11931,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "careerscreen.ts"
     },
@@ -11944,7 +11944,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_tab",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "tab"
     },
@@ -11956,7 +11956,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_n",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "n()"
     },
@@ -11968,7 +11968,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_itemname",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "itemname()"
     },
@@ -11979,7 +11979,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_other_names",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "other_names"
     },
@@ -11991,7 +11991,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_partname",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "partname()"
     },
@@ -12002,7 +12002,7 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_rank_unlocks",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "rank_unlocks"
     },
@@ -12014,7 +12014,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_streakdays",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "streakdays()"
     },
@@ -12026,7 +12026,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_bar",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "bar()"
     },
@@ -12039,7 +12039,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_claim",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "claim"
     },
@@ -12051,7 +12051,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_rowtag",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "rowtag()"
     },
@@ -12063,7 +12063,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_challengerow",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "challengerow()"
     },
@@ -12075,7 +12075,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_untilmidnight",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "untilmidnight()"
     },
@@ -12087,7 +12087,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_shortday",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "shortday()"
     },
@@ -12099,7 +12099,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_todaypanel",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "todaypanel()"
     },
@@ -12111,7 +12111,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_achievementspanel",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "achievementspanel()"
     },
@@ -12123,7 +12123,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_rankcard",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "rankcard()"
     },
@@ -12135,7 +12135,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_rendercareer",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "rendercareer()"
     },
@@ -12147,7 +12147,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_careerstrip",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "careerstrip()"
     },
@@ -12159,7 +12159,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_careerscreen_openstreak",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "openstreak()"
     },
@@ -12171,7 +12171,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_choose",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "choose.ts"
     },
     {
@@ -12182,7 +12182,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_choose_roles",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "roles"
     },
     {
@@ -12194,7 +12194,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_choose_rolecard",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "rolecard()"
     },
     {
@@ -12206,7 +12206,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_choose_renderchoose",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "renderchoose()"
     },
     {
@@ -12217,7 +12217,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "difficultypicker.ts"
     },
     {
@@ -12227,8 +12227,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_difficulty_label",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "difficulty_label"
     },
     {
@@ -12239,8 +12239,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_coinslabel",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "coinslabel()"
     },
     {
@@ -12252,7 +12252,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_choicepicker",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "choicepicker()"
     },
     {
@@ -12264,7 +12264,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_difficultypicker",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "difficultypicker()"
     },
     {
@@ -12275,7 +12275,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_mode_label",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "mode_label"
     },
     {
@@ -12287,7 +12287,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_difficultypicker_modepicker",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "modepicker()"
     },
     {
@@ -12298,7 +12298,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_dom",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "dom.ts"
     },
     {
@@ -12311,7 +12311,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_dom_disposable",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "disposable"
     },
     {
@@ -12323,7 +12323,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_dom_disposable_dispose",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": ".dispose()"
     },
     {
@@ -12334,8 +12334,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_dom_h",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 88,
+      "community_name": "h",
       "norm_label": "h()"
     },
     {
@@ -12347,7 +12347,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_dom_btn",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "btn()"
     },
     {
@@ -12359,7 +12359,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_dom_trapfocus",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "trapfocus()"
     },
     {
@@ -12371,7 +12371,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_dom_mount",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "mount()"
     },
     {
@@ -12383,7 +12383,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_dom_openmodal",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "openmodal()"
     },
     {
@@ -12393,8 +12393,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_end",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "end.ts"
     },
     {
@@ -12405,8 +12405,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_endreason",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "endreason()"
     },
     {
@@ -12417,8 +12417,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_reducedmotion",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "reducedmotion()"
     },
     {
@@ -12429,8 +12429,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_rewardbox",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "rewardbox()"
     },
     {
@@ -12441,8 +12441,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_countup",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "countup()"
     },
     {
@@ -12453,8 +12453,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_resultcard",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "resultcard()"
     },
     {
@@ -12465,8 +12465,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_savednote",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "savednote()"
     },
     {
@@ -12477,8 +12477,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_padbtn",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "padbtn()"
     },
     {
@@ -12489,8 +12489,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_initialspad",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "initialspad()"
     },
     {
@@ -12501,8 +12501,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_recordpanel",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "recordpanel()"
     },
     {
@@ -12513,8 +12513,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_end_renderend",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "renderend()"
     },
     {
@@ -12524,8 +12524,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_flow",
-      "community": 88,
-      "community_name": "flow.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "flow.ts"
     },
     {
@@ -12536,8 +12536,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_countdown",
-      "community": 88,
-      "community_name": "flow.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "countdown"
     },
     {
@@ -12549,8 +12549,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_matchresult",
-      "community": 66,
-      "community_name": "Role",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "matchresult"
     },
     {
@@ -12562,8 +12562,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_flowstate",
-      "community": 88,
-      "community_name": "flow.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "flowstate"
     },
     {
@@ -12575,8 +12575,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_endstate",
-      "community": 88,
-      "community_name": "flow.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "endstate"
     },
     {
@@ -12588,8 +12588,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_flowaction",
-      "community": 88,
-      "community_name": "flow.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "flowaction"
     },
     {
@@ -12600,8 +12600,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_initialstate",
-      "community": 88,
-      "community_name": "flow.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "initialstate()"
     },
     {
@@ -12612,8 +12612,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_flow_reduce",
-      "community": 88,
-      "community_name": "flow.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "reduce()"
     },
     {
@@ -12624,7 +12624,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_garage",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "garage.ts"
     },
     {
@@ -12637,7 +12637,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_garage_garagecar",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "garagecar"
     },
     {
@@ -12649,7 +12649,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_garage_n",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "n()"
     },
     {
@@ -12660,7 +12660,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_garage_sticker_icon",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "sticker_icon"
     },
     {
@@ -12672,7 +12672,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_garage_rewardicon",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "rewardicon()"
     },
     {
@@ -12684,7 +12684,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_garage_dial",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "dial()"
     },
     {
@@ -12696,7 +12696,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_garage_card",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "card()"
     },
     {
@@ -12708,7 +12708,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_garage_garagepanel",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "garagepanel()"
     },
     {
@@ -12719,7 +12719,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "howto.ts"
     },
     {
@@ -12731,7 +12731,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_clock",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "clock()"
     },
     {
@@ -12742,7 +12742,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_escape",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "escape"
     },
     {
@@ -12755,7 +12755,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_tip",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "tip"
     },
     {
@@ -12766,7 +12766,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_pages",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "pages"
     },
     {
@@ -12778,7 +12778,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_tipel",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "tipel()"
     },
     {
@@ -12790,7 +12790,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_pagedots",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "pagedots()"
     },
     {
@@ -12802,7 +12802,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_dragtoturn",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "dragtoturn()"
     },
     {
@@ -12814,7 +12814,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_howto_openhowto",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "openhowto()"
     },
     {
@@ -12825,7 +12825,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_icons",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "screens/icons.ts"
     },
     {
@@ -12837,7 +12837,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_icons_svg",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "svg()"
     },
     {
@@ -12848,7 +12848,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_icons_screen_icons",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "screen_icons"
     },
     {
@@ -12858,7 +12858,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_insignia",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "insignia.ts"
     },
@@ -12869,7 +12869,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_ui_screens_insignia_bodies",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "bodies"
     },
@@ -12881,7 +12881,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_insignia_insignia",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "insignia()"
     },
@@ -12893,7 +12893,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_mode",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "screens/mode.ts"
     },
     {
@@ -12904,7 +12904,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_mode_mode_info",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "mode_info"
     },
     {
@@ -12916,7 +12916,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_mode_rendermode",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "rendermode()"
     },
     {
@@ -12926,8 +12926,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_progress",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 88,
+      "community_name": "h",
       "norm_label": "progress.ts"
     },
     {
@@ -12938,8 +12938,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_progress_n",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 88,
+      "community_name": "h",
       "norm_label": "n()"
     },
     {
@@ -12950,8 +12950,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_progress_statsgrid",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 88,
+      "community_name": "h",
       "norm_label": "statsgrid()"
     },
     {
@@ -12962,8 +12962,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_progress_copycode",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 88,
+      "community_name": "h",
       "norm_label": "copycode()"
     },
     {
@@ -12974,8 +12974,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_progress_restorepanel",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 88,
+      "community_name": "h",
       "norm_label": "restorepanel()"
     },
     {
@@ -12986,8 +12986,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_progress_adminpanel",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 88,
+      "community_name": "h",
       "norm_label": "adminpanel()"
     },
     {
@@ -12998,8 +12998,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_progress_openprogress",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 88,
+      "community_name": "h",
       "norm_label": "openprogress()"
     },
     {
@@ -13010,7 +13010,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "screens.ts"
     },
     {
@@ -13022,7 +13022,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens_titlehero",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "titlehero()"
     },
     {
@@ -13034,7 +13034,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens_walletchip",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "walletchip()"
     },
     {
@@ -13046,7 +13046,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens_rendertitle",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "rendertitle()"
     },
     {
@@ -13058,7 +13058,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens_rendercountdown",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "rendercountdown()"
     },
     {
@@ -13070,7 +13070,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens_renderpause",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "renderpause()"
     },
     {
@@ -13081,7 +13081,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens_tab_label",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "tab_label"
     },
     {
@@ -13093,7 +13093,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens_shortdate",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "shortdate()"
     },
     {
@@ -13105,7 +13105,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_screens_renderranking",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "renderranking()"
     },
     {
@@ -13116,166 +13116,153 @@
       "_origin": "ast",
       "id": "src_ui_screens_shop",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "screens/shop.ts"
-    },
-    {
-      "label": "Tab",
-      "file_type": "code",
-      "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L31",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "src_ui_screens_shop_tab",
-      "community": 50,
-      "community_name": "screens/shop.ts",
-      "norm_label": "tab"
     },
     {
       "label": "n()",
       "file_type": "code",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L32",
+      "source_location": "L31",
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_n",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "n()"
     },
     {
       "label": "hex()",
       "file_type": "code",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L33",
+      "source_location": "L32",
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_hex",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "hex()"
     },
     {
       "label": "ShopProps",
       "file_type": "code",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L35",
+      "source_location": "L34",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_shopprops",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "shopprops"
     },
     {
       "label": ".onSide()",
       "file_type": "code",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L38",
+      "source_location": "L37",
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_shopprops_onside",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": ".onside()"
     },
     {
       "label": ".onBack()",
       "file_type": "code",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L39",
+      "source_location": "L38",
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_shopprops_onback",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": ".onback()"
     },
     {
       "label": ".onBuy()",
       "file_type": "code",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L41",
+      "source_location": "L40",
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_shopprops_onbuy",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": ".onbuy()"
     },
     {
       "label": ".onUse()",
       "file_type": "code",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L42",
+      "source_location": "L41",
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_shopprops_onuse",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": ".onuse()"
     },
     {
       "label": ".onPlate()",
       "file_type": "code",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L43",
+      "source_location": "L42",
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_shopprops_onplate",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": ".onplate()"
     },
     {
       "label": ".onListen()",
       "file_type": "code",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L45",
+      "source_location": "L44",
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_shopprops_onlisten",
-      "community": 22,
-      "community_name": "Mixer",
+      "community": 50,
+      "community_name": "Role",
       "norm_label": ".onlisten()"
     },
     {
       "label": ".mountPreview()",
       "file_type": "code",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L49",
+      "source_location": "L48",
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_shopprops_mountpreview",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": ".mountpreview()"
     },
     {
       "label": "Row",
       "file_type": "code",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L52",
+      "source_location": "L51",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_row",
-      "community": 42,
-      "community_name": "garage.ts",
+      "community": 50,
+      "community_name": "Role",
       "norm_label": "row"
     },
     {
       "label": "renderShop()",
       "file_type": "code",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L61",
+      "source_location": "L60",
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shop_rendershop",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "rendershop()"
     },
     {
@@ -13286,7 +13273,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_shopmastery",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "shopmastery.ts"
     },
     {
@@ -13298,7 +13285,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_shopmastery_n",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "n()"
     },
     {
@@ -13309,8 +13296,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shopmastery_hex",
-      "community": 42,
-      "community_name": "garage.ts",
+      "community": 50,
+      "community_name": "Role",
       "norm_label": "hex()"
     },
     {
@@ -13322,7 +13309,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_shopmastery_finishswatch",
       "community": 42,
-      "community_name": "garage.ts",
+      "community_name": "shopMastery.ts",
       "norm_label": "finishswatch()"
     },
     {
@@ -13334,7 +13321,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_shopmastery_finishrowsfor",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "finishrowsfor()"
     },
     {
@@ -13346,7 +13333,7 @@
       "_origin": "ast",
       "id": "src_ui_screens_shopmastery_drawmasterybar",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "drawmasterybar()"
     },
     {
@@ -13356,67 +13343,104 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_screens_shopparts",
-      "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community": 50,
+      "community_name": "Role",
       "norm_label": "screens/shopparts.ts"
     },
     {
       "label": "WHEEL_SWATCH",
       "file_type": "code",
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L18",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "src_ui_screens_shopparts_wheel_swatch",
-      "community": 56,
-      "community_name": "screens/shopParts.ts",
+      "community": 50,
+      "community_name": "Role",
       "norm_label": "wheel_swatch"
     },
     {
-      "label": "partsRows()",
+      "label": "Tab",
       "file_type": "code",
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L25",
+      "source_location": "L26",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "src_ui_screens_shopparts_tab",
+      "community": 50,
+      "community_name": "Role",
+      "norm_label": "tab"
+    },
+    {
+      "label": "shopTabs()",
+      "file_type": "code",
+      "source_file": "src/ui/screens/shopParts.ts",
+      "source_location": "L29",
       "_callable": true,
       "_origin": "ast",
-      "id": "src_ui_screens_shopparts_partsrows",
+      "id": "src_ui_screens_shopparts_shoptabs",
       "community": 50,
-      "community_name": "screens/shop.ts",
-      "norm_label": "partsrows()"
+      "community_name": "Role",
+      "norm_label": "shoptabs()"
+    },
+    {
+      "label": "wheelRows()",
+      "file_type": "code",
+      "source_file": "src/ui/screens/shopParts.ts",
+      "source_location": "L40",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_ui_screens_shopparts_wheelrows",
+      "community": 50,
+      "community_name": "Role",
+      "norm_label": "wheelrows()"
+    },
+    {
+      "label": "accessoryRows()",
+      "file_type": "code",
+      "source_file": "src/ui/screens/shopParts.ts",
+      "source_location": "L48",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "src_ui_screens_shopparts_accessoryrows",
+      "community": 50,
+      "community_name": "Role",
+      "norm_label": "accessoryrows()"
     },
     {
       "label": "effectsRows()",
       "file_type": "code",
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L41",
+      "source_location": "L57",
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shopparts_effectsrows",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "effectsrows()"
     },
     {
       "label": "accessoryOn()",
       "file_type": "code",
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L51",
+      "source_location": "L67",
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shopparts_accessoryon",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "accessoryon()"
     },
     {
       "label": "previewPart()",
       "file_type": "code",
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L54",
+      "source_location": "L70",
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_screens_shopparts_previewpart",
       "community": 50,
-      "community_name": "screens/shop.ts",
+      "community_name": "Role",
       "norm_label": "previewpart()"
     },
     {
@@ -13496,8 +13520,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_admin_test",
-      "community": 91,
-      "community_name": "admin.test.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "admin.test.ts"
     },
     {
@@ -13507,8 +13531,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_audio_mixer_test",
-      "community": 41,
-      "community_name": "thiefOf",
+      "community": 10,
+      "community_name": "mixer.ts",
       "norm_label": "mixer.test.ts"
     },
     {
@@ -13519,8 +13543,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_audio_mixer_test_world",
-      "community": 41,
-      "community_name": "thiefOf",
+      "community": 10,
+      "community_name": "mixer.ts",
       "norm_label": "world()"
     },
     {
@@ -13530,8 +13554,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "tests_audio_mixer_test_shot",
-      "community": 41,
-      "community_name": "thiefOf",
+      "community": 10,
+      "community_name": "mixer.ts",
       "norm_label": "shot"
     },
     {
@@ -13771,8 +13795,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_meta_shop_test",
-      "community": 50,
-      "community_name": "screens/shop.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "meta/shop.test.ts"
     },
     {
@@ -13783,8 +13807,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_meta_shop_test_unlockedcareer",
-      "community": 50,
-      "community_name": "screens/shop.ts",
+      "community": 45,
+      "community_name": "parts.test.ts",
       "norm_label": "unlockedcareer()"
     },
     {
@@ -13795,8 +13819,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_meta_shop_test_rich",
-      "community": 50,
-      "community_name": "screens/shop.ts",
+      "community": 45,
+      "community_name": "parts.test.ts",
       "norm_label": "rich()"
     },
     {
@@ -13818,7 +13842,7 @@
       "_origin": "ast",
       "id": "tests_render_buildings_test",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "buildings.test.ts"
     },
     {
@@ -13909,8 +13933,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_carsmoke_test",
-      "community": 30,
-      "community_name": "carSmoke.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "carsmoke.test.ts"
     },
     {
@@ -13921,8 +13945,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_carsmoke_test_setup",
-      "community": 30,
-      "community_name": "carSmoke.ts",
+      "community": 8,
+      "community_name": "game.ts",
       "norm_label": "setup()"
     },
     {
@@ -13933,8 +13957,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_carsmoke_test_colours",
-      "community": 30,
-      "community_name": "carSmoke.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "colours()"
     },
     {
@@ -14108,8 +14132,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_hazardsview_test",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "hazardsview.test.ts"
     },
     {
@@ -14120,7 +14144,7 @@
       "_origin": "ast",
       "id": "tests_render_heli_test",
       "community": 19,
-      "community_name": "trackFrame.ts",
+      "community_name": "combatFx.ts",
       "norm_label": "heli.test.ts"
     },
     {
@@ -14130,8 +14154,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_opponentmarker_test",
-      "community": 19,
-      "community_name": "trackFrame.ts",
+      "community": 90,
+      "community_name": "opponentMarker.ts",
       "norm_label": "opponentmarker.test.ts"
     },
     {
@@ -14142,7 +14166,7 @@
       "_origin": "ast",
       "id": "tests_render_particles_test",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": "particles.test.ts"
     },
     {
@@ -14154,7 +14178,7 @@
       "_origin": "ast",
       "id": "tests_render_particles_test_cam",
       "community": 30,
-      "community_name": "carSmoke.ts",
+      "community_name": "scene.ts",
       "norm_label": "cam()"
     },
     {
@@ -14175,7 +14199,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_renderer_test",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "renderer.test.ts"
     },
@@ -14187,7 +14211,7 @@
       "_origin": "ast",
       "id": "tests_render_roadchunks_test",
       "community": 70,
-      "community_name": "roadChunks.ts",
+      "community_name": "worldProps.ts",
       "norm_label": "roadchunks.test.ts"
     },
     {
@@ -14197,7 +14221,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_scene_test",
-      "community": 54,
+      "community": 30,
       "community_name": "scene.ts",
       "norm_label": "scene.test.ts"
     },
@@ -14219,8 +14243,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_trackframe_test",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "trackframe.test.ts"
     },
     {
@@ -14230,8 +14254,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_worldprops_test",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "worldprops.test.ts"
     },
     {
@@ -14242,8 +14266,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_worldprops_test_traffic",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "traffic()"
     },
     {
@@ -14254,8 +14278,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_worldprops_test_visiblenamed",
-      "community": 58,
-      "community_name": "carFactory.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "visiblenamed()"
     },
     {
@@ -14265,7 +14289,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sanity_test",
-      "community": 71,
+      "community": 80,
       "community_name": "balance.ts",
       "norm_label": "sanity.test.ts"
     },
@@ -14276,8 +14300,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_ai_test",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "ai.test.ts"
     },
     {
@@ -14312,8 +14336,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_ai_test_bumpdodgerate",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "bumpdodgerate()"
     },
     {
@@ -14335,8 +14359,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_arrest_test",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "arrest.test.ts"
     },
     {
@@ -14346,8 +14370,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_sim_arrest_test_fire",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "fire"
     },
     {
@@ -14370,7 +14394,7 @@
       "_origin": "ast",
       "id": "tests_sim_bombs_test",
       "community": 71,
-      "community_name": "balance.ts",
+      "community_name": "car.ts",
       "norm_label": "bombs.test.ts"
     },
     {
@@ -14381,7 +14405,7 @@
       "_origin": "ast",
       "id": "tests_sim_bombs_test_bomb",
       "community": 71,
-      "community_name": "balance.ts",
+      "community_name": "car.ts",
       "norm_label": "bomb"
     },
     {
@@ -14404,8 +14428,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_bombs_test_press",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 89,
+      "community_name": "specials.ts",
       "norm_label": "press()"
     },
     {
@@ -14416,7 +14440,7 @@
       "_origin": "ast",
       "id": "tests_sim_car_test",
       "community": 71,
-      "community_name": "balance.ts",
+      "community_name": "car.ts",
       "norm_label": "car.test.ts"
     },
     {
@@ -14428,7 +14452,7 @@
       "_origin": "ast",
       "id": "tests_sim_car_test_run",
       "community": 71,
-      "community_name": "balance.ts",
+      "community_name": "car.ts",
       "norm_label": "run()"
     },
     {
@@ -14440,7 +14464,7 @@
       "_origin": "ast",
       "id": "tests_sim_car_test_atcruise",
       "community": 71,
-      "community_name": "balance.ts",
+      "community_name": "car.ts",
       "norm_label": "atcruise()"
     },
     {
@@ -14450,8 +14474,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_chaos_test",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "chaos.test.ts"
     },
     {
@@ -14462,8 +14486,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_chaos_test_run",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "run()"
     },
     {
@@ -14473,8 +14497,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_collisions_test",
-      "community": 41,
-      "community_name": "thiefOf",
+      "community": 80,
+      "community_name": "balance.ts",
       "norm_label": "collisions.test.ts"
     },
     {
@@ -14485,8 +14509,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_collisions_test_base",
-      "community": 41,
-      "community_name": "thiefOf",
+      "community": 80,
+      "community_name": "balance.ts",
       "norm_label": "base()"
     },
     {
@@ -14497,8 +14521,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_collisions_test_tick",
-      "community": 41,
-      "community_name": "thiefOf",
+      "community": 80,
+      "community_name": "balance.ts",
       "norm_label": "tick()"
     },
     {
@@ -14508,8 +14532,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_curves_test",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 70,
+      "community_name": "worldProps.ts",
       "norm_label": "curves.test.ts"
     },
     {
@@ -14520,7 +14544,7 @@
       "_origin": "ast",
       "id": "tests_sim_curvesphysics_test",
       "community": 71,
-      "community_name": "balance.ts",
+      "community_name": "car.ts",
       "norm_label": "curvesphysics.test.ts"
     },
     {
@@ -14531,8 +14555,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_curvesphysics_test_drive",
-      "community": 17,
-      "community_name": "ai.ts",
+      "community": 71,
+      "community_name": "car.ts",
       "norm_label": "drive()"
     },
     {
@@ -14554,7 +14578,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_difficulty_test",
-      "community": 71,
+      "community": 80,
       "community_name": "balance.ts",
       "norm_label": "sim/difficulty.test.ts"
     },
@@ -14566,7 +14590,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_difficulty_test_both",
-      "community": 71,
+      "community": 80,
       "community_name": "balance.ts",
       "norm_label": "both()"
     },
@@ -14577,8 +14601,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_escape_test",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "escape.test.ts"
     },
     {
@@ -14588,8 +14612,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "tests_sim_escape_test_fire",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "fire"
     },
     {
@@ -14611,8 +14635,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_fixedstepper_test",
-      "community": 8,
-      "community_name": "game.ts",
+      "community": 91,
+      "community_name": "fixedStepper.ts",
       "norm_label": "fixedstepper.test.ts"
     },
     {
@@ -14657,8 +14681,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_match_test",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "match.test.ts"
     },
     {
@@ -14668,8 +14692,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_sim_match_test_fire",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "fire"
     },
     {
@@ -14680,8 +14704,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_match_test_run",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "run()"
     },
     {
@@ -14703,7 +14727,7 @@
       "_origin": "ast",
       "id": "tests_sim_policeitems_test",
       "community": 89,
-      "community_name": "policeItems.ts",
+      "community_name": "specials.ts",
       "norm_label": "policeitems.test.ts"
     },
     {
@@ -14714,7 +14738,7 @@
       "_origin": "ast",
       "id": "tests_sim_policeitems_test_press",
       "community": 89,
-      "community_name": "policeItems.ts",
+      "community_name": "specials.ts",
       "norm_label": "press"
     },
     {
@@ -14748,8 +14772,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_projectiles_test",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "projectiles.test.ts"
     },
     {
@@ -14759,8 +14783,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "tests_sim_projectiles_test_fire",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "fire"
     },
     {
@@ -14771,8 +14795,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_projectiles_test_both",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "both()"
     },
     {
@@ -14796,7 +14820,7 @@
       "_origin": "ast",
       "id": "tests_sim_projectiles_test_flyuntildone",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "flyuntildone()"
     },
     {
@@ -14899,8 +14923,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_ram_test",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "ram.test.ts"
     },
     {
@@ -14911,8 +14935,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_ram_test_isram",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "isram()"
     },
     {
@@ -14922,8 +14946,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_rng_test",
-      "community": 78,
-      "community_name": "items.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "rng.test.ts"
     },
     {
@@ -14934,8 +14958,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_rng_test_take",
-      "community": 78,
-      "community_name": "items.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "take()"
     },
     {
@@ -14946,7 +14970,7 @@
       "_origin": "ast",
       "id": "tests_sim_rules_test",
       "community": 80,
-      "community_name": "projectiles.ts",
+      "community_name": "balance.ts",
       "norm_label": "rules.test.ts"
     },
     {
@@ -14956,8 +14980,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_specials_test",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 71,
+      "community_name": "car.ts",
       "norm_label": "specials.test.ts"
     },
     {
@@ -14967,8 +14991,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "tests_sim_specials_test_press",
-      "community": 59,
-      "community_name": "world.ts",
+      "community": 71,
+      "community_name": "car.ts",
       "norm_label": "press"
     },
     {
@@ -14990,8 +15014,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_survival_test",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "survival.test.ts"
     },
     {
@@ -15059,8 +15083,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_traffic_test",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "traffic.test.ts"
     },
     {
@@ -15071,8 +15095,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_traffic_test_fill",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 54,
+      "community_name": "createRng",
       "norm_label": "fill()"
     },
     {
@@ -15082,8 +15106,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_sim_works_test",
-      "community": 0,
-      "community_name": "works.ts",
+      "community": 59,
+      "community_name": "world.ts",
       "norm_label": "works.test.ts"
     },
     {
@@ -15094,7 +15118,7 @@
       "_origin": "ast",
       "id": "tests_sim_world_test",
       "community": 71,
-      "community_name": "balance.ts",
+      "community_name": "car.ts",
       "norm_label": "world.test.ts"
     },
     {
@@ -15105,8 +15129,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_sim_world_test_play",
-      "community": 71,
-      "community_name": "balance.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "play()"
     },
     {
@@ -15116,7 +15140,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_storage_difficulty_test",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "storage/difficulty.test.ts"
     },
@@ -15128,7 +15152,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_storage_difficulty_test_mem",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "mem()"
     },
@@ -15139,7 +15163,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_storage_mode_test",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "storage/mode.test.ts"
     },
@@ -15151,7 +15175,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_storage_mode_test_mem",
-      "community": 76,
+      "community": 3,
       "community_name": "app.ts",
       "norm_label": "mem()"
     },
@@ -15163,7 +15187,7 @@
       "_origin": "ast",
       "id": "tests_storage_profilestore_test",
       "community": 72,
-      "community_name": "emptyProfile",
+      "community_name": "profileStore.ts",
       "norm_label": "profilestore.test.ts"
     },
     {
@@ -15175,7 +15199,7 @@
       "_origin": "ast",
       "id": "tests_storage_profilestore_test_memory",
       "community": 72,
-      "community_name": "emptyProfile",
+      "community_name": "profileStore.ts",
       "norm_label": "memory()"
     },
     {
@@ -15187,7 +15211,7 @@
       "_origin": "ast",
       "id": "tests_storage_profilestore_test_length",
       "community": 72,
-      "community_name": "emptyProfile",
+      "community_name": "profileStore.ts",
       "norm_label": "length()"
     },
     {
@@ -15198,7 +15222,7 @@
       "_origin": "ast",
       "id": "tests_storage_ranking_test",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "ranking.test.ts"
     },
     {
@@ -15210,7 +15234,7 @@
       "_origin": "ast",
       "id": "tests_storage_ranking_test_memory",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "memory()"
     },
     {
@@ -15221,7 +15245,7 @@
       "_origin": "ast",
       "id": "tests_storage_ranking_test_broken",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "broken"
     },
     {
@@ -15257,7 +15281,7 @@
       "_origin": "ast",
       "id": "tests_storage_ranking_test_length",
       "community": 3,
-      "community_name": "ranking.ts",
+      "community_name": "app.ts",
       "norm_label": "length()"
     },
     {
@@ -15477,7 +15501,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_career_test",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "ui/career.test.ts"
     },
@@ -15489,7 +15513,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_career_test_button",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "button()"
     },
@@ -15500,7 +15524,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_ui_career_test_onclaim",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "onclaim"
     },
@@ -15512,7 +15536,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_career_test_dispose",
-      "community": 75,
+      "community": 66,
       "community_name": "careerScreen.ts",
       "norm_label": "dispose()"
     },
@@ -15523,8 +15547,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_difficultypicker_test",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "difficultypicker.test.ts"
     },
     {
@@ -15535,8 +15559,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_difficultypicker_test_mount",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "mount()"
     },
     {
@@ -15546,8 +15570,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_end_initials_test",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 0,
+      "community_name": "end.ts",
       "norm_label": "end-initials.test.ts"
     },
     {
@@ -15568,8 +15592,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_flow_test",
-      "community": 88,
-      "community_name": "flow.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "flow.test.ts"
     },
     {
@@ -15580,8 +15604,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_flow_test_run",
-      "community": 88,
-      "community_name": "flow.ts",
+      "community": 3,
+      "community_name": "app.ts",
       "norm_label": "run()"
     },
     {
@@ -15591,8 +15615,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_garage_test",
-      "community": 45,
-      "community_name": "parts.test.ts",
+      "community": 66,
+      "community_name": "careerScreen.ts",
       "norm_label": "garage.test.ts"
     },
     {
@@ -15602,8 +15626,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "tests_ui_garage_test_cars",
-      "community": 45,
-      "community_name": "parts.test.ts",
+      "community": 66,
+      "community_name": "careerScreen.ts",
       "norm_label": "cars"
     },
     {
@@ -15626,8 +15650,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_garage_test_open",
-      "community": 45,
-      "community_name": "parts.test.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "open()"
     },
     {
@@ -15637,8 +15661,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_hud_test",
-      "community": 52,
-      "community_name": "hud.ts",
+      "community": 41,
+      "community_name": "thiefOf",
       "norm_label": "hud.test.ts"
     },
     {
@@ -15671,8 +15695,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_mobileshell_test",
-      "community": 92,
-      "community_name": "mobileShell.ts",
+      "community": 7,
+      "community_name": "main.ts",
       "norm_label": "mobileshell.test.ts"
     },
     {
@@ -15683,8 +15707,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_mobileshell_test_touchend",
-      "community": 92,
-      "community_name": "mobileShell.ts",
+      "community": 7,
+      "community_name": "main.ts",
       "norm_label": "touchend()"
     },
     {
@@ -15695,7 +15719,7 @@
       "_origin": "ast",
       "id": "tests_ui_mode_test",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "ui/mode.test.ts"
     },
     {
@@ -15707,7 +15731,7 @@
       "_origin": "ast",
       "id": "tests_ui_mode_test_button",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "button()"
     },
     {
@@ -15728,8 +15752,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_progress_test",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 88,
+      "community_name": "h",
       "norm_label": "progress.test.ts"
     },
     {
@@ -15739,8 +15763,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_ui_progress_test_mine",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 88,
+      "community_name": "h",
       "norm_label": "mine"
     },
     {
@@ -15750,8 +15774,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "tests_ui_progress_test_other",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 88,
+      "community_name": "h",
       "norm_label": "other"
     },
     {
@@ -15762,8 +15786,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_progress_test_button",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 88,
+      "community_name": "h",
       "norm_label": "button()"
     },
     {
@@ -15774,8 +15798,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_progress_test_open",
-      "community": 75,
-      "community_name": "careerScreen.ts",
+      "community": 88,
+      "community_name": "h",
       "norm_label": "open()"
     },
     {
@@ -15786,7 +15810,7 @@
       "_origin": "ast",
       "id": "tests_ui_screens_test",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "screens.test.ts"
     },
     {
@@ -15798,7 +15822,7 @@
       "_origin": "ast",
       "id": "tests_ui_screens_test_button",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "button()"
     },
     {
@@ -15810,7 +15834,7 @@
       "_origin": "ast",
       "id": "tests_ui_screens_test_dispose",
       "community": 75,
-      "community_name": "careerScreen.ts",
+      "community_name": "screens.ts",
       "norm_label": "dispose()"
     },
     {
@@ -15880,15 +15904,15 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_shop_test_open",
-      "community": 45,
-      "community_name": "parts.test.ts",
+      "community": 77,
+      "community_name": "meta/shop.ts",
       "norm_label": "open()"
     },
     {
       "label": "dispose()",
       "file_type": "code",
       "source_file": "tests/ui/shop.test.ts",
-      "source_location": "L173",
+      "source_location": "L180",
       "_callable": true,
       "_origin": "ast",
       "id": "tests_ui_shop_test_dispose",
@@ -26963,7 +26987,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L37",
+      "source_location": "L36",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops",
@@ -26975,7 +26999,7 @@
       "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L49",
+      "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops_mountpreview",
@@ -26987,7 +27011,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L45",
+      "source_location": "L44",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops_onlisten",
@@ -26999,7 +27023,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L38",
+      "source_location": "L37",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops_onside",
@@ -34895,7 +34919,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L173",
+      "source_location": "L167",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -36263,7 +36287,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L36",
+      "source_location": "L35",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops",
@@ -36275,7 +36299,7 @@
       "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L41",
+      "source_location": "L40",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops_onbuy",
@@ -36287,7 +36311,7 @@
       "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L43",
+      "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops_onplate",
@@ -36299,7 +36323,7 @@
       "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L42",
+      "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops_onuse",
@@ -38040,7 +38064,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L45",
+      "source_location": "L44",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops_onlisten",
@@ -38137,7 +38161,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L123",
+      "source_location": "L115",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -38437,7 +38461,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L180",
+      "source_location": "L174",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -38629,7 +38653,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L190",
+      "source_location": "L184",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -38893,7 +38917,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L189",
+      "source_location": "L183",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -38917,7 +38941,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L51",
+      "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shopparts_accessoryon",
@@ -38977,7 +39001,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L188",
+      "source_location": "L182",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -39037,7 +39061,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L51",
+      "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shopparts_accessoryon",
@@ -39204,7 +39228,7 @@
       "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L49",
+      "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops_mountpreview",
@@ -39289,7 +39313,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L168",
+      "source_location": "L162",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -67545,7 +67569,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L70",
+      "source_location": "L69",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -67809,7 +67833,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L74",
+      "source_location": "L73",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -67965,7 +67989,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L359",
+      "source_location": "L358",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -68970,6 +68994,18 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/ui/screens/shopParts.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_ui_screens_shopparts",
+      "target": "src_ui_screens_icons",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -69002,6 +69038,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop",
+      "target": "src_ui_screens_icons_screen_icons",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/ui/screens/shopParts.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_ui_screens_shopparts",
       "target": "src_ui_screens_icons_screen_icons",
       "confidence_score": 1.0
     },
@@ -69531,7 +69579,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L33",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop",
@@ -69542,7 +69590,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L32",
+      "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop",
@@ -69553,7 +69601,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L61",
+      "source_location": "L60",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop",
@@ -69564,7 +69612,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L52",
+      "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop",
@@ -69575,22 +69623,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L35",
+      "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop",
       "target": "src_ui_screens_shop_shopprops",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L31",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_ui_screens_shop",
-      "target": "src_ui_screens_shop_tab",
       "confidence_score": 1.0
     },
     {
@@ -69662,7 +69699,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop",
-      "target": "src_ui_screens_shopparts_effectsrows",
+      "target": "src_ui_screens_shopparts_accessoryrows",
       "confidence_score": 1.0
     },
     {
@@ -69674,7 +69711,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop",
-      "target": "src_ui_screens_shopparts_partsrows",
+      "target": "src_ui_screens_shopparts_effectsrows",
       "confidence_score": 1.0
     },
     {
@@ -69690,11 +69727,47 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/ui/screens/shop.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_ui_screens_shop",
+      "target": "src_ui_screens_shopparts_shoptabs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/ui/screens/shop.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_ui_screens_shop",
+      "target": "src_ui_screens_shopparts_tab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/ui/screens/shop.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_ui_screens_shop",
+      "target": "src_ui_screens_shopparts_wheelrows",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L191",
+      "source_location": "L185",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -69706,7 +69779,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L129",
+      "source_location": "L121",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -69717,7 +69790,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L49",
+      "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops",
@@ -69728,7 +69801,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L39",
+      "source_location": "L38",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops",
@@ -69739,7 +69812,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L41",
+      "source_location": "L40",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops",
@@ -69750,7 +69823,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L45",
+      "source_location": "L44",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops",
@@ -69761,7 +69834,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L43",
+      "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops",
@@ -69772,7 +69845,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L38",
+      "source_location": "L37",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops",
@@ -69783,7 +69856,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L42",
+      "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_shopprops",
@@ -69795,7 +69868,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L79",
+      "source_location": "L78",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -69807,7 +69880,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L307",
+      "source_location": "L301",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -69819,7 +69892,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L300",
+      "source_location": "L294",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -69831,7 +69904,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L266",
+      "source_location": "L260",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -69843,7 +69916,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L97",
+      "source_location": "L96",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -69867,7 +69940,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shopparts",
@@ -69880,7 +69953,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L95",
+      "source_location": "L94",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -69892,7 +69965,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L164",
+      "source_location": "L158",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -69904,7 +69977,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L187",
+      "source_location": "L181",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -69916,7 +69989,19 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L148",
+      "source_location": "L140",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_ui_screens_shop_rendershop",
+      "target": "src_ui_screens_shopparts_accessoryrows"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/ui/screens/shop.ts",
+      "source_location": "L142",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
@@ -69928,11 +70013,11 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L146",
+      "source_location": "L175",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
-      "target": "src_ui_screens_shopparts_partsrows"
+      "target": "src_ui_screens_shopparts_previewpart"
     },
     {
       "relation": "calls",
@@ -69940,11 +70025,23 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shop.ts",
-      "source_location": "L181",
+      "source_location": "L110",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shop_rendershop",
-      "target": "src_ui_screens_shopparts_previewpart"
+      "target": "src_ui_screens_shopparts_shoptabs"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/ui/screens/shop.ts",
+      "source_location": "L138",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_ui_screens_shop_rendershop",
+      "target": "src_ui_screens_shopparts_wheelrows"
     },
     {
       "relation": "imports",
@@ -70054,7 +70151,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shopparts",
@@ -70090,7 +70187,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shopparts",
@@ -70103,7 +70200,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L44",
+      "source_location": "L60",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shopparts_effectsrows",
@@ -70125,7 +70222,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L51",
+      "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shopparts",
@@ -70136,7 +70233,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L41",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_ui_screens_shopparts",
+      "target": "src_ui_screens_shopparts_accessoryrows",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/ui/screens/shopParts.ts",
+      "source_location": "L57",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shopparts",
@@ -70147,18 +70255,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L25",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_ui_screens_shopparts",
-      "target": "src_ui_screens_shopparts_partsrows",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L54",
+      "source_location": "L70",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shopparts",
@@ -70169,11 +70266,44 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/ui/screens/shopParts.ts",
-      "source_location": "L18",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_ui_screens_shopparts",
+      "target": "src_ui_screens_shopparts_shoptabs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/ui/screens/shopParts.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_ui_screens_shopparts",
+      "target": "src_ui_screens_shopparts_tab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/ui/screens/shopParts.ts",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_ui_screens_shopparts",
       "target": "src_ui_screens_shopparts_wheel_swatch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/ui/screens/shopParts.ts",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_ui_screens_shopparts",
+      "target": "src_ui_screens_shopparts_wheelrows",
       "confidence_score": 1.0
     },
     {
@@ -71769,7 +71899,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/ui/shop.test.ts",
-      "source_location": "L173",
+      "source_location": "L180",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_ui_shop_test",
@@ -75235,5 +75365,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a76dadcb028525c3091a2d6a8f5da984ac15c867"
+  "built_at_commit": "e8850e3792b79515f96ab5f5f1e8328ffa285309"
 }
