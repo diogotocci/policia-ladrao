@@ -52,13 +52,22 @@ describe('car × car collisions', () => {
     return withCar(withCar(w, 'police', p), 'thief', { ...t, speed: 30 });
   };
 
-  it('rear-end in the same lane: thief −5, police −3; only the police loses speed (50%), police ends 1 length behind', () => {
+  it('rear-end in the same lane (playtest 2026-10-11): thief −5, the police that hits takes nothing; only the police loses speed (50%), police ends 1 length behind', () => {
     const w = tick(overlapping(0, L * 0.6));
     expect(thiefOf(w).hp).toBe(95);
-    expect(policeOf(w).hp).toBe(97);
+    expect(policeOf(w).hp).toBe(100);
+    expect(w.events.filter((e) => e.type === 'hit').map((e) => (e as { target: string }).target)).toEqual(['thief']);
     expect(thiefOf(w).speed).toBeCloseTo(30, 10);
     expect(policeOf(w).speed).toBeCloseTo(15, 10);
     expect(thiefOf(w).s - policeOf(w).s).toBeCloseTo(L, 1);
+  });
+
+  it('a rear hit with the ram: the thief takes the ram damage, the police still none', () => {
+    const w0 = overlapping(0, L * 0.6);
+    const w = tick(withCar(w0, 'police', { ...policeOf(w0), upgrades: { ...policeOf(w0).upgrades, ramCharges: 1 } }));
+    expect(thiefOf(w).hp).toBe(100 - BALANCE.items.police.ramThief);
+    expect(policeOf(w).hp).toBe(100);
+    expect(policeOf(w).upgrades.ramCharges).toBe(0);
   });
 
   it('after hitting the thief, the police loses the catch-up turbo for 4 s', () => {
@@ -116,7 +125,7 @@ describe('car × car collisions', () => {
     w = withCar(w, 'police', { ...policeOf(w), s: t.s - L * 0.6, x: t.x });
     w = tick(w, 10);
     expect(thiefOf(w).hp).toBe(95);
-    expect(policeOf(w).hp).toBe(97);
+    expect(policeOf(w).hp).toBe(100);
   });
 
   it('cars far apart do nothing', () => {

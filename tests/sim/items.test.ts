@@ -126,7 +126,7 @@ describe('effects in combat', () => {
     expect(pursuitBonus(duel({ upgrades: { ...police().upgrades, nitroUntil: 3 } }, {}, 20, 1))).toBeCloseTo(0.4, 10);
   });
 
-  it('ram: 3 crashes at −8/−1, the 4th back to −5/−3; plates reduce the thief damage', () => {
+  it('ram: 3 crashes at −8 on the thief, the 4th back to −5; the police that hits takes nothing; plates reduce the thief damage', () => {
     let w = duel({ upgrades: { ...police().upgrades, ramCharges: 3 } }, {}, 2);
     const hits: [number, number][] = [];
     for (let k = 0; k < 4; k++) {
@@ -137,10 +137,10 @@ describe('effects in combat', () => {
       hits.push([before[0] - policeOf(w).hp, before[1] - thiefOf(w).hp]);
     }
     expect(hits).toEqual([
-      [1, 8],
-      [1, 8],
-      [1, 8],
-      [3, 5],
+      [0, 8],
+      [0, 8],
+      [0, 8],
+      [0, 5],
     ]);
     const plated = resolveCollisions(duel({}, { upgrades: { ...thief().upgrades, plates: 3 } }, 2), DT);
     expect(100 - thiefOf(plated).hp).toBeCloseTo(5 * 0.55, 10);
