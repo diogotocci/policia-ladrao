@@ -65,7 +65,7 @@ export const STICKER_LAYOUT: Record<string, Layout> = {
   },
   van: {
     faixas: [side(-0.5, 2.38, 1.3, 0.16, 0.955)],
-    chamas: [side(-2.42, -0.66, 1.05, 0.55, 0.955)],
+    chamas: [side(-1.1, 0.12, 0.85, 0.38, 0.955)], // from the front arch along the cab door, between the trim and the character line (playtest 2026-10-10)
     numero: [sideSq(1.55, 1.3, 0.45, 0.955)],
     caveira: [topSq(0.6, 1.76, 0.9)],
   },

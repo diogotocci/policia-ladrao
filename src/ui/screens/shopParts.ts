@@ -1,4 +1,4 @@
-// Shop tabs of V2 part 6 delivery 2: "Peças" (wheels; accessories on the thief) and "Efeitos" (neon and smoke).
+// Shop tabs of V2 part 6 delivery 2: Rodas, Acessórios (thief) and Efeitos (neon and smoke), and the tab list.
 import type { Role } from '../../config/balance';
 import {
   ACCESSORY_IDS,
@@ -12,6 +12,7 @@ import {
 } from '../../meta/parts';
 import type { Profile } from '../../meta/profile';
 import { NEONS, NEON_IDS, PRICES, inUse, owns, type CarLook } from '../../meta/shop';
+import { SCREEN_ICONS } from './icons';
 import { hex } from './shopMastery';
 import type { Row } from './shop';
 
@@ -22,21 +23,36 @@ const WHEEL_SWATCH: Record<WheelStyle | 'padrao', string> = {
   rodao: 'radial-gradient(circle, #ffffff 0 14%, #c9ced6 16% 70%, #1b1c1f 73%)',
 };
 
-export function partsRows(side: Role): Row[] {
+export type Tab = 'cars' | 'paint' | 'sticker' | 'wheels' | 'acc' | 'effects' | 'sound' | 'plate';
+
+/** The shop tabs of a side, with their icon (playtest 2026-10-10: a side rail, every tab named and in view). */
+export const shopTabs = (side: Role): [Tab, string, string][] => [
+  ['cars', 'Carros', SCREEN_ICONS.car],
+  ['paint', 'Pintura', SCREEN_ICONS.paint],
+  ['sticker', 'Adesivos', SCREEN_ICONS.sticker],
+  ['wheels', 'Rodas', SCREEN_ICONS.wheel],
+  ...(side === 'thief' ? [['acc', 'Acessórios', SCREEN_ICONS.wing] as [Tab, string, string]] : []),
+  ['effects', 'Efeitos', SCREEN_ICONS.sparkle],
+  ['sound', side === 'police' ? 'Sirene' : 'Buzina', side === 'police' ? SCREEN_ICONS.siren : SCREEN_ICONS.horn],
+  ['plate', 'Placa', SCREEN_ICONS.plate],
+];
+
+export function wheelRows(side: Role): Row[] {
   return [
-    { id: `wheels:${side}:padrao`, name: 'Padrão', swatch: WHEEL_SWATCH.padrao, price: 0, section: 'Rodas' },
+    { id: `wheels:${side}:padrao`, name: 'Padrão', swatch: WHEEL_SWATCH.padrao, price: 0 },
     ...WHEEL_STYLES.map((w) => ({ id: `wheels:${side}:${w}`, name: WHEEL_NAMES[w], swatch: WHEEL_SWATCH[w], price: PRICES.wheels })),
-    ...(side === 'thief'
-      ? ACCESSORY_IDS.map((a, i) => ({
-          id: `acc:${a}`,
-          name: ACCESSORY_NAMES[a],
-          swatch: '',
-          price: PRICES.acc,
-          section: i === 0 ? 'Acessórios (a moto só usa antena e escapamento)' : undefined,
-        }))
-      : []),
   ];
 }
+
+/** The thief's accessories (several at once). */
+export const accessoryRows = (): Row[] =>
+  ACCESSORY_IDS.map((a, i) => ({
+    id: `acc:${a}`,
+    name: ACCESSORY_NAMES[a],
+    swatch: '',
+    price: PRICES.acc,
+    section: i === 0 ? 'Use juntos · na moto, só antena e escapamento' : undefined,
+  }));
 
 export function effectsRows(side: Role): Row[] {
   return [

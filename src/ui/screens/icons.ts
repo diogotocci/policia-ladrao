@@ -44,4 +44,14 @@ export const SCREEN_ICONS = {
   shop: svg('<path d="M4 9h16l-1.5 11h-13z"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/>'),
   car: svg('<path d="M3 15v-3l2-5h14l2 5v3z"/><circle cx="7.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/><path d="M5 12h14"/>'),
   siren: svg('<path d="M7 18v-5a5 5 0 0 1 10 0v5"/><path d="M5 18h14v3H5zM12 3v2M4.5 6l1.5 1.5M19.5 6 18 7.5"/>'),
+  // shop tabs (playtest 2026-10-10: side rail with icon and name)
+  paint: svg('<path d="M12 3c3 4 6 7.5 6 11a6 6 0 0 1-12 0c0-3.5 3-7 6-11z"/><path d="M9 15a3 3 0 0 0 3 3"/>'),
+  sticker: svg('<path d="M5 4h14v9l-6 7H5z"/><path d="M13 20v-5a2 2 0 0 1 2-2h4"/>'),
+  wheel: svg('<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.5"/><path d="M12 3.5v6M12 14.5v6M3.5 12h6M14.5 12h6"/>'),
+  wing: svg('<path d="M3 9h18l-2 3H5z"/><path d="M8 12v5M16 12v5M5 17h14"/>'),
+  sparkle: svg(
+    '<path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/>',
+  ),
+  horn: svg('<path d="M3 10v4h3l7 4V6L6 10z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 7a7 7 0 0 1 0 10"/>'),
+  plate: svg('<rect x="2.5" y="7" width="19" height="10" rx="1.5"/><path d="M2.5 9.5h19M6 13.5h3M11 13.5h3M16 13.5h2"/>'),
 } as const;
