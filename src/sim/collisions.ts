@@ -97,20 +97,19 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
       out = { ...out, policeTurboOffUntil: w.time + C.policeTurboOff };
       immunity.cars = C.immunity;
     } else if ((immunity.cars ?? 0) <= EPS && !side) {
+      // rear hit (playtest 2026-10-11): the police, always the one behind, hurts the thief and takes no damage
       const ram = police.upgrades.ramCharges > 0;
-      const thiefDmg = (ram ? BALANCE.items.police.ramThief : BALANCE.collision.carCarThief) * armorFactor(thief.upgrades.plates);
-      const policeDmg = ram ? BALANCE.items.police.ramPolice : BALANCE.collision.carCarPolice;
+      const thiefDmg = (ram ? BALANCE.items.police.ramThief : BALANCE.collision.rearHit) * armorFactor(thief.upgrades.plates);
       if (ram) police = { ...police, upgrades: { ...police.upgrades, ramCharges: police.upgrades.ramCharges - 1 } };
       const C = BALANCE.collision;
       thief = { ...hurt(thief, thiefDmg, w), speed: thief.speed * (1 - C.carCarThiefSpeedLoss) };
-      police = { ...hurt(police, policeDmg, w), speed: police.speed * (1 - C.carCarPoliceSpeedLoss) };
+      police = { ...police, speed: police.speed * (1 - C.carCarPoliceSpeedLoss) };
       out = { ...out, policeTurboOffUntil: w.time + C.policeTurboOff };
       immunity.cars = C.immunity;
       const s = (thief.s + police.s) / 2;
       const x = (thief.x + police.x) / 2;
       events.push({ type: 'crash', a: 'police', b: 'thief', s, x });
       events.push({ type: 'hit', target: 'thief', amount: scaledDamage(thiefDmg, w, 'thief'), s, x });
-      events.push({ type: 'hit', target: 'police', amount: scaledDamage(policeDmg, w, 'police'), s, x });
     }
     if (Math.abs(dx) < W) {
       // same lane: the police ends up 1 car length behind

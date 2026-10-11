@@ -1,7 +1,7 @@
-# Graph Report - policia-ladrao  (2026-10-10)
+# Graph Report - policia-ladrao  (2026-10-11)
 
 ## Corpus Check
-- 254 files · ~192,483 words
+- 254 files · ~192,643 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d5e070c5`
+- Built from commit: `02f1e798`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -102,8 +102,8 @@
 - progress.ts
 - world.ts
 - eslint
+- feedback.ts
 - typescript
-- gunner.ts
 - Role
 - @eslint/js
 
@@ -154,7 +154,7 @@ Cohesion: 0.18
 Nodes (10): Global Constraints, Review Focus, Task 1: Dificuldade na simulação, Task 2: Moedas com multiplicador, Task 3: Ranking por dificuldade e preferência salva, Task 4: Seletor e escolha do lado, Task 5: Ranking com seletor, Task 6: Fim de partida e ligação no app (+2 more)
 
 ### Community 2 - "carLook.ts"
-Cohesion: 0.10
+Cohesion: 0.11
 Nodes (28): LEGENDARY, addAccessory(), addParts(), createLookModel(), disposeLookModel(), glowTexture(), plateTexture(), cache (+20 more)
 
 ### Community 3 - "ranking.ts"
@@ -314,8 +314,8 @@ Cohesion: 0.33
 Nodes (4): errors, Game, Snap, Visuals
 
 ### Community 48 - "createCar"
-Cohesion: 0.17
-Nodes (14): createItemsFx(), INSTANT_POLICE, itemToast(), createCarModel(), blockSign(), createSpecialsView(), nailsGeometry(), baseUpgrades() (+6 more)
+Cohesion: 0.09
+Nodes (27): createItemsFx(), INSTANT_POLICE, itemToast(), createCarModel(), updateCarModel(), createCarPreview(), attachGunner(), BODY_MAT (+19 more)
 
 ### Community 49 - "backup.ts"
 Cohesion: 0.11
@@ -441,13 +441,13 @@ Nodes (11): decodeBackup(), fromBase32(), adminPanel(), copyCode(), n(), openPro
 Cohesion: 0.10
 Nodes (35): AiMemory, CarState, NO_EFFECTS, applyPoliceItem(), clearPassedRoadblocks(), freeSpot(), laneIndex(), placeRoadblock() (+27 more)
 
-### Community 93 - "gunner.ts"
-Cohesion: 0.19
-Nodes (13): updateCarModel(), createCarPreview(), attachGunner(), BODY_MAT, box(), FLASH_GEO, FLASH_MAT, flashGunner() (+5 more)
+### Community 91 - "feedback.ts"
+Cohesion: 0.53
+Nodes (4): Feedback, feedbackFor(), feedbackForFrame(), e()
 
 ### Community 94 - "Role"
-Cohesion: 0.13
-Nodes (11): Role, GameHandle, GameOptions, Achievement, CarLook, QualityTier, ShopPreview, Feedback (+3 more)
+Cohesion: 0.18
+Nodes (7): Role, GameHandle, GameOptions, Achievement, CarLook, QualityTier, ShopPreview
 
 ## Knowledge Gaps
 - **499 isolated node(s):** `root`, `skillsDir`, `rulesDir`, `skills`, `usingSuperpowers` (+494 more)
@@ -457,16 +457,16 @@ Nodes (11): Role, GameHandle, GameOptions, Achievement, CarLook, QualityTier, Sh
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Role` connect `Role` to `end.ts`, `carLook.ts`, `ranking.ts`, `main.ts`, `game.ts`, `ai.ts`, `Mixer`, `career.ts`, `carSmoke.ts`, `touchButtons.ts`, `thiefOf`, `screens/shop.ts`, `app.ts`, `createCar`, `Profile`, `hud.ts`, `screens/shopParts.ts`, `carFactory.ts`, `stepWorld`, `flow.ts`, `balance.ts`, `h`, `meta/shop.ts`, `items.ts`, `projectiles.ts`, `profile.ts`, `world.ts`, `gunner.ts`?**
+- **Why does `Role` connect `Role` to `end.ts`, `carLook.ts`, `ranking.ts`, `main.ts`, `game.ts`, `ai.ts`, `Mixer`, `career.ts`, `carSmoke.ts`, `touchButtons.ts`, `thiefOf`, `screens/shop.ts`, `app.ts`, `createCar`, `Profile`, `hud.ts`, `screens/shopParts.ts`, `carFactory.ts`, `stepWorld`, `flow.ts`, `balance.ts`, `h`, `meta/shop.ts`, `items.ts`, `projectiles.ts`, `profile.ts`, `world.ts`, `feedback.ts`?**
   _High betweenness centrality (0.064) - this node is a cross-community bridge._
 - **Why does `AudioBackend` connect `AudioBackend` to `mixer.ts`, `session.ts`, `Mixer`, `synth.ts`?**
   _High betweenness centrality (0.019) - this node is a cross-community bridge._
-- **Why does `BALANCE` connect `balance.ts` to `end.ts`, `ranking.ts`, `game.ts`, `ai.ts`, `combatFx.ts`, `thiefOf`, `createCar`, `hud.ts`, `traffic.ts`, `carFactory.ts`, `stepWorld`, `world.spec.ts`, `curves.ts`, `h`, `items.ts`, `projectiles.ts`, `profile.ts`, `world.ts`, `Role`?**
+- **Why does `BALANCE` connect `balance.ts` to `end.ts`, `ranking.ts`, `game.ts`, `ai.ts`, `combatFx.ts`, `thiefOf`, `createCar`, `hud.ts`, `traffic.ts`, `carFactory.ts`, `stepWorld`, `world.spec.ts`, `curves.ts`, `h`, `items.ts`, `projectiles.ts`, `profile.ts`, `world.ts`, `feedback.ts`?**
   _High betweenness centrality (0.014) - this node is a cross-community bridge._
 - **What connects `root`, `skillsDir`, `rulesDir` to the rest of the system?**
   _499 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `carLook.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.09672830725462304 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.10588235294117647 - nodes in this community are weakly interconnected._
 - **Should `ranking.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.12312312312312312 - nodes in this community are weakly interconnected._
 - **Should `strategy.ts` be split into smaller, more focused modules?**

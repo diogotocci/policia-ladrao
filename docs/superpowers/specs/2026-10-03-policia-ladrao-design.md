@@ -50,7 +50,9 @@ Jogo de perseguição de carros em 3D low-poly estilizado (resolução nativa, i
 |---|---|---|
 | Tiro da polícia | −1 × potência × fator de distância × armadura | — |
 | Tiro do ladrão (com arma) | — | −1,5 × fator de distância (*teste de balanço A, 2026-10-04*) |
-| Colisão polícia × ladrão (qualquer um iniciando) | −5 × armadura (−8 com aríete) | −3 (−1 com aríete) |
+| Polícia bate na traseira do ladrão | −5 × armadura (−8 com aríete) | — (*playtest 2026-10-11: quem bate não perde vida*) |
+| Batida lateral: um vira para cima do outro | −5 × armadura no atingido (*playtest 2026-10-08*) | −5 no atingido |
+| Batida lateral: os dois viram um para o outro | −5 × armadura | −5 |
 | Colisão com cenário (meio-fio/poste) ou tráfego | −5 | −5 |
 | Pegar caixinha da outra cor | −2 | −2 |
 | Passar sobre bomba (no chão) | — | −15 (*teste de balanço C, 2026-10-04*) |

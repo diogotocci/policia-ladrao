@@ -47,10 +47,12 @@ describe('match end', () => {
 
   it('both at 0 in the same step → the thief wins', () => {
     let w = createWorld({ seed: 3, playerRole: 'police', debugHp: { police: 3, thief: 3 } });
-    // puts the police next to the thief (same lane) for a hit that takes 5 / 3
+    // the police hits the thief from behind (thief −5) while scraping the edge (police −5), in the same step
+    const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
+    w = withCar(w, 'thief', { ...thiefOf(w), x: EDGE });
     const t = thiefOf(w);
-    w = withCar(w, 'police', { ...policeOf(w), s: t.s - 2, x: t.x, speed: t.speed + 5 });
-    w = stepWorld(w, NO_INTENTS, DT);
+    w = withCar(w, 'police', { ...policeOf(w), s: t.s - 2, x: EDGE, speed: t.speed + 5 });
+    w = stepWorld(w, { ...NO_INTENTS, right: true }, DT);
     expect(policeOf(w).hp).toBe(0);
     expect(thiefOf(w).hp).toBe(0);
     expect(w.match.winner).toBe('thief');
@@ -58,9 +60,10 @@ describe('match end', () => {
 
   it('a car zeroed by a crash does not shoot in the same step', () => {
     let w = createWorld({ seed: 3, playerRole: 'police', debugHp: { police: 3 } });
-    const t = thiefOf(w);
-    w = withCar(w, 'police', { ...policeOf(w), s: t.s - 2, x: t.x, speed: t.speed + 5 });
-    w = stepWorld(w, FIRE, DT);
+    // a crash into the edge (rear hits no longer hurt the police)
+    const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
+    w = withCar(w, 'police', { ...policeOf(w), x: EDGE, speed: 30 });
+    w = stepWorld(w, { ...FIRE, right: true }, DT);
     expect(policeOf(w).hp).toBe(0);
     expect(w.events.some((e) => e.type === 'shot')).toBe(false);
     expect(w.projectiles).toEqual([]);

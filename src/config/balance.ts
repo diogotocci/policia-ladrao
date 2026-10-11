@@ -37,8 +37,8 @@ export const BALANCE = {
     falloffEnd: 70, // m
   },
   collision: {
-    carCarThief: 5,
-    carCarPolice: 3,
+    // playtest 2026-10-11: the car that hits takes no damage. Rear hit: the police (always behind) hurts the thief
+    rearHit: 5,
     scenery: 5,
     immunity: 1,
     speedLoss: 0.3, // scenery and traffic
@@ -133,7 +133,6 @@ export const BALANCE = {
       nitroTime: 3,
       ramCharges: 3,
       ramThief: 8,
-      ramPolice: 1,
       heliTime: 8,
       pierceTime: 10,
       heliFireInterval: 0.7, // s: the helicopter shoots on its own, besides the officer (full damage, no loss over distance)
