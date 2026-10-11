@@ -112,7 +112,10 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
   const rows = (): Row[] => {
     switch (tab) {
       case 'cars':
-        return carsOf(side).map((c) => ({ id: `car:${c}`, name: CARS[c].name, swatch: '', price: CARS[c].price }));
+        // by price (the new cars of part 6 come last in the catalog)
+        return [...carsOf(side)]
+          .sort((a, b) => CARS[a].price - CARS[b].price)
+          .map((c) => ({ id: `car:${c}`, name: CARS[c].name, swatch: '', price: CARS[c].price }));
       case 'paint':
         return [
           ...CARS[stageCar].colors.map((c, i) => ({

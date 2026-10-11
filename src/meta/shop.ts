@@ -2,8 +2,9 @@
 // reaches the simulation. The catalog order never changes (the backup code stores positions): new items go at the end.
 import type { Role } from '../config/balance';
 import type { Profile } from './profile';
+import { CARS, CAR_IDS, type CarId } from './cars';
 import { meets, requirementText, unlockOf } from './career';
-import { FINISHES, MASTERY_CARS, STICKERS, masteryLevel, type FinishId } from './mastery';
+import { FINISHES, FIRST_CARS, NEW_CARS, STICKERS, masteryLevel, type FinishId } from './mastery';
 import {
   freePart,
   partInUse,
@@ -16,82 +17,11 @@ import {
   type PartsLook,
 } from './shopParts';
 
-export type CarId = 'viatura' | 'esportivo' | 'blazer' | 'caveirao' | 'seda' | 'picape' | 'moto' | 'van';
 export type NeonColor = 'azul' | 'roxo' | 'verde' | 'rosa';
 export type SoundId = 'yelp' | 'choque' | 'corneta' | 'grave' | 'dupla';
 export type ItemKind = 'car' | 'paint' | 'neon' | 'sound' | 'plate' | 'finish' | 'sticker' | 'wheels' | 'smoke' | 'acc';
 
-export interface CarInfo {
-  role: Role;
-  name: string;
-  price: number;
-  /** [original, paint 1, paint 2, paint 3] */
-  colors: [number, number, number, number];
-  colorNames: [string, string, string, string];
-}
-
-// police: always the four colours of a real patrol car (white, silver, navy, black; playtest 2026-10-08)
-export const CARS: Record<CarId, CarInfo> = {
-  viatura: {
-    role: 'police',
-    name: 'Viatura',
-    price: 0,
-    colors: [0xf4f5f7, 0xb8bec6, 0x1b2a4a, 0x16181c],
-    colorNames: ['Branca', 'Prata', 'Azul-marinho', 'Preta'],
-  },
-  esportivo: {
-    role: 'police',
-    name: 'Esportivo',
-    price: 2500,
-    colors: [0x111316, 0xf3f4f6, 0xb8bec6, 0x1b2a4a],
-    colorNames: ['Preto', 'Branco', 'Prata', 'Azul-marinho'],
-  },
-  blazer: {
-    role: 'police',
-    name: 'Blazer',
-    price: 5000,
-    colors: [0xf1f2f4, 0xb8bec6, 0x1b2a4a, 0x16181c],
-    colorNames: ['Branca', 'Prata', 'Azul-marinho', 'Preta'],
-  },
-  caveirao: {
-    role: 'police',
-    name: 'Caveirão',
-    price: 10000,
-    colors: [0x1e2126, 0xf3f4f6, 0xb8bec6, 0x1b2a4a],
-    colorNames: ['Preto', 'Branco', 'Prata', 'Azul-marinho'],
-  },
-  seda: {
-    role: 'thief',
-    name: 'Sedã',
-    price: 0,
-    colors: [0xd0151c, 0xf2c014, 0x1f8a3a, 0x6a2bb0],
-    colorNames: ['Vermelho', 'Amarelo', 'Verde', 'Roxo'],
-  },
-  picape: {
-    role: 'thief',
-    name: 'Picape',
-    price: 2500,
-    colors: [0xe0731c, 0x6e1420, 0x1f4fb0, 0x5d6b3c],
-    colorNames: ['Laranja', 'Vinho', 'Azul', 'Verde-oliva'],
-  },
-  moto: {
-    role: 'thief',
-    name: 'Moto com carona',
-    price: 5000,
-    colors: [0xd0151c, 0x8fd61a, 0x1f4fb0, 0xf2c014],
-    colorNames: ['Vermelha', 'Verde-limão', 'Azul', 'Amarela'],
-  },
-  van: {
-    role: 'thief',
-    name: 'Van preta',
-    price: 10000,
-    colors: [0x101114, 0xeeeff1, 0x6b7380, 0x6e1420],
-    colorNames: ['Preta', 'Branca', 'Cinza', 'Vinho'],
-  },
-};
-export const CAR_IDS = Object.keys(CARS) as CarId[];
-export const DEFAULT_CAR: Record<Role, CarId> = { police: 'viatura', thief: 'seda' };
-export const carsOf = (role: Role): CarId[] => CAR_IDS.filter((c) => CARS[c].role === role);
+export { CARS, CAR_IDS, DEFAULT_CAR, carsOf, type CarId, type CarInfo } from './cars';
 
 export const NEONS: Record<NeonColor, { name: string; color: number }> = {
   azul: { name: 'Azul', color: 0x2f7bff },
@@ -130,47 +60,43 @@ export interface ShopItem {
   sticker?: number;
 }
 
+function carItem(c: CarId): ShopItem {
+  return { id: `car:${c}`, kind: 'car', price: CARS[c].price, role: CARS[c].role, car: c };
+}
+function paintItems(c: CarId): ShopItem[] {
+  return [1, 2, 3].map((i) => ({ id: `paint:${c}:${i}`, kind: 'paint', price: PRICES.paint, role: CARS[c].role, car: c, index: i }));
+}
+function masteryItems(c: CarId): ShopItem[] {
+  const base = { role: CARS[c].role, car: c };
+  return [
+    ...[...FINISHES, 'lendaria' as const].map((f): ShopItem => ({
+      ...base,
+      id: `finish:${c}:${f}`,
+      kind: 'finish',
+      price: f === 'lendaria' ? 0 : PRICES.finish,
+      finish: f,
+    })),
+    ...[1, 2, 3, 4].map((n): ShopItem => ({ ...base, id: `sticker:${c}:${n}`, kind: 'sticker', price: PRICES.sticker, sticker: n })),
+  ];
+}
+
 /**
  * Everything that can be bought, in a fixed order (backup positions; a test pins the whole list). Free originals are
  * not items. New items go in a new list appended at the end, never inside these groups.
  */
 export const CATALOG: readonly ShopItem[] = [
-  ...CAR_IDS.filter((c) => CARS[c].price > 0).map((c): ShopItem => ({
-    id: `car:${c}`,
-    kind: 'car',
-    price: CARS[c].price,
-    role: CARS[c].role,
-    car: c,
-  })),
-  ...CAR_IDS.flatMap((c) =>
-    [1, 2, 3].map((i): ShopItem => ({ id: `paint:${c}:${i}`, kind: 'paint', price: PRICES.paint, role: CARS[c].role, car: c, index: i })),
-  ),
+  ...(FIRST_CARS as readonly CarId[]).filter((c) => CARS[c].price > 0).map(carItem),
+  ...(FIRST_CARS as readonly CarId[]).flatMap(paintItems),
   ...(['police', 'thief'] as Role[]).flatMap((r) =>
     NEON_IDS.map((n): ShopItem => ({ id: `neon:${r}:${n}`, kind: 'neon', price: PRICES.neon, role: r, neon: n })),
   ),
   ...SOUND_IDS.map((s): ShopItem => ({ id: `sound:${s}`, kind: 'sound', price: PRICES.sound, role: SOUNDS[s].role, sound: s })),
   { id: 'plate', kind: 'plate', price: PRICES.plate },
-  // V2 part 6: per car, the 4 finishes, the legendary one (free, from mastery 10) and the 4 stickers. A fixed car
-  // list (MASTERY_CARS): new cars get their own group at the end
-  ...(MASTERY_CARS as readonly CarId[]).flatMap((c): ShopItem[] => [
-    ...[...FINISHES, 'lendaria' as const].map((f): ShopItem => ({
-      id: `finish:${c}:${f}`,
-      kind: 'finish',
-      price: f === 'lendaria' ? 0 : PRICES.finish,
-      role: CARS[c].role,
-      car: c,
-      finish: f,
-    })),
-    ...[1, 2, 3, 4].map((n): ShopItem => ({
-      id: `sticker:${c}:${n}`,
-      kind: 'sticker',
-      price: PRICES.sticker,
-      role: CARS[c].role,
-      car: c,
-      sticker: n,
-    })),
-  ]),
+  // V2 part 6: per car, the 4 finishes, the legendary one (free, from mastery 10) and the 4 stickers
+  ...(FIRST_CARS as readonly CarId[]).flatMap(masteryItems),
   ...partItems(PRICES), // V2 part 6 delivery 2: wheels and smoke per side, the thief's accessories
+  // V2 part 6 delivery 3: each new car with its paints, finishes and stickers
+  ...(NEW_CARS as readonly CarId[]).flatMap((c) => [carItem(c), ...paintItems(c), ...masteryItems(c)]),
 ];
 const BY_ID = new Map(CATALOG.map((i) => [i.id, i]));
 export const itemById = (id: string): ShopItem | undefined => BY_ID.get(id);

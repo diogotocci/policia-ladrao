@@ -35,6 +35,22 @@ export const ACCESSORY_SPOTS: Record<string, Spots> = {
     antena: { x: -0.78, y: 1.76, z: 2.15 },
     escapamento: [{ x: 0.55, y: 0.42, z: 2.5 }],
   },
+  // V2 part 6 delivery 3
+  kombi: {
+    aerofolio: { z: 1.85, y: 1.9, w: 1.6, base: 1.72 },
+    rack: { z0: -1.6, z1: 1.4, y: 1.73, w: 1.6 },
+    antena: { x: -0.8, y: 1.72, z: 1.7 },
+    escapamento: [{ x: 0.5, y: 0.36, z: 2.24 }],
+  },
+  fusca: {
+    aerofolio: { z: 1.75, y: 1.05, w: 1.3, base: 0.8 },
+    rack: { z0: -0.25, z1: 0.55, y: 1.4, w: 1.0 },
+    antena: { x: -0.74, y: 0.9, z: 1.45 },
+    escapamento: [
+      { x: 0.28, y: 0.3, z: 2.2 },
+      { x: -0.28, y: 0.3, z: 2.2 },
+    ],
+  },
   moto: {
     antena: { x: -0.1, y: 1.2, z: 1.05 },
     escapamento: [{ x: 0.24, y: 0.52, z: 1.12 }],
