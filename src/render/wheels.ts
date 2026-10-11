@@ -63,7 +63,7 @@ export function applyWheels(root: THREE.Object3D, style: WheelStyle | null, car:
   root.traverse((o) => {
     const w = o as THREE.Mesh;
     if (!w.isMesh || w.name !== 'wheel') return;
-    if (car === 'moto') {
+    if (car === 'moto' || car === 'rocam') {
       // thin moto wheels: keep them, the rim takes the style's material (the old one was this car's own copy)
       const rim = w.getObjectByName('rim') as THREE.Mesh | undefined;
       if (rim) {

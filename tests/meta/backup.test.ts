@@ -112,6 +112,46 @@ describe('backup code v2 (shop, V2 part 4)', () => {
   });
 });
 
+describe('a code from 0.22.2 (before the four new cars of part 6 delivery 3)', () => {
+  it('restores the same items, choices, mastery and counters', () => {
+    // encoded by 0.22.2: Caveirão and Van with paints, a finish, a sticker, neon, horn, wheels, smoke, rack and plate
+    const r = decodeBackup(
+      'PL1-LMZS-YMJS-GM2D-KLBQ-FQYC-YMBM-GAWD-ALBR-FRNT-ELBR-GYWD-KLBS-HEWD-CMBY-FQYT-CMZM-GM3S-YNBS-FQYT-COBM-GEZD-SLBR-GMZS-YNBT-LUWF-WMZM-FUYS-YLJR-FQ3S-YMZM-GQWC-EMBQ-GAZD-AMBQ-GMRC-YIRC-FQRD-AMBQ-GAYD-AMBS-EIWC-EMBQ-GAYD-AMBQ-GIRC-YWZS-FQWT-CLBN-GEWD-ELBS-LVOS-YWZZ-HE4T-SOJM-HE4T-SOJZ-FRNT-ALBT-GEWD-ALBQ-FQYC-YMBM-GAWD-ALBQ-FQYC-YMBM-GAWD-ALBU-GIWD-ALBQ-LUWF-WMBM-GEWD-ELBT-FQ2C-YNJM-GYWD-OLBY-FQ4S-YMJQ-FQYT-CLBR-GIWD-CMZM-GE2C-YMJV-FQYT-MLBR-G4WD-COBM-GE4S-YMRQ-LUWC-EIRM-LMYC-YMBM-GBOS-YIRC-FQYC-YW25-FRNT-ALBQ-FQYC-YOJQ-GAWD-ALBQ-FQYC-YMRW-GAYF-2XK5-93E3-C953',
+    );
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect([...r.profile.owned].sort()).toEqual(
+      [
+        'car:caveirao',
+        'paint:caveirao:2',
+        'car:van',
+        'paint:van:3',
+        'finish:van:fosco',
+        'sticker:van:2',
+        'neon:thief:rosa',
+        'sound:dupla',
+        'wheels:police:rodao',
+        'smoke:thief:verde',
+        'acc:rack',
+        'plate',
+      ].sort(),
+    );
+    expect(r.profile.equipped).toMatchObject({
+      police: { car: 'caveirao', neon: null, sound: null },
+      thief: { car: 'van', neon: 'rosa', sound: 'dupla' },
+      paint: { caveirao: 2, van: 3 },
+      finish: { van: 'fosco' },
+      sticker: { van: 2 },
+      wheels: { police: 'rodao' },
+      smoke: { thief: 'verde' },
+      acc: ['rack'],
+    });
+    expect(r.profile.coins).toBe(12345);
+    expect(r.profile.career.carXp).toEqual({ van: 2600, caveirao: 900 });
+    expect(r.profile.career.counters).toMatchObject({ skids: 42, arrests: 31, nitros: 0, mysteries: 0 });
+  });
+});
+
 /** Same encoding as encodeBackup, for a raw payload (the format of older versions). */
 function legacyCode(bytes: Uint8Array): string {
   const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';

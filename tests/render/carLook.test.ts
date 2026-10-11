@@ -184,13 +184,14 @@ describe('finishes and stickers (V2 part 6)', () => {
 });
 
 describe('sticker layout (playtest 2026-10-09: car by car, never over the car decals)', () => {
-  it('every car has a place for each sticker of its side; police stickers go on top (POLÍCIA is on the sides)', async () => {
+  it('every car has a place for each sticker of its side; police cars take them on top (POLÍCIA is on the sides; the Rocam is a bike)', async () => {
     const { STICKER_LAYOUT } = await import('../../src/render/stickers');
     const { STICKERS } = await import('../../src/meta/mastery');
     for (const car of CAR_IDS) {
       const layout = STICKER_LAYOUT[car]!;
       for (const kind of STICKERS[CARS[car].role]) expect(layout[kind]?.length, `${car} ${kind}`).toBeGreaterThan(0);
-      if (CARS[car].role === 'police') for (const spots of Object.values(layout)) for (const s of spots!) expect(s.at, car).toBe('top');
+      if (CARS[car].role === 'police' && car !== 'rocam')
+        for (const spots of Object.values(layout)) for (const s of spots!) expect(s.at, car).toBe('top');
     }
   });
 });
