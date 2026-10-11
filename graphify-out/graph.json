@@ -5822,8 +5822,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_carfactory_updatecarmodel",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "updatecarmodel()"
     },
     {
@@ -6195,8 +6195,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_carpreview",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "carpreview.ts"
     },
     {
@@ -6207,8 +6207,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_carpreview_createcarpreview",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "createcarpreview()"
     },
     {
@@ -6582,8 +6582,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_render_gunner",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "gunner.ts"
     },
     {
@@ -6594,8 +6594,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_box",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "box()"
     },
     {
@@ -6605,8 +6605,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_render_gunner_style",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "style"
     },
     {
@@ -6616,8 +6616,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_render_gunner_geocache",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "geocache"
     },
     {
@@ -6628,8 +6628,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_gunnergeometry",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "gunnergeometry()"
     },
     {
@@ -6639,8 +6639,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "src_render_gunner_body_mat",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "body_mat"
     },
     {
@@ -6650,8 +6650,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "src_render_gunner_flash_mat",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "flash_mat"
     },
     {
@@ -6661,8 +6661,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "src_render_gunner_flash_geo",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "flash_geo"
     },
     {
@@ -6673,8 +6673,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_attachgunner",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "attachgunner()"
     },
     {
@@ -6685,8 +6685,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_flashgunner",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "flashgunner()"
     },
     {
@@ -6697,8 +6697,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_render_gunner_updategunner",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "updategunner()"
     },
     {
@@ -11629,8 +11629,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_ui_feedback",
-      "community": 94,
-      "community_name": "Role",
+      "community": 91,
+      "community_name": "feedback.ts",
       "norm_label": "feedback.ts"
     },
     {
@@ -11642,8 +11642,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "src_ui_feedback_feedback",
-      "community": 94,
-      "community_name": "Role",
+      "community": 91,
+      "community_name": "feedback.ts",
       "norm_label": "feedback"
     },
     {
@@ -11654,8 +11654,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_feedback_feedbackfor",
-      "community": 94,
-      "community_name": "Role",
+      "community": 91,
+      "community_name": "feedback.ts",
       "norm_label": "feedbackfor()"
     },
     {
@@ -11666,8 +11666,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "src_ui_feedback_feedbackforframe",
-      "community": 94,
-      "community_name": "Role",
+      "community": 91,
+      "community_name": "feedback.ts",
       "norm_label": "feedbackforframe()"
     },
     {
@@ -14132,8 +14132,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_carlook_test",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "carlook.test.ts"
     },
     {
@@ -14144,8 +14144,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_carlook_test_meshes",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "meshes()"
     },
     {
@@ -14156,8 +14156,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_carlook_test_look",
-      "community": 2,
-      "community_name": "carLook.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "look()"
     },
     {
@@ -14319,8 +14319,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_render_gunner_test",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "gunner.test.ts"
     },
     {
@@ -14331,8 +14331,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_gunner_test_setup",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "setup()"
     },
     {
@@ -14343,8 +14343,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_gunner_test_aimx",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "aimx()"
     },
     {
@@ -14355,8 +14355,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_render_gunner_test_visiblemeshes",
-      "community": 93,
-      "community_name": "gunner.ts",
+      "community": 48,
+      "community_name": "createCar",
       "norm_label": "visiblemeshes()"
     },
     {
@@ -15490,8 +15490,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "tests_storage_ranking_test_e",
-      "community": 94,
-      "community_name": "Role",
+      "community": 91,
+      "community_name": "feedback.ts",
       "norm_label": "e()"
     },
     {
@@ -15815,8 +15815,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ui_feedback_test",
-      "community": 94,
-      "community_name": "Role",
+      "community": 91,
+      "community_name": "feedback.ts",
       "norm_label": "feedback.test.ts"
     },
     {
@@ -18932,7 +18932,7 @@
       "label": "4.3 Dist\u00e2ncia e compensa\u00e7\u00e3o",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L61",
+      "source_location": "L63",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_4_3_dist\u00e2ncia_e_compensa\u00e7\u00e3o",
       "community": 12,
@@ -18943,7 +18943,7 @@
       "label": "5. Caixinhas e itens",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L73",
+      "source_location": "L75",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_5_caixinhas_e_itens",
       "community": 12,
@@ -18954,7 +18954,7 @@
       "label": "5.1 Azul \u2014 Pol\u00edcia (pesos iniciais)",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L80",
+      "source_location": "L82",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_5_1_azul_pol\u00edcia_pesos_iniciais",
       "community": 12,
@@ -18965,7 +18965,7 @@
       "label": "5.2 Vermelha \u2014 Ladr\u00e3o",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L93",
+      "source_location": "L95",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_5_2_vermelha_ladr\u00e3o",
       "community": 12,
@@ -18976,7 +18976,7 @@
       "label": "6. Controles e HUD",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L103",
+      "source_location": "L105",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_6_controles_e_hud",
       "community": 12,
@@ -18987,7 +18987,7 @@
       "label": "7. Telas",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L117",
+      "source_location": "L119",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_7_telas",
       "community": 12,
@@ -18998,7 +18998,7 @@
       "label": "8. Ranking",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L126",
+      "source_location": "L128",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_8_ranking",
       "community": 12,
@@ -19009,7 +19009,7 @@
       "label": "9. Visual e \u00e1udio",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L134",
+      "source_location": "L136",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_9_visual_e_\u00e1udio",
       "community": 12,
@@ -19020,7 +19020,7 @@
       "label": "10. Arquitetura",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L153",
+      "source_location": "L155",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_10_arquitetura",
       "community": 12,
@@ -19031,7 +19031,7 @@
       "label": "11. Testes",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L170",
+      "source_location": "L172",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_11_testes",
       "community": 12,
@@ -19042,7 +19042,7 @@
       "label": "12. Entregas",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L177",
+      "source_location": "L179",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_12_entregas",
       "community": 12,
@@ -76240,7 +76240,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L153",
+      "source_location": "L155",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_pol\u00edcia_ladr\u00e3o_design_v1",
@@ -76251,7 +76251,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L170",
+      "source_location": "L172",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_pol\u00edcia_ladr\u00e3o_design_v1",
@@ -76262,7 +76262,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L177",
+      "source_location": "L179",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_pol\u00edcia_ladr\u00e3o_design_v1",
@@ -76317,7 +76317,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L73",
+      "source_location": "L75",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_pol\u00edcia_ladr\u00e3o_design_v1",
@@ -76328,7 +76328,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L103",
+      "source_location": "L105",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_pol\u00edcia_ladr\u00e3o_design_v1",
@@ -76339,7 +76339,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L117",
+      "source_location": "L119",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_pol\u00edcia_ladr\u00e3o_design_v1",
@@ -76350,7 +76350,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L126",
+      "source_location": "L128",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_pol\u00edcia_ladr\u00e3o_design_v1",
@@ -76361,7 +76361,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L134",
+      "source_location": "L136",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_pol\u00edcia_ladr\u00e3o_design_v1",
@@ -76394,7 +76394,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L61",
+      "source_location": "L63",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_4_combate",
@@ -76405,7 +76405,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L80",
+      "source_location": "L82",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_5_caixinhas_e_itens",
@@ -76416,7 +76416,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/superpowers/specs/2026-10-03-policia-ladrao-design.md",
-      "source_location": "L93",
+      "source_location": "L95",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_superpowers_specs_2026_10_03_policia_ladrao_design_5_caixinhas_e_itens",
@@ -77217,5 +77217,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "d5e070c53a40a271f77ff6500251275e823aa70f"
+  "built_at_commit": "02f1e79842137a7b24707d01e1f830bfe885471f"
 }
