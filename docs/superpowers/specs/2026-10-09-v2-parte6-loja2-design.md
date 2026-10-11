@@ -73,7 +73,7 @@ Preços seguem a Parte 5 (~3x). Tudo bloqueado mostra o que falta, como hoje.
 Os adesivos são posicionados carro a carro (`src/render/stickers.ts`), nunca em cima dos grafismos do próprio carro:
 
 - **Polícia** (as laterais já têm POLÍCIA e faixas): tudo em cima. Faixas no capô, teto e porta-malas; brasão no capô (na Viatura, sobre o painel azul; no Caveirão, no teto, longe do símbolo da lateral); número no teto, atrás do giroflex, lido pela câmera de trás; xadrez na frente do capô e na traseira.
-- **Ladrão**: Sedã (já tem a faixa no teto), Picape e Van nas laterais: faixas acima das rodas, chamas saindo do para-lama da frente, número na porta, caveira na lateral (Sedã), no capô (Picape) ou no teto (Van). Moto: no tanque e na rabeta.
+- **Ladrão**: Sedã (já tem a faixa no teto), Picape e Van nas laterais: faixas acima das rodas, chamas saindo do para-lama da frente (na Van, atrás da roda, na porta da cabine, sem passar da linha do capô; playtest 2026-10-10), número na porta, caveira na lateral (Sedã), no capô (Picape) ou no teto (Van). Moto: no tanque e na rabeta.
 - As faixas mudam de cor para aparecer: escuras num carro claro, brancas num escuro.
 
 ## 4. Carros novos
@@ -90,7 +90,7 @@ Os adesivos são posicionados carro a carro (`src/render/stickers.ts`), nunca em
 
 ## 5. Loja e perfil
 
-- Abas da loja: Carros, Pintura (seções "Cor" e "Acabamento"), Adesivos, Peças (seções "Rodas" e, no ladrão, "Acessórios"), Efeitos (seções "Neon" e "Fumaça"), Sirene/Buzina, Placa.
+- Abas da loja: Carros, Pintura (seções "Cor" e "Acabamento"), Adesivos, Rodas, Acessórios (só no ladrão), Efeitos (seções "Neon" e "Fumaça"), Sirene/Buzina, Placa. Playtest 2026-10-10 (mockup B): as abas são um trilho vertical ao lado da lista, com ícone e nome, todas à vista (a fileira antiga rolava para o lado e para cima e ficava solta).
 - O catálogo só cresce no fim (o código de backup guarda posições): por carro (lista fixa da Parte 4), os 4 acabamentos, a lendária (grátis, só pelo "Resgatar") e os 4 adesivos; depois (entrega 2), por lado, as 3 rodas e as 5 fumaças, e por fim os 4 acessórios.
 - O perfil continua v3, com campos novos opcionais: `career.carXp` (XP por carro) e, em `equipped`, `finish` e `sticker` por carro. Entrega 2: `equipped.wheels` e `equipped.smoke` por lado e `equipped.acc` (lista). O código de backup ganha esses campos no fim das listas; os códigos antigos continuam valendo.
 

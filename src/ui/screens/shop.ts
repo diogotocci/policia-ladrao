@@ -23,12 +23,11 @@ import {
 } from '../../meta/shop';
 import { STICKERS, STICKER_NAMES, masteryLevel, type FinishId } from '../../meta/mastery';
 import { drawMasteryBar, finishRowsFor } from './shopMastery';
-import { accessoryOn, effectsRows, partsRows, previewPart } from './shopParts';
+import { accessoryOn, accessoryRows, effectsRows, previewPart, shopTabs, wheelRows, type Tab } from './shopParts';
 import { btn, h, mount, openModal, type Disposable } from './dom';
 import { SCREEN_ICONS } from './icons';
 import './shop.css';
 
-type Tab = 'cars' | 'paint' | 'sticker' | 'parts' | 'effects' | 'sound' | 'plate';
 const n = (v: number) => v.toLocaleString('pt-BR');
 const hex = (c: number) => `#${c.toString(16).padStart(6, '0')}`;
 
@@ -99,6 +98,7 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
   const panel = h('div', 'shop-panel');
   const tabs = h('div', 'shop-tabs');
   tabs.setAttribute('role', 'tablist');
+  tabs.setAttribute('aria-orientation', 'vertical');
   const list = h('div', 'shop-list');
   list.setAttribute('role', 'listbox');
   list.setAttribute('aria-label', 'Itens');
@@ -107,15 +107,7 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
   body.append(stage, panel);
   s.append(top, body);
 
-  const TABS: [Tab, string][] = [
-    ['cars', 'Carros'],
-    ['paint', 'Pintura'],
-    ['sticker', 'Adesivos'],
-    ['parts', 'Peças'],
-    ['effects', 'Efeitos'],
-    ['sound', side === 'police' ? 'Sirene' : 'Buzina'],
-    ['plate', 'Placa'],
-  ];
+  const TABS = shopTabs(side);
 
   const rows = (): Row[] => {
     switch (tab) {
@@ -142,8 +134,10 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
             price: PRICES.sticker,
           })),
         ];
-      case 'parts':
-        return partsRows(side);
+      case 'wheels':
+        return wheelRows(side);
+      case 'acc':
+        return accessoryRows();
       case 'effects':
         return effectsRows(side);
       case 'sound':
@@ -238,7 +232,7 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
     el.dataset.id = r.id;
     const sw = h('span', r.swatch ? 'shop-swatch' : 'shop-swatch is-icon');
     if (r.swatch) sw.style.background = r.swatch;
-    else sw.innerHTML = tab === 'sound' ? SCREEN_ICONS.siren : SCREEN_ICONS.car; // accessories: the car icon
+    else sw.innerHTML = tab === 'sound' ? SCREEN_ICONS.siren : tab === 'acc' ? SCREEN_ICONS.wing : SCREEN_ICONS.car;
     const st = stateOf(r.id);
     const tag = owns(profile, r.id) ? (inUse(profile, r.id) ? 'Em uso' : 'Seu') : r.price > 0 ? n(r.price) : '';
     const state = h(
@@ -321,15 +315,20 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
     wallet.append(n(profile.coins));
     wallet.setAttribute('aria-label', `${n(profile.coins)} moedas`);
     tabs.replaceChildren(
-      ...TABS.map(([t, label]) => {
-        const b = btn(label, `shop-tab${t === tab ? ' is-on' : ''}`, () => {
-          tab = t;
-          if (t === 'cars') selected = `car:${stageCar}`;
-          else if (t === 'plate') selected = 'plate';
-          else selected = rows().find((r) => inUse(profile, r.id))?.id ?? rows()[0]!.id;
-          draw();
-          tabs.querySelector<HTMLElement>('.is-on')?.focus();
-        });
+      ...TABS.map(([t, label, icon]) => {
+        const b = btn(
+          label,
+          `shop-tab${t === tab ? ' is-on' : ''}`,
+          () => {
+            tab = t;
+            if (t === 'cars') selected = `car:${stageCar}`;
+            else if (t === 'plate') selected = 'plate';
+            else selected = rows().find((r) => inUse(profile, r.id))?.id ?? rows()[0]!.id;
+            draw();
+            tabs.querySelector<HTMLElement>('.is-on')?.focus();
+          },
+          icon,
+        );
         b.setAttribute('role', 'tab');
         b.setAttribute('aria-selected', String(t === tab));
         return b;

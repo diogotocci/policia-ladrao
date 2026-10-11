@@ -110,19 +110,26 @@ describe('shop screen (spec §6)', () => {
     expect(s.listen).toHaveBeenLastCalledWith('thief', null);
   });
 
-  it('Peças tab (V2 part 6 delivery 2): wheels on both sides, accessories only on the thief, put on and taken off', () => {
+  it('tabs are a side rail (playtest 2026-10-10): Rodas on both sides, Acessórios only on the thief', () => {
+    const tabs = () => [...root.querySelectorAll('[role="tab"]')].map((e) => e.textContent);
     open(unlocked(50_000));
-    button('Peças').click();
-    expect([...root.querySelectorAll('.shop-section')].map((e) => e.textContent)).toEqual(['Rodas']);
+    expect(root.querySelector('[role="tablist"]')!.getAttribute('aria-orientation')).toBe('vertical');
+    expect(tabs()).toEqual(['Carros', 'Pintura', 'Adesivos', 'Rodas', 'Efeitos', 'Sirene', 'Placa']);
     root.replaceChildren();
     const s = open(unlocked(50_000), 'thief');
-    button('Peças').click();
-    expect([...root.querySelectorAll('.shop-section')].map((e) => e.textContent)).toEqual([
-      'Rodas',
-      'Acessórios (a moto só usa antena e escapamento)',
+    expect(tabs()).toEqual(['Carros', 'Pintura', 'Adesivos', 'Rodas', 'Acessórios', 'Efeitos', 'Buzina', 'Placa']);
+    expect(root.querySelectorAll('[role="tab"] svg')).toHaveLength(8); // icon and name on every tab
+    button('Rodas').click();
+    expect([...root.querySelectorAll('.shop-row-name')].map((e) => e.textContent)).toEqual([
+      'Padrão',
+      'Cromadas',
+      'Esportivas pretas',
+      'Rodão',
     ]);
     row('Rodão').click();
     expect(s.shown.at(-1)!.wheels).toBe('rodao'); // tried on before buying
+    button('Acessórios').click();
+    expect(root.querySelector('.shop-section')!.textContent).toBe('Use juntos · na moto, só antena e escapamento');
     row('Aerofólio').click();
     expect(s.shown.at(-1)!.acc).toEqual(['aerofolio']);
     expect(action().textContent).toBe('Comprar · 1.200');
