@@ -24,10 +24,12 @@ describe('catalog (spec §2)', () => {
     expect(new Set(ids).size).toBe(ids.length);
     // the first and last positions never move; new items only go at the end
     expect(ids.slice(0, 6)).toEqual(['car:esportivo', 'car:blazer', 'car:caveirao', 'car:picape', 'car:moto', 'car:van']);
-    expect(ids.length).toBe(6 + 24 + 8 + 5 + 1 + 8 * 9 + 2 * 8 + 4);
+    expect(ids.length).toBe(6 + 24 + 8 + 5 + 1 + 8 * 9 + 2 * 8 + 4 + 4 * (1 + 3 + 9));
     expect(ids[43]).toBe('plate');
     expect(ids[115]).toBe('sticker:van:4'); // V2 part 6 group after the plate
-    expect(ids[ids.length - 1]).toBe('acc:escapamento'); // delivery 2 group after it
+    expect(ids[135]).toBe('acc:escapamento'); // delivery 2 group after it
+    expect(ids[136]).toBe('car:rocam'); // delivery 3: each new car with its paints, finishes and stickers
+    expect(ids[ids.length - 1]).toBe('sticker:fusca:4');
   });
 
   it('the whole order is pinned: changing it would make old backup codes restore the wrong items', () => {
@@ -47,6 +49,12 @@ describe('catalog (spec §2)', () => {
         ...['azul', 'vermelha', 'verde', 'rosa', 'amarela'].map((c) => `smoke:${r}:${c}`),
       ]),
       ...['aerofolio', 'rack', 'antena', 'escapamento'].map((a) => `acc:${a}`),
+      ...['rocam', 'descaracterizada', 'kombi', 'fusca'].flatMap((c) => [
+        `car:${c}`,
+        ...[1, 2, 3].map((i) => `paint:${c}:${i}`),
+        ...['metalico', 'fosco', 'perolizado', 'camuflado', 'lendaria'].map((f) => `finish:${c}:${f}`),
+        ...[1, 2, 3, 4].map((n) => `sticker:${c}:${n}`),
+      ]),
     ];
     expect(CATALOG.map((i) => i.id)).toEqual(expected);
   });
@@ -216,7 +224,7 @@ describe('random computer car (playtest 2026-10-08)', () => {
       if (l.sound) expect(['corneta', 'grave', 'dupla']).toContain(l.sound);
       if (l.plate) expect(l.plate).toMatch(/^[A-Z]{3}\d[A-Z]\d{2}$/);
     }
-    expect(seen).toEqual(new Set(['seda', 'picape', 'moto', 'van']));
+    expect(seen).toEqual(new Set(['seda', 'picape', 'moto', 'van', 'kombi', 'fusca']));
     expect(CARS[randomLook('police').car].role).toBe('police');
   });
 });

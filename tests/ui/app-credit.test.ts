@@ -151,7 +151,7 @@ describe('difficulty', () => {
     (container.querySelector('[data-role="thief"]') as HTMLButtonElement).click();
     expect(gameOpts[0]!.difficulty).toBe('hard');
     // the computer drives a random police car (playtest 2026-10-08)
-    expect(['viatura', 'esportivo', 'blazer', 'caveirao']).toContain(gameOpts[0]!.opponentLook!.car);
+    expect(['viatura', 'esportivo', 'blazer', 'caveirao', 'rocam', 'descaracterizada']).toContain(gameOpts[0]!.opponentLook!.car);
     frames(60);
     ends[0]!({ winner: 'thief', time: 90, reason: 'escape', hp: 50, level: 6, stats: { damageDealt: 20, rightBoxes: 2 } });
     // (30 + 5 + 4) x 2 x 1.5 = 117, plus the career

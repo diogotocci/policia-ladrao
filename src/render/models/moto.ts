@@ -59,7 +59,12 @@ function rider(jacket: number, helmet: number, lean: number, armsForward: number
 }
 
 export function buildMoto(root: THREE.Group, body: THREE.Group): void {
-  const RED = mainPaint(0xd0151c);
+  buildBike(root, body, { paint: 0xd0151c, jacket: 0xb01818, helmet: 0x111113 });
+}
+
+/** The motorcycle of both sides: the thief's Moto com carona and the police Rocam (V2 part 6 delivery 3). */
+export function buildBike(root: THREE.Group, body: THREE.Group, o: { paint: number; jacket: number; helmet: number }): void {
+  const RED = mainPaint(o.paint);
   const R = 0.34;
   const FRONT = -0.78; // wheel z
   const REAR = 0.78;
@@ -125,7 +130,7 @@ export function buildMoto(root: THREE.Group, body: THREE.Group): void {
   body.add(mesh(merge([box(0.24, 0.02, 0.5, 0, 0.75, 0.95), box(0.2, 0.02, 0.4, 0, 0.75, -0.9)]), PLASTIC, 'fenders'));
   addArmorPlates(body, { halfW: 0.2, rearZ: 1.12, y: 0.62, w: 0.36, h: 0.3, sideLen: 0.9, sideZ: 0.1 });
   // driver
-  const driver = rider(0xb01818, 0x111113, 0.55, 0.42, 'driver');
+  const driver = rider(o.jacket, o.helmet, 0.55, 0.42, 'driver');
   driver.position.set(0, 1.08, 0.25);
   body.add(driver);
   // the passenger is the gunner figure itself (gunner.ts), on the back seat from the start

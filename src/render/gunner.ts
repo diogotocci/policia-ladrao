@@ -25,9 +25,12 @@ const STYLE: Record<Role, { shirt: number; hat: number; face: number }> = {
 };
 
 const geoCache = new Map<string, THREE.BufferGeometry>();
-/** `armed` false: the same person without the gun (moto passenger before picking a weapon) */
-function gunnerGeometry(role: Role, armed = true): THREE.BufferGeometry {
-  const key = `${role}-${armed}`;
+/**
+ * `armed` false: the same person without the gun (moto passenger before picking a weapon); `helmet`: a white
+ * motorcycle helmet instead of the cap (the Rocam passenger, V2 part 6 delivery 3)
+ */
+function gunnerGeometry(role: Role, armed = true, helmet = false): THREE.BufferGeometry {
+  const key = `${role}-${armed}-${helmet}`;
   let g = geoCache.get(key);
   if (g) return g;
   const st = STYLE[role];
@@ -41,7 +44,10 @@ function gunnerGeometry(role: Role, armed = true): THREE.BufferGeometry {
     box(0.08, 0.08, 0.08, 0.14, 0.32, -0.42, SKIN), // hand
   ];
   if (armed) parts.push(box(0.06, 0.1, 0.34, 0.14, 0.35, -0.6, GUN)); // gun
-  if (role === 'police') {
+  if (helmet) {
+    parts.push(box(0.32, 0.3, 0.32, 0, 0.6, 0.01, 0xf4f5f7)); // helmet over the head
+    parts.push(box(0.26, 0.09, 0.03, 0, 0.6, -0.16, 0x111316)); // visor
+  } else if (role === 'police') {
     parts.push(box(0.27, 0.08, 0.27, 0, 0.71, 0, st.hat)); // cap
     parts.push(box(0.2, 0.025, 0.12, 0, 0.67, -0.17, st.hat)); // brim
   } else {
@@ -61,7 +67,8 @@ const FLASH_GEO = new THREE.OctahedronGeometry(0.14);
 export function attachGunner(model: THREE.Object3D, role: Role): THREE.Group {
   const g = new THREE.Group();
   g.name = 'gunner';
-  const body = new THREE.Mesh(gunnerGeometry(role), BODY_MAT);
+  const helmet = model.userData.gunnerHelmet === true;
+  const body = new THREE.Mesh(gunnerGeometry(role, true, helmet), BODY_MAT);
   body.name = 'gunner-body';
   body.castShadow = false;
   const flash = new THREE.Mesh(FLASH_GEO, FLASH_MAT);
@@ -74,10 +81,7 @@ export function attachGunner(model: THREE.Object3D, role: Role): THREE.Group {
   if (at) g.position.set(...at);
   else g.position.set(0.86, 0.84, role === 'police' ? -0.05 : 0.0);
   g.scale.setScalar(1.15);
-  g.userData.flashUntil = -1;
-  g.userData.body = body;
-  g.userData.always = model.userData.gunnerAlways === true;
-  g.userData.flash = flash;
+  Object.assign(g.userData, { flashUntil: -1, body, always: model.userData.gunnerAlways === true, helmet, flash });
   (model.getObjectByName('body') ?? model).add(g);
   return g;
 }
@@ -95,7 +99,7 @@ export function updateGunner(g: THREE.Object3D, car: CarState, target: { s: numb
     const armed = g.visible;
     g.visible = true;
     const body = g.userData.body as THREE.Mesh;
-    body.geometry = gunnerGeometry(car.role, armed);
+    body.geometry = gunnerGeometry(car.role, armed, g.userData.helmet === true);
     if (!armed) {
       g.rotation.y = 0;
       (g.userData.flash as THREE.Object3D).visible = false;

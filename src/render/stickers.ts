@@ -69,6 +69,34 @@ export const STICKER_LAYOUT: Record<string, Layout> = {
     numero: [sideSq(1.55, 1.3, 0.45, 0.955)],
     caveira: [topSq(0.6, 1.76, 0.9)],
   },
+  // V2 part 6 delivery 3. The Rocam is drawn 15% bigger, like the thief's moto: fairing, tank and tail
+  rocam: {
+    faixas: [side(-0.85, -0.35, 1.13, 0.07, 0.2)],
+    brasao: [sideSq(-0.6, 1.13, 0.18, 0.2)],
+    numero: [sideSq(0.95, 0.97, 0.2, 0.15)],
+    xadrez: [side(-0.95, -0.55, 1.1, 0.12, 0.2)],
+  },
+  // a plain car with no POLÍCIA on the sides; its stickers still go on top like the other police cars
+  descaracterizada: {
+    faixas: [top(-2.2, -1.3, 0.77, 0.86, 1.0), top(-0.25, 0.8, 1.43, 1.43, 1.0), top(1.6, 2.2, 0.9, 0.88, 1.0)],
+    brasao: [top(-2.0, -1.5, 0.79, 0.83, 0.5)],
+    numero: [top(0.0, 0.75, 1.43, 1.43, 1.1)],
+    xadrez: [top(-2.26, -2.04, 0.77, 0.78, 1.5), top(2.0, 2.24, 0.89, 0.88, 1.5)],
+  },
+  // Kombi: the stripe on the belt line under the white top, flames above the front arch, skull on the roof
+  kombi: {
+    faixas: [side(-2.0, 2.0, 1.02, 0.1, 0.915)],
+    chamas: [side(-2.05, -1.09, 0.92, 0.3, 0.915)],
+    numero: [sideSq(0.4, 0.8, 0.4, 0.915)],
+    caveira: [topSq(0.3, 1.74, 0.9)],
+  },
+  // Fusca: on the doors between the fenders (they stand out of the narrow body), skull on the hood
+  fusca: {
+    faixas: [side(-0.85, 0.78, 0.8, 0.08, 0.715)],
+    chamas: [side(-0.85, 0.3, 0.64, 0.36, 0.715)],
+    numero: [sideSq(0.0, 0.64, 0.4, 0.715)],
+    caveira: [top(-1.7, -1.2, 0.79, 0.91, 0.5)],
+  },
 };
 
 // ---------- art ----------

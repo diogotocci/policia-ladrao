@@ -15,6 +15,8 @@ export interface MatchStats {
   boxes?: number;
   /** V2 part 6: skids of the player's car (achievement "Derrape 100 vezes") */
   skids?: number;
+  /** V2 part 6 delivery 3: nitro used (achievement "Use o nitro 30 vezes") */
+  nitros?: number;
 }
 
 export interface Reward {
@@ -37,6 +39,7 @@ export const emptyStats = (): Required<MatchStats> => ({
   shots: 0,
   boxes: 0,
   skids: 0,
+  nitros: 0,
 });
 
 /** Adds one simulation step's events to the running stats of the player's car. */
@@ -53,7 +56,8 @@ export function addEvents(stats: MatchStats, events: readonly GameEvent[], playe
       out.boxes++;
     } else if (e.type === 'mysteryBusy' && e.role === player) out.boxes++;
     else if (e.type === 'shot' && e.from === player && !e.air) out.shots++;
-    else if (e.type === 'special' && e.role === 'police' && e.kind === 'roadblock' && player === 'police') out.roadblocks++;
+    else if (e.type === 'special' && e.role === player && e.kind === 'roadblock') out.roadblocks++;
+    else if (e.type === 'special' && e.role === player && e.kind === 'nitro') out.nitros++;
     else if (e.type === 'skid' && e.role === player) out.skids++;
     else if (e.type === 'explosion' && player === 'thief') out.bombHits++; // a bomb only explodes when it hits the police
   }

@@ -33,6 +33,7 @@ export function settleEnd(profile: Profile, r: MatchEnd, c: Ctx): { profile: Pro
       shots: st.shots ?? 0,
       boxes: st.boxes ?? 0,
       skids: st.skids ?? 0,
+      nitros: st.nitros ?? 0,
       car: profile.equipped[c.role].car, // mastery (V2 part 6)
       coins: settled.reward.total, // XP = the coins of the match
     },

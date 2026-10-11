@@ -1,6 +1,7 @@
 // Career (V2 part 5): daily challenges, achievements, ranks per side and the day streak. Pure: the app passes
 // "today" (local date, yyyy-mm-dd) and the summary of each finished match; this returns the new state, the coins
 // earned and what to show on the end screen. Rewards are coins and shop unlocks (meta/shop.ts asks unlockOf here).
+import { CARS, type CarId } from './cars';
 import type { Role } from '../config/balance';
 import { DAILY_COINS, arrested, dailiesFor, escaped, type MatchSummary } from './dailies';
 import { WHEEL_RANK, type WheelStyle } from './parts';
@@ -37,6 +38,9 @@ export interface Counters {
   skids: number;
   boxes: number;
   survival5min: number; // 1 once the thief lasted 5 min in Sobrevivência
+  /** V2 part 6 delivery 3: nitro used (police) and yellow boxes opened (thief) */
+  nitros: number;
+  mysteries: number;
 }
 /** Fixed order (backup positions): new counters only at the end. */
 export const COUNTER_KEYS: (keyof Counters)[] = [
@@ -56,6 +60,8 @@ export const COUNTER_KEYS: (keyof Counters)[] = [
   'skids',
   'boxes',
   'survival5min',
+  'nitros',
+  'mysteries',
 ];
 export const emptyCounters = (): Counters => Object.fromEntries(COUNTER_KEYS.map((k) => [k, 0])) as unknown as Counters;
 
@@ -100,6 +106,11 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     target: 1,
     unlock: 'acc:escapamento',
   },
+  // V2 part 6 delivery 3: the four new cars
+  { id: 'nitro30', side: 'police', title: 'Use o nitro 30 vezes', counter: 'nitros', target: 30, unlock: 'car:rocam' },
+  { id: 'arrest50', side: 'police', title: 'Prenda 50 ladrões', counter: 'arrests', target: 50, unlock: 'car:descaracterizada' },
+  { id: 'mystery40', side: 'thief', title: 'Abra 40 caixas ?', counter: 'mysteries', target: 40, unlock: 'car:kombi' },
+  { id: 'escape50', side: 'thief', title: 'Fuja 50 vezes', counter: 'escapes', target: 50, unlock: 'car:fusca' },
 ];
 
 // ---------- daily challenges: meta/dailies.ts ----------
@@ -221,6 +232,8 @@ export function careerAfterMatch(c: Career, m: MatchSummary, today: string): { c
   if (m.role === 'thief' && m.mode === 'survival' && m.time >= 300) k.survival5min = 1;
   k.skids += m.skids ?? 0;
   if (m.role === 'thief') k.boxes += m.boxes ?? 0;
+  if (m.role === 'police') k.nitros += m.nitros ?? 0;
+  if (m.role === 'thief') k.mysteries += m.mysteryBoxes;
   k.roadblocks += m.roadblocks;
   k.bombHits += m.bombHits;
 
@@ -284,8 +297,7 @@ function rankUnlock(id: string): Requirement | null {
   if (kind === 'wheels') return wheelsUnlock(x, y);
   return null;
 }
-const POLICE_CARS = ['viatura', 'esportivo', 'blazer', 'caveirao'];
-const paintSide = (car: string): Role => (POLICE_CARS.includes(car) ? 'police' : 'thief');
+const paintSide = (car: string): Role => (car in CARS ? CARS[car as CarId].role : 'thief');
 
 /** A rank counts once reached and claimed (every rank up to it on that side). */
 const rankClaimed = (c: Career, side: Role, rank: number) =>

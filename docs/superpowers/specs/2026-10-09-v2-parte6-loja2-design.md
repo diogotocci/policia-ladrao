@@ -1,6 +1,6 @@
 # V2 Parte 6 — Loja 2: maestria por carro, cosméticos novos e 4 carros
 
-Status: aprovado (2026-10-09). Entrega 1 implementada na 0.21.0, entrega 2 na 0.22.0.
+Status: aprovado (2026-10-09). Entrega 1 implementada na 0.21.0, entrega 2 na 0.22.0, entrega 3 na 0.23.0.
 
 ## 1. Objetivo
 
@@ -85,8 +85,13 @@ Os adesivos são posicionados carro a carro (`src/render/stickers.ts`), nunca em
 | Ladrão | Kombi | 7.500 | conquista nova "Abra 40 caixas ?" |
 | Ladrão | Fusca envenenado (rebaixado, rodão, escapamento) | 12.500 | conquista nova "Fuja 50 vezes" |
 
-- Cada um com 4 cores (polícia: branco, prata, azul-marinho, preto) e mockups antes de implementar.
-- A moto da polícia segue a do ladrão: 15% maior, mesma área de batida, garupa sempre presente.
+- Cada um com 4 cores (polícia: branco, prata, azul-marinho, preto) e mockups antes de implementar (aprovados em 2026-10-10).
+  - Rocam: branca, prata, azul-marinho, preta. Descaracterizada: preta, branca, prata, azul-marinho.
+  - Kombi (sempre branca em cima): azul-claro, vermelha, verde, amarela. Fusca: laranja, preto, verde-limão, azul.
+- A moto da polícia segue a do ladrão: 15% maior, mesma área de batida, garupa sempre presente. Piloto de farda cinza e capacete branco; o garupa também de capacete. Luzes vermelha e azul no protetor da frente e embaixo da rabeta.
+- A descaracterizada não tem faixas nem POLÍCIA. O giroflex fica escondido na grade e no painel e, como o jogador vê o carro de costas, também no vidro de trás e no para-choque traseiro (pedido do Diogo, 2026-10-10).
+- Kombi e Fusca não levam logotipo. O Fusca é rebaixado, com paralamas separados, rodas maiores atrás, escapamento duplo e a tampa do motor entreaberta.
+- Os 4 entram na maestria, nos adesivos (carro a carro), nas rodas e, no ladrão, nos acessórios. No catálogo, cada carro novo vem num grupo no fim (carro, 3 pinturas, acabamentos e adesivos); os contadores novos (nitro usado, caixas ? abertas) também ficam no fim.
 
 ## 5. Loja e perfil
 
