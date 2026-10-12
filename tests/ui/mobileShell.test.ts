@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest';
-import { installFullscreenOnFirstTap, installNoZoom, isStandalone, onTap } from '../../src/ui/mobileShell';
+import { installFullscreenOnFirstTap, installNoZoom, installViewportFix, isStandalone, onTap } from '../../src/ui/mobileShell';
 
 const touchEnd = () => new Event('touchend', { bubbles: true, cancelable: true });
 
@@ -116,5 +116,44 @@ describe('onTap (HUD buttons react on touch-down: a tap right after steering is 
     off();
     b.dispatchEvent(new Event('pointerdown', { bubbles: true, cancelable: true }));
     expect(n).toBe(2);
+  });
+});
+
+describe('installViewportFix (iPhone app opened in landscape, playtest 2026-10-11)', () => {
+  const fakeWin = (o: { standalone: boolean; w: number; h: number }) => {
+    const target = new EventTarget();
+    const win = {
+      navigator: { standalone: o.standalone },
+      screen: { width: 430, height: 932 },
+      innerWidth: o.w,
+      innerHeight: o.h,
+      document: new EventTarget(),
+      addEventListener: target.addEventListener.bind(target),
+      removeEventListener: target.removeEventListener.bind(target),
+      dispatchEvent: target.dispatchEvent.bind(target),
+      setTimeout: (f: () => void) => (f(), 0),
+      scrollTo: vi.fn(),
+    };
+    return win as unknown as Window & { innerHeight: number; innerWidth: number };
+  };
+
+  it('a window shorter than the screen in landscape: the game takes the whole screen height', () => {
+    const app = document.createElement('div');
+    const win = fakeWin({ standalone: true, w: 932, h: 366 });
+    const dispose = installViewportFix(app, win);
+    expect(app.style.height).toBe('430px');
+    // rotating fixes the window: back to the stylesheet size
+    win.innerHeight = 430;
+    win.dispatchEvent(new Event('resize'));
+    expect(app.style.height).toBe('');
+    dispose();
+  });
+
+  it('upright (drawn rotated) or in the browser: nothing changes', () => {
+    const app = document.createElement('div');
+    installViewportFix(app, fakeWin({ standalone: true, w: 430, h: 800 }));
+    expect(app.style.height).toBe('');
+    installViewportFix(app, fakeWin({ standalone: false, w: 932, h: 366 }));
+    expect(app.style.height).toBe('');
   });
 });

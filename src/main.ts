@@ -1,7 +1,7 @@
 import type { Role } from './config/balance';
 import { startApp } from './app';
 import { startGame } from './game';
-import { installFullscreenOnFirstTap, installNoZoom } from './ui/mobileShell';
+import { installFullscreenOnFirstTap, installNoZoom, installViewportFix } from './ui/mobileShell';
 import { registerServiceWorker } from './pwa/register';
 import { hideSplash } from './ui/splash';
 import type { QualityTier } from './render/renderer';
@@ -56,6 +56,7 @@ const mysteryShare = debug && params.has('mystery') ? Math.min(1, Math.max(0, Nu
 
 registerServiceWorker(window, { prod: import.meta.env.PROD, debug });
 installNoZoom(document);
+if (app) installViewportFix(app);
 installFullscreenOnFirstTap(document, window);
 
 // Test/debug parameters (?debug, ?role, ?seed) go straight to the match; without them (or with ?app), the app starts on the title screen.
