@@ -1,6 +1,6 @@
 # V2 Parte 6 — Loja 2: maestria por carro, cosméticos novos e 4 carros
 
-Status: aprovado (2026-10-09). Entrega 1 implementada na 0.21.0, entrega 2 na 0.22.0, entrega 3 na 0.23.0.
+Status: aprovado (2026-10-09). Entrega 1 implementada na 0.21.0, entrega 2 na 0.22.0, entrega 3 na 0.23.0, entrega 4 na 0.24.0.
 
 ## 1. Objetivo
 
@@ -92,6 +92,19 @@ Os adesivos são posicionados carro a carro (`src/render/stickers.ts`), nunca em
 - A descaracterizada não tem faixas nem POLÍCIA. O giroflex fica escondido na grade e no painel e, como o jogador vê o carro de costas, também no vidro de trás e no para-choque traseiro (pedido do Diogo, 2026-10-10).
 - Kombi e Fusca não levam logotipo. O Fusca é rebaixado, com paralamas separados, rodas maiores atrás, escapamento duplo e a tampa do motor entreaberta.
 - Os 4 entram na maestria, nos adesivos (carro a carro), nas rodas e, no ladrão, nos acessórios. No catálogo, cada carro novo vem num grupo no fim (carro, 3 pinturas, acabamentos e adesivos); os contadores novos (nitro usado, caixas ? abertas) também ficam no fim.
+
+### 4.1 Entrega 4 (pedido do Diogo, 2026-10-11; mockups aprovados em 2026-10-12)
+
+| Lado | Carro | Preço | Libera | Cores |
+|---|---|---|---|---|
+| Polícia | Camburão (van branca com faixa azul, grades atrás, giroflex grande) | 9.000 | "Use o bloqueio 30 vezes" | branco, prata, azul-marinho, preto |
+| Polícia | Rodoviária PRF (sedã com as cores da PRF) | 15.000 | "Prenda 30 ladrões no Difícil" | azul PRF, preta, branca, prata |
+| Ladrão | Sedã clássico anos 70 (capô comprido, teto de vinil, cromados, faixas amarelas) | 9.000 | "Fuja 30 vezes no Difícil" | preto, vinho, azul-escuro, dourado |
+| Ladrão | Carro-forte (blindado com rebites e seteiras, faixa verde) | 15.000 | "Destrua a viatura 50 vezes" | prata, branco, grafite, azul-escuro |
+
+- PRF, pelas fotos de referência: azul-marinho com teto branco, faixa amarela com friso branco, "PRF" amarelo nas portas, no capô e no vidro de trás (o que o jogador vê), chevrons amarelos e brancos na traseira, "191" na lateral, escudo genérico (não o brasão oficial) e bandeirinha, quebra-mato. As outras cores trocam só a carroceria.
+- Camburão e carro-forte não podem ficar muito altos (Diogo): teto em 1,68 m e 1,74 m (Van 1,75 m, Caveirão ~2,1 m).
+- As conquistas usam contadores que já existiam (bloqueios, prisões e fugas no Difícil, viaturas destruídas).
 
 ## 5. Loja e perfil
 

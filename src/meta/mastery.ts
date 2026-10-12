@@ -13,8 +13,8 @@ export const nextMasteryXp = (xp: number): number | null => MASTERY_XP[masteryLe
 
 /** The cars of V2 parts 4 and 5, in the order of their catalog groups. */
 export const FIRST_CARS = ['viatura', 'esportivo', 'blazer', 'caveirao', 'seda', 'picape', 'moto', 'van'] as const;
-/** V2 part 6 delivery 3: police Rocam and Descaracterizada, thief Kombi and Fusca (their catalog group is at the end). */
-export const NEW_CARS = ['rocam', 'descaracterizada', 'kombi', 'fusca'] as const;
+/** V2 part 6 deliveries 3 and 4 (their catalog groups are at the end, one car after the other, new ones appended). */
+export const NEW_CARS = ['rocam', 'descaracterizada', 'kombi', 'fusca', 'camburao', 'prf', 'classico', 'carroforte'] as const;
 /** Every car that has mastery, in the order the backup code stores it (new cars only at the end). */
 export const MASTERY_CARS = [...FIRST_CARS, ...NEW_CARS] as const;
 

@@ -31,8 +31,8 @@ describe('new cars', () => {
   });
 
   it('two per side, 7.500 and 12.500, police in the patrol colours', () => {
-    expect(carsOf('police').slice(-2)).toEqual(['rocam', 'descaracterizada']);
-    expect(carsOf('thief').slice(-2)).toEqual(['kombi', 'fusca']);
+    expect(carsOf('police').slice(4, 6)).toEqual(['rocam', 'descaracterizada']);
+    expect(carsOf('thief').slice(4, 6)).toEqual(['kombi', 'fusca']);
     expect([CARS.rocam.price, CARS.descaracterizada.price, CARS.kombi.price, CARS.fusca.price]).toEqual([7500, 12500, 7500, 12500]);
     for (const c of ['rocam', 'descaracterizada'] as const)
       expect([...CARS[c].colorNames].sort()).toEqual(['Azul-marinho', 'Branca', 'Prata', 'Preta']);
@@ -84,5 +84,27 @@ describe('new cars', () => {
     expect(back.profile.equipped.paint.fusca).toBe(2);
     expect(back.profile.career.carXp).toMatchObject({ fusca: 1600, rocam: 300 });
     expect(lookFor(back.profile, 'thief').paint).toBe(CARS.fusca.colors[2]);
+  });
+});
+
+describe('delivery 4 cars (mockups approved 2026-10-12)', () => {
+  it('Camburão and PRF for the police, Sedã clássico and Carro-forte for the thief, 9.000 and 15.000', () => {
+    expect(carsOf('police').slice(-2)).toEqual(['camburao', 'prf']);
+    expect(carsOf('thief').slice(-2)).toEqual(['classico', 'carroforte']);
+    expect([CARS.camburao.price, CARS.prf.price, CARS.classico.price, CARS.carroforte.price]).toEqual([9000, 15000, 9000, 15000]);
+    expect(CARS.prf.colorNames[0]).toBe('Azul PRF');
+  });
+
+  it('each one is unlocked by its new achievement, counted from what the career already tracks', () => {
+    const ach = (id: string) => (unlockOf(id) as { achievement: { title: string } }).achievement.title;
+    expect(['car:camburao', 'car:prf', 'car:classico', 'car:carroforte'].map(ach)).toEqual([
+      'Use o bloqueio 30 vezes',
+      'Prenda 30 ladrões no Difícil',
+      'Fuja 30 vezes no Difícil',
+      'Destrua a viatura 50 vezes',
+    ]);
+    const career = { ...emptyCareer(), counters: { ...emptyCareer().counters, kills: 49 } };
+    const c = careerAfterMatch(career, match({ role: 'thief', won: true, reason: 'policeDown' }), '2026-10-12').career;
+    expect(c.achieved).toContain('kill50');
   });
 });

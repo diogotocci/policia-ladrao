@@ -111,6 +111,11 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
   { id: 'arrest50', side: 'police', title: 'Prenda 50 ladrões', counter: 'arrests', target: 50, unlock: 'car:descaracterizada' },
   { id: 'mystery40', side: 'thief', title: 'Abra 40 caixas ?', counter: 'mysteries', target: 40, unlock: 'car:kombi' },
   { id: 'escape50', side: 'thief', title: 'Fuja 50 vezes', counter: 'escapes', target: 50, unlock: 'car:fusca' },
+  // V2 part 6 delivery 4
+  { id: 'roadblock30', side: 'police', title: 'Use o bloqueio 30 vezes', counter: 'roadblocks', target: 30, unlock: 'car:camburao' },
+  { id: 'arrestHard30', side: 'police', title: 'Prenda 30 ladrões no Difícil', counter: 'arrestsHard', target: 30, unlock: 'car:prf' },
+  { id: 'escapeHard30', side: 'thief', title: 'Fuja 30 vezes no Difícil', counter: 'escapesHard', target: 30, unlock: 'car:classico' },
+  { id: 'kill50', side: 'thief', title: 'Destrua a viatura 50 vezes', counter: 'kills', target: 50, unlock: 'car:carroforte' },
 ];
 
 // ---------- daily challenges: meta/dailies.ts ----------
