@@ -1,14 +1,14 @@
 // Item boxes and items (spec §5): spaced spawn, color tending toward whoever is losing, pickup on the ground, effects with caps.
-import { BALANCE, type Role } from '../config/balance';
-import { hpPct, type CarState } from './car';
-import { hurt, scaledDamage } from './chaos';
-import { createRngFromState, type Rng } from './rng';
-import { bumpsBetween } from './track';
-import { pickMystery } from './mystery';
-import { applyPoliceItem } from './policeItems';
-import { addSpecial, specialRoom } from './specials';
-import { SPECIALS, type Box, type GameEvent, type ItemId, type SpecialKind, type WorldState } from './types';
-import { policeOf, thiefOf, withCar } from './world';
+import { BALANCE, type Role } from '../config/balance.js';
+import { hpPct, type CarState } from './car.js';
+import { hurt, scaledDamage } from './chaos.js';
+import { createRngFromState, type Rng } from './rng.js';
+import { bumpsBetween } from './track.js';
+import { pickMystery } from './mystery.js';
+import { applyPoliceItem } from './policeItems.js';
+import { addSpecial, specialRoom } from './specials.js';
+import { SPECIALS, type Box, type GameEvent, type ItemId, type SpecialKind, type WorldState } from './types.js';
+import { policeOf, thiefOf, withCar } from './world.js';
 
 const I = BALANCE.items;
 

@@ -1,11 +1,11 @@
 // Career (V2 part 5): daily challenges, achievements, ranks per side and the day streak. Pure: the app passes
 // "today" (local date, yyyy-mm-dd) and the summary of each finished match; this returns the new state, the coins
 // earned and what to show on the end screen. Rewards are coins and shop unlocks (meta/shop.ts asks unlockOf here).
-import { CARS, type CarId } from './cars';
-import type { Role } from '../config/balance';
-import { DAILY_COINS, arrested, dailiesFor, escaped, type MatchSummary } from './dailies';
-import { WHEEL_RANK, type WheelStyle } from './parts';
-import { MASTERY_CARS, MASTERY_MAX, masteryLevel, masteryLevelFor, rewardId } from './mastery';
+import { CARS, type CarId } from './cars.js';
+import type { Role } from '../config/balance.js';
+import { DAILY_COINS, arrested, dailiesFor, escaped, type MatchSummary } from './dailies.js';
+import { WHEEL_RANK, type WheelStyle } from './parts.js';
+import { MASTERY_CARS, MASTERY_MAX, masteryLevel, masteryLevelFor, rewardId } from './mastery.js';
 
 // ---------- ranks ----------
 export const RANK_XP = [0, 300, 900, 2000, 4000, 7000, 12000] as const;
@@ -119,7 +119,7 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
 ];
 
 // ---------- daily challenges: meta/dailies.ts ----------
-export { DAILIES, DAILY_COINS, POOL_FROM, dailiesFor, type Daily, type MatchSummary } from './dailies';
+export { DAILIES, DAILY_COINS, POOL_FROM, dailiesFor, type Daily, type MatchSummary } from './dailies.js';
 
 // ---------- streak ----------
 export const STREAK_COINS = [50, 100, 150, 200, 250, 300, 500] as const;

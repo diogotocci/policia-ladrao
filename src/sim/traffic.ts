@@ -1,8 +1,8 @@
 // Traffic: a few slow cars (50–70% of cruise) that sometimes change lanes, recycled ahead.
-import { BALANCE, type Difficulty, type Mode } from '../config/balance';
-import { createRngFromState } from './rng';
-import type { TrafficCar, WorldState } from './types';
-import { policeOf, thiefOf } from './world';
+import { BALANCE, type Difficulty, type Mode } from '../config/balance.js';
+import { createRngFromState } from './rng.js';
+import type { TrafficCar, WorldState } from './types.js';
+import { policeOf, thiefOf } from './world.js';
 
 const LANES = BALANCE.road.laneCenters;
 

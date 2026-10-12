@@ -1,13 +1,13 @@
 // Auto-aimed shots: aim at the target's predicted position (forward motion only, not lateral drift) and can miss.
 // The police's flies at 150 m/s: a thief zigzagging from afar escapes.
-import { BALANCE, type Role } from '../config/balance';
-import { hurt, scaledDamage } from './chaos';
-import type { CarState } from './car';
-import type { Intents } from './intents';
-import { armorFactor, distanceFactor, inFireCone } from './rules';
-import { createRngFromState } from './rng';
-import type { GameEvent, Projectile, WorldState } from './types';
-import { policeOf, thiefOf, withCar } from './world';
+import { BALANCE, type Role } from '../config/balance.js';
+import { hurt, scaledDamage } from './chaos.js';
+import type { CarState } from './car.js';
+import type { Intents } from './intents.js';
+import { armorFactor, distanceFactor, inFireCone } from './rules.js';
+import { createRngFromState } from './rng.js';
+import type { GameEvent, Projectile, WorldState } from './types.js';
+import { policeOf, thiefOf, withCar } from './world.js';
 
 const HIT_MARGIN = 0.2;
 const SUBSTEP = 1; // m — avoids passing through a car (4.4 m) in a 5 m step

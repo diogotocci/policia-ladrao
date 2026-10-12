@@ -12,6 +12,12 @@ describe('service worker strategy', () => {
     expect(strategyFor(`${o}/icons/icon-192.png`, 'no-cors', o)).toBe('cache-first');
     expect(strategyFor(`${o}/manifest.webmanifest`, 'cors', o)).toBe('cache-first');
   });
+  it('the account API and the pages outside the game are never cached (V3)', () => {
+    expect(strategyFor(`${o}/api/me`, 'cors', o)).toBe('network-only');
+    expect(strategyFor(`${o}/api/profile`, 'same-origin', o)).toBe('network-only');
+    for (const page of ['/privacidade', '/termos', '/excluir-conta'])
+      expect(strategyFor(`${o}${page}`, 'navigate', o)).toBe('network-only');
+  });
   it('the service worker itself and other origins are never cached', () => {
     expect(strategyFor(`${o}/sw.js`, 'same-origin', o)).toBe('network-only');
     expect(strategyFor('https://outro.site/x.js', 'cors', o)).toBe('network-only');

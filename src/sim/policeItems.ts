@@ -1,14 +1,14 @@
 // The police items (V2 part 3, spec §4.2). Roadblock: the police special (button), a patrol car across a lane
 // 120 m ahead of the thief with spike strips next to it. Machine gun and backup patrol car act
 // at once when picked. "Strong" times in Sobrevivência from chaos 3 (backup car: chaos 4).
-import { BALANCE } from '../config/balance';
-import type { CarState } from './car';
-import { hurt, scaledDamage } from './chaos';
-import { curvesBetween } from './curves';
-import type { Intents } from './intents';
-import { bumpsBetween } from './track';
-import type { GameEvent, Hazard, ItemId, WorldState } from './types';
-import { policeOf, thiefOf, withCar } from './world';
+import { BALANCE } from '../config/balance.js';
+import type { CarState } from './car.js';
+import { hurt, scaledDamage } from './chaos.js';
+import { curvesBetween } from './curves.js';
+import type { Intents } from './intents.js';
+import { bumpsBetween } from './track.js';
+import type { GameEvent, Hazard, ItemId, WorldState } from './types.js';
+import { policeOf, thiefOf, withCar } from './world.js';
 
 const I = BALANCE.items;
 const R = I.roadblock;

@@ -1,5 +1,6 @@
-// "Seu progresso" dialog (V2 part 1): stats, the backup code to copy, and restoring a code from another device.
-import { BACKUP_ERROR_TEXT, decodeBackup, encodeBackup } from '../../meta/backup';
+// "Seu perfil" dialog (the corner button of the title): the account (V3 part 1: username, Sair, Excluir minha conta),
+// the stats and the admin mode. The V2 backup code is gone: the account keeps the progress now.
+import type { Account } from '../../account/api';
 import type { Profile } from '../../meta/profile';
 import { btn, h, openModal } from './dom';
 
@@ -17,53 +18,6 @@ function statsGrid(p: Profile): HTMLElement {
   item(p.stats.wins, 'vitórias');
   item(p.stats.escapes, 'fugas');
   return grid;
-}
-
-/** Copies the code; without the Clipboard API (old iOS, plain http) selects it for a manual copy. */
-function copyCode(codeEl: HTMLElement, button: HTMLButtonElement): void {
-  const clip = typeof navigator !== 'undefined' ? navigator.clipboard : undefined;
-  const select = () => window.getSelection()?.selectAllChildren(codeEl);
-  if (!clip?.writeText) return select();
-  clip.writeText(codeEl.textContent ?? '').then(
-    () => (button.textContent = 'Copiado'),
-    () => select(),
-  );
-}
-
-function restorePanel(current: Profile, onRestore: (next: Profile) => void): HTMLElement {
-  const panel = h('div', 'progress-restore');
-  const label = h('label', 'progress-label', 'Cole o código do outro aparelho');
-  const input = h('textarea', 'progress-input');
-  input.id = 'progress-input';
-  label.htmlFor = input.id;
-  input.rows = 2;
-  input.spellcheck = false;
-  const error = h('p', 'progress-error');
-  error.setAttribute('role', 'alert');
-  const confirm = h('div', 'progress-confirm');
-  const check = () => {
-    confirm.replaceChildren();
-    const r = decodeBackup(input.value);
-    if (!r.ok) {
-      error.textContent = BACKUP_ERROR_TEXT[r.error];
-      error.scrollIntoView?.({ block: 'nearest' }); // short screens: the message may sit below the fold
-      return;
-    }
-    error.textContent = '';
-    const text = `Isso substitui o progresso deste aparelho (${n(current.coins)} moedas) pelo do código (${n(r.profile.coins)} moedas).`;
-    const row = h('div', 'progress-actions');
-    const replace = btn('Substituir', 'is-primary', () => onRestore(r.profile));
-    row.append(
-      replace,
-      btn('Cancelar', 'is-quiet', () => confirm.replaceChildren()),
-    );
-    confirm.append(h('p', 'progress-note', text), row);
-    replace.focus(); // also scrolls the confirmation into view on short screens
-  };
-  // a confirmation belongs to the code it was made for
-  input.addEventListener('input', () => confirm.replaceChildren());
-  panel.append(label, input, btn('Conferir', '', check), error, confirm);
-  return panel;
 }
 
 /** Admin mode (testing): password to turn it on, one button to turn it off. */
@@ -91,31 +45,71 @@ function adminPanel(onAdmin: (password: string) => Promise<boolean>): HTMLElemen
   return panel;
 }
 
+/** The account block: initial, @username, name and e-mail, and its three actions. */
+function accountBlock(a: AccountActions, close: () => void): HTMLElement {
+  const box = h('div', 'profile-account');
+  const who = a.account.username ?? a.account.name;
+  const avatar = h('span', 'profile-avatar', (who.trim()[0] ?? '?').toUpperCase());
+  avatar.setAttribute('aria-hidden', 'true');
+  const names = h('div', 'profile-names');
+  names.append(
+    h('b', 'profile-username', a.account.username ? `@${a.account.username}` : a.account.name),
+    h('span', 'profile-email', [a.account.name, a.account.email].filter(Boolean).join(' · ')),
+  );
+  const top = h('div', 'profile-who');
+  top.append(
+    avatar,
+    names,
+    btn('Trocar nome', 'profile-rename', () => (close(), a.rename())),
+  );
+  const error = h('p', 'progress-error');
+  error.setAttribute('role', 'alert');
+  const out = btn('Sair', '', () => {
+    out.disabled = true;
+    void a.signOut().then((problem) => {
+      out.disabled = false;
+      error.textContent = problem ?? '';
+    });
+  });
+  const row = h('div', 'progress-actions');
+  row.append(
+    out,
+    btn('Excluir minha conta', 'is-danger-outline', () => (close(), a.remove())),
+  );
+  box.append(top, row, error);
+  return box;
+}
+
+export interface AccountActions {
+  account: Account;
+  /** progress waiting for the internet to reach the account */
+  pending: boolean;
+  rename(): void;
+  /** resolves with a problem to show, or undefined once signed out */
+  signOut(): Promise<string | undefined>;
+  remove(): void;
+}
+
 export function openProgress(
   host: HTMLElement,
   p: {
     profile: Profile;
     persistent: boolean;
-    onRestore(next: Profile): void;
     onClose(): void;
+    /** V3: the signed-in account (absent in the unit tests of other screens) */
+    account?: AccountActions;
+    version?: string;
     /** admin mode (testing): on now, and how to turn it on (true when the password is right) or off */
     admin?: { on: boolean; enter(password: string): Promise<boolean>; leave(): void };
   },
-): void {
+): () => void {
   const dialog = h('div', 'progress-dialog');
-  const note = p.persistent
-    ? 'Seu progresso fica salvo neste aparelho. Para levar a outro celular, copie o código e cole lá em "Restaurar".'
-    : 'Seu progresso não está sendo salvo neste navegador.';
-  const code = h('p', 'progress-code', encodeBackup(p.profile));
-  const copy = btn('Copiar código', 'is-primary', () => copyCode(code, copy));
-  const restore = btn('Restaurar', '', () => {
-    restore.disabled = true;
-    const panel = restorePanel(p.profile, p.onRestore);
-    actions.after(panel);
-    panel.querySelector('textarea')!.focus();
-  });
+  const note = !p.persistent
+    ? 'Este navegador não guarda dados: o progresso só fica salvo na sua conta quando há internet.'
+    : p.account?.pending
+      ? 'Sem conexão agora: o progresso sobe para a sua conta quando a internet voltar.'
+      : 'Seu progresso fica salvo na sua conta.';
   const actions = h('div', 'progress-actions');
-  actions.append(copy, restore);
   const admin = p.admin;
   if (admin?.on) actions.append(btn('Sair do admin', '', () => (admin.leave(), close())));
   else if (admin) {
@@ -131,8 +125,25 @@ export function openProgress(
     });
     actions.append(open);
   }
-  actions.append(btn('Fechar', 'is-quiet', () => close()));
-  dialog.append(h('h2', 'screen-heading', 'Seu progresso'), statsGrid(p.profile), h('p', 'progress-note', note), code, actions);
-  const close = openModal(host, dialog, 'Seu progresso', p.onClose);
-  copy.focus();
+  const done = btn('Fechar', 'is-quiet', () => close());
+  actions.append(done);
+  const legal = h('p', 'profile-legal');
+  for (const [href, text] of [
+    ['/privacidade', 'Política de privacidade'],
+    ['/termos', 'Termos'],
+  ] as const) {
+    const a = h('a', 'account-link', text);
+    a.href = href;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    legal.append(a, ' · ');
+  }
+  if (p.version) legal.append(`v${p.version}`);
+  else legal.lastChild?.remove();
+  dialog.append(h('h2', 'screen-heading', 'Seu perfil'));
+  if (p.account) dialog.append(accountBlock(p.account, () => close()));
+  dialog.append(statsGrid(p.profile), h('p', 'progress-note', note), actions, legal);
+  const close = openModal(host, dialog, 'Seu perfil', p.onClose);
+  done.focus();
+  return close;
 }

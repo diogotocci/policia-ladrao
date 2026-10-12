@@ -1,6 +1,6 @@
 // Daily challenges (V2 part 5; 21 since playtest 2026-10-08): the pool, what each one counts in a match and the
 // 3 of each day. Pure: the same date gives the same challenges to everyone.
-import type { Difficulty, Mode, Role } from '../config/balance';
+import type { Difficulty, Mode, Role } from '../config/balance.js';
 
 // ---------- daily challenges ----------
 /** What one match did, as the career sees it. */

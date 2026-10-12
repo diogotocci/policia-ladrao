@@ -1,9 +1,9 @@
 // Thief bombs (dropped with the special button, see specials.ts): last 20 s, damage to the police on the ground.
 // The area bomb (Sobrevivência chaos 2+) also covers a second lane (x2).
-import { BALANCE } from '../config/balance';
-import { hurt, scaledDamage } from './chaos';
-import type { Bomb, GameEvent, WorldState } from './types';
-import { policeOf, withCar } from './world';
+import { BALANCE } from '../config/balance.js';
+import { hurt, scaledDamage } from './chaos.js';
+import type { Bomb, GameEvent, WorldState } from './types.js';
+import { policeOf, withCar } from './world.js';
 
 const B = BALANCE.items.bomb;
 

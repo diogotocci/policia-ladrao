@@ -1,8 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { encodeBackup } from '../../src/meta/backup';
 import { emptyProfile, type Profile } from '../../src/meta/profile';
-import { openProgress } from '../../src/ui/screens/progress';
+import { openProgress, type AccountActions } from '../../src/ui/screens/progress';
 
 const mine: Profile = {
   ...emptyProfile(),
@@ -10,14 +9,13 @@ const mine: Profile = {
   stats: { matches: 37, wins: 21, escapes: 14, arrests: 7, coinsEarned: 2890 },
   welcomeGranted: true,
 };
-const other: Profile = { ...emptyProfile(), coins: 500, welcomeGranted: true };
 
 let host: HTMLElement;
 let opener: HTMLButtonElement;
 beforeEach(() => {
   host = document.createElement('section');
   opener = document.createElement('button');
-  opener.textContent = 'Progresso';
+  opener.textContent = 'Perfil';
   host.append(opener);
   document.body.append(host);
   opener.focus();
@@ -29,79 +27,74 @@ afterEach(() => {
 
 const button = (label: string) => [...host.querySelectorAll('button')].find((b) => b.textContent?.trim() === label)!;
 const open = (over: Partial<Parameters<typeof openProgress>[1]> = {}) => {
-  const cb = { onRestore: vi.fn(), onClose: vi.fn() };
+  const cb = { onClose: vi.fn() };
   openProgress(host, { profile: mine, persistent: true, ...cb, ...over });
   return cb;
 };
 
-describe('progress dialog', () => {
-  it('shows coins, matches, wins, escapes and the backup code; the page behind is inert', () => {
-    open();
+const acct = (over: Partial<AccountActions> = {}): AccountActions => ({
+  account: { id: 'u1', email: 'diogo@exemplo.com', name: 'Diogo Tocci', picture: '', username: 'Diogo_Fuga' },
+  pending: false,
+  rename: vi.fn(),
+  signOut: vi.fn(async () => undefined),
+  remove: vi.fn(),
+  ...over,
+});
+
+describe('profile dialog (V3)', () => {
+  it('shows the account, the stats and the legal links; the page behind is inert; no backup code any more', () => {
+    open({ account: acct(), version: '0.25.0' });
     const d = host.querySelector('[role="dialog"]')!;
-    expect(d.getAttribute('aria-label')).toBe('Seu progresso');
-    for (const t of ['1.240', 'moedas', '37', 'partidas', '21', 'vitórias', '14', 'fugas']) expect(d.textContent).toContain(t);
-    expect(host.querySelector('.progress-code')!.textContent).toBe(encodeBackup(mine));
+    expect(d.getAttribute('aria-label')).toBe('Seu perfil');
+    for (const t of [
+      '@Diogo_Fuga',
+      'Diogo Tocci · diogo@exemplo.com',
+      '1.240',
+      'moedas',
+      '37',
+      'partidas',
+      '21',
+      'vitórias',
+      '14',
+      'fugas',
+    ])
+      expect(d.textContent).toContain(t);
+    expect(d.textContent).toContain('Seu progresso fica salvo na sua conta.');
+    expect(host.querySelector('.profile-avatar')!.textContent).toBe('D');
+    const links = [...d.querySelectorAll('a')].map((a) => a.getAttribute('href'));
+    expect(links).toEqual(['/privacidade', '/termos']);
+    expect(d.textContent).toContain('v0.25.0');
+    expect(host.querySelector('.progress-code')).toBeNull();
+    expect(button('Restaurar')).toBeUndefined();
     expect(opener.hasAttribute('inert')).toBe(true);
-    expect(d.textContent).toContain('Seu progresso fica salvo neste aparelho');
   });
 
-  it('copy uses the clipboard and says so', async () => {
-    const writeText = vi.fn().mockResolvedValue(undefined);
-    vi.stubGlobal('navigator', { ...navigator, clipboard: { writeText } });
-    open();
-    button('Copiar código').click();
-    await Promise.resolve();
-    await Promise.resolve();
-    expect(writeText).toHaveBeenCalledWith(encodeBackup(mine));
-    expect(host.textContent).toContain('Copiado');
+  it('Trocar nome and Excluir minha conta close the dialog and open theirs', () => {
+    const a = acct();
+    open({ account: a });
+    button('Trocar nome').click();
+    expect(host.querySelector('[role="dialog"]')).toBeNull();
+    expect(a.rename).toHaveBeenCalledOnce();
+    open({ account: a });
+    button('Excluir minha conta').click();
+    expect(a.remove).toHaveBeenCalledOnce();
   });
 
-  it('without a clipboard, copy selects the code instead of throwing', () => {
-    vi.stubGlobal('navigator', { ...navigator, clipboard: undefined });
-    open();
-    expect(() => button('Copiar código').click()).not.toThrow();
-    expect(window.getSelection()!.toString()).toBe(encodeBackup(mine));
+  it('Sair shows why it could not sign out (offline progress not sent yet)', async () => {
+    const a = acct({ signOut: vi.fn(async () => 'Sem conexão: conecte-se para sair.') });
+    open({ account: a });
+    button('Sair').click();
+    await vi.waitFor(() =>
+      expect(host.querySelector('.profile-account [role="alert"]')!.textContent).toBe('Sem conexão: conecte-se para sair.'),
+    );
   });
 
-  it('restore: a valid code asks for confirmation, then replaces the progress', () => {
-    const cb = open();
-    button('Restaurar').click();
-    (host.querySelector('textarea') as HTMLTextAreaElement).value = encodeBackup(other);
-    button('Conferir').click();
-    expect(host.textContent).toContain('Isso substitui o progresso deste aparelho (1.240 moedas) pelo do código (500 moedas).');
-    button('Cancelar').click();
-    expect(cb.onRestore).not.toHaveBeenCalled();
-    button('Conferir').click();
-    expect(document.activeElement).toBe(button('Substituir')); // brings the confirmation into view on short screens
-    button('Substituir').click();
-    expect(cb.onRestore).toHaveBeenCalledWith(other);
-  });
-
-  it('editing the code after Conferir drops the pending confirmation', () => {
-    const cb = open();
-    button('Restaurar').click();
-    const input = host.querySelector('textarea') as HTMLTextAreaElement;
-    input.value = encodeBackup(other);
-    button('Conferir').click();
-    input.value = 'PL1-';
-    input.dispatchEvent(new Event('input'));
-    expect(host.textContent).not.toContain('Isso substitui');
-    expect(cb.onRestore).not.toHaveBeenCalled();
-  });
-
-  it('an invalid code shows what to do and changes nothing', () => {
-    const cb = open();
-    button('Restaurar').click();
-    (host.querySelector('textarea') as HTMLTextAreaElement).value = 'PL1-ABCD-1234';
-    button('Conferir').click();
-    expect(host.querySelector('[role="alert"]')!.textContent).toBe('Código incompleto ou com erro. Copie de novo no outro aparelho.');
-    expect(host.textContent).not.toContain('Isso substitui');
-    expect(cb.onRestore).not.toHaveBeenCalled();
-  });
-
-  it('warns when nothing is being saved on this browser', () => {
+  it('says when progress is waiting for the internet, and when this browser does not save', () => {
+    open({ account: acct({ pending: true }) });
+    expect(host.textContent).toContain('o progresso sobe para a sua conta quando a internet voltar');
+    button('Fechar').click();
     open({ persistent: false });
-    expect(host.textContent).toContain('Seu progresso não está sendo salvo neste navegador');
+    expect(host.textContent).toContain('Este navegador não guarda dados');
   });
 
   it('Esc and Fechar close it; the page behind comes back', () => {

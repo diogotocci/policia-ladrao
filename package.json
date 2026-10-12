@@ -17,9 +17,12 @@
     "lint:types": "eslint --config eslint.typed.config.mjs ."
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
+    "jose": "^6.2.12",
     "three": "^0.186.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.63.0",
     "@types/node": "^26.6.4",

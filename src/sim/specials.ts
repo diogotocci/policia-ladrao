@@ -2,13 +2,13 @@
 // Thief:
 // Bomb (2 lanes in Sobrevivência from chaos 2), oil, spikes and smoke. Oil and spikes stay on the road and hit only
 // the police: oil makes it skid, spikes give it a flat tire.
-import { BALANCE, type Role } from '../config/balance';
-import { NO_EFFECTS, type CarState } from './car';
-import type { Intents } from './intents';
-import { createRngFromState } from './rng';
-import type { Bomb, GameEvent, Hazard, SpecialKind, WorldState } from './types';
-import { policeOf, thiefOf, withCar } from './world';
-import { clearPassedRoadblocks, hitRoadblock } from './policeItems';
+import { BALANCE, type Role } from '../config/balance.js';
+import { NO_EFFECTS, type CarState } from './car.js';
+import type { Intents } from './intents.js';
+import { createRngFromState } from './rng.js';
+import type { Bomb, GameEvent, Hazard, SpecialKind, WorldState } from './types.js';
+import { policeOf, thiefOf, withCar } from './world.js';
+import { clearPassedRoadblocks, hitRoadblock } from './policeItems.js';
 
 const I = BALANCE.items;
 const LANES = BALANCE.road.laneCenters;

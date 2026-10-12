@@ -1,7 +1,7 @@
 // Mastery per car (V2 part 6, spec §2): every car has its own XP (the coins of the matches played with it) and 10
 // levels. Each level unlocks a finish or a sticker of that car in the shop; level 10 gives its legendary paint.
 // Pure data: no imports from the shop (the shop and the career both read it).
-import type { Role } from '../config/balance';
+import type { Role } from '../config/balance.js';
 
 /** XP to reach each level (index 0 = level 1). */
 export const MASTERY_XP = [0, 300, 800, 1500, 2500, 4000, 6000, 8500, 11500, 15000] as const;

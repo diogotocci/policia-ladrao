@@ -1,5 +1,5 @@
 // Pure numeric rules from spec §4 (stateless).
-import { BALANCE, type Difficulty } from '../config/balance';
+import { BALANCE, type Difficulty } from '../config/balance.js';
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 

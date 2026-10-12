@@ -1,6 +1,6 @@
-import { BALANCE, type Role } from '../config/balance';
-import type { Intents } from './intents';
-import type { MysteryOutcome, SpecialKind } from './types';
+import { BALANCE, type Role } from '../config/balance.js';
+import type { Intents } from './intents.js';
+import type { MysteryOutcome, SpecialKind } from './types.js';
 
 /** Upgrades and effects of the item-box items (spec §5). Times in match seconds. */
 export interface Upgrades {

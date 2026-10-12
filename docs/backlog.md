@@ -12,9 +12,9 @@ Ideias anotadas durante o desenvolvimento. Cada item passa por brainstorming e e
 
 **Pedido (Diogo):** mais carros, modelos e cosméticos, para o jogador ter motivo para continuar jogando depois de comprar tudo. Virou a V2 Parte 6 (`docs/superpowers/specs/2026-10-09-v2-parte6-loja2-design.md`): entrega 1 (maestria, acabamentos, adesivos, 0.21) e entrega 2 (rodas, fumaça colorida, acessórios do ladrão, 0.22) feitas; entrega 3 (os 4 carros novos, 0.23) e entrega 4 (Camburão, Rodoviária PRF, Sedã clássico e Carro-forte, 0.24) feitas. Ideias que ficaram de fora: SUV tático, buggy de praia, viatura antiga anos 70, moto de trilha da polícia, táxi roubado, moto de entrega, ambulância roubada, hatch rebaixado com som.
 
-### V3: conta, servidor e dinheiro de verdade
+### V3: conta, servidor e Google Play
 
-Fora da V2 desde a Parte 1. O formato do progresso e o código de backup já foram feitos pensando nisso.
+Virou a V3 Parte 1 (`docs/superpowers/specs/2026-10-12-v3-parte1-conta-play-design.md`). Entrega 1 (servidor, login com Google, nome de usuário, progresso na nuvem, Perfil, excluir conta, privacidade e termos, 0.25) feita; faltam o ranking global (2), eventos e painel /admin (3) e o pacote Android com a ficha da loja (4). Dinheiro de verdade continua fora.
 
 ## Feito
 

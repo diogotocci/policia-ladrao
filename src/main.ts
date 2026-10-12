@@ -1,5 +1,10 @@
 import type { Role } from './config/balance';
 import { startApp } from './app';
+import { httpApi } from './account/api';
+import { devApi, useDevApi } from './account/devApi';
+import { runGate } from './account/gate';
+import { createAppAccount } from './appAccount';
+import { openStorage } from './storage/prefs';
 import { startGame } from './game';
 import { installFullscreenOnFirstTap, installNoZoom, installViewportFix } from './ui/mobileShell';
 import { registerServiceWorker } from './pwa/register';
@@ -64,7 +69,28 @@ const direct = !params.has('app') && (debug || params.has('role') || params.has(
 if (app) {
   if (direct)
     startGame(app, { role, seed, debug, quality, debugHp, debugGive, traffic, mute, curves, escapeTime, mode, chaosEvery, mysteryShare });
-  else startApp(app, { quality, debug, debugHp, traffic, mute, curves, escapeTime, mode, chaosEvery }); // ?app forces the screens (product e2e)
+  else void enter(app); // ?app forces the screens (product e2e)
+}
+
+/** V3: the account gate first (sign in, username, which progress), then the app; Sair and Excluir come back here. */
+async function enter(container: HTMLElement): Promise<void> {
+  const storage = openStorage();
+  // localhost (dev server and e2e preview) uses a fake account server; ?login starts it signed out
+  const dev = (import.meta.env.DEV && !params.has('realapi')) || useDevApi(location); // pnpm dev (also from a phone on the LAN) or the local preview
+  const api = dev ? devApi(storage, { startSignedOut: params.has('login') }) : httpApi();
+  const { account, profile } = await runGate(container, { api, storage, dev });
+  const running = startApp(container, {
+    quality,
+    debug,
+    debugHp,
+    traffic,
+    mute,
+    curves,
+    escapeTime,
+    mode,
+    chaosEvery,
+    account: createAppAccount({ api, storage, account, profile, restart: () => (running.stop(), void enter(container)) }),
+  });
 }
 // first screen drawn (2 frames): the splash disappears. In test/debug (?debug) it goes away immediately.
 requestAnimationFrame(() => requestAnimationFrame(() => hideSplash(document, { immediate: debug })));

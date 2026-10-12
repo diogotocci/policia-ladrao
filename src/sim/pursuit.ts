@@ -1,8 +1,8 @@
 // Pursuit: police catch-up turbo and the rule "the police never overtakes the thief" (spec §4.3).
-import { BALANCE } from '../config/balance';
-import { catchUpBonus } from './rules';
-import type { WorldState } from './types';
-import { policeOf, thiefOf, withCar } from './world';
+import { BALANCE } from '../config/balance.js';
+import { catchUpBonus } from './rules.js';
+import type { WorldState } from './types.js';
+import { policeOf, thiefOf, withCar } from './world.js';
 
 /** Police speed bonus: only when behind the thief. */
 export function pursuitBonus(w: WorldState): number {

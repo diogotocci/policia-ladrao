@@ -9,7 +9,11 @@ export function strategyFor(url: string, mode: string, origin: string): Strategy
   const u = new URL(url);
   if (u.origin !== origin) return 'network-only';
   if (u.pathname === '/sw.js') return 'network-only';
-  if (mode === 'navigate') return 'network-first'; // HTML: new version whenever there is network
+  // the account API (V3) answers per person and must never come from a cache
+  if (u.pathname.startsWith('/api/')) return 'network-only';
+  // HTML: new version whenever there is network. Only the game itself ('/') falls back to the cached page; the other pages
+  // (privacy, terms, delete account) need the network instead of showing the game in their place.
+  if (mode === 'navigate') return u.pathname === '/' || u.pathname === '/index.html' ? 'network-first' : 'network-only';
   if (u.pathname.startsWith('/assets/') || u.pathname.startsWith('/icons/') || u.pathname === '/manifest.webmanifest') return 'cache-first';
   return 'network-first';
 }

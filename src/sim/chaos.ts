@@ -1,7 +1,7 @@
 // Sobrevivência chaos (V2 part 3): rises with time and scales damage, traffic and boxes. Always 1 in Perseguição.
-import { BALANCE, type Mode, type Role } from '../config/balance';
-import type { CarState } from './car';
-import type { WorldState } from './types';
+import { BALANCE, type Mode, type Role } from '../config/balance.js';
+import type { CarState } from './car.js';
+import type { WorldState } from './types.js';
 
 const S = BALANCE.survival;
 

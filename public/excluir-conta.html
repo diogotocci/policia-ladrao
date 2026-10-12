@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="icon" href="/icons/icon-192.png" />
+    <title>Excluir conta · Polícia × Ladrão</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      body {
+        margin: 0;
+        background: #1b1d22;
+        color: #e8eaee;
+        font:
+          16px/1.6 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 24px 18px 48px;
+      }
+      h1 {
+        font-size: 28px;
+        line-height: 1.2;
+        margin: 8px 0 4px;
+      }
+      h2 {
+        font-size: 19px;
+        margin: 28px 0 6px;
+      }
+      a {
+        color: #ffc21a;
+      }
+      .muted {
+        color: #a7adb8;
+        font-size: 14px;
+      }
+      .plate {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 6px;
+        background: #1d4fb8;
+        border: 2px solid #fff;
+        color: #fff;
+        font-weight: 900;
+        text-decoration: none;
+      }
+      .plate span {
+        color: #ffc21a;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="plate" href="/">Polícia <span>×</span> Ladrão</a>
+      <h1>Excluir sua conta</h1>
+      <p>
+        Exclua sua conta do <b>Polícia × Ladrão</b> sem precisar do app. Também dá para excluir dentro do jogo: Perfil →
+        Excluir minha conta.
+      </p>
+      <p>O que acontece:</p>
+      <ul>
+        <li>Some o progresso: moedas, carros, carreira e maestria.</li>
+        <li>Seu nome de usuário e seus recordes saem do ranking global.</li>
+        <li>Os registros de uso deixam de ter qualquer ligação com você.</li>
+        <li>É imediato e não dá para desfazer.</li>
+      </ul>
+
+      <section id="step-signin">
+        <h2>1. Entre com a conta do jogo</h2>
+        <div id="google"></div>
+        <p id="signin-error" class="error" role="alert"></p>
+      </section>
+
+      <form id="step-confirm" hidden>
+        <h2>2. Confirme</h2>
+        <p>Conta: <b id="who"></b></p>
+        <label for="confirm">Para confirmar, digite <b id="expected"></b>:</label>
+        <input id="confirm" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        <button id="delete" type="submit" disabled>Excluir para sempre</button>
+        <p id="confirm-error" class="error" role="alert"></p>
+      </form>
+
+      <p id="done" hidden role="status"><b>Pronto: sua conta foi excluída.</b> Obrigado por ter jogado.</p>
+
+      <p class="muted">Dúvidas: <a href="mailto:diogotocci@gmail.com">diogotocci@gmail.com</a> · <a href="/privacidade">Política de privacidade</a></p>
+
+      <style>
+        .error {
+          color: #ff6b6b;
+        }
+        .error:empty {
+          display: none;
+        }
+        input {
+          display: block;
+          width: 100%;
+          max-width: 360px;
+          box-sizing: border-box;
+          margin: 8px 0 12px;
+          padding: 10px 12px;
+          border-radius: 10px;
+          border: 2px solid #3b4048;
+          background: #0f1013;
+          color: #fff;
+          font: inherit;
+        }
+        button {
+          min-height: 46px;
+          padding: 0 20px;
+          border: 0;
+          border-radius: 12px;
+          background: #b3262b;
+          color: #fff;
+          font: 800 16px/1 system-ui, sans-serif;
+          cursor: pointer;
+        }
+        button:disabled {
+          opacity: 0.45;
+          cursor: default;
+        }
+      </style>
+      <script>
+        // Google Play rule: the account can be deleted on the web too. Same API as the game: sign in, then DELETE /api/account.
+        (function () {
+          var $ = function (id) {
+            return document.getElementById(id);
+          };
+          var expected = '';
+          function fail(id, text) {
+            $(id).textContent = text;
+          }
+          function signedIn(account) {
+            expected = account.username || account.email;
+            $('who').textContent = (account.username ? '@' + account.username + ' · ' : '') + account.email;
+            $('expected').textContent = expected;
+            $('step-signin').hidden = true;
+            $('step-confirm').hidden = false;
+            $('confirm').focus();
+          }
+          $('confirm').addEventListener('input', function () {
+            $('delete').disabled = $('confirm').value.trim().toLowerCase() !== expected.toLowerCase();
+          });
+          $('step-confirm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            $('delete').disabled = true;
+            fetch('/api/account', {
+              method: 'DELETE',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ confirm: $('confirm').value.trim() }),
+            })
+              .then(function (res) {
+                if (!res.ok) throw new Error(String(res.status));
+                try {
+                  // this browser forgets the account too (the game's copy of the progress)
+                  ['pl.account.v1', 'pl.profile.v3', 'pl.profile.v2', 'pl.profile.v1', 'pl.profile.corrupt'].forEach(function (k) {
+                    localStorage.removeItem(k);
+                  });
+                } catch (err) {}
+                $('step-confirm').hidden = true;
+                $('done').hidden = false;
+              })
+              .catch(function () {
+                $('delete').disabled = false;
+                fail('confirm-error', 'Não deu para excluir agora. Confira a internet e tente de novo.');
+              });
+          });
+          function onCredential(r) {
+            fetch('/api/auth/google', {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ credential: r.credential }),
+            })
+              .then(function (res) {
+                if (!res.ok) throw new Error(String(res.status));
+                return res.json();
+              })
+              .then(function (b) {
+                signedIn(b.account);
+              })
+              .catch(function () {
+                fail('signin-error', 'Não deu para entrar. Tente de novo.');
+              });
+          }
+          fetch('/api/config')
+            .then(function (res) {
+              return res.json();
+            })
+            .then(function (c) {
+              if (!c.googleClientId) throw new Error('no client');
+              var s = document.createElement('script');
+              s.src = 'https://accounts.google.com/gsi/client';
+              s.async = true;
+              s.onload = function () {
+                google.accounts.id.initialize({ client_id: c.googleClientId, callback: onCredential, use_fedcm_for_button: true });
+                google.accounts.id.renderButton($('google'), { theme: 'outline', size: 'large', text: 'signin_with', locale: 'pt-BR' });
+              };
+              s.onerror = function () {
+                fail('signin-error', 'Não deu para carregar o login do Google. Confira a internet.');
+              };
+              document.head.appendChild(s);
+            })
+            .catch(function () {
+              fail('signin-error', 'O login não está disponível agora. Tente mais tarde.');
+            });
+        })();
+      </script>
+    </main>
+  </body>
+</html>

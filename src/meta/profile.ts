@@ -2,9 +2,9 @@
 // Career (v3, part 5): challenges, achievements, ranks, streak.
 // Older profiles (local or from a backup code) are migrated when read: nothing bought, default cars, the career
 // started from the stats already kept.
-import { BALANCE, type Difficulty, type Mode, type Role } from '../config/balance';
-import { emptyStats, rewardFor, type MatchStats, type Reward } from './rewards';
-import { defaultEquipped, sanitizeShop, use, type Equipped } from './shop';
+import { BALANCE, type Difficulty, type Mode, type Role } from '../config/balance.js';
+import { emptyStats, rewardFor, type MatchStats, type Reward } from './rewards.js';
+import { defaultEquipped, sanitizeShop, use, type Equipped } from './shop.js';
 import {
   careerAfterMatch,
   careerFromStats,
@@ -14,7 +14,7 @@ import {
   type Career,
   type CareerEvent,
   type MatchSummary,
-} from './career';
+} from './career.js';
 
 export const PROFILE_VERSION = 3;
 /** upper bound for any stored number: rejects absurd values from a hand-edited backup */

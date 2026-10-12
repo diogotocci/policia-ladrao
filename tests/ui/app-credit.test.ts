@@ -123,7 +123,7 @@ describe('coins credit', () => {
 });
 
 describe('storage that stops saving', () => {
-  it('the Progresso dialog warns when saving the coins failed', () => {
+  it('the profile dialog warns when saving the coins failed', () => {
     const app = startApp(container, { mute: true });
     click('Jogar');
     click('Jogar Perseguição');
@@ -135,8 +135,8 @@ describe('storage that stops saving', () => {
     ends[0]!({ winner: 'police', time: 60, hp: 80, level: 2, stats: { damageDealt: 100, rightBoxes: 1 } });
     vi.restoreAllMocks();
     click('Início');
-    click('Progresso');
-    expect(container.textContent).toContain('Seu progresso não está sendo salvo neste navegador');
+    click('Perfil');
+    expect(container.textContent).toContain('Este navegador não guarda dados');
     app.stop();
   });
 });

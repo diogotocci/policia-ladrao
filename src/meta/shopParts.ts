@@ -1,8 +1,8 @@
 // Shop rules for the per-side parts (V2 part 6 delivery 2, spec §3.3-3.5): wheels and smoke colour per side, the
 // thief's accessories. Kept apart from shop.ts so each file stays small; shop.ts calls these from its own rules.
-import type { Role } from '../config/balance';
-import { ACCESSORY_IDS, SMOKES, SMOKE_COLORS, WHEEL_STYLES, type AccessoryId, type SmokeColor, type WheelStyle } from './parts';
-import type { ShopItem } from './shop';
+import type { Role } from '../config/balance.js';
+import { ACCESSORY_IDS, SMOKES, SMOKE_COLORS, WHEEL_STYLES, type AccessoryId, type SmokeColor, type WheelStyle } from './parts.js';
+import type { ShopItem } from './shop.js';
 
 export interface PartsEquip {
   /** per side (none = standard wheels, white smoke) */

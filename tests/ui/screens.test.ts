@@ -34,11 +34,11 @@ describe('title', () => {
     s.dispose();
   });
 
-  it('coin balance (pt-BR digits) and a Progresso button', () => {
+  it('coin balance (pt-BR digits) and a Perfil button', () => {
     const onProgress = vi.fn();
     const s = renderTitle(root, { onPlay: vi.fn(), onRanking: vi.fn(), onProgress, coins: 1240, mountToggle: () => ({ dispose() {} }) });
     expect(root.querySelector('.title-wallet')!.textContent).toContain('1.240');
-    button('Progresso').click();
+    button('Perfil').click();
     expect(onProgress).toHaveBeenCalledOnce();
     s.dispose();
   });

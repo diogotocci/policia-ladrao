@@ -1,12 +1,12 @@
 // The yellow "?" box (V2 part 3, both modes, both sides): good (an item of your side) or bad (a timed effect).
 // The chance of good depends on the difficulty. What it gives is drawn at pickup; it applies when the 0.6 s roulette
 // stops (the HUD shows it spinning meanwhile).
-import { BALANCE } from '../config/balance';
-import type { CarState } from './car';
-import { applyItem, rollItem } from './items';
-import type { Rng } from './rng';
-import type { BadEffect, GameEvent, MysteryOutcome, WorldState } from './types';
-import { policeOf, thiefOf, withCar } from './world';
+import { BALANCE } from '../config/balance.js';
+import type { CarState } from './car.js';
+import { applyItem, rollItem } from './items.js';
+import type { Rng } from './rng.js';
+import type { BadEffect, GameEvent, MysteryOutcome, WorldState } from './types.js';
+import { policeOf, thiefOf, withCar } from './world.js';
 
 const M = BALANCE.items.mystery;
 export const BAD_EFFECTS: readonly BadEffect[] = ['slow', 'double', 'mud', 'noBrake'];
