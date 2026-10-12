@@ -46,7 +46,7 @@ export function renderTitle(
     onPlay(): void;
     onRanking(): void;
     onHowToSeen?(): void;
-    /** opens the Progresso dialog (stats and backup code) */
+    /** opens the profile dialog (account and stats) */
     onProgress?(): void;
     /** V2 part 4: opens the shop */
     onShop?(): void;
@@ -80,7 +80,7 @@ export function renderTitle(
   const sound = h('div', 'title-sound');
   if (p.onProgress) {
     const progress = btn('', 'title-progress', p.onProgress, SCREEN_ICONS.profile);
-    progress.setAttribute('aria-label', 'Progresso');
+    progress.setAttribute('aria-label', 'Perfil');
     sound.append(progress);
   }
   const toggle = p.mountToggle(sound);

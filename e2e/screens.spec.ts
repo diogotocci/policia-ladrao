@@ -1,6 +1,4 @@
 import { expect, test, type Page } from '@playwright/test';
-import { encodeBackup } from '../src/meta/backup';
-import { emptyProfile } from '../src/meta/profile';
 
 type G = { snapshot(): { time: number; match: { over: boolean } }; drawCalls(): number };
 const simTime = (page: Page) => page.evaluate(() => (window as unknown as { __game: G }).__game.snapshot().time);
@@ -142,7 +140,7 @@ test('pressing Back on the title first does not disarm the trap: Back during a m
   await expect(page.locator('.screen-pause')).toBeVisible();
 });
 
-test('coins: a finished match pays, the balance survives a reload, a backup code restores another progress', async ({ page }) => {
+test('coins: a finished match pays and the balance survives a reload', async ({ page }) => {
   await page.goto('/?app&quality=low&mute&debug&traffic=0&escape=4');
   await page.getByRole('button', { name: 'Jogar', exact: true }).click();
   await page.getByRole('button', { name: 'Jogar Perseguição' }).click();
@@ -159,16 +157,6 @@ test('coins: a finished match pays, the balance survives a reload, a backup code
   expect(balance).toBeGreaterThanOrEqual(earned + 50);
   await page.reload();
   await expect(page.locator('.title-wallet')).toHaveAttribute('aria-label', label);
-  // restore a progress with 500 coins
-  await page.getByRole('button', { name: 'Progresso' }).click();
-  const dialog = page.getByRole('dialog', { name: 'Seu progresso' });
-  await dialog.getByRole('button', { name: 'Restaurar' }).click();
-  await dialog.getByLabel('Cole o código do outro aparelho').fill(encodeBackup({ ...emptyProfile(), coins: 500, welcomeGranted: true }));
-  await dialog.getByRole('button', { name: 'Conferir' }).click();
-  await dialog.getByRole('button', { name: 'Substituir' }).click();
-  await expect(page.locator('.title-wallet')).toHaveText('500');
-  await page.reload();
-  await expect(page.locator('.title-wallet')).toHaveText('500');
 });
 
 test('difficulty: Difícil is remembered, pays x1,5 and has its own ranking', async ({ page }) => {

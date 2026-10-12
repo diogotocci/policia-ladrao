@@ -1,10 +1,10 @@
 // Shop (V2 part 4, spec §2-3): catalog, prices and the pure rules to buy and use items. Visual only: nothing here
 // reaches the simulation. The catalog order never changes (the backup code stores positions): new items go at the end.
-import type { Role } from '../config/balance';
-import type { Profile } from './profile';
-import { CARS, CAR_IDS, type CarId } from './cars';
-import { meets, requirementText, unlockOf } from './career';
-import { FINISHES, FIRST_CARS, NEW_CARS, STICKERS, masteryLevel, type FinishId } from './mastery';
+import type { Role } from '../config/balance.js';
+import type { Profile } from './profile.js';
+import { CARS, CAR_IDS, type CarId } from './cars.js';
+import { meets, requirementText, unlockOf } from './career.js';
+import { FINISHES, FIRST_CARS, NEW_CARS, STICKERS, masteryLevel, type FinishId } from './mastery.js';
 import {
   freePart,
   partInUse,
@@ -15,13 +15,13 @@ import {
   PART_PRICES,
   type PartsEquip,
   type PartsLook,
-} from './shopParts';
+} from './shopParts.js';
 
 export type NeonColor = 'azul' | 'roxo' | 'verde' | 'rosa';
 export type SoundId = 'yelp' | 'choque' | 'corneta' | 'grave' | 'dupla';
 export type ItemKind = 'car' | 'paint' | 'neon' | 'sound' | 'plate' | 'finish' | 'sticker' | 'wheels' | 'smoke' | 'acc';
 
-export { CARS, CAR_IDS, DEFAULT_CAR, carsOf, type CarId, type CarInfo } from './cars';
+export { CARS, CAR_IDS, DEFAULT_CAR, carsOf, type CarId, type CarInfo } from './cars.js';
 
 export const NEONS: Record<NeonColor, { name: string; color: number }> = {
   azul: { name: 'Azul', color: 0x2f7bff },

@@ -1,8 +1,8 @@
 // Curve layout (Delivery 6): alternating straights and curves, deterministic from the seed.
 // The sim stays in (s, x); the curve only enters as curvature κ(s) (lateral drift in physics and drawing in the renderer).
-import { BALANCE } from '../config/balance';
-import { createRng } from './rng';
-import { bumpsBetween } from './track';
+import { BALANCE } from '../config/balance.js';
+import { createRng } from './rng.js';
+import { bumpsBetween } from './track.js';
 
 export interface Curve {
   start: number; // s at entry

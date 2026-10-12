@@ -29,7 +29,8 @@ Itens: tiros, bombas, óleo, miguelito e fumaça do ladrão; bloqueio, nitro, me
 - Cada partida paga moedas (tempo, dano, caixas, vitória; o Difícil paga mais).
 - **Loja:** carros novos para cada lado, pinturas e acabamentos, adesivos, rodas, neon, fumaça colorida, acessórios do ladrão (aerofólio, rack, antena, escapamento com chama), sirenes e buzinas, e placa personalizada. Os itens são desbloqueados na Carreira (patentes, conquistas e maestria de cada carro) e depois comprados.
 - **Carreira:** 3 desafios por dia (sorteados entre 21, sem repetir o do dia anterior), conquistas, patentes por lado (Recruta a Delegado, Pivete a Chefão) e sequência de dias. Recompensas são resgatadas na tela da Carreira.
-- O progresso fica no aparelho. Em "Progresso" há um código de backup para levar para outro aparelho.
+- **Conta (V3):** entrar com o Google é obrigatório. O progresso fica no aparelho e na conta (sobe sozinho depois de cada mudança; sem internet, sobe quando a conexão voltar) e vai junto para outro celular. O nome de usuário (único) é o que vai aparecer no ranking global.
+- No Perfil (botão do canto da tela inicial): trocar o nome, Sair e **Excluir minha conta**. A exclusão também pode ser feita na web, em `/excluir-conta`. Política de privacidade em `/privacidade` e termos em `/termos`.
 
 ## Tecnologia
 
@@ -43,10 +44,11 @@ A simulação (`src/sim`) é determinística a 60 Hz e não conhece Three.js, DO
 | `src/render` | cena 3D, modelos dos carros, efeitos, retrovisor |
 | `src/audio` | sintetizador, efeitos, sirenes e música |
 | `src/ui` | telas (título, escolha, fim, ranking, loja, carreira) e HUD |
-| `src/meta` | moedas, perfil, backup, loja e carreira |
+| `src/meta` | moedas, perfil, loja, carreira, nome de usuário e junção de perfis |
+| `src/account` | conta no jogo: API, servidor falso do localhost, telas de entrada e sincronização |
 | `src/storage` | ranking e preferências salvas no aparelho |
 | `src/pwa` | service worker e cache offline |
-| `api` | função da Vercel que confere a senha do modo admin |
+| `api` | funções da Vercel: conta (login com Google, sessão, nome, progresso, excluir) e a senha do modo admin |
 | `tests`, `e2e` | testes unitários (Vitest) e de navegador (Playwright) |
 | `docs/superpowers/specs` | specs de cada parte |
 
@@ -74,12 +76,20 @@ pnpm build        # gera dist/
 | `?quality=low`, `medium` ou `high` | força a qualidade gráfica |
 | `?mute` | começa sem som |
 | `?curves=0` | pista reta |
+| `?login` | (localhost) começa sem login, para testar as telas de entrada |
+| `?realapi` | (localhost) usa o servidor de verdade em vez do falso |
 
 Só com `?debug`: `traffic=0` (sem tráfego), `escape=N` (fuga em N segundos), `mode=survival`, `mystery=0..1` (fração de caixas amarelas), `give=item1,item2` (itens no início). Com `?app` o jogo abre pelas telas normais mesmo com esses parâmetros.
 
+### Conta no localhost
+
+Em `localhost` o jogo usa um servidor de conta falso (`src/account/devApi.ts`), guardado no próprio navegador: já entra numa "Conta de Teste" com o nome `Teste`, sem Google e sem banco. Com `?login` ele começa sem login, com o botão "Entrar (conta de teste)". Os testes e2e usam esse servidor.
+
+Os testes do servidor (`tests/api`) rodam num Postgres em memória (PGlite). Em produção, as funções em `api/` precisam das variáveis `DATABASE_URL` (Neon), `GOOGLE_CLIENT_ID` e `SESSION_SECRET` na Vercel; sem elas, as rotas respondem 503. Passo a passo em [docs/conta-setup.md](docs/conta-setup.md).
+
 ### Modo admin (testes)
 
-Em "Progresso" há o botão **Admin**: com a senha, a loja fica toda liberada e grátis (o que for pego fica no perfil). A senha é só a variável de ambiente `ADMIN_PASSWORD` na Vercel (Settings → Environment Variables); a função `api/admin.ts` confere no servidor, e a senha nunca entra no código do jogo. Sem a variável, ou fora da Vercel (`pnpm dev`), o admin não liga.
+No Perfil há o botão **Admin**: com a senha, a loja fica toda liberada e grátis (o que for pego fica no perfil). A senha é só a variável de ambiente `ADMIN_PASSWORD` na Vercel (Settings → Environment Variables); a função `api/admin.ts` confere no servidor, e a senha nunca entra no código do jogo. Sem a variável, ou fora da Vercel (`pnpm dev`), o admin não liga.
 
 ## Contribuindo
 

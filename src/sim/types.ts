@@ -1,7 +1,7 @@
-import type { Difficulty, Mode, Role } from '../config/balance';
-import type { Works } from './works';
-import type { AiMemory } from './ai';
-import type { CarState } from './car';
+import type { Difficulty, Mode, Role } from '../config/balance.js';
+import type { Works } from './works.js';
+import type { AiMemory } from './ai.js';
+import type { CarState } from './car.js';
 
 export interface Projectile {
   from: Role;

@@ -1,6 +1,6 @@
 // The cars of both sides (V2 part 4; deliveries 3 and 4 of part 6 added four each): side, name, price and the four colours.
 // Order matters: the backup code stores positions (new cars only at the end).
-import type { Role } from '../config/balance';
+import type { Role } from '../config/balance.js';
 
 export type CarId =
   | 'viatura'

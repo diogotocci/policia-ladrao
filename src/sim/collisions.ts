@@ -1,10 +1,10 @@
 // Collisions with the scenery (road edges) and between police and thief, with 1 s immunity per pair.
-import { BALANCE, type Role } from '../config/balance';
-import type { CarState } from './car';
-import { hurt, scaledDamage } from './chaos';
-import { armorFactor } from './rules';
-import type { GameEvent, WorldState } from './types';
-import { policeOf, thiefOf, withCar } from './world';
+import { BALANCE, type Role } from '../config/balance.js';
+import type { CarState } from './car.js';
+import { hurt, scaledDamage } from './chaos.js';
+import { armorFactor } from './rules.js';
+import type { GameEvent, WorldState } from './types.js';
+import { policeOf, thiefOf, withCar } from './world.js';
 
 const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
 const EPS = 1e-9;

@@ -1,14 +1,14 @@
 // Roadworks (V2 part 3, Sobrevivência chaos 3+): a lane closed by cones for 60 m, from the seed.
 // More of them at each chaos level: about every 300 m at chaos 3, 220 m at 4 and 180 m at 5.
 // Never on a speed bump or a sharp curve. Driving into the cones costs like the curb.
-import { BALANCE } from '../config/balance';
-import type { CarState } from './car';
-import { hurt, scaledDamage } from './chaos';
-import { curvesBetween } from './curves';
-import { createRng } from './rng';
-import { bumpsBetween } from './track';
-import type { GameEvent, WorldState } from './types';
-import { policeOf, thiefOf, withCar } from './world';
+import { BALANCE } from '../config/balance.js';
+import type { CarState } from './car.js';
+import { hurt, scaledDamage } from './chaos.js';
+import { curvesBetween } from './curves.js';
+import { createRng } from './rng.js';
+import { bumpsBetween } from './track.js';
+import type { GameEvent, WorldState } from './types.js';
+import { policeOf, thiefOf, withCar } from './world.js';
 
 const S = BALANCE.survival;
 /**

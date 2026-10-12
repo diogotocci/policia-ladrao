@@ -1,7 +1,7 @@
 // Speed bumps: 1 every ~400 m, covering 2 adjacent lanes. Driving over one makes the car jump for 0.6 s and lose 25%.
-import { BALANCE } from '../config/balance';
-import type { CarState } from './car';
-import { createRng } from './rng';
+import { BALANCE } from '../config/balance.js';
+import type { CarState } from './car.js';
+import { createRng } from './rng.js';
 
 export interface Bump {
   s: number;

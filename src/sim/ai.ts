@@ -1,12 +1,12 @@
 // AI for both sides. Pure given the rng; memory (lateral target, timers) lives in the world.
 // Delivery 3: dodges traffic, speed bumps (with a level-based chance) and bombs; seeks item boxes; thief drops bombs.
-import { BALANCE, type Role } from '../config/balance';
-import type { Rng } from './rng';
-import { NO_INTENTS, type Intents } from './intents';
-import { curvesBetween } from './curves';
-import { bumpXRange, bumpsBetween } from './track';
-import type { Hazard, WorldState } from './types';
-import { policeOf, thiefOf } from './world';
+import { BALANCE, type Role } from '../config/balance.js';
+import type { Rng } from './rng.js';
+import { NO_INTENTS, type Intents } from './intents.js';
+import { curvesBetween } from './curves.js';
+import { bumpXRange, bumpsBetween } from './track.js';
+import type { Hazard, WorldState } from './types.js';
+import { policeOf, thiefOf } from './world.js';
 
 export interface AiMemory {
   /** x the AI is heading to */

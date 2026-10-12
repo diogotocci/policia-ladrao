@@ -1,6 +1,6 @@
 // Coins earned in a finished match (V2 part 1): time played, damage dealt to the opponent and boxes of the player's color.
-import { BALANCE, type Difficulty, type Mode, type Role } from '../config/balance';
-import type { GameEvent } from '../sim/types';
+import { BALANCE, type Difficulty, type Mode, type Role } from '../config/balance.js';
+import type { GameEvent } from '../sim/types.js';
 
 export interface MatchStats {
   damageDealt: number;

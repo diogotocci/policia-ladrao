@@ -21,6 +21,7 @@ import { ADMIN_KEY, HOWTO_KEY, INITIALS_KEY, openStorage, readPref, writePref } 
 import { addRecord, settleEnd } from './appMatch';
 import { wireAppEvents } from './appEvents';
 import { checkAdminPassword } from './admin';
+import type { AppAccount } from './appAccount';
 import { initialState, reduce, type FlowAction, type FlowState } from './ui/screens/flow';
 import { openProgress } from './ui/screens/progress';
 import {
@@ -43,6 +44,8 @@ export function startApp(
   /** debug/e2e only: mode, chaosEvery and the debug options */
   opts: Pick<GameOptions, 'quality' | 'debugHp' | 'traffic' | 'mute' | 'curves' | 'escapeTime' | 'mode' | 'chaosEvery'> & {
     debug?: boolean;
+    /** V3: the signed-in account (the gate ran before); absent in unit tests */
+    account?: AppAccount;
   } = {},
 ): { stop(): void } {
   const storage = openStorage();
@@ -59,28 +62,38 @@ export function startApp(
   let mode: Mode = opts.mode ?? loadMode(storage);
   // coins and stats (V2 part 1); the welcome bonus is credited once, from the records already in the ranking
   const loaded = loadProfile(storage);
-  let profile = grantWelcome(loaded.profile, countModeRecords(boards));
-  // false once any save fails (full or blocked storage): the Progresso dialog then warns that nothing is kept
+  const start = opts.account?.profile ?? loaded.profile;
+  let profile = grantWelcome(start, countModeRecords(boards));
+  // false once any save fails (full or blocked storage): the profile dialog then warns that only the account keeps it
   let persistent = loaded.persistent;
-  const persist = () => (persistent = saveProfile(storage, profile) && persistent);
-  if (profile !== loaded.profile) persist();
+  // V3: every saved change also goes up to the account; a copy merged with another phone comes back down
+  const cloud = opts.account?.bind({
+    get: () => profile,
+    adopt: (next) => {
+      profile = next;
+      saveProfile(storage, profile);
+      if (state.screen === 'title') show(state);
+    },
+  });
+  const persist = () => {
+    persistent = saveProfile(storage, profile) && persistent;
+    cloud?.changed();
+  };
+  if (profile !== start) persist();
   // "Como jogar" opens by itself until the player closes it once
   const howToSeen = () => readPref(storage, HOWTO_KEY) === '1';
   const markHowToSeen = () => writePref(storage, HOWTO_KEY, '1');
   // admin mode (testing): the whole shop unlocked and free
   let admin = readPref(storage, ADMIN_KEY) === '1';
-  // "Seu progresso" over the title screen; restoring a code replaces the profile and redraws the balance
+  // "Seu perfil" over the title screen: the account, the stats and the admin mode
   const openProgressDialog = () => {
     const host = layer.querySelector<HTMLElement>('.screen-title');
     if (!host) return;
     openProgress(host, {
       profile,
       persistent,
-      onRestore: (next) => {
-        profile = next;
-        persist();
-        show(state);
-      },
+      account: opts.account?.actions(host, openProgressDialog),
+      version: APP_VERSION,
       onClose: () => host.querySelector<HTMLElement>('.title-progress')?.focus(),
       admin: {
         on: admin,
@@ -365,6 +378,7 @@ export function startApp(
   return {
     stop() {
       unwire();
+      cloud?.dispose();
       clearTimeout(goTimer);
       clearView();
       stopGame();
