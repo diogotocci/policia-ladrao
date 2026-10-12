@@ -8,6 +8,8 @@ export interface Account {
   name: string;
   picture: string;
   username: string | null;
+  /** the shop's admin mode; the server sets it only for the admin account */
+  admin?: boolean;
 }
 
 export type UsernameIssue = 'format' | 'blocked' | 'taken' | 'cooldown';

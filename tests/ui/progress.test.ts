@@ -109,37 +109,11 @@ describe('profile dialog (V3)', () => {
   });
 });
 
-describe('admin (playtest 2026-10-09)', () => {
-  it('Admin asks for the password; a wrong one says so, the right one closes the dialog', async () => {
-    const enter = vi.fn(async (pw: string) => pw === 'secret123');
-    const cb = open({ admin: { on: false, enter, leave: vi.fn() } });
-    button('Admin').click();
-    const input = host.querySelector<HTMLInputElement>('#progress-admin')!;
-    expect(input.type).toBe('password');
-    expect(document.activeElement).toBe(input);
-    input.value = 'nope';
-    input.form!.requestSubmit();
-    await vi.waitFor(() =>
-      expect(host.querySelector('.progress-admin .progress-error')!.textContent).toBe('Senha errada (ou sem conexão).'),
-    );
-    expect(host.querySelector('[role="dialog"]')).not.toBeNull();
-    input.value = 'secret123';
-    input.form!.requestSubmit();
-    await vi.waitFor(() => expect(cb.onClose).toHaveBeenCalled());
-    expect(enter).toHaveBeenCalledWith('secret123');
-  });
-
-  it('with admin on: "Sair do admin" turns it off; without the admin option there is no button', () => {
-    const leave = vi.fn();
-    open({ admin: { on: true, enter: vi.fn(), leave } });
-    expect(button('Admin')).toBeUndefined();
-    button('Sair do admin').click();
-    expect(leave).toHaveBeenCalled();
-  });
-
-  it('no admin option: no admin button', () => {
-    open();
+describe('admin (V3: by account, no password)', () => {
+  it('there is no Admin button or password field any more', () => {
+    open({ account: acct() });
     expect(button('Admin')).toBeUndefined();
     expect(button('Sair do admin')).toBeUndefined();
+    expect(host.querySelector('input[type="password"]')).toBeNull();
   });
 });

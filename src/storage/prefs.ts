@@ -1,7 +1,6 @@
 // Small values kept on the device (never throw: blocked or full storage just forgets them).
 export const HOWTO_KEY = 'pl.howto.v1'; // "Como jogar" already closed once
 export const INITIALS_KEY = 'pl.initials'; // the last initials saved in the ranking (the plate starts with them)
-export const ADMIN_KEY = 'pl.admin'; // admin mode on (testing)
 
 export function openStorage(): Storage | undefined {
   try {

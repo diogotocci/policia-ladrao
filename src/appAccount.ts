@@ -10,6 +10,8 @@ import type { AccountActions } from './ui/screens/progress';
 export interface AppAccount {
   /** the profile the gate settled on */
   profile: Profile;
+  /** the shop's admin mode: the server says so only for the admin account */
+  admin: boolean;
   bind(o: { get(): Profile; adopt(p: Profile): void }): Pick<Sync, 'changed' | 'dispose'>;
   /** the profile dialog's account block; `reopen` draws the dialog again after a rename */
   actions(host: HTMLElement, reopen: () => void): AccountActions;
@@ -36,6 +38,7 @@ export function createAppAccount(o: {
   };
   return {
     profile: o.profile,
+    admin: o.account.admin === true,
     bind(b) {
       sync = createSync({ api: o.api, storage: o.storage, get: b.get, adopt: b.adopt, signedOut: (gone) => leave(gone) });
       return sync;
