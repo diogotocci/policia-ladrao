@@ -30,6 +30,26 @@ const SCHEMA = [
     rev integer not null default 1,
     updated_at timestamptz not null default now()
   )`,
+  // V3 delivery 2: the global ranking. One row per match; the boards show each player's best (suspect rows never show).
+  `create table if not exists records (
+    id bigserial primary key,
+    user_id bigint not null references users(id) on delete cascade,
+    match_id text not null,
+    mode text not null,
+    side text not null,
+    difficulty text not null,
+    time_ms integer not null,
+    hp integer not null,
+    how text,
+    car text not null,
+    rank integer not null,
+    suspect boolean not null default false,
+    ended_at timestamptz not null,
+    created_at timestamptz not null default now(),
+    unique (user_id, match_id)
+  )`,
+  `create index if not exists records_board on records (mode, side, difficulty) where not suspect`,
+  `create index if not exists records_user on records (user_id, ended_at desc)`,
 ];
 
 const ready = new WeakMap<Db, Promise<void>>();

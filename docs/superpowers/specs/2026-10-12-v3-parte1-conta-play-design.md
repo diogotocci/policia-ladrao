@@ -1,6 +1,6 @@
 # Polícia × Ladrão: V3, Parte 1: conta, nuvem, ranking global, painel e Google Play
 
-Data: 2026-10-12. Status: aprovada; entrega 1 feita (0.25.0).
+Data: 2026-10-12. Status: aprovada; entrega 1 feita (0.25.0, admin pela conta em 0.26.0); entrega 2 feita (0.27.0).
 
 ## 1. Objetivo
 
@@ -115,10 +115,15 @@ A tela de perfil (o botão do canto) mostra:
 - **Quando sobe:** um recorde sobe junto com o fim da partida, com `match_id` único.
 - **Checagem de plausibilidade no servidor:**
   - o tempo fica dentro dos limites do modo (uma fuga na Perseguição dura exatamente o tempo de fuga);
-  - no máximo 1 resultado por minuto por conta;
-  - o resultado precisa bater com o evento `match_end` da mesma partida.
+  - cada partida terminou depois da anterior pelo menos o tempo que ela durou (com folga de 20%), contando pela hora em que acabou, para que recordes enviados juntos depois de jogar offline não virem suspeitos;
+  - a hora em que acabou não pode estar no futuro nem ter mais de 30 dias;
+  - o carro é do lado certo e a patente vai de 1 a 7;
+  - (entrega 3) o resultado precisa bater com o evento `match_end` da mesma partida.
   - Fora disso o recorde é guardado como suspeito e não aparece. A verificação por replay vai para o backlog.
-- **Iniciais de arcade:** saem; o nome de usuário substitui.
+- **Iniciais de arcade:** ficam só no ranking do aparelho, com a placa de sempre (decidido em 2026-10-12). O global usa o nome de usuário.
+- **Global sem digitar nada:** a partida sobe sozinha para o global no fim. A tela de fim mostra a linha "Ranking global" (enviando, a posição, "seu melhor continua em…" ou "sobe quando a internet voltar") junto da placa ou do "Recorde salvo!"; se a partida só entra no global, aparece uma caixinha só com essa linha.
+- **Offline:** o recorde fica numa fila no aparelho e sobe quando a conexão volta (o `match_id` evita duplicar).
+- **Partidas com `?debug`** não sobem em produção (as regras delas são alteradas para teste).
 
 ## 6. Painel (/admin)
 

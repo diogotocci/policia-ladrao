@@ -18,7 +18,8 @@ import { loadMode, saveMode } from './storage/mode';
 import { renderMode } from './ui/screens/mode';
 import { countModeRecords, loadModeBoards, qualifies, saveModeBoards, type ModeBoards } from './storage/ranking';
 import { HOWTO_KEY, INITIALS_KEY, openStorage, readPref, writePref } from './storage/prefs';
-import { addRecord, settleEnd } from './appMatch';
+import { addRecord, settleEnd, submitGlobal } from './appMatch';
+import type { Submitted } from './account/api';
 import { wireAppEvents } from './appEvents';
 import type { AppAccount } from './appAccount';
 import { initialState, reduce, type FlowAction, type FlowState } from './ui/screens/flow';
@@ -107,6 +108,8 @@ export function startApp(
   /** the cars in use (shop), for the spinning previews */
   const looks = () => ({ police: lookFor(profile, 'police'), thief: lookFor(profile, 'thief') });
   let highlight: { mode: Mode; difficulty: Difficulty; role: Role; rank: number } | undefined;
+  /** V3 delivery 2: the global ranking's answer for the last match (it goes up by itself, with the username) */
+  let lastGlobal: Promise<Submitted | undefined> | undefined;
   /** the reward of the last match already counted up on screen once */
   let rewardShown = false;
   let game: GameHandle | undefined;
@@ -153,6 +156,7 @@ export function startApp(
         profile = settled.profile;
         persist();
         rewardShown = false;
+        lastGlobal = submitGlobal(profile, r, { role, mode, difficulty }, opts.account);
         dispatch({
           type: 'ended',
           result: r,
@@ -166,6 +170,9 @@ export function startApp(
   };
 
   let tabSwitch = false;
+  // V3 delivery 2: the Ranking screen opens on the global ranking; "Neste aparelho" is the phone's
+  let rankingScope: 'global' | 'local' = 'global';
+  let scopeSwitch = false;
   let difficultySwitch = false;
   let modeSwitch = false;
   function trap() {
@@ -278,11 +285,13 @@ export function startApp(
           result: s.result,
           qualifies: s.qualifies,
           saved: s.saved,
+          global: lastGlobal,
           reward: s.reward,
           difficulty,
           animateReward: !rewardShown, // count up only the first time, not when coming back from the ranking
           lastInitials: /^[A-Z]{3}$/.test(readPref(storage, INITIALS_KEY)) ? readPref(storage, INITIALS_KEY) : '',
           career: s.career,
+          // the phone's ranking keeps the arcade plate with initials; the global one uses the username by itself
           onSave: (initials) => {
             writePref(storage, INITIALS_KEY, initials); // the plate starts with them next time
             const r = addRecord(boards, profile, s, initials, { mode, difficulty });
@@ -312,7 +321,17 @@ export function startApp(
           focusTab: tabSwitch,
           onTab: (tab) => ((tabSwitch = true), press({ type: 'tab', tab })),
           onBack: () => press({ type: 'back' }),
+          scope: rankingScope,
+          onScope: (sc) => {
+            audio.mixer.cue('ui');
+            rankingScope = sc;
+            scopeSwitch = true;
+            show(state);
+          },
+          focusScope: scopeSwitch,
+          loadGlobal: opts.account?.ranking,
         });
+        scopeSwitch = false;
         tabSwitch = false;
         difficultySwitch = false;
         modeSwitch = false;

@@ -688,6 +688,14 @@
 .end-save {
   min-width: 186px;
 }
+.end-record-global {
+  margin: 0;
+  font:
+    700 14px/1.3 system-ui,
+    sans-serif;
+  color: var(--sign);
+  text-align: center;
+}
 .end-actions {
   display: flex;
   gap: 10px;
@@ -751,6 +759,73 @@
 .ranking-empty {
   opacity: 0.75;
   font-family: system-ui, sans-serif;
+}
+/* V3 delivery 2: the global ranking (usernames); the phone's ranking keeps the initials */
+.ranking-name {
+  min-width: 0;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ranking-row.is-global {
+  grid-template-columns: 2.6em minmax(0, 1fr) auto minmax(0, 8em) minmax(0, 6em);
+}
+.ranking-row.is-me {
+  background: rgba(255, 207, 74, 0.25);
+  box-shadow: inset 0 0 0 2px rgba(255, 194, 26, 0.7);
+}
+.ranking-car,
+.ranking-rankname {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: system-ui, sans-serif;
+  font-size: 0.85em;
+}
+.ranking-rankname {
+  opacity: 0.7;
+}
+.ranking-you {
+  color: var(--sign);
+  font-family: system-ui, sans-serif;
+  font-size: 0.85em;
+}
+.ranking-gap {
+  text-align: center;
+  opacity: 0.6;
+  line-height: 1;
+}
+.ranking-list.is-global {
+  max-height: 42vh;
+  overflow-y: auto;
+}
+.ranking-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+.ranking-scopes {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+.ranking-scope.screen-btn {
+  min-width: 0;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  background: transparent;
+  box-shadow: none;
+}
+.ranking-scope[aria-checked='true'] {
+  background: var(--sign);
+  color: var(--sign-ink);
 }
 
 @media (max-height: 420px) {

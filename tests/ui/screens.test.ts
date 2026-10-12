@@ -440,6 +440,55 @@ describe('end', () => {
     expect(root.querySelector('.initials')).toBeNull();
   });
 
+  it('V3: the global line sits in the record box (it goes up by itself); the plate still saves the initials for the phone', async () => {
+    let answer!: (a: { pos: number | null; best: boolean } | undefined) => void;
+    const global = new Promise<{ pos: number | null; best: boolean } | undefined>((r) => (answer = r));
+    const onSave = vi.fn();
+    renderEnd(root, { ...base, role: 'police', result: { winner: 'police', time: 40 }, qualifies: true, onSave, global });
+    expect(root.querySelector('.initials')).not.toBeNull();
+    expect(root.querySelector('.end-record-global')!.textContent).toBe('Ranking global: enviando…');
+    answer({ pos: 37, best: true });
+    await vi.waitFor(() => expect(root.querySelector('.end-record-global')!.textContent).toBe('Ranking global: 37º'));
+    button('Salvar').click();
+    expect(onSave).toHaveBeenCalledWith('AAA');
+    expect(root.textContent).toContain('Recorde salvo!');
+    expect(root.querySelector('.end-record-global')!.textContent).toBe('Ranking global: 37º'); // moved into the saved note
+  });
+
+  it('V3: only global (not in the phone top 10): a small box; not a new best; offline; not believed', async () => {
+    renderEnd(root, {
+      ...base,
+      role: 'police',
+      result: { winner: 'police', time: 60 },
+      qualifies: false,
+      onSave: vi.fn(),
+      global: Promise.resolve({ pos: 12, best: false }),
+    });
+    expect(root.querySelector('.end-layout.has-record')).not.toBeNull();
+    await vi.waitFor(() => expect(root.textContent).toContain('Ranking global: seu melhor continua em 12º'));
+    root.innerHTML = '';
+    renderEnd(root, {
+      ...base,
+      role: 'police',
+      result: { winner: 'police', time: 60 },
+      qualifies: false,
+      onSave: vi.fn(),
+      global: Promise.resolve(undefined),
+    });
+    await vi.waitFor(() => expect(root.textContent).toContain('sobe quando a internet voltar'));
+    root.innerHTML = '';
+    renderEnd(root, {
+      ...base,
+      role: 'police',
+      result: { winner: 'police', time: 60 },
+      qualifies: false,
+      onSave: vi.fn(),
+      global: Promise.resolve({ pos: null, best: false }),
+    });
+    await vi.waitFor(() => expect(root.querySelector('.end-record')).toBeNull());
+    expect(root.querySelector('.end-layout.has-record')).toBeNull();
+  });
+
   it('the reason says how it ended: escape (1:30), police destroyed, thief caught', () => {
     renderEnd(root, { ...base, role: 'thief', result: { winner: 'thief', time: 90, reason: 'escape' }, qualifies: false, onSave: vi.fn() });
     expect(root.textContent).toContain('Fugiu!');

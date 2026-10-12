@@ -1,6 +1,8 @@
 // The game's side of the account API (V3 part 1): one interface, two implementations. In production it talks to the
 // Vercel functions in api/; on localhost the e2e tests and local play use the fake in devApi.ts (no Google, no database).
 import type { Profile } from '../meta/profile';
+import type { GlobalBoard, RecordIn } from '../meta/records';
+import type { Difficulty, Mode, Role } from '../config/balance';
 
 export interface Account {
   id: string;
@@ -26,6 +28,9 @@ export class OfflineError extends Error {
   }
 }
 
+/** The server answered with an error of its own (5xx): treated as offline, but a request that keeps failing is given up. */
+export class ServerError extends OfflineError {}
+
 export interface AccountApi {
   /** the Google Client ID for the sign-in button (null: sign-in not set up on this server) */
   clientId(): Promise<string | null>;
@@ -41,6 +46,18 @@ export interface AccountApi {
   putProfile(data: Profile, baseRev: number): Promise<Stored>;
   /** false when the confirmation does not match */
   deleteAccount(confirm: string): Promise<boolean>;
+  /** V3 delivery 2: sends a finished match to the global ranking; the answer is the player's position there.
+   * Undefined when the server refused the record as malformed (it is dropped, never retried). */
+  submitRecord(r: RecordIn & { sentAt: string }): Promise<Submitted | undefined>;
+  /** one board of the global ranking: top 100 plus the player's own line */
+  ranking(mode: Mode, side: Role, difficulty: Difficulty): Promise<GlobalBoard>;
+}
+
+/** the player's place after sending a record (pos null: not on the board, e.g. a record the server finds suspect) */
+export interface Submitted {
+  pos: number | null;
+  /** this match is the player's best on that board */
+  best: boolean;
 }
 
 export function httpApi(fetchFn: typeof fetch = (...a) => fetch(...a)): AccountApi {
@@ -55,7 +72,7 @@ export function httpApi(fetchFn: typeof fetch = (...a) => fetch(...a)): AccountA
     } catch {
       throw new OfflineError();
     }
-    if (res.status >= 500) throw new OfflineError(); // server down or not configured: same as no internet
+    if (res.status >= 500) throw new ServerError(); // server down or not configured: same as no internet
     return res;
   };
   const read = async <T>(res: Response): Promise<T> => (await res.json()) as T;
@@ -97,6 +114,16 @@ export function httpApi(fetchFn: typeof fetch = (...a) => fetch(...a)): AccountA
       const res = await call('/api/account', send('DELETE', { confirm }));
       if (res.status === 400) return false;
       return (await signedIn<{ ok: boolean }>(res)).ok;
+    },
+    async submitRecord(r) {
+      const res = await call('/api/records', send('POST', r));
+      if (res.status === 400) return undefined;
+      return signedIn<Submitted>(res);
+    },
+    async ranking(mode, side, difficulty) {
+      const res = await call(`/api/ranking?mode=${mode}&side=${side}&difficulty=${difficulty}`);
+      if (!res.ok) throw new OfflineError();
+      return read<GlobalBoard>(res);
     },
   };
 }

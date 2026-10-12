@@ -1,6 +1,7 @@
 // The account inside the running app (V3 part 1): keeps the cloud copy of the progress in sync and gives the profile
 // dialog its actions (Trocar nome, Sair, Excluir minha conta). Kept out of app.ts, which only calls bind() and actions().
-import type { Account, AccountApi } from './account/api';
+import type { Account, AccountApi, Submitted } from './account/api';
+import type { RecordIn } from './meta/records';
 import { forgetAccount, loadAccountState, saveAccountState } from './account/store';
 import { createSync, type Sync } from './account/sync';
 import type { Profile } from './meta/profile';
@@ -12,6 +13,13 @@ export interface AppAccount {
   profile: Profile;
   /** the shop's admin mode: the server says so only for the admin account */
   admin: boolean;
+  /** the name shown in the rankings */
+  username(): string;
+  /** V3 delivery 2: a finished match for the global ranking (queued when offline); the answer once it arrives.
+   * Undefined when records do not go up at all (a ?debug match in production, or already signed out). */
+  record(r: RecordIn): Promise<Submitted | undefined> | undefined;
+  /** one board of the global ranking */
+  ranking: AccountApi['ranking'];
   bind(o: { get(): Profile; adopt(p: Profile): void }): Pick<Sync, 'changed' | 'dispose'>;
   /** the profile dialog's account block; `reopen` draws the dialog again after a rename */
   actions(host: HTMLElement, reopen: () => void): AccountActions;
@@ -22,6 +30,8 @@ export function createAppAccount(o: {
   storage: Storage | undefined;
   account: Account;
   profile: Profile;
+  /** records go to the global ranking (off for ?debug matches in production: their rules are bent for testing) */
+  records: boolean;
   /** back to the start (the gate): after Sair, Excluir, or a session that ended on the server */
   restart(): void;
 }): AppAccount {
@@ -39,6 +49,9 @@ export function createAppAccount(o: {
   return {
     profile: o.profile,
     admin: o.account.admin === true,
+    username: () => account.username ?? '',
+    record: (r) => (o.records && sync && !left ? sync.record(r) : undefined),
+    ranking: (mode, side, difficulty) => o.api.ranking(mode, side, difficulty),
     bind(b) {
       sync = createSync({ api: o.api, storage: o.storage, get: b.get, adopt: b.adopt, signedOut: (gone) => leave(gone) });
       return sync;

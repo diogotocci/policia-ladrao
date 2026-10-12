@@ -3,6 +3,7 @@
 // as a test account with a username, so the old e2e tests go straight to the title; ?login starts signed out to test the gate.
 import { mergeProfiles } from '../meta/merge';
 import { parseProfile, type Profile } from '../meta/profile';
+import { better, GLOBAL_TOP, plausible, type GlobalRow, type RecordIn } from '../meta/records';
 import { usernameProblem } from '../meta/username';
 import { SignedOutError, type Account, type AccountApi, type Stored } from './api';
 
@@ -15,6 +16,8 @@ interface DevServer {
   account: Account;
   profile: Profile | null;
   rev: number;
+  /** V3 delivery 2: this test account's records (the fake has no other players) */
+  records?: (RecordIn & { suspect: boolean })[];
 }
 
 const testAccount = (username: string | null): Account => ({
@@ -92,8 +95,31 @@ export function devApi(storage: Storage | undefined, opts: { startSignedOut: boo
       const s = signedIn();
       if (confirm.trim().toLowerCase() !== (s.account.username ?? s.account.email).toLowerCase()) return Promise.resolve(false);
       // a deleted account comes back as a brand new one on the next sign-in
-      save({ signedIn: false, account: { ...testAccount(null), id: `dev-${Date.now()}` }, profile: null, rev: 0 });
+      save({ signedIn: false, account: { ...testAccount(null), id: `dev-${Date.now()}` }, profile: null, rev: 0, records: [] });
       return Promise.resolve(true);
     },
+    submitRecord(r) {
+      const s = signedIn();
+      const records = s.records ?? [];
+      if (!records.some((x) => x.matchId === r.matchId)) records.push({ ...r, suspect: !plausible(r) });
+      save({ ...s, records });
+      const best = bestOf(records, r);
+      return Promise.resolve({ pos: best ? 1 : null, best: best?.matchId === r.matchId });
+    },
+    ranking(mode, side, difficulty) {
+      const s = load();
+      const best = s.signedIn && s.account.username ? bestOf(s.records ?? [], { mode, side, difficulty }) : undefined;
+      const row: GlobalRow[] = best
+        ? [{ pos: 1, username: s.account.username!, time: best.time, hp: best.hp, how: best.how, car: best.car, rank: best.rank, me: true }]
+        : [];
+      return Promise.resolve({ rows: row.slice(0, GLOBAL_TOP) });
+    },
   };
+}
+
+/** the best shown record of one board (the fake's only player) */
+function bestOf(list: (RecordIn & { suspect: boolean })[], b: Pick<RecordIn, 'mode' | 'side' | 'difficulty'>) {
+  return list
+    .filter((x) => !x.suspect && x.mode === b.mode && x.side === b.side && x.difficulty === b.difficulty)
+    .reduce<(RecordIn & { suspect: boolean }) | undefined>((top, x) => (!top || better(b.mode, b.side, x, top) ? x : top), undefined);
 }

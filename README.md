@@ -29,7 +29,8 @@ Itens: tiros, bombas, óleo, miguelito e fumaça do ladrão; bloqueio, nitro, me
 - Cada partida paga moedas (tempo, dano, caixas, vitória; o Difícil paga mais).
 - **Loja:** carros novos para cada lado, pinturas e acabamentos, adesivos, rodas, neon, fumaça colorida, acessórios do ladrão (aerofólio, rack, antena, escapamento com chama), sirenes e buzinas, e placa personalizada. Os itens são desbloqueados na Carreira (patentes, conquistas e maestria de cada carro) e depois comprados.
 - **Carreira:** 3 desafios por dia (sorteados entre 21, sem repetir o do dia anterior), conquistas, patentes por lado (Recruta a Delegado, Pivete a Chefão) e sequência de dias. Recompensas são resgatadas na tela da Carreira.
-- **Conta (V3):** entrar com o Google é obrigatório. O progresso fica no aparelho e na conta (sobe sozinho depois de cada mudança; sem internet, sobe quando a conexão voltar) e vai junto para outro celular. O nome de usuário (único) é o que vai aparecer no ranking global.
+- **Conta (V3):** entrar com o Google é obrigatório. O progresso fica no aparelho e na conta (sobe sozinho depois de cada mudança; sem internet, sobe quando a conexão voltar) e vai junto para outro celular. O nome de usuário (único) é o que aparece no ranking.
+- **Ranking global:** cada vitória (e o tempo vivo do ladrão na Sobrevivência) entra sozinha no global, com o nome de usuário; o ranking do aparelho continua com a placa de iniciais. O global mostra o top 100 de cada quadro (modo, lado e dificuldade), com o melhor de cada jogador, o carro e a patente; a sua posição aparece embaixo quando está fora do top. O servidor guarda como suspeito, e não mostra, o resultado que não pode ser de uma partida de verdade.
 - No Perfil (botão do canto da tela inicial): trocar o nome, Sair e **Excluir minha conta**. A exclusão também pode ser feita na web, em `/excluir-conta`. Política de privacidade em `/privacidade` e termos em `/termos`.
 
 ## Tecnologia

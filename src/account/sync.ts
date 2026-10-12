@@ -2,7 +2,9 @@
 // the profile dirty and goes up a moment later; offline it waits for the connection. When another phone saved meanwhile,
 // the server merges both and the game takes the merged copy.
 import type { Profile } from '../meta/profile';
-import { SignedOutError, type AccountApi } from './api';
+import { SignedOutError, type AccountApi, type Submitted } from './api';
+import type { RecordIn } from '../meta/records';
+import { flushRecords, pendingFor, queueRecord } from './records';
 import { loadAccountState, saveAccountState } from './store';
 
 export interface Sync {
@@ -10,8 +12,11 @@ export interface Sync {
   changed(): void;
   /** sends now (before signing out); resolves when done or failed */
   flush(): Promise<void>;
-  /** changes the account has not received yet */
+  /** changes the account has not received yet (the profile or records for the global ranking) */
   pending(): boolean;
+  /** V3 delivery 2: queues a finished match for the global ranking and sends it; resolves with the server's answer, or
+   * undefined when it stays queued (offline) or was refused */
+  record(r: RecordIn): Promise<Submitted | undefined>;
   dispose(): void;
 }
 
@@ -30,7 +35,24 @@ export function createSync(o: {
 }): Sync {
   let timer: ReturnType<typeof setTimeout> | undefined;
   let chain: Promise<void> = Promise.resolve();
+  let answers = new Map<string, Submitted>();
+  /** the records waiting for the global ranking, after the profile */
+  const sendRecords = async () => {
+    const owner = loadAccountState(o.storage).account?.id;
+    if (!owner || pendingFor(o.storage, owner).length === 0) return;
+    try {
+      answers = await flushRecords(o.api, o.storage, owner);
+    } catch (e) {
+      if (e instanceof SignedOutError) o.signedOut?.(e.gone);
+      return;
+    }
+    if (pendingFor(o.storage, owner).length > 0) retry();
+  };
   const push = async () => {
+    await pushProfile();
+    await sendRecords();
+  };
+  const pushProfile = async () => {
     const st = loadAccountState(o.storage);
     if (!st.account || !st.dirty) return;
     const sent = o.get();
@@ -74,7 +96,17 @@ export function createSync(o: {
       schedule();
     },
     flush,
-    pending: () => loadAccountState(o.storage).dirty,
+    pending: () => {
+      const st = loadAccountState(o.storage);
+      return st.dirty || (st.account !== null && pendingFor(o.storage, st.account.id).length > 0);
+    },
+    async record(r) {
+      const owner = loadAccountState(o.storage).account?.id;
+      if (!owner) return undefined;
+      queueRecord(o.storage, owner, r);
+      await flush();
+      return answers.get(r.matchId);
+    },
     dispose() {
       clearTimeout(timer);
       target?.removeEventListener('online', onOnline);
