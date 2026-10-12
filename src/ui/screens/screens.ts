@@ -6,6 +6,7 @@ import { formatTime } from '../hud';
 import { btn, h, mount, type Disposable } from './dom';
 import { openHowTo } from './howto';
 import { SCREEN_ICONS } from './icons';
+import { fillGlobal, type LoadGlobal } from './rankingGlobal';
 import './screens.css';
 
 export { trapFocus } from './dom';
@@ -174,6 +175,11 @@ export function renderRanking(
     focusMode?: boolean;
     onTab(tab: Role): void;
     onBack(): void;
+    /** V3 delivery 2: "Global" (the default) or "Neste aparelho"; without `loadGlobal` only the phone's ranking shows */
+    scope?: 'global' | 'local';
+    onScope?(scope: 'global' | 'local'): void;
+    focusScope?: boolean;
+    loadGlobal?: LoadGlobal;
   },
 ): Disposable {
   const s = h('section', 'screen screen-ranking');
@@ -193,8 +199,9 @@ export function renderRanking(
   const list = h('ol', 'ranking-list');
   list.id = 'ranking-list';
   list.setAttribute('role', 'tabpanel');
-  const entries = p.boards[p.mode][p.difficulty][p.tab];
-  if (entries.length === 0) list.append(h('li', 'ranking-empty', 'Nenhum recorde ainda — jogue uma partida!'));
+  const global = p.loadGlobal && p.scope !== 'local' ? p.loadGlobal : undefined;
+  const entries = global ? [] : p.boards[p.mode][p.difficulty][p.tab];
+  if (entries.length === 0 && !global) list.append(h('li', 'ranking-empty', 'Nenhum recorde ainda — jogue uma partida!'));
   entries.forEach((e, i) => {
     const row = h('li', 'ranking-row');
     const hl = p.highlight;
@@ -223,9 +230,39 @@ export function renderRanking(
   const back = btn('Voltar', 'is-quiet', p.onBack);
   const picker = difficultyPicker(p.difficulty, p.onDifficulty);
   const modes = modePicker(p.mode, p.onMode);
-  card.append(h('h2', 'screen-heading', 'Ranking'), modes, picker, tabs, list, back);
+  const head = h('div', 'ranking-head');
+  head.append(h('h2', 'screen-heading', 'Ranking'));
+  let scopeTab: HTMLElement | undefined;
+  if (p.loadGlobal) {
+    const scopes = h('div', 'ranking-scopes');
+    scopes.setAttribute('role', 'radiogroup');
+    scopes.setAttribute('aria-label', 'Qual ranking');
+    for (const [id, label] of [
+      ['global', 'Global'],
+      ['local', 'Neste aparelho'],
+    ] as const) {
+      const on = (p.scope ?? 'global') === id;
+      const b = btn(label, 'ranking-scope', () => p.onScope?.(id));
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', String(on));
+      if (on) scopeTab = b;
+      scopes.append(b);
+    }
+    head.append(scopes);
+  }
+  card.append(head, modes, picker, tabs, list, back);
   s.append(card);
+  const stop = global ? fillGlobal(list, global, { mode: p.mode, side: p.tab, difficulty: p.difficulty }) : () => {};
   const checkedIn = (g: HTMLElement) => g.querySelector<HTMLElement>('[aria-checked="true"]') ?? undefined;
-  const focus = p.focusMode ? checkedIn(modes) : p.focusDifficulty ? checkedIn(picker) : p.focusTab ? selected : back;
-  return mount(root, s, focus);
+  const focus = p.focusScope
+    ? scopeTab
+    : p.focusMode
+      ? checkedIn(modes)
+      : p.focusDifficulty
+        ? checkedIn(picker)
+        : p.focusTab
+          ? selected
+          : back;
+  const m = mount(root, s, focus);
+  return { dispose: () => (stop(), m.dispose()) };
 }

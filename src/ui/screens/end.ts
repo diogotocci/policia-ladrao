@@ -81,6 +81,25 @@ function resultCard(
   return { card, stop };
 }
 
+type GlobalAnswer = { pos: number | null; best: boolean } | undefined;
+const nth = (v: number) => `${v.toLocaleString('pt-BR')}º`;
+
+/**
+ * V3 delivery 2: the global ranking takes the match by itself (with the username); this line says where it went.
+ * `gone` runs when there is nothing to say (a result the server did not believe).
+ */
+function globalLine(answer: Promise<GlobalAnswer>, gone: () => void): HTMLElement {
+  const line = h('p', 'end-record-global', 'Ranking global: enviando…');
+  line.setAttribute('aria-live', 'polite');
+  const offline = () => (line.textContent = 'Ranking global: sobe quando a internet voltar');
+  answer.then((a) => {
+    if (!a) return offline();
+    if (a.pos === null) return gone();
+    line.textContent = a.best ? `Ranking global: ${nth(a.pos)}` : `Ranking global: seu melhor continua em ${nth(a.pos)}`;
+  }, offline);
+  return line;
+}
+
 const savedNote = () => {
   const box = h('div', 'end-record is-saved');
   box.append(h('p', 'end-saved', 'Recorde salvo!'), h('p', 'end-record-hint', 'Veja sua placa no ranking'));
@@ -161,7 +180,12 @@ function recordPanel(
     e.stopPropagation(); // letters do not become game shortcuts (M, P...)
     render();
   });
-  panel.append(h('p', 'end-record-title', 'Novo recorde!'), h('p', 'end-record-hint', 'Escreva sua placa para o ranking'), plate, pad);
+  panel.append(
+    h('p', 'end-record-title', 'Novo recorde!'),
+    h('p', 'end-record-hint', 'Escreva sua placa para o ranking do aparelho'),
+    plate,
+    pad,
+  );
   panel.append(btn('Salvar', 'is-primary end-save', save));
   render();
   return { panel, focus: plate };
@@ -183,6 +207,8 @@ export function renderEnd(
     animateReward?: boolean;
     /** the last initials saved: the plate starts with them */
     lastInitials?: string;
+    /** V3 delivery 2: the global ranking's answer for this match (it goes up by itself, with the username) */
+    global?: Promise<GlobalAnswer>;
     /** V2 part 5: career of this match; the streak dialog opens over the screen when `animateReward` (first time) */
     career?: CareerEvent[];
     onSave(initials: string): void;
@@ -219,13 +245,25 @@ export function renderEnd(
     btn('Início', 'is-quiet', p.onHome, SCREEN_ICONS.home),
   );
   let focus: HTMLElement = again;
-  if (p.saved) layout.append(savedNote());
+  // the global line lives in whichever record box shows; a match that is only global gets a small box of its own
+  let box: HTMLElement | undefined;
+  if (p.saved) layout.append((box = savedNote()));
   else if (p.qualifies) {
-    const rec = recordPanel(p.onSave, () => again.focus(), p.lastInitials);
-    layout.append(rec.panel);
+    const rec = recordPanel(p.onSave, (note) => (again.focus(), line && note.append(line)), p.lastInitials);
+    layout.append((box = rec.panel));
     focus = rec.focus;
+  } else if (p.global) {
+    box = h('div', 'end-record is-saved');
+    box.append(h('p', 'end-saved', 'Ranking global'));
+    layout.append(box);
   }
-  layout.classList.toggle('has-record', p.saved === true || p.qualifies);
+  const alone = !p.saved && !p.qualifies;
+  const line =
+    p.global && box
+      ? globalLine(p.global, () => (alone ? (box?.remove(), layout.classList.remove('has-record')) : line?.remove()))
+      : undefined;
+  if (line) box?.append(line);
+  layout.classList.toggle('has-record', box !== undefined);
   s.append(layout, actions);
   const m = mount(root, s, focus);
   const streak = p.career?.find((e): e is Extract<CareerEvent, { kind: 'streak' }> => e.kind === 'streak');

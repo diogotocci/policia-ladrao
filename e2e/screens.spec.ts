@@ -51,12 +51,16 @@ test('full product flow: title → choose thief → 3-2-1 → play → escape at
   await page.keyboard.press('Enter');
   await expect(page.locator('.end-saved')).toBeVisible();
   await page.getByRole('button', { name: 'Ranking' }).click();
+  // V3: the Ranking opens on Global; an escape at 4 s (debug) is not believable, so it never shows there
+  await expect(page.locator('.ranking-list')).toContainText('Ninguém neste quadro ainda');
+  await page.getByRole('radio', { name: 'Neste aparelho' }).click();
   const first = page.locator('.ranking-row').first();
   await expect(first).toContainText('DIO');
   await expect(first).toHaveClass(/is-new/);
   await expect(first).toContainText('🏁');
   await page.reload();
   await page.getByRole('button', { name: 'Ranking' }).click();
+  await page.getByRole('radio', { name: 'Neste aparelho' }).click();
   await page.getByRole('tab', { name: 'Ladrão — mais rápidos a vencer' }).click();
   await expect(page.locator('.ranking-row').first()).toContainText('DIO');
 });
@@ -171,6 +175,7 @@ test('difficulty: Difícil is remembered, pays x1,5 and has its own ranking', as
   await page.locator('.initials').press('Enter');
   await page.getByRole('button', { name: 'Ranking' }).click();
   await expect(page.locator('.screen-ranking [aria-label="Dificuldade"] [aria-checked="true"]')).toHaveText('Difícil');
+  await page.getByRole('radio', { name: 'Neste aparelho' }).click();
   await expect(page.locator('.ranking-row').first()).toHaveClass(/is-new/);
   await page.locator('.screen-ranking').getByRole('radio', { name: 'Médio' }).click();
   await expect(page.locator('.ranking-row')).toHaveCount(0);
@@ -194,4 +199,27 @@ test('Sobrevivência: no clock, chaos rises, roadworks appear and the match stil
   await page.waitForFunction(() => (window as unknown as { __game: G }).__game.snapshot().works.length > 0, null, { timeout: 60_000 });
   expect(await page.evaluate(() => (window as unknown as { __game: G }).__game.snapshot().mode)).toBe('survival');
   await expect(page.locator('.screen-end')).toBeVisible({ timeout: 180_000 });
+});
+
+test('global ranking (V3 delivery 2): a real win goes up by itself and shows with the username, car and rank', async ({ page }) => {
+  test.setTimeout(300_000);
+  await page.goto('/?app&quality=low&mute&debug&traffic=0&thiefHp=2');
+  await page.evaluate(() => localStorage.setItem('pl.howto.v1', '1'));
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await page.getByRole('button', { name: 'Jogar Perseguição' }).click();
+  await page.locator('[data-role="police"]').click();
+  await page.waitForFunction(() => '__game' in window && !document.querySelector('.screen-countdown'), null, { timeout: 60_000 });
+  await page.keyboard.down('Space');
+  await expect(page.locator('.screen-end')).toContainText('Você venceu!', { timeout: 150_000 });
+  await page.keyboard.up('Space');
+  // the plate for the phone's ranking is still there; the global one already has the match
+  await expect(page.locator('.initials')).toBeVisible();
+  await expect(page.locator('.end-record-global')).toHaveText('Ranking global: 1º');
+  await page.getByRole('button', { name: 'Ranking' }).click();
+  await expect(page.getByRole('radio', { name: 'Global' })).toHaveAttribute('aria-checked', 'true');
+  const me = page.locator('.ranking-row.is-me');
+  await expect(me).toContainText('@Teste');
+  await expect(me).toContainText('(você)');
+  await expect(me).toContainText('Viatura');
+  await expect(me).toContainText('Recruta');
 });

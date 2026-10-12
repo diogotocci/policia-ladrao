@@ -6,7 +6,9 @@ import { settleCareer, settleMatch, type Profile } from './meta/profile';
 import type { Reward } from './meta/rewards';
 import type { MatchEnd } from './gameTypes';
 import { insert, recordEntry, type ModeBoards } from './storage/ranking';
+import type { Submitted } from './account/api';
 import type { MatchResult } from './ui/screens/flow';
+import { goesGlobal, type RecordIn } from './meta/records';
 
 type Ctx = { role: Role; mode: Mode; difficulty: Difficulty; today: string };
 
@@ -60,4 +62,47 @@ export function addRecord(
   );
   const r = insert(boards[where.mode][where.difficulty], s.role, entry, where.mode);
   return { boards: { ...boards, [where.mode]: { ...boards[where.mode], [where.difficulty]: r.board } }, rank: r.rank };
+}
+
+/** V3 delivery 2: the global ranking record of a finished match (the car and rank are the ones it was played with). */
+export function globalRecord(
+  profile: Profile,
+  r: MatchEnd,
+  c: { role: Role; mode: Mode; difficulty: Difficulty },
+  now = new Date(),
+): RecordIn {
+  const entry = recordEntry(c.role, r, 'x', '');
+  return {
+    matchId: newMatchId(),
+    mode: c.mode,
+    side: c.role,
+    difficulty: c.difficulty,
+    time: r.time,
+    hp: Math.max(0, Math.round(r.hp ?? 0)),
+    ...(c.role === 'thief' ? { how: entry.how } : {}),
+    car: profile.equipped[c.role].car,
+    rank: rankOf(profile.career.xp[c.role]),
+    endedAt: now.toISOString(),
+  };
+}
+
+/** a unique id for each match (the server keeps one row per id, so a resend from the offline queue counts once) */
+export function newMatchId(): string {
+  const c = globalThis.crypto;
+  if (c?.randomUUID) return c.randomUUID();
+  return `m-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
+/**
+ * V3 delivery 2: a win (or the Sobrevivência thief's time alive) goes to the global ranking by itself, under the
+ * username. The answer is the player's place there; undefined when the match does not go global (or records are off).
+ */
+export function submitGlobal(
+  profile: Profile,
+  r: MatchEnd,
+  c: { role: Role; mode: Mode; difficulty: Difficulty },
+  account?: { record(rec: RecordIn): Promise<Submitted | undefined> | undefined },
+): Promise<Submitted | undefined> | undefined {
+  if (!account || !goesGlobal(c.mode, c.role, r.winner === c.role)) return undefined;
+  return account.record(globalRecord(profile, r, c));
 }

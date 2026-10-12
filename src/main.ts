@@ -89,7 +89,14 @@ async function enter(container: HTMLElement): Promise<void> {
     escapeTime,
     mode,
     chaosEvery,
-    account: createAppAccount({ api, storage, account, profile, restart: () => (running.stop(), void enter(container)) }),
+    account: createAppAccount({
+      api,
+      storage,
+      account,
+      profile,
+      records: (!debug && curves !== false) || dev,
+      restart: () => (running.stop(), void enter(container)),
+    }),
   });
 }
 // first screen drawn (2 frames): the splash disappears. In test/debug (?debug) it goes away immediately.

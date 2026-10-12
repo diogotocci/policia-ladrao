@@ -6,6 +6,9 @@ import { verifyGoogleToken } from './google.js';
 import { clearCookie, cookieOf, readSession, setCookie, signSession } from './session.js';
 import { deleteAccount, getAccount, getProfile, putProfile, setUsername, upsertGoogleUser, usernameFree } from './users.js';
 import { parseProfile } from '../../src/meta/profile.js';
+import { parseRecord } from '../../src/meta/records.js';
+import { DIFFICULTIES, MODES, type Difficulty, type Mode } from '../../src/config/balance.js';
+import { board, submit } from './records.js';
 import { usernameProblem } from '../../src/meta/username.js';
 
 export interface Deps {
@@ -152,4 +155,29 @@ export async function accountDelete(req: Request, d: Deps): Promise<Response> {
     return json({ error: 'confirm' }, 400);
   await deleteAccount(d.db, id);
   return json({ ok: true }, 200, { 'Set-Cookie': clearCookie() });
+}
+
+/** POST /api/records: a finished match for the global ranking (delivery 2). Answers the player's position on that board. */
+export async function recordPost(req: Request, d: Deps): Promise<Response> {
+  const bad = foreign(req);
+  if (bad) return bad;
+  if (!d.db) return unavailable();
+  const id = await member(req, { ...d, db: d.db });
+  if (typeof id !== 'string') return id;
+  const r = parseRecord(await bodyOf(req));
+  if (!r) return json({ error: 'invalid' }, 400);
+  return json(await submit(d.db, id, r, d.now?.()));
+}
+
+/** GET /api/ranking?mode=&side=&difficulty=: the top 100 of a board (best per player), plus the signed-in player's line. */
+export async function rankingGet(req: Request, d: Deps): Promise<Response> {
+  if (!d.db) return unavailable();
+  const q = new URL(req.url).searchParams;
+  const mode = q.get('mode') as Mode;
+  const side = q.get('side');
+  const difficulty = q.get('difficulty') as Difficulty;
+  if (!MODES.includes(mode) || (side !== 'police' && side !== 'thief') || !DIFFICULTIES.includes(difficulty))
+    return json({ error: 'invalid' }, 400);
+  await ensureSchema(d.db);
+  return json(await board(d.db, { mode, side, difficulty }, await who(req, d)));
 }
