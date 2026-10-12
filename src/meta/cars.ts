@@ -1,9 +1,24 @@
-// The cars of both sides (V2 part 4; delivery 3 of part 6 added four): side, name, price and the four colours.
+// The cars of both sides (V2 part 4; deliveries 3 and 4 of part 6 added four each): side, name, price and the four colours.
 // Order matters: the backup code stores positions (new cars only at the end).
 import type { Role } from '../config/balance';
 
 export type CarId =
-  'viatura' | 'esportivo' | 'blazer' | 'caveirao' | 'seda' | 'picape' | 'moto' | 'van' | 'rocam' | 'descaracterizada' | 'kombi' | 'fusca';
+  | 'viatura'
+  | 'esportivo'
+  | 'blazer'
+  | 'caveirao'
+  | 'seda'
+  | 'picape'
+  | 'moto'
+  | 'van'
+  | 'rocam'
+  | 'descaracterizada'
+  | 'kombi'
+  | 'fusca'
+  | 'camburao'
+  | 'prf'
+  | 'classico'
+  | 'carroforte';
 export interface CarInfo {
   role: Role;
   name: string;
@@ -99,6 +114,35 @@ export const CARS: Record<CarId, CarInfo> = {
     price: 12500,
     colors: [0xff7a12, 0x141518, 0x8fd61a, 0x1f4fb0],
     colorNames: ['Laranja', 'Preto', 'Verde-limão', 'Azul'],
+  },
+  // V2 part 6 delivery 4 (mockups approved 2026-10-12)
+  camburao: {
+    role: 'police',
+    name: 'Camburão',
+    price: 9000,
+    colors: [0xf1f2f4, 0xb8bec6, 0x1b2a4a, 0x16181c],
+    colorNames: ['Branco', 'Prata', 'Azul-marinho', 'Preto'],
+  },
+  prf: {
+    role: 'police',
+    name: 'Rodoviária PRF',
+    price: 15000,
+    colors: [0x1d2b5c, 0x16181c, 0xf3f4f6, 0xb8bec6],
+    colorNames: ['Azul PRF', 'Preta', 'Branca', 'Prata'],
+  },
+  classico: {
+    role: 'thief',
+    name: 'Sedã clássico',
+    price: 9000,
+    colors: [0x101114, 0x6e1420, 0x1b2a4a, 0xc9a23a],
+    colorNames: ['Preto', 'Vinho', 'Azul-escuro', 'Dourado'],
+  },
+  carroforte: {
+    role: 'thief',
+    name: 'Carro-forte',
+    price: 15000,
+    colors: [0xd9dadc, 0xf3f4f6, 0x4a4d53, 0x1b2a4a],
+    colorNames: ['Prata', 'Branco', 'Grafite', 'Azul-escuro'],
   },
 };
 export const CAR_IDS = Object.keys(CARS) as CarId[];

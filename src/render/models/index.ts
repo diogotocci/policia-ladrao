@@ -7,6 +7,8 @@ import { buildMoto } from './moto';
 import { buildBlazer, buildEsportivo, buildPicape } from './shopCars';
 import { buildVan } from './van';
 import { buildDescaracterizada, buildFusca, buildKombi, buildRocam } from './newCars';
+import { buildCamburao, buildCarroForte, buildClassico } from './newCars2';
+import { buildPrf } from './prf';
 
 export interface ModelSpec {
   build(root: THREE.Group, body: THREE.Group): void;
@@ -98,4 +100,23 @@ export const MODELS: Record<CarId, ModelSpec> = {
   },
   // narrow car: the gunner sits closer in; the plate above the bumper
   fusca: { build: buildFusca, camLift: 0, gunner: [0.62, 0.85, -0.1], plate: { y: 0.53, z: 1.965, w: 0.42 }, neon: { w: 1.9, l: 4.2 } },
+  // V2 part 6 delivery 4 (mockups approved 2026-10-12)
+  camburao: {
+    build: buildCamburao,
+    camLift: 0.1,
+    camBack: 0.3,
+    gunner: [0.92, 0.95, -1.0],
+    plate: { y: 0.66, z: 2.45, w: 0.5 },
+    neon: { w: 2.1, l: 5.0 },
+  },
+  prf: { build: buildPrf, camLift: 0, plate: { y: 0.4, z: 2.48, w: 0.5 }, neon: { w: 2.1, l: 4.9 } },
+  classico: { build: buildClassico, camLift: 0, plate: { y: 0.62, z: 2.52, w: 0.5 }, neon: { w: 2.1, l: 5.0 } },
+  carroforte: {
+    build: buildCarroForte,
+    camLift: 0.1,
+    camBack: 0.3,
+    gunner: [0.96, 1.0, -1.75],
+    plate: { y: 0.78, z: 2.55, w: 0.5 },
+    neon: { w: 2.2, l: 5.1 },
+  },
 };

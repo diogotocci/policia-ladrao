@@ -51,6 +51,22 @@ export const ACCESSORY_SPOTS: Record<string, Spots> = {
       { x: -0.28, y: 0.3, z: 2.2 },
     ],
   },
+  // V2 part 6 delivery 4
+  classico: {
+    aerofolio: { z: 2.3, y: 1.12, w: 1.7, base: 0.86 },
+    rack: { z0: -0.3, z1: 0.6, y: 1.38, w: 1.3 },
+    antena: { x: -0.8, y: 0.88, z: 2.2 },
+    escapamento: [
+      { x: 0.55, y: 0.3, z: 2.75 },
+      { x: -0.55, y: 0.3, z: 2.75 },
+    ],
+  },
+  carroforte: {
+    aerofolio: { z: 2.3, y: 1.9, w: 1.8, base: 1.74 },
+    rack: { z0: -1.6, z1: 2.0, y: 1.75, w: 1.7 },
+    antena: { x: -0.85, y: 1.74, z: 2.2 },
+    escapamento: [{ x: 0.6, y: 0.36, z: 2.66 }],
+  },
   moto: {
     antena: { x: -0.1, y: 1.2, z: 1.05 },
     escapamento: [{ x: 0.24, y: 0.52, z: 1.12 }],

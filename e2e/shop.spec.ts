@@ -66,7 +66,7 @@ test('Carreira: challenges of the day, achievements and ranks; a locked car in t
   await expect(page.getByRole('heading', { name: 'Carreira' })).toBeVisible();
   await expect(page.getByText('Desafios do dia')).toBeVisible();
   await page.getByRole('tab', { name: 'Conquistas' }).click();
-  await expect(page.getByText('Prenda 30 ladrões')).toBeVisible();
+  await expect(page.getByText('Prenda 30 ladrões', { exact: true })).toBeVisible();
   await page.getByRole('tab', { name: 'Patente' }).click();
   await expect(page.locator('svg[aria-label="Recruta"]')).toBeVisible(); // the insignia of the current rank
   // V2 part 6: Garagem, the mastery of each car owned (the free cars at least)

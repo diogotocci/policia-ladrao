@@ -97,6 +97,34 @@ export const STICKER_LAYOUT: Record<string, Layout> = {
     numero: [sideSq(0.0, 0.64, 0.4, 0.715)],
     caveira: [top(-1.7, -1.2, 0.79, 0.91, 0.5)],
   },
+  // V2 part 6 delivery 4. Camburão: all on the flat roof (the lightbar is at the front of it)
+  camburao: {
+    faixas: [top(-0.6, 2.3, 1.69, 1.69, 1.0)],
+    brasao: [topSq(0.3, 1.69, 0.7)],
+    numero: [top(1.1, 2.1, 1.69, 1.69, 1.3)],
+    xadrez: [top(2.1, 2.35, 1.69, 1.69, 1.7)],
+  },
+  // PRF: the livery takes the sides, the hood and the rear glass; stickers on the roof (behind the lightbar) and the trunk
+  prf: {
+    faixas: [top(1.8, 2.38, 0.88, 0.86, 1.0)], // on the trunk (the roof is white: light stripes would vanish)
+    brasao: [topSq(2.1, 0.88, 0.5)],
+    numero: [top(0.25, 0.88, 1.39, 1.39, 1.1)],
+    xadrez: [top(2.25, 2.45, 0.87, 0.86, 1.5)],
+  },
+  // Sedã clássico: its yellow stripes run on the front doors; stickers on the hood, trunk and between the arches
+  classico: {
+    faixas: [top(-2.4, -0.95, 0.79, 0.88, 1.0), top(1.35, 2.45, 0.9, 0.86, 1.0)],
+    chamas: [side(0.0, 1.12, 0.62, 0.35, 0.955)],
+    numero: [sideSq(0.6, 0.62, 0.4, 0.955)],
+    caveira: [topSq(-1.7, 0.84, 0.6)],
+  },
+  // Carro-forte: rivets and gun ports on the upper sides; flames over the green band between the arches, the rest on top
+  carroforte: {
+    faixas: [top(-1.8, 2.4, 1.75, 1.75, 1.2)],
+    chamas: [side(-1.05, -0.09, 1.1, 0.3, 1.015)],
+    numero: [top(0.9, 1.9, 1.75, 1.75, 1.3)],
+    caveira: [topSq(-0.6, 1.75, 1.0)],
+  },
 };
 
 // ---------- art ----------
