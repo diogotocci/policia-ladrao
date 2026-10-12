@@ -48,7 +48,7 @@ A simulação (`src/sim`) é determinística a 60 Hz e não conhece Three.js, DO
 | `src/account` | conta no jogo: API, servidor falso do localhost, telas de entrada e sincronização |
 | `src/storage` | ranking e preferências salvas no aparelho |
 | `src/pwa` | service worker e cache offline |
-| `api` | funções da Vercel: conta (login com Google, sessão, nome, progresso, excluir) e a senha do modo admin |
+| `api` | funções da Vercel: conta (login com Google, sessão, nome, progresso, excluir) |
 | `tests`, `e2e` | testes unitários (Vitest) e de navegador (Playwright) |
 | `docs/superpowers/specs` | specs de cada parte |
 
@@ -89,7 +89,7 @@ Os testes do servidor (`tests/api`) rodam num Postgres em memória (PGlite). Em 
 
 ### Modo admin (testes)
 
-No Perfil há o botão **Admin**: com a senha, a loja fica toda liberada e grátis (o que for pego fica no perfil). A senha é só a variável de ambiente `ADMIN_PASSWORD` na Vercel (Settings → Environment Variables); a função `api/admin.ts` confere no servidor, e a senha nunca entra no código do jogo. Sem a variável, ou fora da Vercel (`pnpm dev`), o admin não liga.
+A conta Google `diogotocci@gmail.com` entra sempre em modo admin: a loja fica toda liberada e grátis (o que for pego fica no perfil). Quem decide é o servidor, pelo e-mail que o Google confirmou (`api/_lib/users.ts`); não há senha nem botão, e nenhuma outra conta vira admin.
 
 ## Contribuindo
 

@@ -49,7 +49,7 @@ const cookieFrom = (res: Response) => res.headers.get('Set-Cookie')!.split(';')[
 async function login(sub = 'g-1', email = 'ana@example.com') {
   const res = await signIn(req('/api/auth/google', 'POST', { credential: await googleToken({ sub, email }) }), deps);
   expect(res.status).toBe(200);
-  return { cookie: cookieFrom(res), body: (await res.json()) as { account: { id: string; username: string | null } } };
+  return { cookie: cookieFrom(res), body: (await res.json()) as { account: { id: string; username: string | null; admin: boolean } } };
 }
 
 describe('sign-in with Google', () => {
@@ -79,6 +79,14 @@ describe('sign-in with Google', () => {
     expect((await me(req('/api/me'), deps)).status).toBe(401);
     expect((await me(req('/api/me', 'GET', undefined, 'pl_session=forged'), deps)).status).toBe(401);
     expect(signOut(req('/api/auth/logout', 'POST', {})).headers.get('Set-Cookie')).toContain('Max-Age=0');
+  });
+
+  it("only Diogo's Google account is admin (no password, no other way)", async () => {
+    expect((await login('g-1', 'ana@example.com')).body.account).toMatchObject({ admin: false });
+    expect((await login('g-9', 'diogotocci@gmail.com')).body.account).toMatchObject({ admin: true });
+    const res = await me(req('/api/me', 'GET', undefined, (await login('g-9', 'diogotocci@gmail.com')).cookie), deps);
+    expect(await res.json()).toMatchObject({ account: { admin: true } });
+    expect((await login('g-8', 'diogotocci@gmail.com.evil.example')).body.account).toMatchObject({ admin: false });
   });
 
   it('without the database or the secret (local dev), the endpoints say so instead of failing', async () => {

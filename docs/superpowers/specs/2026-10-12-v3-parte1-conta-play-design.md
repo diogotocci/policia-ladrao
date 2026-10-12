@@ -41,14 +41,14 @@ Publicar o jogo na Google Play (pedido do Diogo, 2026-10-12) com login e tudo o 
 ## 3. Arquitetura
 
 - **App:** continua sendo o mesmo site (PWA) na Vercel. Na Play, ele vai embrulhado num **TWA** (Trusted Web Activity, gerado pelo Bubblewrap). Cada deploy na Vercel já atualiza o jogo. Só é preciso mandar um pacote novo à loja quando muda algo do pacote: ícone, nome ou versão do Android.
-- **Servidor:** funções da Vercel em `api/`, como a `api/admin.ts` de hoje.
+- **Servidor:** funções da Vercel em `api/`.
 - **Banco:** Postgres no Neon, pelo driver `@neondatabase/serverless`.
 - **Login:** Google Identity Services, o botão oficial "Fazer login com o Google".
   - O servidor confere o token do Google (assinatura e `aud` = Client ID) e abre uma sessão.
   - A sessão é um cookie `HttpOnly`, `Secure` e `SameSite=Lax`, de 90 dias, assinado com `SESSION_SECRET`.
   - Não guardamos senha nem token do Google.
-- **Variáveis na Vercel:** `GOOGLE_CLIENT_ID`, `DATABASE_URL`, `SESSION_SECRET` e `ADMIN_EMAILS` (`diogotocci@gmail.com`).
-  - `ADMIN_PASSWORD` sai: o modo admin da loja passa a ser da conta admin.
+- **Variáveis na Vercel:** `GOOGLE_CLIENT_ID`, `DATABASE_URL` e `SESSION_SECRET`. A conta admin é fixa no código do servidor: `diogotocci@gmail.com` (decidido em 2026-10-12, já na entrega 1).
+  - `ADMIN_PASSWORD`, o botão Admin e a senha saem: o modo admin da loja fica sempre ligado para a conta admin e nunca para outra.
 - **A simulação continua sem rede e sem a loja:** nada muda em `src/sim`.
 
 **Tabelas:**
@@ -122,7 +122,7 @@ A tela de perfil (o botão do canto) mostra:
 
 ## 6. Painel (/admin)
 
-- A página só abre para os e-mails de `ADMIN_EMAILS`. O servidor confere a sessão em todas as consultas.
+- A página só abre para a conta admin (`diogotocci@gmail.com`). O servidor confere a sessão em todas as consultas.
 - **Eventos gravados** (sem dados pessoais além do id da conta):
   - `session_start`: versão do app e se é o app da Play ou o navegador;
   - `match_end`: modo, lado, dificuldade, carro, venceu, motivo, tempo, nível máximo da IA, moedas;
@@ -167,7 +167,7 @@ A tela de perfil (o botão do canto) mostra:
 
 1. Criar a conta de desenvolvedor no Play Console: pessoal, US$ 25, com verificação de identidade.
 2. No Google Cloud, criar o projeto e o OAuth Client ID "Aplicativo da Web", com os domínios do jogo autorizados, e configurar a tela de consentimento.
-3. Criar o banco no Neon e pôr `DATABASE_URL`, `GOOGLE_CLIENT_ID`, `SESSION_SECRET` e `ADMIN_EMAILS` na Vercel.
+3. Criar o banco no Neon e pôr `DATABASE_URL`, `GOOGLE_CLIENT_ID` e `SESSION_SECRET` na Vercel.
 4. Ficha da loja:
    - ícone 512×512;
    - imagem de destaque 1024×500;

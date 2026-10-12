@@ -17,10 +17,9 @@ import { loadDifficulty, saveDifficulty } from './storage/difficulty';
 import { loadMode, saveMode } from './storage/mode';
 import { renderMode } from './ui/screens/mode';
 import { countModeRecords, loadModeBoards, qualifies, saveModeBoards, type ModeBoards } from './storage/ranking';
-import { ADMIN_KEY, HOWTO_KEY, INITIALS_KEY, openStorage, readPref, writePref } from './storage/prefs';
+import { HOWTO_KEY, INITIALS_KEY, openStorage, readPref, writePref } from './storage/prefs';
 import { addRecord, settleEnd } from './appMatch';
 import { wireAppEvents } from './appEvents';
-import { checkAdminPassword } from './admin';
 import type { AppAccount } from './appAccount';
 import { initialState, reduce, type FlowAction, type FlowState } from './ui/screens/flow';
 import { openProgress } from './ui/screens/progress';
@@ -83,9 +82,9 @@ export function startApp(
   // "Como jogar" opens by itself until the player closes it once
   const howToSeen = () => readPref(storage, HOWTO_KEY) === '1';
   const markHowToSeen = () => writePref(storage, HOWTO_KEY, '1');
-  // admin mode (testing): the whole shop unlocked and free
-  let admin = readPref(storage, ADMIN_KEY) === '1';
-  // "Seu perfil" over the title screen: the account, the stats and the admin mode
+  // admin mode (testing): the whole shop unlocked and free, only for the admin account (the server decides, by e-mail)
+  const admin = opts.account?.admin === true;
+  // "Seu perfil" over the title screen: the account and the stats
   const openProgressDialog = () => {
     const host = layer.querySelector<HTMLElement>('.screen-title');
     if (!host) return;
@@ -95,15 +94,6 @@ export function startApp(
       account: opts.account?.actions(host, openProgressDialog),
       version: APP_VERSION,
       onClose: () => host.querySelector<HTMLElement>('.title-progress')?.focus(),
-      admin: {
-        on: admin,
-        enter: async (password) => {
-          admin = await checkAdminPassword(password);
-          if (admin) writePref(storage, ADMIN_KEY, '1');
-          return admin;
-        },
-        leave: () => ((admin = false), writePref(storage, ADMIN_KEY, '')),
-      },
     });
   };
   const actions = profileActions({

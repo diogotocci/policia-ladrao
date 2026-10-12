@@ -11,7 +11,13 @@ export interface Account {
   name: string;
   picture: string;
   username: string | null;
+  /** the shop's admin mode (everything unlocked and free, for testing): only Diogo's Google account */
+  admin: boolean;
 }
+
+/** The one admin account. Decided here on the server from the e-mail Google verified; no password, no other way in. */
+export const ADMIN_EMAIL = 'diogotocci@gmail.com';
+export const isAdminEmail = (email: string) => email.trim().toLowerCase() === ADMIN_EMAIL;
 
 interface UserRow {
   id: string;
@@ -21,7 +27,14 @@ interface UserRow {
   username: string | null;
   username_changed_at: string | Date | null;
 }
-const toAccount = (r: UserRow): Account => ({ id: String(r.id), email: r.email, name: r.name, picture: r.picture, username: r.username });
+const toAccount = (r: UserRow): Account => ({
+  id: String(r.id),
+  email: r.email,
+  name: r.name,
+  picture: r.picture,
+  username: r.username,
+  admin: isAdminEmail(r.email),
+});
 
 /** First sign-in creates the account; later ones refresh name and picture. */
 export async function upsertGoogleUser(db: Db, g: GoogleUser): Promise<Account> {

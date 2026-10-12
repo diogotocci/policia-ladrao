@@ -1,5 +1,5 @@
-// "Seu perfil" dialog (the corner button of the title): the account (V3 part 1: username, Sair, Excluir minha conta),
-// the stats and the admin mode. The V2 backup code is gone: the account keeps the progress now.
+// "Seu perfil" dialog (the corner button of the title): the account (V3 part 1: username, Sair, Excluir minha conta)
+// and the stats. The V2 backup code is gone: the account keeps the progress now.
 import type { Account } from '../../account/api';
 import type { Profile } from '../../meta/profile';
 import { btn, h, openModal } from './dom';
@@ -18,31 +18,6 @@ function statsGrid(p: Profile): HTMLElement {
   item(p.stats.wins, 'vitórias');
   item(p.stats.escapes, 'fugas');
   return grid;
-}
-
-/** Admin mode (testing): password to turn it on, one button to turn it off. */
-function adminPanel(onAdmin: (password: string) => Promise<boolean>): HTMLElement {
-  const panel = h('form', 'progress-restore progress-admin');
-  const label = h('label', 'progress-label', 'Senha de admin');
-  const input = h('input', 'progress-input');
-  input.id = 'progress-admin';
-  input.type = 'password';
-  input.autocomplete = 'off';
-  label.htmlFor = input.id;
-  const error = h('p', 'progress-error');
-  error.setAttribute('role', 'alert');
-  const enter = h('button', 'screen-btn', 'Entrar');
-  enter.type = 'submit';
-  panel.addEventListener('submit', (e) => {
-    e.preventDefault();
-    enter.disabled = true;
-    void onAdmin(input.value).then((ok) => {
-      enter.disabled = false;
-      if (!ok) error.textContent = 'Senha errada (ou sem conexão).';
-    });
-  });
-  panel.append(label, input, enter, error);
-  return panel;
 }
 
 /** The account block: initial, @username, name and e-mail, and its three actions. */
@@ -99,8 +74,6 @@ export function openProgress(
     /** V3: the signed-in account (absent in the unit tests of other screens) */
     account?: AccountActions;
     version?: string;
-    /** admin mode (testing): on now, and how to turn it on (true when the password is right) or off */
-    admin?: { on: boolean; enter(password: string): Promise<boolean>; leave(): void };
   },
 ): () => void {
   const dialog = h('div', 'progress-dialog');
@@ -110,21 +83,6 @@ export function openProgress(
       ? 'Sem conexão agora: o progresso sobe para a sua conta quando a internet voltar.'
       : 'Seu progresso fica salvo na sua conta.';
   const actions = h('div', 'progress-actions');
-  const admin = p.admin;
-  if (admin?.on) actions.append(btn('Sair do admin', '', () => (admin.leave(), close())));
-  else if (admin) {
-    const open = btn('Admin', '', () => {
-      open.disabled = true;
-      const panel = adminPanel(async (password) => {
-        const ok = await admin.enter(password);
-        if (ok) close();
-        return ok;
-      });
-      actions.after(panel);
-      panel.querySelector('input')!.focus();
-    });
-    actions.append(open);
-  }
   const done = btn('Fechar', 'is-quiet', () => close());
   actions.append(done);
   const legal = h('p', 'profile-legal');
