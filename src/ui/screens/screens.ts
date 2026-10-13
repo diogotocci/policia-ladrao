@@ -6,7 +6,7 @@ import { formatTime } from '../hud';
 import { btn, h, mount, type Disposable } from './dom';
 import { openHowTo } from './howto';
 import { SCREEN_ICONS } from './icons';
-import { fillGlobal, type LoadGlobal } from './rankingGlobal';
+import { fillGlobal, markReported, openReport, type LoadGlobal, type OnReport, type ReportAnswer } from './rankingGlobal';
 import './screens.css';
 
 export { trapFocus } from './dom';
@@ -180,6 +180,8 @@ export function renderRanking(
     onScope?(scope: 'global' | 'local'): void;
     focusScope?: boolean;
     loadGlobal?: LoadGlobal;
+    /** reports a name seen on the Global ranking; without it (no account) the lines have no report button */
+    reportName?: (username: string) => Promise<ReportAnswer>;
   },
 ): Disposable {
   const s = h('section', 'screen screen-ranking');
@@ -251,15 +253,20 @@ export function renderRanking(
     head.append(scopes);
   }
   card.append(head, modes, picker, tabs, list);
-  // V3 delivery 4 (Play user-generated content policy): usernames are public, so there is a way to report one
-  if (global) {
-    const report = h('a', 'ranking-report', 'Denunciar um nome');
-    report.href = 'mailto:diogotocci@gmail.com?subject=Nome%20no%20ranking%20global';
-    card.append(report);
-  }
   card.append(back);
   s.append(card);
-  const stop = global ? fillGlobal(list, global, { mode: p.mode, side: p.tab, difficulty: p.difficulty }) : () => {};
+  // Play user-generated content policy: usernames are public, so each line of the Global ranking can be reported
+  const send = p.reportName;
+  const onReport: OnReport | undefined = send
+    ? (r, flag) =>
+        openReport(s, {
+          username: r.username,
+          send: () => send(r.username),
+          onSent: () => markReported(flag, r.username),
+          onClose: () => flag.focus(),
+        })
+    : undefined;
+  const stop = global ? fillGlobal(list, global, { mode: p.mode, side: p.tab, difficulty: p.difficulty }, onReport) : () => {};
   const checkedIn = (g: HTMLElement) => g.querySelector<HTMLElement>('[aria-checked="true"]') ?? undefined;
   const focus = p.focusScope
     ? scopeTab

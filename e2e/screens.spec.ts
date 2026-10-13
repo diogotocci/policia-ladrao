@@ -223,3 +223,33 @@ test('global ranking (V3 delivery 2): a real win goes up by itself and shows wit
   await expect(me).toContainText('Viatura');
   await expect(me).toContainText('Recruta');
 });
+
+test('global ranking: report a name from its line (confirm, saved, marked after reload); no report on the player own line', async ({
+  page,
+}) => {
+  await page.goto('/?app&quality=low&mute');
+  await page.evaluate(() => {
+    const rivals = [
+      { pos: 1, username: 'turbo_br', time: 41, hp: 90, car: 'caveirao', rank: 7 },
+      { pos: 2, username: 'pmdorj', time: 45, hp: 70, car: 'prf', rank: 6 },
+    ];
+    const account = { id: 'dev-1', email: 'teste@exemplo.com', name: 'Conta de Teste', picture: '', username: 'Teste' };
+    localStorage.setItem('pl.dev.api', JSON.stringify({ signedIn: true, account, profile: null, rev: 0, rivals }));
+  });
+  await page.reload();
+  await page.getByRole('button', { name: 'Ranking' }).click();
+  const flag = page.getByRole('button', { name: 'Denunciar @pmdorj' });
+  await flag.click();
+  // the dialog is named by its heading, which changes once the report is sent
+  await expect(page.getByRole('dialog', { name: 'Denunciar @pmdorj?' })).toBeVisible();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByRole('button', { name: 'Denunciar' }).click();
+  await expect(page.getByRole('dialog', { name: 'Denúncia enviada' })).toContainText('O nome @pmdorj vai para a revisão');
+  await dialog.getByRole('button', { name: 'OK' }).click();
+  await expect(page.getByRole('button', { name: '@pmdorj denunciado' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Denunciar @turbo_br' })).toBeEnabled();
+  await page.reload();
+  await page.getByRole('button', { name: 'Ranking' }).click();
+  await expect(page.getByRole('button', { name: '@pmdorj denunciado' })).toBeVisible();
+  await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0);
+});

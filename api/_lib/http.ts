@@ -10,6 +10,7 @@ import { parseRecord } from '../../src/meta/records.js';
 import { DIFFICULTIES, MODES, type Difficulty, type Mode } from '../../src/config/balance.js';
 import { board, submit } from './records.js';
 import { adminStats, saveEvents } from './events.js';
+import { reportName } from './reports.js';
 import { parseContext, parseEvent, type ClientEvent } from '../../src/meta/events.js';
 import { usernameProblem } from '../../src/meta/username.js';
 
@@ -182,6 +183,20 @@ export async function rankingGet(req: Request, d: Deps): Promise<Response> {
     return json({ error: 'invalid' }, 400);
   await ensureSchema(d.db);
   return json(await board(d.db, { mode, side, difficulty }, await who(req, d)));
+}
+
+/** POST /api/ranking {username}: reports a name seen on the global ranking (saved for review). */
+export async function reportPost(req: Request, d: Deps): Promise<Response> {
+  const bad = foreign(req);
+  if (bad) return bad;
+  if (!d.db) return unavailable();
+  const id = await member(req, { ...d, db: d.db });
+  if (typeof id !== 'string') return id;
+  const username = (await bodyOf(req)).username;
+  if (typeof username !== 'string' || username.length > 40) return json({ error: 'invalid' }, 400);
+  const r = await reportName(d.db, id, username, d.now?.());
+  if (r === 'ok') return json({ ok: true });
+  return json({ error: r }, r === 'unknown' ? 404 : r === 'limit' ? 429 : 400);
 }
 
 /** POST /api/events {events, context, sentAt}: a batch of usage events from the phone (delivery 3). Malformed ones are dropped. */

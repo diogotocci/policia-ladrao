@@ -21,6 +21,10 @@ interface DevServer {
   records?: (RecordIn & { suspect: boolean })[];
   /** V3 delivery 3: how many usage events arrived (the fake only counts them) */
   events?: number;
+  /** other players shown on every board (none unless a test seeds them) */
+  rivals?: GlobalRow[];
+  /** the names this account reported */
+  reported?: string[];
 }
 
 const testAccount = (username: string | null): Account => ({
@@ -109,6 +113,13 @@ export function devApi(storage: Storage | undefined, opts: { startSignedOut: boo
       const best = bestOf(records, r);
       return Promise.resolve({ pos: best ? 1 : null, best: best?.matchId === r.matchId });
     },
+    async reportName(username) {
+      const s = signedIn(); // async: signed out answers a rejected promise, like the real server
+      const name = (s.rivals ?? []).find((r) => r.username.toLowerCase() === username.toLowerCase())?.username;
+      if (!name) return 'unknown';
+      save({ ...s, reported: [...new Set([...(s.reported ?? []), name])] });
+      return 'ok';
+    },
     sendEvents(events) {
       const s = signedIn();
       save({ ...s, events: (s.events ?? 0) + events.length });
@@ -119,10 +130,14 @@ export function devApi(storage: Storage | undefined, opts: { startSignedOut: boo
     ranking(mode, side, difficulty) {
       const s = load();
       const best = s.signedIn && s.account.username ? bestOf(s.records ?? [], { mode, side, difficulty }) : undefined;
-      const row: GlobalRow[] = best
-        ? [{ pos: 1, username: s.account.username!, time: best.time, hp: best.hp, how: best.how, car: best.car, rank: best.rank, me: true }]
+      const mine: GlobalRow[] = best
+        ? [{ pos: 0, username: s.account.username!, time: best.time, hp: best.hp, how: best.how, car: best.car, rank: best.rank, me: true }]
         : [];
-      return Promise.resolve({ rows: row.slice(0, GLOBAL_TOP) });
+      const reported = new Set(s.signedIn ? s.reported : []);
+      const rows = [...(s.rivals ?? []).map((r) => (reported.has(r.username) ? { ...r, reported: true } : r)), ...mine]
+        .sort((a, b) => (better(mode, side, a, b) ? -1 : better(mode, side, b, a) ? 1 : 0))
+        .map((r, i) => ({ ...r, pos: i + 1 }));
+      return Promise.resolve({ rows: rows.slice(0, GLOBAL_TOP) });
     },
   };
 }

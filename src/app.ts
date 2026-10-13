@@ -331,6 +331,7 @@ export function startApp(
           },
           focusScope: scopeSwitch,
           loadGlobal: opts.account?.ranking,
+          reportName: opts.account?.report,
         });
         scopeSwitch = false;
         tabSwitch = false;

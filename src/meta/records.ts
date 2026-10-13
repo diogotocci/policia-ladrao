@@ -38,6 +38,8 @@ export interface GlobalRow {
   rank: number;
   /** this is the signed-in player */
   me?: boolean;
+  /** the signed-in player already reported this name */
+  reported?: boolean;
 }
 
 export interface GlobalBoard {
