@@ -2,6 +2,7 @@
 // Vercel functions in api/; on localhost the e2e tests and local play use the fake in devApi.ts (no Google, no database).
 import type { Profile } from '../meta/profile';
 import type { GlobalBoard, RecordIn } from '../meta/records';
+import type { AdminStats, ClientEvent, EventContext } from '../meta/events';
 import type { Difficulty, Mode, Role } from '../config/balance';
 
 export interface Account {
@@ -51,6 +52,10 @@ export interface AccountApi {
   submitRecord(r: RecordIn & { sentAt: string }): Promise<Submitted | undefined>;
   /** one board of the global ranking: top 100 plus the player's own line */
   ranking(mode: Mode, side: Role, difficulty: Difficulty): Promise<GlobalBoard>;
+  /** V3 delivery 3: a batch of usage events for the /admin panel */
+  sendEvents(events: ClientEvent[], context: EventContext): Promise<void>;
+  /** the /admin panel's numbers; 'forbidden' for any account but the admin's */
+  adminStats(days: number): Promise<AdminStats | 'forbidden'>;
 }
 
 /** the player's place after sending a record (pos null: not on the board, e.g. a record the server finds suspect) */
@@ -119,6 +124,14 @@ export function httpApi(fetchFn: typeof fetch = (...a) => fetch(...a)): AccountA
       const res = await call('/api/records', send('POST', r));
       if (res.status === 400) return undefined;
       return signedIn<Submitted>(res);
+    },
+    async sendEvents(events, context) {
+      await signedIn<{ saved: number }>(await call('/api/events', send('POST', { events, context, sentAt: new Date().toISOString() })));
+    },
+    async adminStats(days) {
+      const res = await call(`/api/admin/stats?days=${days}`);
+      if (res.status === 403) return 'forbidden';
+      return signedIn<AdminStats>(res);
     },
     async ranking(mode, side, difficulty) {
       const res = await call(`/api/ranking?mode=${mode}&side=${side}&difficulty=${difficulty}`);

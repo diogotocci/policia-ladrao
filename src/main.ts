@@ -5,6 +5,7 @@ import { devApi, useDevApi } from './account/devApi';
 import { runGate } from './account/gate';
 import { createAppAccount } from './appAccount';
 import { openStorage } from './storage/prefs';
+import { eventContext } from './account/context';
 import { startGame } from './game';
 import { installFullscreenOnFirstTap, installNoZoom, installViewportFix } from './ui/mobileShell';
 import { registerServiceWorker } from './pwa/register';
@@ -12,6 +13,8 @@ import { hideSplash } from './ui/splash';
 import type { QualityTier } from './render/renderer';
 import type { ItemId } from './sim/world';
 
+declare const __APP_VERSION__: string | undefined;
+const APP_VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : undefined;
 const params = new URLSearchParams(location.search);
 const role: Role = params.get('role') === 'thief' ? 'thief' : 'police';
 const seedParam = Number(params.get('seed'));
@@ -95,6 +98,7 @@ async function enter(container: HTMLElement): Promise<void> {
       account,
       profile,
       records: (!debug && curves !== false) || dev,
+      context: eventContext(APP_VERSION),
       restart: () => (running.stop(), void enter(container)),
     }),
   });

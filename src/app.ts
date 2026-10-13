@@ -18,7 +18,7 @@ import { loadMode, saveMode } from './storage/mode';
 import { renderMode } from './ui/screens/mode';
 import { countModeRecords, loadModeBoards, qualifies, saveModeBoards, type ModeBoards } from './storage/ranking';
 import { HOWTO_KEY, INITIALS_KEY, openStorage, readPref, writePref } from './storage/prefs';
-import { addRecord, settleEnd, submitGlobal } from './appMatch';
+import { addRecord, reportMatch, settleEnd } from './appMatch';
 import type { Submitted } from './account/api';
 import { wireAppEvents } from './appEvents';
 import type { AppAccount } from './appAccount';
@@ -102,6 +102,7 @@ export function startApp(
     set: (next) => ((profile = next), persist()),
     cue: () => audio.mixer.cue('ui'),
     admin: () => admin,
+    track: (type, data) => opts.account?.track(type, data),
   });
   /** the player's calendar day (challenges renew at local midnight) */
   const today = () => localDate(new Date());
@@ -156,7 +157,7 @@ export function startApp(
         profile = settled.profile;
         persist();
         rewardShown = false;
-        lastGlobal = submitGlobal(profile, r, { role, mode, difficulty }, opts.account);
+        lastGlobal = reportMatch(profile, r, { role, mode, difficulty, coins: settled.reward.total }, opts.account);
         dispatch({
           type: 'ended',
           result: r,

@@ -48,6 +48,24 @@ const SCHEMA = [
     created_at timestamptz not null default now(),
     unique (user_id, match_id)
   )`,
+  // V3 delivery 3: usage events for the /admin panel. Deleting the account keeps them, with no link to the person.
+  `create table if not exists events (
+    id bigserial primary key,
+    event_id text not null,
+    user_id bigint references users(id) on delete set null,
+    type text not null,
+    data jsonb not null default '{}',
+    app_version text,
+    client text,
+    match_id text,
+    created_at timestamptz not null,
+    unique (user_id, event_id)
+  )`,
+  `create index if not exists events_type on events (type, created_at)`,
+  `create index if not exists events_user on events (user_id, created_at)`,
+  `create index if not exists events_match on events (user_id, match_id) where match_id is not null`,
+  // records sent from 0.28 on must match their match_end event to show (older ones keep showing)
+  `alter table records add column if not exists needs_event boolean not null default false`,
   `create index if not exists records_board on records (mode, side, difficulty) where not suspect`,
   `create index if not exists records_user on records (user_id, ended_at desc)`,
 ];

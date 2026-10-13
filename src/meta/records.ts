@@ -23,6 +23,8 @@ export interface RecordIn {
   endedAt: string;
   /** when the phone sent it (phone clock): the server takes the difference, so a phone clock that is off does not matter */
   sentAt?: string;
+  /** from 0.28: the phone sent the match_end event of this match first, so the server checks one against the other */
+  ev?: boolean;
 }
 
 /** a line of a global board */
@@ -76,7 +78,8 @@ export function parseRecord(x: unknown): RecordIn | undefined {
     return undefined;
   if (typeof endedAt !== 'string' || Number.isNaN(Date.parse(endedAt))) return undefined;
   const sent = typeof sentAt === 'string' && !Number.isNaN(Date.parse(sentAt)) ? { sentAt } : {};
-  return { matchId, mode: mode as Mode, side, difficulty: difficulty as Difficulty, time, hp, how, car, rank, endedAt, ...sent };
+  const ev = (x as { ev?: unknown }).ev === true ? { ev: true } : {};
+  return { matchId, mode: mode as Mode, side, difficulty: difficulty as Difficulty, time, hp, how, car, rank, endedAt, ...sent, ...ev };
 }
 
 /** Whether the numbers can come from a real match (spec §5). A record that fails is kept as suspect and never shown. */

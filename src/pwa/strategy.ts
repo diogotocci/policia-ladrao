@@ -29,7 +29,8 @@ const STATIC = ['/', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/ico
 
 /** everything the game needs to open without network: the page, manifest, icons and the build's JS/CSS */
 export function precacheList(fileNames: string[]): string[] {
-  const built = fileNames.filter((f) => /^assets\/.+\.(js|css)$/.test(f)).map((f) => `/${f}`);
+  // the /admin panel's own files stay out: the game never needs them offline
+  const built = fileNames.filter((f) => /^assets\/.+\.(js|css)$/.test(f) && !/^assets\/admin-/.test(f)).map((f) => `/${f}`);
   return [...STATIC, ...built];
 }
 

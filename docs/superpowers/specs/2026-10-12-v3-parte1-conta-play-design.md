@@ -1,6 +1,6 @@
 # Polícia × Ladrão: V3, Parte 1: conta, nuvem, ranking global, painel e Google Play
 
-Data: 2026-10-12. Status: aprovada; entrega 1 feita (0.25.0, admin pela conta em 0.26.0); entrega 2 feita (0.27.0).
+Data: 2026-10-12. Status: aprovada; entrega 1 feita (0.25.0, admin pela conta em 0.26.0); entrega 2 feita (0.27.0); entrega 3 feita (0.28.0).
 
 ## 1. Objetivo
 
@@ -118,7 +118,7 @@ A tela de perfil (o botão do canto) mostra:
   - cada partida terminou depois da anterior pelo menos o tempo que ela durou (com folga de 20%), contando pela hora em que acabou, para que recordes enviados juntos depois de jogar offline não virem suspeitos;
   - a hora em que acabou não pode estar no futuro nem ter mais de 30 dias;
   - o carro é do lado certo e a patente vai de 1 a 7;
-  - (entrega 3) o resultado precisa bater com o evento `match_end` da mesma partida.
+  - o resultado precisa bater com o evento `match_end` da mesma partida (modo, lado, dificuldade, tempo e resultado). Os recordes enviados antes da 0.28 continuam valendo.
   - Fora disso o recorde é guardado como suspeito e não aparece. A verificação por replay vai para o backlog.
 - **Iniciais de arcade:** ficam só no ranking do aparelho, com a placa de sempre (decidido em 2026-10-12). O global usa o nome de usuário.
 - **Global sem digitar nada:** a partida sobe sozinha para o global no fim. A tela de fim mostra a linha "Ranking global" (enviando, a posição, "seu melhor continua em…" ou "sobe quando a internet voltar") junto da placa ou do "Recorde salvo!"; se a partida só entra no global, aparece uma caixinha só com essa linha.
@@ -146,7 +146,13 @@ A tela de perfil (o botão do canto) mostra:
   - duração média das partidas;
   - versões do app em uso.
   - Cada tela tem filtro de período.
-- **Modo admin da loja:** fica ligado para a conta admin (sem senha), com o mesmo selo "admin" de hoje.
+- **Modo admin da loja:** fica ligado para a conta admin (sem senha), com o mesmo selo "admin" de hoje. As peças pegas de graça no modo admin não contam como compras no painel.
+- **Como foi feito (0.28.0):**
+  - os eventos ficam numa fila no aparelho (como os recordes, presos à conta) e sobem junto da sincronização, antes dos recordes;
+  - `account_created`, `username_set` e `account_deleted` são gravados pelo próprio servidor;
+  - a retenção D1/D7/D30 aparece como um número só para as contas criadas no período (não por semana);
+  - partidas com `?debug` ou `?curves=0` não contam em produção;
+  - o painel é a página `admin.html` (`/admin`), separada do jogo; no localhost mostra números de exemplo.
 
 ## 7. Pacote Android (TWA)
 

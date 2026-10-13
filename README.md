@@ -88,6 +88,10 @@ Em `localhost` o jogo usa um servidor de conta falso (`src/account/devApi.ts`), 
 
 Os testes do servidor (`tests/api`) rodam num Postgres em memória (PGlite). Em produção, as funções em `api/` precisam das variáveis `DATABASE_URL` (Neon), `GOOGLE_CLIENT_ID` e `SESSION_SECRET` na Vercel; sem elas, as rotas respondem 503. Passo a passo em [docs/conta-setup.md](docs/conta-setup.md).
 
+### Painel /admin
+
+`/admin` mostra contas criadas, jogadores ativos, retenção, partidas por modo, lado e dificuldade, vitórias, carros e itens mais usados e comprados, duração das partidas e versões em uso, com filtro de 7, 30 ou 90 dias. Só abre para a conta admin; os números vêm dos eventos de uso que o jogo manda (`api/_lib/events.ts`). No localhost a página mostra números de exemplo.
+
 ### Modo admin (testes)
 
 A conta Google `diogotocci@gmail.com` entra sempre em modo admin: a loja fica toda liberada e grátis (o que for pego fica no perfil). Quem decide é o servidor, pelo e-mail que o Google confirmou (`api/_lib/users.ts`); não há senha nem botão, e nenhuma outra conta vira admin.

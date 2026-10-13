@@ -2,6 +2,7 @@
 // dialog its actions (Trocar nome, Sair, Excluir minha conta). Kept out of app.ts, which only calls bind() and actions().
 import type { Account, AccountApi, Submitted } from './account/api';
 import type { RecordIn } from './meta/records';
+import type { ClientEventType, EventContext } from './meta/events';
 import { forgetAccount, loadAccountState, saveAccountState } from './account/store';
 import { createSync, type Sync } from './account/sync';
 import type { Profile } from './meta/profile';
@@ -20,6 +21,8 @@ export interface AppAccount {
   record(r: RecordIn): Promise<Submitted | undefined> | undefined;
   /** one board of the global ranking */
   ranking: AccountApi['ranking'];
+  /** V3 delivery 3: a usage event for the /admin panel (queued, goes up with the next send) */
+  track(type: ClientEventType, data: Record<string, unknown>): void;
   bind(o: { get(): Profile; adopt(p: Profile): void }): Pick<Sync, 'changed' | 'dispose'>;
   /** the profile dialog's account block; `reopen` draws the dialog again after a rename */
   actions(host: HTMLElement, reopen: () => void): AccountActions;
@@ -32,6 +35,8 @@ export function createAppAccount(o: {
   profile: Profile;
   /** records go to the global ranking (off for ?debug matches in production: their rules are bent for testing) */
   records: boolean;
+  /** the app version and where it runs (Play app, installed web app, browser), sent with the usage events */
+  context: EventContext;
   /** back to the start (the gate): after Sair, Excluir, or a session that ended on the server */
   restart(): void;
 }): AppAccount {
@@ -52,8 +57,17 @@ export function createAppAccount(o: {
     username: () => account.username ?? '',
     record: (r) => (o.records && sync && !left ? sync.record(r) : undefined),
     ranking: (mode, side, difficulty) => o.api.ranking(mode, side, difficulty),
+    track: (type, data) => (o.records && !left ? sync?.track(type, data) : undefined),
     bind(b) {
-      sync = createSync({ api: o.api, storage: o.storage, get: b.get, adopt: b.adopt, signedOut: (gone) => leave(gone) });
+      sync = createSync({
+        api: o.api,
+        storage: o.storage,
+        get: b.get,
+        adopt: b.adopt,
+        signedOut: (gone) => leave(gone),
+        context: o.context,
+      });
+      if (o.records) sync.track('session_start', {});
       return sync;
     },
     actions(host, reopen) {

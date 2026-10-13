@@ -1,0 +1,267 @@
+/* /admin panel (mockup approved 2026-10-12): dark, cards on a 12-column feel, readable on a laptop and a phone */
+:root {
+  color-scheme: dark;
+  --bg: #16181d;
+  --card: #1f2126;
+  --line: #2c2f36;
+  --ink: #eceef2;
+  --muted: #a3a8b3;
+  --good: #4ade80;
+  --accent: #ffc21a;
+  --bar: #3b82f6;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font:
+    15px/1.4 system-ui,
+    sans-serif;
+}
+#admin {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.head h1 {
+  margin: 0 auto 0 0;
+  font-size: 24px;
+}
+.chips {
+  display: flex;
+  gap: 8px;
+}
+.chip {
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 14px;
+  background: #2c2f36;
+  color: var(--ink);
+  font:
+    700 14px/1 system-ui,
+    sans-serif;
+  cursor: pointer;
+}
+.chip[aria-checked='true'] {
+  background: var(--accent);
+  color: #1a1a1a;
+}
+.chip:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+.who {
+  color: var(--muted);
+}
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.tile,
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 14px 16px;
+  min-width: 0;
+}
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tile-label {
+  color: var(--muted);
+}
+.tile-value {
+  font-size: 32px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.tile-note {
+  color: var(--good);
+  font-size: 14px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.card.is-wide {
+  grid-column: span 2;
+}
+.card h2 {
+  margin: 0 0 10px;
+  font-size: 17px;
+}
+.card h3 {
+  margin: 14px 0 6px;
+  font-size: 15px;
+}
+.legend {
+  display: flex;
+  gap: 16px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+.plot-wrap {
+  position: relative;
+}
+.plot {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: pan-y;
+}
+.plot .grid {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+.plot .tick {
+  fill: var(--muted);
+  font-size: 11px;
+}
+.plot .line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.plot .cross {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+.plot .dot {
+  stroke: var(--card);
+  stroke-width: 2;
+}
+.tip {
+  position: absolute;
+  top: 4px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #0f1013;
+  border: 1px solid var(--line);
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.tip[hidden] {
+  display: none;
+}
+.bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bar-row {
+  display: grid;
+  grid-template-columns: minmax(0, 11em) 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+.bar-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bar-track {
+  height: 12px;
+}
+.bar {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  background: var(--bar);
+  border-radius: 0 4px 4px 0;
+}
+.bar-value {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  min-width: 3.5em;
+  text-align: right;
+}
+.empty {
+  color: var(--muted);
+}
+.wins {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.wins th,
+.wins td {
+  padding: 6px 8px;
+  text-align: right;
+  border-bottom: 1px solid var(--line);
+}
+.wins th:first-child {
+  text-align: left;
+}
+.wins tr:first-child th {
+  color: var(--muted);
+  font-weight: 600;
+}
+.line {
+  margin: 0;
+}
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+.message {
+  max-width: 420px;
+  margin: 15vh auto 0;
+}
+.message h1 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.google {
+  margin-top: 12px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .card.is-wide {
+    grid-column: auto;
+  }
+}

@@ -29,7 +29,15 @@ describe('service worker strategy', () => {
   });
 
   it('precaches the whole build at install (first visit already works offline)', () => {
-    const list = precacheList(['assets/main-abc.js', 'assets/main-def.css', 'sw.js', 'index.html', 'assets/sw-x.js.map']);
+    const list = precacheList([
+      'assets/main-abc.js',
+      'assets/main-def.css',
+      'sw.js',
+      'index.html',
+      'assets/sw-x.js.map',
+      'assets/admin-q1.js',
+      'assets/admin-q2.css',
+    ]);
     expect(list).toEqual([
       '/',
       '/manifest.webmanifest',
