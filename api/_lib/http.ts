@@ -4,11 +4,13 @@ import type { JWTVerifyGetKey } from 'jose';
 import { ensureSchema, prodDb, type Db } from './db.js';
 import { verifyGoogleToken } from './google.js';
 import { clearCookie, cookieOf, readSession, setCookie, signSession } from './session.js';
-import { deleteAccount, getAccount, getProfile, putProfile, setUsername, upsertGoogleUser, usernameFree } from './users.js';
+import { deleteAccount, getAccount, getProfile, isAdminEmail, putProfile, setUsername, upsertGoogleUser, usernameFree } from './users.js';
 import { parseProfile } from '../../src/meta/profile.js';
 import { parseRecord } from '../../src/meta/records.js';
 import { DIFFICULTIES, MODES, type Difficulty, type Mode } from '../../src/config/balance.js';
 import { board, submit } from './records.js';
+import { adminStats, saveEvents } from './events.js';
+import { parseContext, parseEvent, type ClientEvent } from '../../src/meta/events.js';
 import { usernameProblem } from '../../src/meta/username.js';
 
 export interface Deps {
@@ -81,7 +83,7 @@ export async function signIn(req: Request, d: Deps): Promise<Response> {
   const g = await verifyGoogleToken((await bodyOf(req)).credential, d.clientId, d.googleKeys);
   if (!g) return json({ error: 'invalid' }, 401);
   await ensureSchema(d.db);
-  const account = await upsertGoogleUser(d.db, g);
+  const account = await upsertGoogleUser(d.db, g, d.now?.());
   const token = await signSession(account.id, d.secret, d.now?.().getTime());
   return json({ account }, 200, { 'Set-Cookie': setCookie(token) });
 }
@@ -153,7 +155,7 @@ export async function accountDelete(req: Request, d: Deps): Promise<Response> {
   const expected = account?.username ?? account?.email;
   if (!account || typeof confirm !== 'string' || confirm.trim().toLowerCase() !== expected?.toLowerCase())
     return json({ error: 'confirm' }, 400);
-  await deleteAccount(d.db, id);
+  await deleteAccount(d.db, id, d.now?.());
   return json({ ok: true }, 200, { 'Set-Cookie': clearCookie() });
 }
 
@@ -180,4 +182,31 @@ export async function rankingGet(req: Request, d: Deps): Promise<Response> {
     return json({ error: 'invalid' }, 400);
   await ensureSchema(d.db);
   return json(await board(d.db, { mode, side, difficulty }, await who(req, d)));
+}
+
+/** POST /api/events {events, context, sentAt}: a batch of usage events from the phone (delivery 3). Malformed ones are dropped. */
+export async function eventsPost(req: Request, d: Deps): Promise<Response> {
+  const bad = foreign(req);
+  if (bad) return bad;
+  if (!d.db) return unavailable();
+  const id = await member(req, { ...d, db: d.db });
+  if (typeof id !== 'string') return id;
+  const b = await bodyOf(req);
+  const list = (Array.isArray(b.events) ? b.events : [])
+    .slice(0, 100)
+    .map(parseEvent)
+    .filter((e): e is ClientEvent => e !== undefined);
+  const saved = await saveEvents(d.db, id, list, parseContext(b.context), typeof b.sentAt === 'string' ? b.sentAt : undefined, d.now?.());
+  return json({ saved });
+}
+
+/** GET /api/admin/stats?days=7|30|90: the panel's numbers, only for the admin account. */
+export async function adminStatsGet(req: Request, d: Deps): Promise<Response> {
+  if (!d.db) return unavailable();
+  const id = await member(req, { ...d, db: d.db });
+  if (typeof id !== 'string') return id;
+  const account = await getAccount(d.db, id);
+  if (!account || !isAdminEmail(account.email)) return json({ error: 'forbidden' }, 403);
+  const days = Number(new URL(req.url).searchParams.get('days'));
+  return json(await adminStats(d.db, [7, 30, 90].includes(days) ? days : 30, d.now?.()));
 }

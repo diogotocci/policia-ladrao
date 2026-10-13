@@ -4,6 +4,7 @@ import { emptyProfile } from '../meta/profile';
 import { CORRUPT_KEY, PROFILE_V1_KEY, PROFILE_V2_KEY, saveProfile } from '../storage/profileStore';
 import type { Account } from './api';
 import { RECORDS_KEY } from './records';
+import { EVENTS_KEY } from './events';
 
 export const ACCOUNT_KEY = 'pl.account.v1';
 
@@ -52,7 +53,7 @@ export function saveAccountState(storage: Storage | undefined, s: AccountState):
  */
 export function forgetAccount(storage: Storage | undefined): void {
   try {
-    for (const k of [ACCOUNT_KEY, PROFILE_V2_KEY, PROFILE_V1_KEY, CORRUPT_KEY, RECORDS_KEY]) storage?.removeItem(k);
+    for (const k of [ACCOUNT_KEY, PROFILE_V2_KEY, PROFILE_V1_KEY, CORRUPT_KEY, RECORDS_KEY, EVENTS_KEY]) storage?.removeItem(k);
   } catch {
     // blocked storage: nothing was kept anyway
   }

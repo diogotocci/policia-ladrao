@@ -5,6 +5,7 @@ import { mergeProfiles } from '../meta/merge';
 import { parseProfile, type Profile } from '../meta/profile';
 import { better, GLOBAL_TOP, plausible, type GlobalRow, type RecordIn } from '../meta/records';
 import { usernameProblem } from '../meta/username';
+import { demoStats } from './devStats';
 import { SignedOutError, type Account, type AccountApi, type Stored } from './api';
 
 export const DEV_API_KEY = 'pl.dev.api';
@@ -18,6 +19,8 @@ interface DevServer {
   rev: number;
   /** V3 delivery 2: this test account's records (the fake has no other players) */
   records?: (RecordIn & { suspect: boolean })[];
+  /** V3 delivery 3: how many usage events arrived (the fake only counts them) */
+  events?: number;
 }
 
 const testAccount = (username: string | null): Account => ({
@@ -106,6 +109,13 @@ export function devApi(storage: Storage | undefined, opts: { startSignedOut: boo
       const best = bestOf(records, r);
       return Promise.resolve({ pos: best ? 1 : null, best: best?.matchId === r.matchId });
     },
+    sendEvents(events) {
+      const s = signedIn();
+      save({ ...s, events: (s.events ?? 0) + events.length });
+      return Promise.resolve();
+    },
+    // localhost shows example numbers to every account (the real server shows them only to the admin)
+    adminStats: (days) => Promise.resolve(demoStats(days)),
     ranking(mode, side, difficulty) {
       const s = load();
       const best = s.signedIn && s.account.username ? bestOf(s.records ?? [], { mode, side, difficulty }) : undefined;

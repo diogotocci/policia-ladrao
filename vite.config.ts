@@ -29,6 +29,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        // V3 delivery 3: the /admin panel (its own page; the game's bundle does not load it)
+        admin: fileURLToPath(new URL('./admin.html', import.meta.url)),
         sw: fileURLToPath(new URL('./src/pwa/sw.ts', import.meta.url)),
       },
       output: {

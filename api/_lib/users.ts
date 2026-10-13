@@ -4,6 +4,7 @@ import { parseProfile, type Profile } from '../../src/meta/profile.js';
 import { USERNAME_COOLDOWN_DAYS, usernameProblem } from '../../src/meta/username.js';
 import type { Db } from './db.js';
 import type { GoogleUser } from './google.js';
+import { serverEvent } from './events.js';
 
 export interface Account {
   id: string;
@@ -36,14 +37,16 @@ const toAccount = (r: UserRow): Account => ({
   admin: isAdminEmail(r.email),
 });
 
-/** First sign-in creates the account; later ones refresh name and picture. */
-export async function upsertGoogleUser(db: Db, g: GoogleUser): Promise<Account> {
+/** First sign-in creates the account (and the panel's account_created event); later ones refresh name and picture. */
+export async function upsertGoogleUser(db: Db, g: GoogleUser, now = new Date()): Promise<Account> {
+  const known = (await db.query<{ id: string }>(`select id from users where google_sub = $1`, [g.sub])).length > 0;
   const rows = await db.query<UserRow>(
-    `insert into users (google_sub, email, name, picture) values ($1, $2, $3, $4)
+    `insert into users (google_sub, email, name, picture, created_at) values ($1, $2, $3, $4, $5)
      on conflict (google_sub) do update set email = excluded.email, name = excluded.name, picture = excluded.picture, last_seen_at = now()
      returning id, email, name, picture, username, username_changed_at`,
-    [g.sub, g.email, g.name, g.picture],
+    [g.sub, g.email, g.name, g.picture, now.toISOString()],
   );
+  if (!known) await serverEvent(db, String(rows[0]!.id), 'account_created', now);
   return toAccount(rows[0]!);
 }
 
@@ -80,6 +83,7 @@ export async function setUsername(db: Db, id: string, name: string, now = new Da
        returning id, email, name, picture, username, username_changed_at`,
       [id, name, name.toLowerCase(), caseOnly ? cur.username_changed_at : now.toISOString()],
     );
+    await serverEvent(db, id, 'username_set', now);
     return { ok: true, account: toAccount(rows[0]!) };
   } catch {
     return { ok: false, problem: 'taken' }; // someone took it between the check and the update
@@ -124,7 +128,8 @@ export async function putProfile(db: Db, id: string, raw: unknown, baseRev: numb
 }
 
 /** Deletes the account and everything tied to it (the profile goes with it: on delete cascade). */
-export async function deleteAccount(db: Db, id: string): Promise<boolean> {
+export async function deleteAccount(db: Db, id: string, now = new Date()): Promise<boolean> {
   const rows = await db.query<{ id: string }>(`delete from users where id = $1 returning id`, [id]);
+  if (rows.length > 0) await serverEvent(db, null, 'account_deleted', now); // its other events stay, with no link to the person
   return rows.length > 0;
 }

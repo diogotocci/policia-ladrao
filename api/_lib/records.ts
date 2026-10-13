@@ -32,6 +32,12 @@ async function ranked(db: Db, where: { mode: Mode; side: Role; difficulty: Diffi
        select distinct on (r.user_id) r.id, r.user_id, u.username, r.time_ms, r.hp, r.how, r.car, r.rank, r.ended_at
        from records r join users u on u.id = r.user_id
        where r.mode = $1 and r.side = $2 and r.difficulty = $3 and not r.suspect and u.username is not null
+         -- delivery 3: the record must match the match_end event of the same match (sent just before it)
+         and (not r.needs_event or exists (
+           select 1 from events e where e.user_id = r.user_id and e.type = 'match_end' and e.match_id = r.match_id
+             and e.data->>'mode' = r.mode and e.data->>'side' = r.side and e.data->>'difficulty' = r.difficulty
+             and abs((e.data->>'time')::float8 * 1000 - r.time_ms) <= 5 and (e.data->>'won')::boolean = (r.how is distinct from 'caught')
+         ))
        order by r.user_id, ${ord}
      ), pos as (select *, row_number() over (order by ${ord}) as pos from best)
      select pos, user_id, username, time_ms, hp, how, car, rank, id from pos
@@ -86,8 +92,8 @@ export async function submit(db: Db, userId: string, r: RecordIn, now = new Date
   const gap = prev ? (ended.getTime() - new Date(prev.ended_at).getTime()) / 1000 : Infinity;
   const suspect = !plausible(r) || gap < r.time * 0.8 || ago < 0 || ago > MAX_AGE_DAYS * 86400;
   const inserted = await db.query<{ id: string | number }>(
-    `insert into records (user_id, match_id, mode, side, difficulty, time_ms, hp, how, car, rank, suspect, ended_at)
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+    `insert into records (user_id, match_id, mode, side, difficulty, time_ms, hp, how, car, rank, suspect, ended_at, needs_event)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
      on conflict (user_id, match_id) do nothing returning id`,
     [
       userId,
@@ -102,6 +108,7 @@ export async function submit(db: Db, userId: string, r: RecordIn, now = new Date
       r.rank,
       suspect,
       ended.toISOString(),
+      r.ev === true, // older phones send no match_end event: their records are not held back for it
     ],
   );
   const id =

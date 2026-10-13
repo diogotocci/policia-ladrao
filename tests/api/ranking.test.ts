@@ -1,6 +1,6 @@
 // V3 delivery 2 (spec §5): the global ranking against PGlite.
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { accountDelete, rankingGet, recordPost } from '../../api/_lib/http';
+import { accountDelete, eventsPost, rankingGet, recordPost } from '../../api/_lib/http';
 import type { GlobalBoard, RecordIn } from '../../src/meta/records';
 import { req, testServer } from './helpers';
 
@@ -24,10 +24,32 @@ const rec = (o: Partial<RecordIn> = {}): RecordIn => ({
   rank: 2,
   endedAt: new Date(Date.parse('2026-10-01T00:00:00Z') + n * 600_000).toISOString(),
   sentAt: '2026-10-12T12:00:00Z', // the phone clock agrees with the server here
+  ev: true, // a 0.28 phone: the match_end event goes first
   ...o,
 });
-const send = async (cookie: string, r: RecordIn) =>
-  (await recordPost(req('/api/records', 'POST', r, cookie), s.deps)).json() as Promise<{ pos: number | null; best: boolean }>;
+/** the phone sends the match_end event first (delivery 3), then the record */
+const event = (r: RecordIn, o: Record<string, unknown> = {}) => ({
+  id: `ev-${r.matchId}`,
+  type: 'match_end',
+  at: r.endedAt,
+  data: {
+    matchId: r.matchId,
+    mode: r.mode,
+    side: r.side,
+    difficulty: r.difficulty,
+    car: r.car,
+    won: r.how !== 'caught',
+    time: r.time,
+    level: 3,
+    coins: 50,
+    ...o,
+  },
+});
+const send = async (cookie: string, r: RecordIn, withEvent = true) => {
+  if (withEvent)
+    await eventsPost(req('/api/events', 'POST', { events: [event(r)], context: { version: '0.28.0' }, sentAt: r.sentAt }, cookie), s.deps);
+  return (await recordPost(req('/api/records', 'POST', r, cookie), s.deps)).json() as Promise<{ pos: number | null; best: boolean }>;
+};
 const board = async (q = 'mode=pursuit&side=police&difficulty=normal', cookie?: string) =>
   (await rankingGet(req(`/api/ranking?${q}`, 'GET', undefined, cookie), s.deps)).json() as Promise<GlobalBoard>;
 
@@ -110,6 +132,17 @@ describe('global ranking', () => {
     expect(b.rows).toHaveLength(100);
     expect(b.me).toMatchObject({ pos: 101, username: 'Jogador100', me: true });
     expect((await board()).me).toBeUndefined();
+  });
+
+  it('delivery 3: a record shows only when the match_end event of the same match agrees with it', async () => {
+    const ana = await s.login('ana', 'Ana');
+    expect(await send(ana, rec({ time: 40 }), false)).toEqual({ pos: null, best: false }); // no event
+    const r = rec({ time: 30 });
+    await eventsPost(req('/api/events', 'POST', { events: [event(r, { time: 55 })], sentAt: r.sentAt }, ana), s.deps); // other time
+    expect(await send(ana, r, false)).toEqual({ pos: null, best: false });
+    const old = rec({ time: 20, matchId: 'legacy-0001', ev: undefined }); // a 0.27 phone sends no event
+    await send(ana, old, false);
+    expect((await board()).rows.map((x) => x.time)).toEqual([20]);
   });
 
   it('deleting the account takes its records off the boards; bad requests are refused', async () => {

@@ -10,6 +10,8 @@ export function profileActions(p: {
   set(next: Profile): void;
   cue(): void;
   admin(): boolean;
+  /** V3 delivery 3: purchases and claims for the /admin panel */
+  track?(type: 'purchase' | 'claim', data: Record<string, unknown>): void;
 }) {
   const change = (next: Profile, ok: boolean) => {
     if (ok) {
@@ -19,8 +21,11 @@ export function profileActions(p: {
   };
   return {
     onBuy(id: string): Profile {
-      const r = buy(p.get(), id, { admin: p.admin() });
+      const before = p.get();
+      const r = buy(before, id, { admin: p.admin() });
       change(r.profile, r.ok);
+      // the admin's free picks are marked, so the panel does not count them as purchases
+      if (r.ok) p.track?.('purchase', { item: id, price: before.coins - r.profile.coins, ...(p.admin() ? { admin: true } : {}) });
       return p.get();
     },
     onUse: (id: string): Profile => (p.set(use(p.get(), id)), p.get()),
@@ -29,6 +34,7 @@ export function profileActions(p: {
       const before = p.get();
       const r = claimReward(before, id);
       change(r.profile, r.coins > 0 || r.profile !== before);
+      if (r.profile !== before) p.track?.('claim', { id, coins: r.coins });
       return { career: p.get().career, coins: p.get().coins };
     },
   };

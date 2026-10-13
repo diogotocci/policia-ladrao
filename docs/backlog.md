@@ -14,7 +14,7 @@ Ideias anotadas durante o desenvolvimento. Cada item passa por brainstorming e e
 
 ### V3: conta, servidor e Google Play
 
-Virou a V3 Parte 1 (`docs/superpowers/specs/2026-10-12-v3-parte1-conta-play-design.md`). Entrega 1 (servidor, login com Google, nome de usuário, progresso na nuvem, Perfil, excluir conta, privacidade e termos, 0.25; admin pela conta, 0.26) e entrega 2 (ranking global, 0.27) feitas; faltam eventos e painel /admin (3) e o pacote Android com a ficha da loja (4). Ideia para depois: conferir os recordes pelo replay da partida (semente + comandos). Dinheiro de verdade continua fora.
+Virou a V3 Parte 1 (`docs/superpowers/specs/2026-10-12-v3-parte1-conta-play-design.md`). Entrega 1 (servidor, login com Google, nome de usuário, progresso na nuvem, Perfil, excluir conta, privacidade e termos, 0.25; admin pela conta, 0.26) entrega 2 (ranking global, 0.27) e entrega 3 (eventos e painel /admin, 0.28) feitas; falta o pacote Android com a ficha da loja (4). Ideia para depois: conferir os recordes pelo replay da partida (semente + comandos). Dinheiro de verdade continua fora.
 
 ## Feito
 

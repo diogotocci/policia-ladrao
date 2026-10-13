@@ -5,6 +5,8 @@ import type { Profile } from '../meta/profile';
 import { SignedOutError, type AccountApi, type Submitted } from './api';
 import type { RecordIn } from '../meta/records';
 import { flushRecords, pendingFor, queueRecord } from './records';
+import { flushEvents, pendingEvents, queueEvent } from './events';
+import type { ClientEventType, EventContext } from '../meta/events';
 import { loadAccountState, saveAccountState } from './store';
 
 export interface Sync {
@@ -17,6 +19,8 @@ export interface Sync {
   /** V3 delivery 2: queues a finished match for the global ranking and sends it; resolves with the server's answer, or
    * undefined when it stays queued (offline) or was refused */
   record(r: RecordIn): Promise<Submitted | undefined>;
+  /** V3 delivery 3: a usage event for the /admin panel; queued, it goes up with the next send */
+  track(type: ClientEventType, data: Record<string, unknown>): void;
   dispose(): void;
 }
 
@@ -28,6 +32,8 @@ export function createSync(o: {
   adopt(p: Profile): void;
   /** the session ended on the server; `gone` when the account was deleted elsewhere */
   signedOut?(gone: boolean): void;
+  /** the app version and where it runs, sent with the usage events */
+  context?: EventContext;
   delayMs?: number;
   /** how long to wait after a failed send */
   retryMs?: number;
@@ -48,9 +54,24 @@ export function createSync(o: {
     }
     if (pendingFor(o.storage, owner).length > 0) retry();
   };
+  /** the usage events go before the records: the server checks each record against its match_end event */
+  const sendEvents = async () => {
+    const owner = loadAccountState(o.storage).account?.id;
+    if (!owner || pendingEvents(o.storage, owner).length === 0) return;
+    try {
+      await flushEvents(o.api, o.storage, owner, o.context ?? { version: 'unknown', client: 'web' });
+    } catch (e) {
+      if (e instanceof SignedOutError) o.signedOut?.(e.gone);
+      return;
+    }
+    if (pendingEvents(o.storage, owner).length > 0) retry();
+  };
   const push = async () => {
     await pushProfile();
-    await sendRecords();
+    await sendEvents();
+    // a record waits for its match_end event: sent alone, the server would not show it
+    const owner = loadAccountState(o.storage).account?.id;
+    if (owner && pendingEvents(o.storage, owner).length === 0) await sendRecords();
   };
   const pushProfile = async () => {
     const st = loadAccountState(o.storage);
@@ -98,7 +119,14 @@ export function createSync(o: {
     flush,
     pending: () => {
       const st = loadAccountState(o.storage);
-      return st.dirty || (st.account !== null && pendingFor(o.storage, st.account.id).length > 0);
+      if (st.dirty) return true;
+      return st.account !== null && (pendingFor(o.storage, st.account.id).length > 0 || pendingEvents(o.storage, st.account.id).length > 0);
+    },
+    track(type, data) {
+      const owner = loadAccountState(o.storage).account?.id;
+      if (!owner) return;
+      queueEvent(o.storage, owner, type, data);
+      if (timer === undefined) schedule();
     },
     async record(r) {
       const owner = loadAccountState(o.storage).account?.id;
