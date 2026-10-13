@@ -44,6 +44,7 @@ describe('global ranking screen', () => {
     expect(rows[2]).toContain('(você)');
     expect(root.querySelector('.ranking-gap')).not.toBeNull();
     expect(root.querySelector('.ranking-row.is-me')).not.toBeNull();
+    expect(root.querySelector<HTMLAnchorElement>('.ranking-report')!.href).toContain('mailto:diogotocci@gmail.com');
   });
 
   it('offline: says the global ranking needs internet; "Neste aparelho" switches scope', async () => {

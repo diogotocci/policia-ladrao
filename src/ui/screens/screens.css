@@ -823,6 +823,14 @@
   background: transparent;
   box-shadow: none;
 }
+.ranking-report,
+.ranking-report:visited {
+  align-self: flex-end;
+  color: var(--muted);
+  font:
+    600 12px/1 system-ui,
+    sans-serif;
+}
 .ranking-scope[aria-checked='true'] {
   background: var(--sign);
   color: var(--sign-ink);

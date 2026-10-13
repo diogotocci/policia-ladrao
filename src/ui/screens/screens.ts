@@ -250,7 +250,14 @@ export function renderRanking(
     }
     head.append(scopes);
   }
-  card.append(head, modes, picker, tabs, list, back);
+  card.append(head, modes, picker, tabs, list);
+  // V3 delivery 4 (Play user-generated content policy): usernames are public, so there is a way to report one
+  if (global) {
+    const report = h('a', 'ranking-report', 'Denunciar um nome');
+    report.href = 'mailto:diogotocci@gmail.com?subject=Nome%20no%20ranking%20global';
+    card.append(report);
+  }
+  card.append(back);
   s.append(card);
   const stop = global ? fillGlobal(list, global, { mode: p.mode, side: p.tab, difficulty: p.difficulty }) : () => {};
   const checkedIn = (g: HTMLElement) => g.querySelector<HTMLElement>('[aria-checked="true"]') ?? undefined;

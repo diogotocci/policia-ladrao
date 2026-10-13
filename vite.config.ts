@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, type Plugin } from 'vite';
 import { injectPrecache, precacheList } from './src/pwa/strategy';
+import { assetLinks, parseFingerprints } from './src/pwa/assetlinks';
 
 /** writes the build's file list into /sw.js for precaching (offline from the 1st visit) */
 const swPrecache = (): Plugin => ({
@@ -14,8 +15,18 @@ const swPrecache = (): Plugin => ({
   },
 });
 
+/** V3 delivery 4: /.well-known/assetlinks.json for the Play app, from ANDROID_SHA256_FINGERPRINTS (only when set) */
+const androidAssetLinks = (): Plugin => ({
+  name: 'pl-assetlinks',
+  apply: 'build',
+  generateBundle() {
+    const fingerprints = parseFingerprints(process.env.ANDROID_SHA256_FINGERPRINTS);
+    if (fingerprints.length) this.emitFile({ type: 'asset', fileName: '.well-known/assetlinks.json', source: assetLinks(fingerprints) });
+  },
+});
+
 export default defineConfig({
-  plugins: [swPrecache()],
+  plugins: [swPrecache(), androidAssetLinks()],
   // build version: service worker cache name (a new build clears the old cache)
   // app version shown on the title screen (package.json)
   define: {

@@ -1,0 +1,6 @@
+# Bubblewrap works in build/ and leaves the packages in out/. The upload key never goes to git:
+# keep android/upload-key.keystore and its password in a safe place (a password manager and a backup).
+build/
+out/
+*.keystore
+*.jks
