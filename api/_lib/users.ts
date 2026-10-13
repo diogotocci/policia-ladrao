@@ -37,14 +37,15 @@ const toAccount = (r: UserRow): Account => ({
   admin: isAdminEmail(r.email),
 });
 
-/** First sign-in creates the account (and the panel's account_created event); later ones refresh name and picture. */
+/** First sign-in creates the account (and the panel's account_created event); later ones refresh the name. The
+ * profile picture is not kept (the game never shows it): the column stays empty, and older rows are cleared on sign-in. */
 export async function upsertGoogleUser(db: Db, g: GoogleUser, now = new Date()): Promise<Account> {
   const known = (await db.query<{ id: string }>(`select id from users where google_sub = $1`, [g.sub])).length > 0;
   const rows = await db.query<UserRow>(
     `insert into users (google_sub, email, name, picture, created_at) values ($1, $2, $3, $4, $5)
      on conflict (google_sub) do update set email = excluded.email, name = excluded.name, picture = excluded.picture, last_seen_at = now()
      returning id, email, name, picture, username, username_changed_at`,
-    [g.sub, g.email, g.name, g.picture, now.toISOString()],
+    [g.sub, g.email, g.name, '', now.toISOString()],
   );
   if (!known) await serverEvent(db, String(rows[0]!.id), 'account_created', now);
   return toAccount(rows[0]!);

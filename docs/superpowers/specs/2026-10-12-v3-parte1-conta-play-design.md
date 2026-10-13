@@ -1,6 +1,6 @@
 # Polícia × Ladrão: V3, Parte 1: conta, nuvem, ranking global, painel e Google Play
 
-Data: 2026-10-12. Status: aprovada; entrega 1 feita (0.25.0, admin pela conta em 0.26.0); entrega 2 feita (0.27.0); entrega 3 feita (0.28.0).
+Data: 2026-10-12. Status: aprovada; entrega 1 feita (0.25.0, admin pela conta em 0.26.0); entrega 2 feita (0.27.0); entrega 3 feita (0.28.0); entrega 4 feita (0.29.0).
 
 ## 1. Objetivo
 
@@ -157,11 +157,11 @@ A tela de perfil (o botão do canto) mostra:
 ## 7. Pacote Android (TWA)
 
 - **Gerado com o Bubblewrap** a partir do `manifest.webmanifest`: tela cheia, paisagem, ícone e splash.
-- **ID do pacote:** `br.com.diogotocci.policialadrao`, a confirmar (não muda depois de publicado).
+- **ID do pacote:** `br.com.diogotocci.policialadrao` (confirmado; não muda depois de publicado).
 - **API alvo:** Android 16 (API 36), versão mínima Android 7. A versão do pacote segue a do jogo (0.x → versionCode).
-- **`/.well-known/assetlinks.json`:** servido pela Vercel com a impressão SHA-256 da chave de assinatura da Play (Play App Signing). Sem ele o app abre com a barra do navegador.
+- **`/.well-known/assetlinks.json`:** gerado no build a partir da variável `ANDROID_SHA256_FINGERPRINTS` da Vercel (a impressão SHA-256 da chave de assinatura da Play, mais a da chave de envio). Sem ele o app abre com a barra do navegador.
 - **Login dentro do TWA:** roda no Chrome do aparelho, com a conta Google que já está nele. O botão do Google funciona como no navegador.
-- **O projeto Android fica em `android/`:** gerado uma vez, versionado, e o `.aab` sai por um script.
+- **O projeto Android:** só `android/twa-manifest.json` fica no git; `scripts/android-build.ps1` gera o projeto com o Bubblewrap 1.27 (que já mira a API 36) numa pasta ignorada, cria a chave de envio na primeira vez e entrega o `.aab`. Passo a passo em `docs/play-store.md`.
 
 ## 8. Formulário de Segurança dos dados (respostas)
 
