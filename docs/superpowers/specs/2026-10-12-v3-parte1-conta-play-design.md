@@ -70,6 +70,7 @@ Publicar o jogo na Google Play (pedido do Diogo, 2026-10-12) com login e tudo o 
    - Único, sem diferenciar maiúsculas.
    - Passa por um filtro de palavrões.
    - Pode ser trocado uma vez a cada 30 dias.
+   - Pode ser denunciado no Ranking Global: a bandeira no fim de cada linha (menos a do próprio jogador) pede confirmação e guarda a denúncia no banco para revisão (tabela `reports`, uma por pessoa e jogador, até 30 por dia; some com a exclusão de qualquer das duas contas). Mockup aprovado em 13/10/2026; 0.30.
 3. **Progresso:** se a conta é nova e o celular tem progresso, ele sobe para a conta. Se a conta já tem progresso de outro aparelho e este também tem, o jogo pergunta qual manter, mostrando as moedas, as patentes e a quantidade de carros de cada um.
 
 ### 4.2 Depois

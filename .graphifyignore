@@ -10,3 +10,6 @@ pnpm-lock.yaml
 skills-lock.json
 # Graphify's own output.
 graphify-out/
+# Bubblewrap's generated Android project and the built packages (gitignored in android/.gitignore).
+android/build/
+android/out/

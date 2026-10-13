@@ -52,6 +52,8 @@ export interface AccountApi {
   submitRecord(r: RecordIn & { sentAt: string }): Promise<Submitted | undefined>;
   /** one board of the global ranking: top 100 plus the player's own line */
   ranking(mode: Mode, side: Role, difficulty: Difficulty): Promise<GlobalBoard>;
+  /** reports a name seen on the global ranking: saved, too many today, or the name is not in use (or is the player's own) */
+  reportName(username: string): Promise<'ok' | 'limit' | 'unknown'>;
   /** V3 delivery 3: a batch of usage events for the /admin panel */
   sendEvents(events: ClientEvent[], context: EventContext): Promise<void>;
   /** the /admin panel's numbers; 'forbidden' for any account but the admin's */
@@ -132,6 +134,13 @@ export function httpApi(fetchFn: typeof fetch = (...a) => fetch(...a)): AccountA
       const res = await call(`/api/admin/stats?days=${days}`);
       if (res.status === 403) return 'forbidden';
       return signedIn<AdminStats>(res);
+    },
+    async reportName(username) {
+      const res = await call('/api/ranking', send('POST', { username }));
+      if (res.status === 404 || res.status === 400) return 'unknown';
+      if (res.status === 429) return 'limit';
+      await signedIn<{ ok: true }>(res);
+      return 'ok';
     },
     async ranking(mode, side, difficulty) {
       const res = await call(`/api/ranking?mode=${mode}&side=${side}&difficulty=${difficulty}`);

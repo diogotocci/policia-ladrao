@@ -3,6 +3,7 @@
 import { GLOBAL_TOP, longestFirst, plausible, type GlobalBoard, type GlobalRow, type RecordIn } from '../../src/meta/records.js';
 import type { Difficulty, Mode, Role } from '../../src/config/balance.js';
 import type { Db } from './db.js';
+import { reportedAmong } from './reports.js';
 
 /** ORDER BY of a board, from a fixed list (never from the request) */
 const order = (mode: Mode, side: Role) =>
@@ -58,7 +59,15 @@ const toRow = (r: Row, me?: string): GlobalRow => ({
 });
 
 export async function board(db: Db, where: { mode: Mode; side: Role; difficulty: Difficulty }, me?: string): Promise<GlobalBoard> {
-  const rows = (await ranked(db, where, me)).map((r) => toRow(r, me));
+  const raw = await ranked(db, where, me);
+  const reported = me
+    ? await reportedAmong(
+        db,
+        me,
+        raw.map((r) => String(r.user_id)),
+      )
+    : new Set<string>();
+  const rows = raw.map((r) => (reported.has(String(r.user_id)) ? { ...toRow(r, me), reported: true } : toRow(r, me)));
   const top = rows.filter((r) => r.pos <= GLOBAL_TOP);
   const mine = rows.find((r) => r.me && r.pos > GLOBAL_TOP);
   return mine ? { rows: top, me: mine } : { rows: top };

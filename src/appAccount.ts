@@ -1,6 +1,6 @@
 // The account inside the running app (V3 part 1): keeps the cloud copy of the progress in sync and gives the profile
 // dialog its actions (Trocar nome, Sair, Excluir minha conta). Kept out of app.ts, which only calls bind() and actions().
-import type { Account, AccountApi, Submitted } from './account/api';
+import { SignedOutError, type Account, type AccountApi, type Submitted } from './account/api';
 import type { RecordIn } from './meta/records';
 import type { ClientEventType, EventContext } from './meta/events';
 import { forgetAccount, loadAccountState, saveAccountState } from './account/store';
@@ -21,6 +21,8 @@ export interface AppAccount {
   record(r: RecordIn): Promise<Submitted | undefined> | undefined;
   /** one board of the global ranking */
   ranking: AccountApi['ranking'];
+  /** reports a name seen on the global ranking; any failure is 'offline', so the dialog lets the player try again */
+  report(username: string): Promise<'ok' | 'limit' | 'unknown' | 'offline'>;
   /** V3 delivery 3: a usage event for the /admin panel (queued, goes up with the next send) */
   track(type: ClientEventType, data: Record<string, unknown>): void;
   bind(o: { get(): Profile; adopt(p: Profile): void }): Pick<Sync, 'changed' | 'dispose'>;
@@ -57,6 +59,12 @@ export function createAppAccount(o: {
     username: () => account.username ?? '',
     record: (r) => (o.records && sync && !left ? sync.record(r) : undefined),
     ranking: (mode, side, difficulty) => o.api.ranking(mode, side, difficulty),
+    report: (username) =>
+      o.api.reportName(username).catch((e: unknown) => {
+        // the session ended on the server (or the account was deleted elsewhere): back to the sign-in, as the sync does
+        if (e instanceof SignedOutError) leave(e.gone);
+        return 'offline' as const;
+      }),
     track: (type, data) => (o.records && !left ? sync?.track(type, data) : undefined),
     bind(b) {
       sync = createSync({

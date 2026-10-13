@@ -823,13 +823,40 @@
   background: transparent;
   box-shadow: none;
 }
-.ranking-report,
-.ranking-report:visited {
-  align-self: flex-end;
-  color: var(--muted);
-  font:
-    600 12px/1 system-ui,
-    sans-serif;
+/* the Global ranking's report button (mockup approved 2026-10-13); the touch area is larger than the flag */
+.ranking-row.is-global.has-report {
+  grid-template-columns: 2.6em minmax(0, 1fr) auto minmax(0, 8em) minmax(0, 6em) 32px;
+}
+.ranking-flag {
+  position: relative;
+  align-self: center;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 22px;
+  margin: -2px 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+}
+.ranking-flag::before {
+  content: '';
+  position: absolute;
+  inset: -9px -8px;
+}
+.ranking-flag svg {
+  width: 16px;
+  height: 16px;
+}
+.ranking-flag:focus-visible {
+  outline: 2px solid var(--sign);
+}
+.ranking-flag.is-done {
+  color: var(--sign);
+  cursor: default;
 }
 .ranking-scope[aria-checked='true'] {
   background: var(--sign);
