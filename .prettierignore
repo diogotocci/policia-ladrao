@@ -13,3 +13,5 @@ docs/
 *.md
 .graphifyignore
 .superpowers/
+android/build/
+android/out/

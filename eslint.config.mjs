@@ -50,6 +50,8 @@ export default defineConfig([
     '.claude/**', // mirror of .agents/skills for Claude Code
     'graphify-out/**', // generated knowledge graph
     'scratch/**', // local ship scripts (gitignored)
+    'android/build/**', // Bubblewrap's generated Android project (gitignored)
+    'android/out/**', // the built .aab and .apk (gitignored)
   ]),
 
   js.configs.recommended,
