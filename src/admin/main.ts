@@ -7,6 +7,8 @@ import { CARS } from '../meta/cars';
 import type { AdminStats } from '../meta/events';
 import { openStorage } from '../storage/prefs';
 import { bars, dailyChart, n } from './charts';
+import type { ModerationView } from '../meta/moderation';
+import { renderReports } from './reports';
 import './admin.css';
 
 const KIND: Record<string, string> = {
@@ -147,8 +149,53 @@ function message(root: HTMLElement, title: string, text: string, extra?: HTMLEle
   root.replaceChildren(box);
 }
 
+type Tab = 'stats' | 'reports';
+
+/** "Números" and "Denúncias (n)" under the page title (mockup approved 2026-10-15) */
+function tabs(current: Tab, pending: number, onTab: (t: Tab) => void): HTMLElement {
+  const bar = el('div', 'tabs');
+  bar.setAttribute('role', 'tablist');
+  bar.setAttribute('aria-label', 'Seções do painel');
+  const all: Tab[] = ['stats', 'reports'];
+  for (const t of all) {
+    const b = el('button', 'tab', t === 'stats' ? 'Números' : 'Denúncias');
+    b.type = 'button';
+    b.setAttribute('role', 'tab');
+    b.setAttribute('aria-selected', String(t === current));
+    b.tabIndex = t === current ? 0 : -1;
+    if (t === 'reports' && pending > 0) {
+      const c = el('span', 'count', String(pending));
+      c.setAttribute('aria-label', `${pending} para revisar`);
+      b.append(c);
+    }
+    b.addEventListener('click', () => onTab(t));
+    bar.append(b);
+  }
+  bar.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    e.preventDefault();
+    onTab(current === 'stats' ? 'reports' : 'stats');
+  });
+  return bar;
+}
+
+/** The "Denúncias" tab: the page title, then the queue and the history. */
+export function renderReportsPage(root: HTMLElement, v: ModerationView, email: string, act: Parameters<typeof renderReports>[2]): void {
+  const head = el('header', 'head');
+  head.append(el('h1', '', 'Painel · Polícia × Ladrão'), el('span', 'who', email));
+  const panel = el('div', 'reports');
+  renderReports(panel, v, act);
+  const status = el('p', 'act-status');
+  status.setAttribute('role', 'status');
+  root.replaceChildren(head, panel, status);
+}
+
 export async function startAdmin(root: HTMLElement, api: AccountApi, dev: boolean): Promise<void> {
   let days = 30;
+  let tab: Tab = 'stats';
+  let tabFocus = false;
+  let reports: ModerationView | undefined;
+  let email = '';
   /** only the latest request draws (a quick second click on the chips wins over a slow first answer) */
   let ticket = 0;
   let chipFocus = false;
@@ -188,10 +235,68 @@ export async function startAdmin(root: HTMLElement, api: AccountApi, dev: boolea
     root.removeAttribute('aria-busy');
     if (mine !== ticket) return;
     if (stats === 'forbidden') return message(root, 'Só para a conta admin', `Você entrou como ${me.email}.`);
-    renderStats(root, stats, me.email, (d) => ((days = d), (chipFocus = true), void load()));
+    email = me.email;
+    current = stats;
+    const r = await api.adminReports().catch(() => undefined);
+    reports = r && r !== 'forbidden' ? r : undefined;
+    if (mine !== ticket) return;
+    draw();
     // after a period change the keyboard stays on the chips (the page was drawn again)
     if (chipFocus) root.querySelector<HTMLElement>('.chip[aria-checked="true"]')?.focus({ preventScroll: true });
     chipFocus = false;
+  };
+  let current: AdminStats | undefined;
+  /** a decision in the "Denúncias" tab: the server answers the tab as it is now */
+  const act = async (userId: string, action: Parameters<AccountApi['adminAct']>[1]) => {
+    // a period change still loading must not draw an older queue over this decision
+    ticket++;
+    try {
+      const v = await api.adminAct(userId, action);
+      if (v === 'forbidden') return say('Só a conta admin pode decidir.');
+      const next = v === 'unknown' ? await api.adminReports() : v;
+      if (next !== 'forbidden') reports = next;
+      draw();
+      // the page was drawn again: the keyboard goes back to the top of the queue
+      root.querySelector<HTMLElement>('.reports .sec')?.focus({ preventScroll: true });
+      say(v === 'unknown' ? 'Essa conta não existe mais.' : 'Feito.');
+    } catch {
+      say('Não deu para salvar. Confira a internet e tente de novo.');
+    }
+  };
+  /** a short message under the page; written a moment after drawing, so screen readers announce it */
+  const say = (t: string): void => {
+    setTimeout(() => {
+      const s = root.querySelector('.act-status');
+      if (s) s.textContent = t;
+    }, 60);
+  };
+  const draw = () => {
+    if (!current) return;
+    const v = reports;
+    if (tab === 'reports' && v) renderReportsPage(root, v, email, act);
+    else {
+      renderStats(root, current, email, (d) => ((days = d), (chipFocus = true), void load()));
+      const status = el('p', 'act-status');
+      status.setAttribute('role', 'status');
+      root.append(status);
+    }
+    const bar = tabs(v && tab === 'reports' ? 'reports' : 'stats', v?.pending.length ?? 0, (t) => {
+      tab = t;
+      tabFocus = true;
+      if (v || t === 'stats') return draw();
+      // the queue did not load with the numbers: try again now
+      void api.adminReports().then(
+        (r) => {
+          if (r !== 'forbidden') reports = r;
+          draw();
+          if (!reports) say('Não deu para carregar as denúncias. Confira a internet e tente de novo.');
+        },
+        () => (draw(), say('Não deu para carregar as denúncias. Confira a internet e tente de novo.')),
+      );
+    });
+    root.querySelector('.head')?.after(bar);
+    if (tabFocus) bar.querySelector<HTMLElement>('[aria-selected="true"]')?.focus({ preventScroll: true });
+    tabFocus = false;
   };
   await load();
 }

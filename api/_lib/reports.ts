@@ -1,5 +1,6 @@
 // Reports of a username from the global ranking (Play user-generated content policy): saved for review, nothing else yet.
 import type { Db } from './db.js';
+import { isAdminEmail } from './users.js';
 
 /** reports one player can send in 24 hours */
 export const REPORTS_PER_DAY = 30;
@@ -8,10 +9,11 @@ export type ReportResult = 'ok' | 'self' | 'unknown' | 'limit';
 
 /** Saves a report of `username` by `reporterId`. Reporting the same player again changes nothing. */
 export async function reportName(db: Db, reporterId: string, username: string, now = new Date()): Promise<ReportResult> {
-  const [target] = await db.query<{ id: string | number; username: string }>(`select id, username from users where username_lower = $1`, [
-    username.trim().toLowerCase(),
-  ]);
-  if (!target) return 'unknown';
+  const [target] = await db.query<{ id: string | number; username: string; email: string }>(
+    `select id, username, email from users where username_lower = $1 and banned_at is null`,
+    [username.trim().toLowerCase()],
+  );
+  if (!target || isAdminEmail(target.email)) return 'unknown'; // the admin's own name is not up for review
   if (String(target.id) === reporterId) return 'self';
   const [done] = await db.query(`select 1 from reports where reporter_id = $1 and reported_id = $2`, [reporterId, target.id]);
   if (done) return 'ok';

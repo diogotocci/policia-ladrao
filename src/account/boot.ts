@@ -11,6 +11,8 @@ export type Step =
   /** no internet and never signed in on this phone */
   | { kind: 'offline-first' }
   | { kind: 'username'; account: Account }
+  /** suspended from /admin: only "Entrar com outra conta" and deleting the account */
+  | { kind: 'banned'; account: Account }
   /** the phone and the account both have progress, and they differ: the player picks one */
   | { kind: 'choose'; account: Account; local: Profile; cloud: Profile; rev: number };
 
@@ -37,6 +39,7 @@ export async function nextStep(api: AccountApi, storage: Storage | undefined, lo
     return { kind: 'signin' };
   }
   if (!account) return { kind: 'signin' };
+  if (account.banned) return { kind: 'banned', account };
   if (!account.username) return { kind: 'username', account };
   const keep = (rev: number, dirty = false) => saveAccountState(storage, { account, rev, dirty });
   try {

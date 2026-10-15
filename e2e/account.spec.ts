@@ -67,3 +67,16 @@ test('privacy, terms and delete-account pages exist outside the game', async ({ 
     expect(await res.text()).toContain(text);
   }
 });
+
+test('a banned account sees "Conta suspensa" and can sign in with another account', async ({ page }) => {
+  await page.goto('/?app&quality=low&mute');
+  await page.evaluate(() => {
+    const account = { id: 'dev-1', email: 'teste@exemplo.com', name: 'Conta de Teste', picture: '', username: 'Ladrao_Ruim', banned: true };
+    localStorage.setItem('pl.dev.api', JSON.stringify({ signedIn: true, account, profile: null, rev: 0 }));
+  });
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Conta suspensa' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Excluir esta conta' })).toHaveAttribute('href', '/excluir-conta');
+  await page.getByRole('button', { name: 'Entrar com outra conta' }).click();
+  await expect(page.getByRole('heading', { name: 'Entre para jogar' })).toBeVisible();
+});

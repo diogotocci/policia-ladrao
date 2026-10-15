@@ -11,6 +11,8 @@ import { DIFFICULTIES, MODES, type Difficulty, type Mode } from '../../src/confi
 import { board, submit } from './records.js';
 import { adminStats, saveEvents } from './events.js';
 import { reportName } from './reports.js';
+import { moderate, moderationView } from './moderation.js';
+import { MODERATION_ACTIONS, type ModerationAction } from '../../src/meta/moderation.js';
 import { parseContext, parseEvent, type ClientEvent } from '../../src/meta/events.js';
 import { usernameProblem } from '../../src/meta/username.js';
 
@@ -66,13 +68,17 @@ async function who(req: Request, d: Deps): Promise<string | undefined> {
 /** a valid session whose account was deleted (on another phone or on the web): the phone must forget it */
 const gone = () => json({ error: 'gone' }, 401, { 'Set-Cookie': clearCookie() });
 
-/** the signed-in user's id when the account still exists; otherwise the answer to send */
-async function member(req: Request, d: Deps & { db: Db }): Promise<string | Response> {
+/** the signed-in user's id when the account still exists and is not banned; otherwise the answer to send.
+ * `banned: true` lets a banned account through (deleting the account must keep working, a Google Play rule). */
+async function member(req: Request, d: Deps & { db: Db }, o: { banned?: boolean } = {}): Promise<string | Response> {
   const id = await who(req, d);
   if (!id) return json({ error: 'signed-out' }, 401);
   await ensureSchema(d.db);
-  const rows = await d.db.query<{ id: string }>(`select id from users where id = $1`, [id]);
-  return rows[0] ? id : gone();
+  const rows = await d.db.query<{ id: string; banned: boolean }>(`select id, banned_at is not null as banned from users where id = $1`, [
+    id,
+  ]);
+  if (!rows[0]) return gone();
+  return rows[0].banned && !o.banned ? json({ error: 'banned' }, 403) : id;
 }
 
 export const config = (d: Deps) => json({ googleClientId: d.clientId ?? null });
@@ -149,7 +155,7 @@ export async function accountDelete(req: Request, d: Deps): Promise<Response> {
   const bad = foreign(req);
   if (bad) return bad;
   if (!d.db) return unavailable();
-  const id = await member(req, { ...d, db: d.db });
+  const id = await member(req, { ...d, db: d.db }, { banned: true });
   if (typeof id !== 'string') return id;
   const account = await getAccount(d.db, id);
   const confirm = (await bodyOf(req)).confirm;
@@ -215,13 +221,36 @@ export async function eventsPost(req: Request, d: Deps): Promise<Response> {
   return json({ saved });
 }
 
-/** GET /api/admin/stats?days=7|30|90: the panel's numbers, only for the admin account. */
-export async function adminStatsGet(req: Request, d: Deps): Promise<Response> {
-  if (!d.db) return unavailable();
-  const id = await member(req, { ...d, db: d.db });
+/** the admin's id, or the answer to send to anyone else */
+async function admin(req: Request, d: Deps & { db: Db }): Promise<string | Response> {
+  const id = await member(req, d);
   if (typeof id !== 'string') return id;
   const account = await getAccount(d.db, id);
-  if (!account || !isAdminEmail(account.email)) return json({ error: 'forbidden' }, 403);
+  return account && isAdminEmail(account.email) ? id : json({ error: 'forbidden' }, 403);
+}
+
+/** GET /api/admin/stats?days=7|30|90: the panel's numbers, only for the admin account.
+ * GET /api/admin/stats?view=reports: the "Denúncias" tab (same function: the Hobby plan allows 12). */
+export async function adminStatsGet(req: Request, d: Deps): Promise<Response> {
+  if (!d.db) return unavailable();
+  const id = await admin(req, { ...d, db: d.db });
+  if (typeof id !== 'string') return id;
+  if (new URL(req.url).searchParams.get('view') === 'reports') return json(await moderationView(d.db));
   const days = Number(new URL(req.url).searchParams.get('days'));
   return json(await adminStats(d.db, [7, 30, 90].includes(days) ? days : 30, d.now?.()));
+}
+
+/** POST /api/admin/stats {userId, action}: a decision in the "Denúncias" tab (rename, ban, unban, dismiss). */
+export async function adminActPost(req: Request, d: Deps): Promise<Response> {
+  const bad = foreign(req);
+  if (bad) return bad;
+  if (!d.db) return unavailable();
+  const id = await admin(req, { ...d, db: d.db });
+  if (typeof id !== 'string') return id;
+  const b = await bodyOf(req);
+  if (typeof b.userId !== 'string' || !/^[0-9]{1,19}$/.test(b.userId) || !MODERATION_ACTIONS.includes(b.action as ModerationAction))
+    return json({ error: 'invalid' }, 400);
+  const r = await moderate(d.db, b.userId, b.action as ModerationAction, d.now?.());
+  if (r === 'ok') return json(await moderationView(d.db));
+  return json({ error: r }, r === 'unknown' ? 404 : 403);
 }

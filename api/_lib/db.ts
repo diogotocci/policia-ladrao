@@ -76,6 +76,18 @@ const SCHEMA = [
     unique (reporter_id, reported_id)
   )`,
   `create index if not exists reports_reported on reports (reported_id)`,
+  // moderation from the /admin "Denúncias" tab: a banned account cannot play; a name taken away is never given again
+  `alter table users add column if not exists banned_at timestamptz`,
+  `alter table users add column if not exists notice text`,
+  `create table if not exists moderation (
+    id bigserial primary key,
+    user_id bigint references users(id) on delete set null,
+    username text,
+    action text not null,
+    reports integer not null default 0,
+    created_at timestamptz not null
+  )`,
+  `create table if not exists blocked_names (name_lower text primary key, created_at timestamptz not null)`,
   `create index if not exists records_board on records (mode, side, difficulty) where not suspect`,
   `create index if not exists records_user on records (user_id, ended_at desc)`,
 ];

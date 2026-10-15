@@ -1,6 +1,7 @@
 // Example numbers for the /admin panel on localhost (the fake account server has no real players). Fixed, so the page
 // and its tests look the same every time.
 import type { AdminStats } from '../meta/events';
+import type { Decision, ModerationAction, ModerationView } from '../meta/moderation';
 
 export function demoStats(days: number, now = new Date()): AdminStats {
   const daily = Array.from({ length: days }, (_, i) => {
@@ -75,4 +76,51 @@ export function demoStats(days: number, now = new Date()): AdminStats {
       { client: 'pwa', players: 28 },
     ],
   };
+}
+
+/** Example reports for the /admin "Denúncias" tab on localhost (made-up names). */
+export function demoModeration(now = new Date()): ModerationView {
+  const ago = (h: number) => new Date(now.getTime() - h * 3600_000).toISOString();
+  return {
+    pending: [
+      {
+        userId: '101',
+        username: 'xX_Policial_Xx',
+        count: 5,
+        first: ago(60),
+        last: ago(3),
+        by: ['turbo_br', 'pmdorj', 'Sirene_BR'],
+      },
+      { userId: '102', username: 'NitroMax', reportedAs: 'Nitr0_Xyz', count: 2, first: ago(40), last: ago(14), by: ['Zé_da_Rota', 'Ana'] },
+      { userId: '103', username: 'Fuga_Rapida', count: 1, first: ago(4), last: ago(4), by: ['PegaLadrao'] },
+    ],
+    decided: [
+      { userId: '104', username: 'Ladrao_Ruim', action: 'ban', reports: 4, at: ago(26), nowName: 'Ladrao_Ruim', banned: true },
+      { userId: '105', username: 'Nome_Feio', action: 'rename', reports: 3, at: ago(41), nowName: 'Vel0z', banned: false },
+      { userId: '106', username: 'Caveirao_BR', action: 'dismiss', reports: 1, at: ago(44), nowName: 'Caveirao_BR', banned: false },
+    ],
+  };
+}
+
+/** The fake's answer to a decision: the same rules as the server, on the example data. */
+export function demoAct(v: ModerationView, userId: string, action: ModerationAction, now = new Date()): ModerationView | 'unknown' {
+  const at = now.toISOString();
+  if (action === 'unban') {
+    const d = v.decided.find((x) => x.userId === userId && x.action === 'ban');
+    if (!d) return 'unknown';
+    const decided = v.decided.map((x) => (x.userId === userId ? { ...x, banned: false } : x));
+    return { ...v, decided: [{ ...d, action, reports: 0, at, banned: false }, ...decided] };
+  }
+  const p = v.pending.find((x) => x.userId === userId);
+  if (!p) return 'unknown';
+  const d: Decision = {
+    userId,
+    username: p.username,
+    action,
+    reports: p.count,
+    at,
+    nowName: action === 'rename' ? null : p.username,
+    banned: action === 'ban',
+  };
+  return { pending: v.pending.filter((x) => x !== p), decided: [d, ...v.decided] };
 }
