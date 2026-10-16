@@ -95,7 +95,8 @@ function globalLine(answer: Promise<GlobalAnswer>, gone: () => void): HTMLElemen
   answer.then((a) => {
     if (!a) return offline();
     if (a.pos === null) return gone();
-    line.textContent = a.best ? `Ranking global: ${nth(a.pos)}` : `Ranking global: seu melhor continua em ${nth(a.pos)}`;
+    // every match is its own line in the global ranking: this one's place
+    line.textContent = `Ranking global: ${nth(a.pos)}`;
   }, offline);
   return line;
 }

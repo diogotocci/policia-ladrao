@@ -1,5 +1,6 @@
-// Global ranking list (V3 delivery 2, mockup approved 2026-10-12): top 100 of a board, best per player, with the
-// player's own line pinned below when it is outside the top. Loads by itself; the screen around it is renderRanking.
+// Global ranking list (V3 delivery 2, mockup approved 2026-10-12): the top 30 matches of a board, a player possibly more
+// than once (until 0.34: one line per player), with the player's best line pinned below when none made the top. Loads
+// by itself; the screen around it is renderRanking.
 import type { Difficulty, Mode, Role } from '../../config/balance';
 import { RANK_NAMES } from '../../meta/career';
 import { CARS } from '../../meta/cars';

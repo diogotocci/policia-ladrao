@@ -54,20 +54,23 @@ const board = async (q = 'mode=pursuit&side=police&difficulty=normal', cookie?: 
   (await rankingGet(req(`/api/ranking?${q}`, 'GET', undefined, cookie), s.deps)).json() as Promise<GlobalBoard>;
 
 describe('global ranking', () => {
-  it("each player shows once, with the best time; the answer says the player's position and whether it is a new best", async () => {
+  it("every match is its own line (a player can appear many times); the answer is this match's place", async () => {
     const ana = await s.login('ana', 'Ana');
     const bia = await s.login('bia', 'Bia_191');
     expect(await send(ana, rec({ time: 50 }))).toEqual({ pos: 1, best: true });
     expect(await send(bia, rec({ time: 30, car: 'esportivo' }))).toEqual({ pos: 1, best: true });
-    expect(await send(ana, rec({ time: 60 }))).toEqual({ pos: 2, best: false }); // slower than her 0:50
+    expect(await send(ana, rec({ time: 60 }))).toEqual({ pos: 3, best: false }); // slower than her 0:50
     expect(await send(ana, rec({ time: 20 }))).toEqual({ pos: 1, best: true });
     const b = await board();
     expect(b.rows.map((r) => [r.pos, r.username, r.time])).toEqual([
       [1, 'Ana', 20],
       [2, 'Bia_191', 30],
+      [3, 'Ana', 50],
+      [4, 'Ana', 60],
     ]);
     expect(b.rows[1]).toMatchObject({ car: 'esportivo', rank: 2 });
-    expect((await board(undefined, ana)).rows[0]!.me).toBe(true);
+    const mine = (await board(undefined, ana)).rows;
+    expect(mine.filter((r) => r.me).map((r) => r.pos)).toEqual([1, 3, 4]);
   });
 
   it('thief boards: fastest win with more life first; Sobrevivência thief: longest time alive first', async () => {
@@ -114,7 +117,7 @@ describe('global ranking', () => {
     const ana = await s.login('ana', 'Ana');
     const first = rec({ time: 60, endedAt: '2026-10-12T11:00:00Z' });
     await send(ana, first);
-    expect(await send(ana, rec({ time: 50, endedAt: '2026-10-12T11:00:20Z' }))).toEqual({ pos: 1, best: false });
+    expect(await send(ana, rec({ time: 50, endedAt: '2026-10-12T11:00:20Z' }))).toEqual({ pos: null, best: false });
     // a huge number is refused outright (it would not fit the database)
     expect((await recordPost(req('/api/records', 'POST', rec({ hp: 1e12 }), ana), s.deps)).status).toBe(400);
     expect(await send(ana, first)).toEqual({ pos: 1, best: true }); // resent from the offline queue: no new row
@@ -122,16 +125,19 @@ describe('global ranking', () => {
     expect(rows.rows[0]!.n).toBe(2);
   });
 
-  it("the player's own line comes below the top 100; a player without a username or signed out is not on it", async () => {
+  it("top 30 matches; the player's best line comes below when none made it; no username or signed out: not on it", async () => {
     const cookies: string[] = [];
-    for (let i = 0; i < 101; i++) cookies.push(await s.login(`p${i}`, `Jogador${i}`));
-    for (let i = 0; i < 101; i++) await send(cookies[i]!, rec({ time: 10 + i * 0.5 }));
+    for (let i = 0; i < 31; i++) cookies.push(await s.login(`p${i}`, `Jogador${i}`));
+    for (let i = 0; i < 31; i++) await send(cookies[i]!, rec({ time: 10 + i * 0.5 }));
+    await send(cookies[30]!, rec({ time: 40 })); // a worse match of the same player: his best is the one shown below
     const nameless = await s.login('semnome');
     await send(nameless, rec({ time: 5 }));
-    const b = await board(undefined, cookies[100]);
-    expect(b.rows).toHaveLength(100);
-    expect(b.me).toMatchObject({ pos: 101, username: 'Jogador100', me: true });
+    const b = await board(undefined, cookies[30]);
+    expect(b.rows).toHaveLength(30);
+    expect(b.me).toMatchObject({ pos: 31, username: 'Jogador30', time: 25, me: true });
     expect((await board()).me).toBeUndefined();
+    // a match outside the top still gets its place
+    expect(await send(cookies[30]!, rec({ time: 45 }))).toEqual({ pos: 33, best: false });
   });
 
   it('delivery 3: a record shows only when the match_end event of the same match agrees with it', async () => {

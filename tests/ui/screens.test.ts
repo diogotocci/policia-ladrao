@@ -465,7 +465,7 @@ describe('end', () => {
       global: Promise.resolve({ pos: 12, best: false }),
     });
     expect(root.querySelector('.end-layout.has-record')).not.toBeNull();
-    await vi.waitFor(() => expect(root.textContent).toContain('Ranking global: seu melhor continua em 12º'));
+    await vi.waitFor(() => expect(root.textContent).toContain('Ranking global: 12º')); // this match's own place
     root.innerHTML = '';
     renderEnd(root, {
       ...base,

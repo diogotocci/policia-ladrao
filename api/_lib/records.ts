@@ -1,5 +1,5 @@
 // The global ranking in the database (V3 delivery 2, spec §5): records go up with the end of each match, the boards show
-// each player's best, top 100, plus the player's own line.
+// every match as its own line, top 30, plus the player's best line when none made it (until 0.34: best per player).
 import { GLOBAL_TOP, longestFirst, plausible, type GlobalBoard, type GlobalRow, type RecordIn } from '../../src/meta/records.js';
 import type { Difficulty, Mode, Role } from '../../src/config/balance.js';
 import type { Db } from './db.js';
@@ -25,12 +25,15 @@ interface Row {
   id: string | number;
 }
 
-/** Every player's best on one board, ranked; `onlyTop` plus the given player's line. */
-async function ranked(db: Db, where: { mode: Mode; side: Role; difficulty: Difficulty }, me?: string): Promise<Row[]> {
+/**
+ * Every shown record of one board, ranked (a player can have many lines: each match is its own). Returns the top
+ * GLOBAL_TOP, plus the given player's best line and the given match's line wherever they are.
+ */
+async function ranked(db: Db, where: { mode: Mode; side: Role; difficulty: Difficulty }, me?: string, recordId?: string): Promise<Row[]> {
   const ord = order(where.mode, where.side);
   return db.query<Row>(
-    `with best as (
-       select distinct on (r.user_id) r.id, r.user_id, u.username, r.time_ms, r.hp, r.how, r.car, r.rank, r.ended_at
+    `with shown as (
+       select r.id, r.user_id, u.username, r.time_ms, r.hp, r.how, r.car, r.rank, r.ended_at
        from records r join users u on u.id = r.user_id
        where r.mode = $1 and r.side = $2 and r.difficulty = $3 and not r.suspect and u.username is not null and u.banned_at is null
          -- delivery 3: the record must match the match_end event of the same match (sent just before it)
@@ -39,11 +42,13 @@ async function ranked(db: Db, where: { mode: Mode; side: Role; difficulty: Diffi
              and e.data->>'mode' = r.mode and e.data->>'side' = r.side and e.data->>'difficulty' = r.difficulty
              and abs((e.data->>'time')::float8 * 1000 - r.time_ms) <= 5 and (e.data->>'won')::boolean = (r.how is distinct from 'caught')
          ))
-       order by r.user_id, ${ord}
-     ), pos as (select *, row_number() over (order by ${ord}) as pos from best)
+     ), pos as (select *, row_number() over (order by ${ord}) as pos from shown)
      select pos, user_id, username, time_ms, hp, how, car, rank, id from pos
-     where pos <= $4 or user_id::text = $5 order by pos`,
-    [where.mode, where.side, where.difficulty, GLOBAL_TOP, me ?? ''],
+     where pos <= $4
+        or id::text = $6
+        or (user_id::text = $5 and pos = (select min(pos) from pos where user_id::text = $5))
+     order by pos`,
+    [where.mode, where.side, where.difficulty, GLOBAL_TOP, me ?? '', recordId ?? ''],
   );
 }
 
@@ -69,12 +74,13 @@ export async function board(db: Db, where: { mode: Mode; side: Role; difficulty:
     : new Set<string>();
   const rows = raw.map((r) => (reported.has(String(r.user_id)) ? { ...toRow(r, me), reported: true } : toRow(r, me)));
   const top = rows.filter((r) => r.pos <= GLOBAL_TOP);
-  const mine = rows.find((r) => r.me && r.pos > GLOBAL_TOP);
+  // the player's best line, below the list, when none of the player's matches made the top
+  const mine = top.some((r) => r.me) ? undefined : rows.find((r) => r.me && r.pos > GLOBAL_TOP);
   return mine ? { rows: top, me: mine } : { rows: top };
 }
 
 export interface Submitted {
-  /** the player's position on that board now (null: not on it, e.g. the record is suspect) */
+  /** this match's position on that board (null: not shown, e.g. the record is suspect) */
   pos: number | null;
   /** this match is the player's best on that board */
   best: boolean;
@@ -123,6 +129,9 @@ export async function submit(db: Db, userId: string, r: RecordIn, now = new Date
   const id =
     inserted[0]?.id ??
     (await db.query<{ id: string | number }>(`select id from records where match_id = $1 and user_id = $2`, [r.matchId, userId]))[0]?.id;
-  const mine = (await ranked(db, r, userId)).find((x) => String(x.user_id) === userId);
-  return { pos: mine ? Number(mine.pos) : null, best: mine !== undefined && id !== undefined && String(mine.id) === String(id) };
+  if (id === undefined) return { pos: null, best: false };
+  const rows = await ranked(db, r, userId, String(id));
+  const match = rows.find((x) => String(x.id) === String(id));
+  const best = rows.filter((x) => String(x.user_id) === userId).sort((a, b) => Number(a.pos) - Number(b.pos))[0];
+  return { pos: match ? Number(match.pos) : null, best: match !== undefined && best !== undefined && String(best.id) === String(id) };
 }

@@ -178,7 +178,7 @@ export async function recordPost(req: Request, d: Deps): Promise<Response> {
   return json(await submit(d.db, id, r, d.now?.()));
 }
 
-/** GET /api/ranking?mode=&side=&difficulty=: the top 100 of a board (best per player), plus the signed-in player's line. */
+/** GET /api/ranking?mode=&side=&difficulty=: the top 30 matches of a board, plus the signed-in player's best line. */
 export async function rankingGet(req: Request, d: Deps): Promise<Response> {
   if (!d.db) return unavailable();
   const q = new URL(req.url).searchParams;
