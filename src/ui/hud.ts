@@ -213,8 +213,15 @@ export function createHud(
   hud.append(bars, center, finalEl, toastEl, end);
   root.append(hud);
 
-  const setBar = (b: { fill: HTMLElement; track: HTMLElement }, hp: number) => {
+  // the HUD is redrawn every frame: only what changed touches the page, so the browser does not redo the HUD's
+  // style and layout 60 times a second (on a weak phone that work competes with the game for the same CPU)
+  const put = (e: HTMLElement, text: string) => {
+    if (e.textContent !== text) e.textContent = text;
+  };
+  const setBar = (b: { fill: HTMLElement; track: HTMLElement; shown?: number }, hp: number) => {
     const v = Math.max(0, Math.round(hp));
+    if (b.shown === v) return;
+    b.shown = v;
     b.fill.style.width = `${v}%`;
     b.track.setAttribute('aria-valuenow', String(v));
   };
@@ -229,8 +236,8 @@ export function createHud(
       // Sobrevivência: no clock to beat, the time counts up next to the chaos level
       const survival = w.mode === 'survival';
       const left = survival ? Infinity : Math.max(0, w.escapeTime - at);
-      timeLabel.textContent = survival ? 'Tempo' : playerRole === 'thief' ? 'Fuga em' : 'Prenda em';
-      time.textContent = formatTime(survival ? at : left);
+      put(timeLabel, survival ? 'Tempo' : playerRole === 'thief' ? 'Fuga em' : 'Prenda em');
+      put(time, formatTime(survival ? at : left));
       const rose = chaosMeter.update(w.mode, w.chaos);
       if (rose) this.toast(rose, { big: true });
       const scene = w.match.escapeAt !== undefined || w.match.arrestAt !== undefined;
@@ -247,12 +254,13 @@ export function createHud(
         if (alert) finalEl.classList.add('pop');
       }
       const d = Math.abs(thief.s - police.s);
-      dist.textContent = `${Math.round(d)} m`;
-      dist.dataset.band = distanceBand(d);
-      level.textContent = `Nv ${w.level}`;
+      put(dist, `${Math.round(d)} m`);
+      const band = distanceBand(d);
+      if (dist.dataset.band !== band) dist.dataset.band = band;
+      put(level, `Nv ${w.level}`);
 
       const list = playerItems(w, playerRole);
-      const sig = JSON.stringify(list.map((i) => [i.id, i.count]));
+      const sig = list.map((i) => `${i.id}:${i.count ?? ''}`).join('|');
       if (sig !== itemsSig) {
         itemsSig = sig;
         items.replaceChildren(
@@ -271,7 +279,9 @@ export function createHud(
       }
       for (const i of list) {
         if (i.left === undefined) continue;
-        items.querySelector<HTMLElement>(`.hud-item[data-item="${i.id}"]`)?.style.setProperty('--left', String(i.left));
+        const e = items.querySelector<HTMLElement>(`.hud-item[data-item="${i.id}"]`);
+        const left = String(i.left);
+        if (e && e.style.getPropertyValue('--left') !== left) e.style.setProperty('--left', left);
       }
 
       if (w.match.over && end.hidden && opts.showEnd !== false) {

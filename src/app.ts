@@ -42,7 +42,7 @@ const APP_VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : unde
 export function startApp(
   container: HTMLElement,
   /** debug/e2e only: mode, chaosEvery and the debug options */
-  opts: Pick<GameOptions, 'quality' | 'debugHp' | 'traffic' | 'mute' | 'curves' | 'escapeTime' | 'mode' | 'chaosEvery'> & {
+  opts: Pick<GameOptions, 'quality' | 'fps' | 'debugHp' | 'traffic' | 'mute' | 'curves' | 'escapeTime' | 'mode' | 'chaosEvery'> & {
     debug?: boolean;
     /** V3: the signed-in account (the gate ran before); absent in unit tests */
     account?: AppAccount;

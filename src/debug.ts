@@ -8,6 +8,9 @@ export function createDebug(
   getIntents: () => Intents,
   getQuality: () => string = () => '',
   getVisuals: () => Record<string, unknown> = () => ({}),
+  getExtra: () => string = () => '',
+  /** window.__game for the tests (?debug only; ?fps shows the overlay alone) */
+  handle = true,
 ): { frame(dtSeconds: number, calls: { main: number; mirror: number }): void; dispose(): void } {
   const el = document.createElement('div');
   el.className = 'debug-overlay';
@@ -17,17 +20,18 @@ export function createDebug(
   let acc = 0;
   let frames = 0;
 
-  (window as unknown as { __game?: unknown }).__game = {
-    snapshot: () => structuredClone(getWorld()),
-    /** draw calls of the main pass (scene + shadows) in the last frame */
-    drawCalls: () => lastCalls,
-    /** draw calls of the rear-view mirror in the last frame (0 when hidden) */
-    mirrorDrawCalls: () => mirrorCalls,
-    intents: () => ({ ...getIntents() }),
-    quality: () => getQuality(),
-    /** visual state for e2e tests (live particles, visible shooters...) */
-    visuals: () => getVisuals(),
-  };
+  if (handle)
+    (window as unknown as { __game?: unknown }).__game = {
+      snapshot: () => structuredClone(getWorld()),
+      /** draw calls of the main pass (scene + shadows) in the last frame */
+      drawCalls: () => lastCalls,
+      /** draw calls of the rear-view mirror in the last frame (0 when hidden) */
+      mirrorDrawCalls: () => mirrorCalls,
+      intents: () => ({ ...getIntents() }),
+      quality: () => getQuality(),
+      /** visual state for e2e tests (live particles, visible shooters...) */
+      visuals: () => getVisuals(),
+    };
 
   return {
     frame(dt, calls) {
@@ -37,7 +41,8 @@ export function createDebug(
       frames++;
       if (acc >= 0.5) {
         const w = getWorld();
-        el.textContent = `${Math.round(frames / acc)} fps · ${getQuality()} · ${lastCalls}${mirrorCalls ? `+${mirrorCalls}` : ''} draws · ${w.player.speed.toFixed(1)} m/s · s ${w.player.s.toFixed(0)}`;
+        el.textContent =
+          `${Math.round(frames / acc)} fps · ${getQuality()} · ${lastCalls}${mirrorCalls ? `+${mirrorCalls}` : ''} draws · ${w.player.speed.toFixed(1)} m/s · s ${w.player.s.toFixed(0)} ${getExtra()}`.trim();
         acc = 0;
         frames = 0;
       }

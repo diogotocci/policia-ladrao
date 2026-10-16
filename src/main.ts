@@ -10,7 +10,7 @@ import { startGame } from './game';
 import { installFullscreenOnFirstTap, installNoZoom, installViewportFix } from './ui/mobileShell';
 import { registerServiceWorker } from './pwa/register';
 import { hideSplash } from './ui/splash';
-import type { QualityTier } from './render/renderer';
+import { QUALITY_TIERS, type QualityTier } from './render/renderer';
 import type { ItemId } from './sim/world';
 
 declare const __APP_VERSION__: string | undefined;
@@ -22,9 +22,11 @@ const seed = Number.isFinite(seedParam) && params.has('seed') ? seedParam : Date
 
 const app = document.getElementById('app');
 const q = params.get('quality');
-const quality = q === 'high' || q === 'medium' || q === 'low' ? (q as QualityTier) : undefined;
+const quality = QUALITY_TIERS.includes(q as QualityTier) ? (q as QualityTier) : undefined;
 
 const debug = params.has('debug');
+/** frame-rate overlay alone, for measuring on a phone (policia-ladrao.xyz/?fps) */
+const fps = params.has('fps');
 /** positive number from the URL, debug only */
 const hpParam = (name: string) => {
   const v = Number(params.get(name));
@@ -84,6 +86,7 @@ async function enter(container: HTMLElement): Promise<void> {
   const { account, profile } = await runGate(container, { api, storage, dev });
   const running = startApp(container, {
     quality,
+    fps,
     debug,
     debugHp,
     traffic,

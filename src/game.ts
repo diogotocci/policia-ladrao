@@ -15,9 +15,11 @@ import { createParticles } from './render/particles';
 import { createCarSmoke } from './render/carSmoke';
 import { createOpponentMarker } from './render/opponentMarker';
 import { createRearview, isBehind, rearviewRect } from './render/rearview';
+import { warmUpShaders } from './render/warmup';
+import { createFramePacer } from './render/pacer';
 import { createWorldProps } from './render/worldProps';
 import { updateCarModel } from './render/carFactory';
-import { createQualityGovernor, createRenderer } from './render/renderer';
+import { createQualityGovernor, createRenderer, saveTier, startTier } from './render/renderer';
 import { createLighting } from './render/scene';
 import { createRoad, renderOrigin } from './render/roadChunks';
 import { createTrackFrame, setActiveTrackFrame, trackPos } from './render/trackFrame';
@@ -47,8 +49,20 @@ const anyOf = (a: Intents, b: Intents): Intents => ({
 });
 
 export function startGame(container: HTMLElement, opts: GameOptions): GameHandle {
-  const view = createRenderer(container, opts.quality ?? 'high');
+  // ?quality= (tests, debugging) fixes the tier; otherwise the one this device settled on before (see initialTier)
+  const store = (() => {
+    try {
+      return window.localStorage;
+    } catch {
+      return undefined;
+    }
+  })();
+  const phone = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+  const view = createRenderer(container, opts.quality ?? startTier(store, phone));
   const { renderer } = view;
+  // the error check reads each shader's log, which waits for its compile to finish on the main thread; the build that
+  // reaches players skips it (the tests and the dev server keep it)
+  renderer.debug.checkShaderErrors = !import.meta.env.PROD || opts.debug === true;
   renderer.info.autoReset = false;
   const scene = new THREE.Scene();
   const lighting = createLighting(scene, renderer);
@@ -181,20 +195,24 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
     if (f.cue) mixer.cue(f.cue);
   };
   const readIntents = () => anyOf(keyboard.read(), touch.read());
-  const debug = opts.debug
-    ? createDebug(
-        ui,
-        () => world,
-        readIntents,
-        () => view.quality,
-        () => ({
-          particles: particles.alive(),
-          gunners: { police: gunners.police.visible, thief: gunners.thief.visible },
-          muted: mixer.muted(),
-          cameraAspect: chase.camera.aspect,
-        }),
-      )
-    : undefined;
+  const debug =
+    opts.debug || opts.fps
+      ? createDebug(
+          ui,
+          () => world,
+          readIntents,
+          () => view.quality,
+          () => ({
+            particles: particles.alive(),
+            gunners: { police: gunners.police.visible, thief: gunners.thief.visible },
+            muted: mixer.muted(),
+            cameraAspect: chase.camera.aspect,
+          }),
+          // ?fps on a phone: also the pace and how many pixels are drawn
+          () => `${pacer.halved ? `½ (${Math.round(pacer.target)} fps)` : ''} ${renderer.domElement.width}×${renderer.domElement.height}`,
+          opts.debug,
+        )
+      : undefined;
 
   // damage dealt and right boxes, for the coins earned (V2 part 1)
   let stats = emptyStats();
@@ -231,8 +249,10 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
   window.addEventListener('orientationchange', resize);
   window.visualViewport?.addEventListener('resize', resize);
   const onVisibility = () => {
-    if (document.visibilityState === 'visible') governor?.reset();
-    else requestPause(); // hidden tab: pause (the session suspends the audio)
+    if (document.visibilityState === 'visible') {
+      governor?.reset();
+      pacer.reset();
+    } else requestPause(); // hidden tab: pause (the session suspends the audio)
   };
   document.addEventListener('visibilitychange', onVisibility);
 
@@ -251,7 +271,15 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
     });
   };
   let last = performance.now();
+  let mirrorBox = '';
+  let heldFor = 0;
+  const pacer = createFramePacer({ enabled: phone });
   const frame = (now: number) => {
+    // a slow phone on a 90/120 Hz screen draws every second refresh, evenly (see pacer.ts)
+    if (!pacer.shouldDraw(now, !(portrait || paused))) {
+      raf = requestAnimationFrame(frame);
+      return;
+    }
     if (container.clientWidth !== sizeW || container.clientHeight !== sizeH) resize();
     const raw = (now - last) / 1000;
     const elapsed = Math.min(0.25, raw);
@@ -313,12 +341,18 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
     const here = trackPos(car.s, car.x, origin);
     lighting.follow(here.x, here.z, here.heading);
     if (governor && !frozen) {
-      const tier = governor.sample(raw); // real time (without the 0.25 s cap) to ignore long stalls
+      // a minute of play without dropping: this tier holds on this phone (after a higher try, see startTier)
+      heldFor += raw;
+      if (heldFor >= 60 && heldFor - raw < 60) saveTier(store, view.quality);
+      const tier = governor.sample(raw, pacer.target); // real time (without the 0.25 s cap) to ignore long stalls
       if (tier !== view.quality) {
         view.setQuality(tier);
         lighting.setQuality(tier);
         particles.setQuality(tier);
         rearview.setQuality(tier);
+        void warmUpShaders(renderer, scene, chase.camera, [rearview.pass()]); // shadows on/off: other shader variants
+        saveTier(store, tier); // the next match starts here
+        heldFor = 0;
       }
     }
     // draw-call count per pass: info accumulates over the frame and is reset here
@@ -326,12 +360,13 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
     renderer.render(scene, chase.camera);
     const mainCalls = renderer.info.render.calls;
     const showMirror = isBehind(car, foe) && !world.match.over;
-    mirrorFrame.hidden = !showMirror;
+    if (mirrorFrame.hidden === showMirror) mirrorFrame.hidden = !showMirror;
     if (showMirror) {
       const cssW = container.clientWidth;
       const cssH = container.clientHeight;
       const r = rearviewRect(cssW, cssH);
-      mirrorFrame.style.cssText = `left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px`;
+      const box = `left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px`;
+      if (box !== mirrorBox) mirrorFrame.style.cssText = mirrorBox = box; // only when the screen size changes
       rearview.place(car, origin);
       marker.setVisible(false); // the marker does not appear in the mirror
       rearview.render(renderer, scene, cssW, cssH);
@@ -339,6 +374,8 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
     debug?.frame(elapsed, { main: mainCalls, mirror: renderer.info.render.calls - mainCalls });
     raf = requestAnimationFrame(frame);
   };
+  // everything that can appear later in the match compiles now, during the countdown
+  void warmUpShaders(renderer, scene, chase.camera, [rearview.pass()]);
   raf = requestAnimationFrame(frame);
 
   const handle: GameHandle = {
