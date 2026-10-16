@@ -110,7 +110,8 @@ export type GameEvent =
   | { type: 'hit'; target: Role; amount: number; s: number; x: number }
   | { type: 'crash'; a: Role | 'scenery'; b: Role | 'scenery' | 'traffic' | 'works'; s: number; x: number }
   | { type: 'blocked'; s: number; x: number }
-  | { type: 'pickup'; role: Role; item: ItemId | 'wrong' | 'none' }
+  /** `amount`: the life a box of the other side took (it doubles each time) */
+  | { type: 'pickup'; role: Role; item: ItemId | 'wrong' | 'none'; amount?: number }
   | { type: 'bombDropped'; s: number; x: number }
   | { type: 'explosion'; s: number; x: number }
   | { type: 'shot'; from: Role; s: number; x: number; /** from the helicopter */ air?: true; /** machine gun */ rapid?: true }

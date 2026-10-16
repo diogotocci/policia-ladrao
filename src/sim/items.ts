@@ -179,9 +179,11 @@ export function stepBoxes(w: WorldState): WorldState {
     }
     const own: Role = box.color === 'blue' ? 'police' : 'thief';
     if (own !== car.role) {
-      events.push({ type: 'pickup', role: car.role, item: 'wrong' });
-      events.push({ type: 'hit', target: car.role, amount: scaledDamage(I.wrongBoxDamage, w, car.role), s: box.s, x: box.x });
-      return hurt(car, I.wrongBoxDamage, w);
+      const damage = wrongBoxDamage(car.wrongBoxes);
+      const amount = scaledDamage(damage, w, car.role);
+      events.push({ type: 'pickup', role: car.role, item: 'wrong', amount });
+      events.push({ type: 'hit', target: car.role, amount, s: box.s, x: box.x });
+      return { ...hurt(car, damage, w), wrongBoxes: car.wrongBoxes + 1 };
     }
     const item = rollItem(car, rng);
     events.push({ type: 'pickup', role: car.role, item: item ?? 'none' });
@@ -200,3 +202,6 @@ export function stepBoxes(w: WorldState): WorldState {
     events,
   };
 }
+
+/** Damage of the next box of the other side, after `taken` this match: 4, 8, 16, 32... */
+export const wrongBoxDamage = (taken: number) => I.wrongBoxDamage * I.wrongBoxGrowth ** taken;

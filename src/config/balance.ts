@@ -120,7 +120,10 @@ export const BALANCE = {
     firstBoxAt: 200,
     maxVisible: 2,
     spawnAhead: 250,
-    wrongBoxDamage: 2,
+    // the other side's box (playtest 2026-10-16: at 2 it paid to take them away from the opponent): 4, then double
+    // each time in the same match (4, 8, 16, 32...)
+    wrongBoxDamage: 4,
+    wrongBoxGrowth: 2,
     colorTilt: 0.15, // up to 65/35
     colorTiltAtHpDiff: 50,
     police: {

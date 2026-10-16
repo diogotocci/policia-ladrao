@@ -135,8 +135,8 @@ function playerItems(w: WorldState, role: Role): HudItem[] {
 }
 
 /** Short notice when picking up a box. */
-export function pickupToast(item: string): string {
-  if (item === 'wrong') return '−2 caixinha errada';
+export function pickupToast(item: string, amount?: number): string {
+  if (item === 'wrong') return `−${Math.round(amount ?? BALANCE.items.wrongBoxDamage)} caixinha errada`;
   if (item === 'none') return 'Itens no máximo';
   return `+ ${ITEM_LABEL[item] ?? item}`;
 }

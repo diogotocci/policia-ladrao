@@ -89,6 +89,8 @@ export interface CarState {
   effects: CarEffects;
   /** yellow box picked: what it gives and when the roulette stops */
   mystery: { at: number; outcome: MysteryOutcome } | null;
+  /** boxes of the other side taken this match: each one hurts twice as much as the one before */
+  wrongBoxes: number;
 }
 
 export function createCar(role: Role, laneIndex: 0 | 1 | 2 | 3, s = 0): CarState {
@@ -109,6 +111,7 @@ export function createCar(role: Role, laneIndex: 0 | 1 | 2 | 3, s = 0): CarState
     upgrades: baseUpgrades(role),
     effects: NO_EFFECTS,
     mystery: null,
+    wrongBoxes: 0,
   };
 }
 
