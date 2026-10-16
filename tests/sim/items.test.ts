@@ -3,7 +3,7 @@ import { BALANCE } from '../../src/config/balance';
 import { createCar, type CarState } from '../../src/sim/car';
 import { resolveCollisions } from '../../src/sim/collisions';
 import { NO_INTENTS } from '../../src/sim/intents';
-import { applyItem, boxSpot, colorChance, rollItem, stepBoxes } from '../../src/sim/items';
+import { applyItem, boxSpot, colorChance, rollItem, stepBoxes, wrongBoxDamage } from '../../src/sim/items';
 import { fireWeapons, stepProjectiles } from '../../src/sim/projectiles';
 import { pursuitBonus } from '../../src/sim/pursuit';
 import { createRng } from '../../src/sim/rng';
@@ -200,13 +200,29 @@ describe('boxes', () => {
     return { ...withCar(w, 'police', { ...p, airTime }), boxes: [{ id: 1, s: p.s, x: p.x, color }], nextBoxAt: 1e9 };
   };
 
-  it('own colour gives an item, the other costs 2 hp, both consume the box', () => {
+  it('own colour gives an item, the other costs 4 hp, both consume the box', () => {
     const own = stepBoxes(boxWorld('blue'));
     expect(own.boxes).toEqual([]);
     expect(own.events.some((e) => e.type === 'pickup' && e.role === 'police' && e.item !== 'wrong')).toBe(true);
     const wrong = stepBoxes(boxWorld('red'));
-    expect(policeOf(wrong).hp).toBe(98);
-    expect(wrong.events).toContainEqual({ type: 'pickup', role: 'police', item: 'wrong' });
+    expect(policeOf(wrong).hp).toBe(96);
+    expect(wrong.events).toContainEqual({ type: 'pickup', role: 'police', item: 'wrong', amount: 4 });
+  });
+
+  it('each box of the other side hurts twice as much as the one before (4, 8, 16, 32), in the same match', () => {
+    let w: WorldState = boxWorld('red');
+    const hp: number[] = [];
+    for (let i = 0; i < 4; i++) {
+      w = stepBoxes(w);
+      hp.push(policeOf(w).hp);
+      const p = policeOf(w);
+      w = { ...w, boxes: [{ id: 10 + i, s: p.s, x: p.x, color: 'red' as const }] };
+    }
+    expect(hp).toEqual([96, 88, 72, 40]);
+    expect(policeOf(w).wrongBoxes).toBe(4);
+    expect(wrongBoxDamage(0)).toBe(4);
+    expect(wrongBoxDamage(5)).toBe(128);
+    expect(policeOf(createWorld({ seed: 1, playerRole: 'police' })).wrongBoxes).toBe(0); // a new match starts over
   });
 
   it('airborne cars do not pick boxes up', () => {

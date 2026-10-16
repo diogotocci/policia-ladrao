@@ -186,7 +186,7 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
   const onEvents = (events: GameEvent[]) => {
     for (const e of events) {
       if (e.type === 'noTarget' && e.from === opts.role) touch.flashNoTarget();
-      else if (e.type === 'pickup' && e.role === opts.role && !INSTANT_POLICE.has(e.item)) hud.toast(pickupToast(e.item));
+      else if (e.type === 'pickup' && e.role === opts.role && !INSTANT_POLICE.has(e.item)) hud.toast(pickupToast(e.item, e.amount));
     }
     const f = feedbackForFrame(events, opts.role);
     if (f.flash) flash(f.flash);

@@ -27,7 +27,8 @@ describe('formatTime', () => {
 describe('pickupToast', () => {
   it('own item, wrong colour, and everything already maxed', () => {
     expect(pickupToast('bomb')).toBe(`+ ${ITEM_LABEL.bomb}`);
-    expect(pickupToast('wrong')).toBe('−2 caixinha errada');
+    expect(pickupToast('wrong', 4)).toBe('−4 caixinha errada');
+    expect(pickupToast('wrong', 16.4)).toBe('−16 caixinha errada'); // doubled, and scaled by the chaos
     expect(pickupToast('none')).toBe('Itens no máximo');
     expect(pickupToast('ram')).toBe('+ Quebra-mato'); // playtest 2026-10-04: 'aríete' is rarely used
   });

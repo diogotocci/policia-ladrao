@@ -112,7 +112,7 @@ describe('choose', () => {
     expect(page()).toContain('Freie nas curvas fechadas');
     expect(page()).toContain('sobe na calçada e perde 5 de vida'); // BALANCE.collision.scenery
     expect(dialog.textContent).not.toContain('muro'); // there is no wall, it is the curb
-    expect(page()).toContain('tira 2 de vida'); // BALANCE.items.wrongBoxDamage
+    expect(page()).toContain('A do outro tira vida, e cada uma tira o dobro da anterior.'); // grows, no numbers
     expect(page()).toContain('Quebra-molas');
     expect(page()).not.toContain('Quem vence');
     button('Próximo').click();

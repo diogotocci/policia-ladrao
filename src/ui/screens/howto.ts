@@ -21,7 +21,7 @@ const PAGES: { tips: Tip[] }[] = [
       {
         icon: 'box',
         title: 'Só a caixa da sua cor',
-        text: `Azul é da polícia, vermelha é do ladrão. A do outro tira ${BALANCE.items.wrongBoxDamage} de vida.`,
+        text: 'Azul é da polícia, vermelha é do ladrão. A do outro tira vida, e cada uma tira o dobro da anterior.',
       },
       { icon: 'bump', title: 'Quebra-molas', text: 'O carro pula e perde velocidade. No ar, passa por cima das bombas.' },
     ],
