@@ -17,7 +17,8 @@ vi.mock('../../src/game', () => ({
   startGame: (_c: HTMLElement, o: Opts) => {
     ends.push(o.onEnd);
     gameOpts.push(o);
-    return { stop() {}, pause() {}, resume() {} };
+    // ready at once (a thenable that answers synchronously: the tests drive the frames by hand)
+    return { stop() {}, pause() {}, resume() {}, loadProgress: () => 1, ready: () => ({ then: (f: () => void) => f() }) };
   },
 }));
 vi.mock('../../src/render/carPreview', () => ({ createCarPreview: () => ({ dispose() {} }) }));

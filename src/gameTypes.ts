@@ -9,6 +9,10 @@ import type { ItemId } from './sim/world';
 export interface GameHandle {
   pause(): void;
   resume(): void;
+  /** resolves once the match is set up (shaders compiled, models and textures on the GPU), at most a few seconds */
+  ready(): Promise<void>;
+  /** 0..1, for the loading bar */
+  loadProgress(): number;
   isPaused(): boolean;
   stop(): void;
 }

@@ -50,7 +50,7 @@ export function trapFocus(el: HTMLElement): () => void {
 export const mount = (root: HTMLElement, el: HTMLElement, focus?: HTMLElement): Disposable => {
   root.append(el);
   focus?.focus();
-  const untrap = el.classList.contains('screen-countdown') ? () => {} : trapFocus(el);
+  const untrap = el.classList.contains('screen-countdown') || el.classList.contains('screen-loading') ? () => {} : trapFocus(el);
   return {
     dispose: () => {
       untrap();

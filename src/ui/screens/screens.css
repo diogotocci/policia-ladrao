@@ -500,6 +500,51 @@
 .screen-countdown {
   pointer-events: none;
 }
+/* loading before the countdown (mockup approved 2026-10-16); on screen before the setup starts holding the page */
+.screen-loading {
+  pointer-events: none;
+  background: rgba(10, 12, 16, 0.62);
+  animation: pl-loading-in 0.12s both;
+}
+@keyframes pl-loading-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.loading-title {
+  font:
+    800 26px/1.2 system-ui,
+    sans-serif;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+}
+.loading-bar {
+  width: min(320px, 60vw);
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+}
+.loading-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #ffcf4a;
+  box-shadow: 0 0 12px rgba(255, 207, 74, 0.6);
+  transition: width 0.25s ease-out;
+}
+.loading-tip {
+  max-width: min(460px, 80vw);
+  margin: 0;
+  color: #cfd3da;
+  font:
+    500 14px/1.4 system-ui,
+    sans-serif;
+}
+.loading-tip b {
+  color: #ffcf4a;
+}
 .countdown-number {
   font:
     900 120px/1 system-ui,

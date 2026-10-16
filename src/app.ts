@@ -1,5 +1,6 @@
 // Full app (spec §7): screens + matches + ranking. The flow is the pure state machine in screens/flow.ts;
 // here we only wire each state to what appears on screen (and to the game).
+import { HOWTO_TIPS } from './ui/screens/howto';
 import type { Difficulty, Mode, Role } from './config/balance';
 import { createAudioSession } from './audio/session';
 import { startGame } from './game';
@@ -28,6 +29,7 @@ import {
   renderCareer,
   renderChoose,
   renderCountdown,
+  renderLoading,
   renderEnd,
   renderPause,
   renderRanking,
@@ -260,9 +262,26 @@ export function startApp(
           admin,
         });
         break;
-      case 'countdown':
+      case 'loading': {
         highlight = undefined; // the record highlight applies only to the match that just ended
         newGame(s.role);
+        const me = game;
+        const loading = renderLoading(layer, { tip: HOWTO_TIPS[Math.floor(Math.random() * HOWTO_TIPS.length)]! });
+        view = loading;
+        // the bar follows the setup; the countdown starts once the match is ready (this match, still loading)
+        let bar = requestAnimationFrame(function tick() {
+          loading.set(me?.loadProgress() ?? 0);
+          bar = requestAnimationFrame(tick);
+        });
+        const stopBar = () => cancelAnimationFrame(bar);
+        view = { dispose: () => (stopBar(), loading.dispose()) };
+        void me?.ready().then(() => {
+          stopBar();
+          if (game === me && state.screen === 'loading') dispatch({ type: 'loaded' });
+        });
+        break;
+      }
+      case 'countdown':
         countdown = renderCountdown(layer);
         countdown.set(s.left);
         view = countdown;

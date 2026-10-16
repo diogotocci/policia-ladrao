@@ -23,6 +23,20 @@ Como o jogo se ajusta a celulares mais fracos sem mudar a interface (0.32, depoi
 - **Sem leitura do log dos shaders em produção** (`checkShaderErrors`), que esperava cada compilação terminar na linha principal. Com `?debug` e nos testes continua ligado.
 - **HUD:** só mexe na página quando um valor muda (tempo, vida, distância). Medido: cerca de 40% menos trabalho de layout e estilo por quadro.
 
+## Tela "Preparando a partida…"
+
+Entre a escolha do lado e o 3-2-1 (mockup aprovado em 16/10/2026, 0.33). A partida é montada atrás dela (`prepareMatch` em `src/render/warmup.ts`):
+
+1. Todos os shaders compilam, inclusive o retrovisor.
+2. Tudo é desenhado uma vez numa imagem escondida de 16×16, com os objetos escondidos visíveis e sem cortar o que está fora da câmera. Assim modelos e texturas já estão na placa de vídeo, e as sombras já compiladas, quando aparecem pela primeira vez.
+3. Começa o 3-2-1.
+
+- A barra acompanha a montagem; embaixo, uma dica do "Como jogar".
+- Limite de 6 s: um celular que não termina joga mesmo assim, e o que faltou não é desenhado depois no meio da partida.
+- Enquanto monta, a pista atrás é redesenhada só de vez em quando, para sobrar o celular para a montagem.
+- Com `?debug` (testes) não há espera: os shaders compilam durante a contagem, como antes.
+- Num navegador sem compilação paralela (`KHR_parallel_shader_compile`), a página fica parada com a tela de carregamento à vista até terminar.
+
 ## Telas de 90 e 120 Hz
 
 Num celular de 90 Hz que não consegue desenhar todos os quadros, o jogo alternava quadros de 1 e 2 atualizações da tela (55, 70, 48 fps), o que parece engasgo. Agora (`src/render/pacer.ts`), se os quadros passam de 1,25 atualização em média, o jogo desenha a cada duas atualizações: 45 fps estáveis em 90 Hz, 60 em 120 Hz. A simulação tem passo fixo, então velocidades e tempos não mudam. Telas de 60 Hz e computadores ficam como estavam.

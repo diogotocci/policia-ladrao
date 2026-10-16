@@ -49,6 +49,9 @@ describe('screen flow', () => {
     s = reduce(s, { type: 'pickMode' });
     expect(s.screen).toBe('choose');
     s = reduce(s, { type: 'choose', role: 'thief' });
+    expect(s).toEqual({ screen: 'loading', role: 'thief' }); // "Preparando a partida…" first
+    expect(reduce(s, { type: 'tick', dt: 5 })).toBe(s); // the countdown waits for the match to be ready
+    s = reduce(s, { type: 'loaded' });
     expect(s).toEqual({ screen: 'countdown', role: 'thief', left: COUNTDOWN });
     s = reduce(s, { type: 'tick', dt: COUNTDOWN + 0.01 });
     expect(s).toEqual({ screen: 'playing', role: 'thief' });
@@ -88,7 +91,7 @@ describe('screen flow', () => {
   });
 
   it('the countdown goes 3 → 0 in 3 s and cannot be paused', () => {
-    let s = run(initialState(), { type: 'play' }, { type: 'pickMode' }, { type: 'choose', role: 'police' });
+    let s = run(initialState(), { type: 'play' }, { type: 'pickMode' }, { type: 'choose', role: 'police' }, { type: 'loaded' });
     s = reduce(s, { type: 'tick', dt: 1 });
     expect(s).toMatchObject({ screen: 'countdown', left: 2 });
     expect(reduce(s, { type: 'pause' })).toBe(s);
@@ -101,10 +104,11 @@ describe('screen flow', () => {
     const paused = reduce(playing, { type: 'pause' });
     expect(paused).toEqual({ screen: 'paused', role: 'police' });
     expect(reduce(paused, { type: 'resume' })).toEqual(playing);
-    expect(reduce(paused, { type: 'restart' })).toEqual({ screen: 'countdown', role: 'police', left: COUNTDOWN });
+    expect(reduce(paused, { type: 'restart' })).toEqual({ screen: 'loading', role: 'police' });
     expect(reduce(paused, { type: 'quit' }).screen).toBe('title');
     const end = reduce(playing, { type: 'ended', result: { winner: 'police', time: 61 } });
-    expect(reduce(end, { type: 'restart' })).toEqual({ screen: 'countdown', role: 'police', left: COUNTDOWN });
+    expect(reduce(end, { type: 'restart' })).toEqual({ screen: 'loading', role: 'police' });
+    expect(reduce({ screen: 'loading', role: 'police' }, { type: 'quit' }).screen).toBe('title');
     expect(reduce(end, { type: 'quit' }).screen).toBe('title');
   });
 

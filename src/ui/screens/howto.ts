@@ -198,3 +198,8 @@ export function openHowTo(host: HTMLElement, onClose: () => void): void {
   const close = openModal(host, dialog, 'Como jogar', onClose);
   done.focus();
 }
+
+/** every tip of "Como jogar", one line each: the loading screen shows one at random */
+export const HOWTO_TIPS: readonly { title: string; text: string }[] = PAGES.flatMap((p) =>
+  p.tips.map(({ title, text }) => ({ title, text })),
+);

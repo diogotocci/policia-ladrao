@@ -23,7 +23,7 @@ Denúncia de nome pela bandeira de cada linha do Ranking Global, salva no banco 
 
 ## Feito
 
-- **Desempenho no celular (playtest 2026-10-15, Realme C61):** nível de qualidade lembrado por aparelho, nível `lowest`, shaders compilados na contagem, HUD sem trabalho à toa e ritmo estável em telas de 90/120 Hz (0.32; `docs/desempenho.md`).
+- **Desempenho no celular (playtest 2026-10-15, Realme C61):** nível de qualidade lembrado por aparelho, nível `lowest`, shaders compilados na contagem, HUD sem trabalho à toa e ritmo estável em telas de 90/120 Hz (0.32; `docs/desempenho.md`). Tela "Preparando a partida…" antes do 3-2-1, que monta a partida antes de começar (0.33).
 - **Denúncias no /admin (anotado em 2026-10-13):** aba Denúncias com fila, histórico e as ações forçar troca de nome, banir (com desfazer) e descartar (0.31). Ficaram de fora: ocultar sozinho por número de denúncias, tirar só do ranking, suspensão com prazo e aviso por e-mail.
 - **Progressão e retenção (anotado em 2026-10-04):** moedas por partida (V2 Parte 1), dificuldade com multiplicador (Parte 2), loja só de cosméticos (Parte 4) e Carreira com desafios do dia, conquistas, patentes por lado e sequência de dias (Parte 5). Progresso no aparelho com código de backup.
 - **Loja com desbloqueio (anotado em 2026-10-08):** preços ~3x mais altos, carros, cores, neon, sons e placa liberados pela Carreira e depois comprados (Parte 5).
