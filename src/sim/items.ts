@@ -1,7 +1,6 @@
 // Item boxes and items (spec §5): spaced spawn, color tending toward whoever is losing, pickup on the ground, effects with caps.
 import { BALANCE, type Role } from '../config/balance.js';
 import { hpPct, type CarState } from './car.js';
-import { hurt, scaledDamage } from './chaos.js';
 import { createRngFromState, type Rng } from './rng.js';
 import { bumpsBetween } from './track.js';
 import { pickMystery } from './mystery.js';
@@ -179,11 +178,12 @@ export function stepBoxes(w: WorldState): WorldState {
     }
     const own: Role = box.color === 'blue' ? 'police' : 'thief';
     if (own !== car.role) {
-      const damage = wrongBoxDamage(car.wrongBoxes);
-      const amount = scaledDamage(damage, w, car.role);
+      // exactly 4, 8, 16, 32...: no chaos, side or "dano dobrado" scale on top (playtest 2026-10-16: the scaled
+      // 17 and 39 did not read as doubling)
+      const amount = wrongBoxDamage(car.wrongBoxes);
       events.push({ type: 'pickup', role: car.role, item: 'wrong', amount });
       events.push({ type: 'hit', target: car.role, amount, s: box.s, x: box.x });
-      return { ...hurt(car, damage, w), wrongBoxes: car.wrongBoxes + 1 };
+      return { ...car, hp: Math.max(0, car.hp - amount), wrongBoxes: car.wrongBoxes + 1 };
     }
     const item = rollItem(car, rng);
     events.push({ type: 'pickup', role: car.role, item: item ?? 'none' });

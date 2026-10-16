@@ -225,6 +225,20 @@ describe('boxes', () => {
     expect(policeOf(createWorld({ seed: 1, playerRole: 'police' })).wrongBoxes).toBe(0); // a new match starts over
   });
 
+  it('Sobrevivência: still exactly 4, 8, 16, 32 (no chaos or side scale on the wrong box)', () => {
+    const base = createWorld({ seed: 1, playerRole: 'thief', mode: 'survival' });
+    let w: WorldState = { ...base, chaos: 3 };
+    const amounts: number[] = [];
+    for (let i = 0; i < 4; i++) {
+      const t = thiefOf(w);
+      w = stepBoxes({ ...w, boxes: [{ id: 20 + i, s: t.s, x: t.x, color: 'blue' as const }], nextBoxAt: 1e9 });
+      const e = [...w.events].reverse().find((x) => x.type === 'pickup'); // events pile up across these steps
+      amounts.push(e && e.type === 'pickup' ? (e.amount ?? 0) : 0);
+    }
+    expect(amounts).toEqual([4, 8, 16, 32]);
+    expect(thiefOf(w).hp).toBe(thiefOf(base).hp - 60);
+  });
+
   it('airborne cars do not pick boxes up', () => {
     const w = stepBoxes(boxWorld('red', 0.3));
     expect(w.boxes).toHaveLength(1);
