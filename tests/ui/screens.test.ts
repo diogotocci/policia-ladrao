@@ -619,14 +619,30 @@ describe('ranking', () => {
     expect(rows[0]!.textContent).toContain('00:55.0');
     expect(rows[0]!.textContent).toContain('05/10');
     expect(rows[0]!.classList.contains('is-new')).toBe(true);
-    button('Ladrão — mais rápidos a vencer').click();
+    expect(root.querySelector('.ranking-hint')!.textContent).toBe('Ranking da polícia: os mais rápidos a prender');
+    expect(root.querySelector('.ranking-back')!.getAttribute('aria-label')).toBe('Voltar');
+    button('Ladrão').click();
     expect(onTab).toHaveBeenCalledWith('thief');
     root.innerHTML = '';
     renderRanking(root, { ...R(board), tab: 'thief', focusTab: true, onTab, onBack: vi.fn() });
-    expect(document.activeElement).toBe(button('Ladrão — mais rápidos a vencer')); // focus stays on the tab after switching
+    expect(document.activeElement).toBe(button('Ladrão')); // focus stays on the tab after switching
     root.innerHTML = '';
     renderRanking(root, { ...R(board), tab: 'thief', onTab, onBack: vi.fn() });
     expect(root.textContent).toContain('Nenhum recorde ainda');
+  });
+
+  it('the hint above the list says what each board ranks', () => {
+    const hint = (tab: 'police' | 'thief', mode: 'pursuit' | 'survival') => {
+      root.innerHTML = '';
+      renderRanking(root, { ...R(emptyBoard()), mode, tab, onTab: vi.fn(), onBack: vi.fn() });
+      const el = root.querySelector('.ranking-hint')!;
+      expect(root.querySelector('.ranking-list')!.getAttribute('aria-describedby')).toBe(el.id);
+      return el.textContent;
+    };
+    expect(hint('police', 'pursuit')).toBe('Ranking da polícia: os mais rápidos a prender');
+    expect(hint('police', 'survival')).toBe('Ranking da polícia: os mais rápidos a vencer');
+    expect(hint('thief', 'pursuit')).toBe('Ranking do ladrão: os mais rápidos a vencer');
+    expect(hint('thief', 'survival')).toBe('Ranking do ladrão: quem ficou mais tempo vivo');
   });
 
   it('thief rows show how the win came (💥 destroyed the police / 🏁 escaped) and the life left', () => {

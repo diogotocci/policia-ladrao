@@ -52,7 +52,9 @@ describe('global ranking screen', () => {
     const onScope = vi.fn();
     renderRanking(root, { ...base, boards: emptyModeBoards(), loadGlobal: () => Promise.reject(new Error('offline')), onScope });
     await vi.waitFor(() => expect(root.textContent).toContain('Sem conexão. O ranking global precisa de internet'));
-    ([...root.querySelectorAll('.ranking-scope')].find((b) => b.textContent === 'Neste aparelho') as HTMLButtonElement).click();
+    (
+      [...root.querySelectorAll('.ranking-scope')].find((b) => b.getAttribute('aria-label') === 'Neste aparelho') as HTMLButtonElement
+    ).click();
     expect(onScope).toHaveBeenCalledWith('local');
   });
 

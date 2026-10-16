@@ -841,17 +841,6 @@
   opacity: 0.6;
   line-height: 1;
 }
-.ranking-list.is-global {
-  max-height: 42vh;
-  overflow-y: auto;
-}
-.ranking-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-}
 .ranking-scopes {
   display: inline-flex;
   gap: 4px;
@@ -1193,21 +1182,8 @@
 .end-difficulty.is-hard {
   background: var(--thief);
 }
-.screen-ranking .difficulty-picker {
-  align-self: center;
-}
-
-/* short screens: the ranking with its difficulty picker must still show Voltar without scrolling */
+/* short screens: the report dialog's buttons inside the ranking */
 @media (max-height: 420px) {
-  .screen-ranking .screen-heading {
-    display: none;
-  }
-  .screen-ranking .difficulty-option {
-    min-height: 32px;
-  }
-  .screen-ranking .ranking-tab {
-    min-height: 34px;
-  }
   .screen-ranking .screen-btn.is-quiet {
     min-height: 36px;
   }
@@ -1286,4 +1262,141 @@
 .mode-card .screen-btn {
   margin-top: auto;
   width: 100%;
+}
+
+/* ranking, layout B (mockup approved 2026-10-16): the filters in one bar on top, the list fills the screen */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.screen-ranking {
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 8px;
+}
+.ranking-bar {
+  display: flex;
+  flex-wrap: wrap; /* breaks into two lines only when the controls do not fit (narrow or notched screens) */
+  align-items: center;
+  gap: 6px 8px;
+  min-width: 0;
+}
+.ranking-bar-gap {
+  flex: 1;
+}
+.ranking-back.screen-btn {
+  flex: none;
+  width: 40px;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+.ranking-back svg {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+}
+.screen-ranking .ranking-scopes,
+.screen-ranking .difficulty-picker,
+.screen-ranking .ranking-tabs {
+  flex: none;
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+}
+.screen-ranking .ranking-scope.screen-btn,
+.screen-ranking .difficulty-option,
+.screen-ranking .ranking-tab.screen-btn {
+  min-width: 0;
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  color: #cfd3da;
+  font:
+    700 13px/1 system-ui,
+    sans-serif;
+  white-space: nowrap;
+}
+.screen-ranking .difficulty-name {
+  font:
+    700 13px/1 system-ui,
+    sans-serif;
+}
+.screen-ranking .ranking-scope[aria-checked='true'] {
+  background: var(--sign);
+  color: var(--sign-ink);
+}
+.screen-ranking .difficulty-option[aria-checked='true'] {
+  background: #fff;
+  color: #16181c;
+}
+.screen-ranking .ranking-tab[aria-selected='true'].is-police {
+  background: var(--police);
+  color: #fff;
+}
+.screen-ranking .ranking-tab[aria-selected='true'].is-thief {
+  background: var(--thief);
+  color: #fff;
+}
+.ranking-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  border-radius: 14px;
+  background: rgba(14, 18, 28, 0.55);
+}
+.ranking-hint {
+  margin: 0 8px 2px;
+  color: var(--muted);
+  font:
+    500 12px/1.3 system-ui,
+    sans-serif;
+  text-align: left;
+}
+.screen-ranking .ranking-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.screen-ranking .ranking-row:nth-child(even) {
+  background: rgba(255, 255, 255, 0.035);
+}
+.screen-ranking .ranking-row.is-me,
+.screen-ranking .ranking-row.is-new {
+  background: rgba(255, 207, 74, 0.22);
+}
+.screen-ranking .ranking-row:nth-child(1) .ranking-pos {
+  color: var(--sign);
+}
+.screen-ranking .ranking-row:nth-child(2) .ranking-pos {
+  color: #d6dbe3;
+}
+.screen-ranking .ranking-row:nth-child(3) .ranking-pos {
+  color: #d79b62;
+}
+@media (max-width: 700px) {
+  .screen-ranking .ranking-scope.screen-btn,
+  .screen-ranking .difficulty-option,
+  .screen-ranking .ranking-tab.screen-btn {
+    padding: 0 7px;
+    font-size: 12px;
+  }
+  .screen-ranking .difficulty-name {
+    font-size: 12px;
+  }
 }
