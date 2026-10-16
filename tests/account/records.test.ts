@@ -57,7 +57,7 @@ describe('global ranking records', () => {
     t.events.dispatchEvent(new Event('online'));
     await vi.advanceTimersByTimeAsync(0);
     expect(pendingRecords(t.storage)).toEqual([]);
-    expect((await t.api.ranking('pursuit', 'police', 'normal')).rows[0]!.time).toBe(30);
+    expect((await t.api.ranking('pursuit', 'police', 'normal')).rows.map((r) => r.time)).toEqual([30, 40]); // both matches
   });
 
   it("another account's queued records never go up under the account signed in now", async () => {

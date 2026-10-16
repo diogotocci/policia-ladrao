@@ -43,13 +43,13 @@ export interface GlobalRow {
 }
 
 export interface GlobalBoard {
-  /** the top 100 */
+  /** the top GLOBAL_TOP matches (a player can appear more than once) */
   rows: GlobalRow[];
-  /** the player's own line when it is outside the top 100 */
+  /** the player's best line when none of the player's matches is in the top */
   me?: GlobalRow;
 }
 
-export const GLOBAL_TOP = 100;
+export const GLOBAL_TOP = 30;
 const MAX_HP = Math.max(...Object.values(BALANCE.survival.hp), 100);
 /** a Sobrevivência match longer than this is not believable */
 const MAX_SURVIVAL = 2 * 3600;

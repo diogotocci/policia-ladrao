@@ -110,7 +110,7 @@ A tela de perfil (o botão do canto) mostra:
 
 ## 5. Ranking global
 
-- **Quadros:** os mesmos de hoje (modo × lado × dificuldade), com o top 100 de cada um. Cada jogador aparece só uma vez, com seu melhor resultado.
+- **Quadros:** os mesmos de hoje (modo × lado × dificuldade), com as 30 melhores partidas de cada um. Cada partida é uma linha: o mesmo jogador pode aparecer várias vezes (pedido do Diogo em 16/10/2026; antes era uma linha por jogador, top 100). Quando nenhuma partida do jogador entra nas 30, a melhor dele aparece embaixo.
 - **Mostra:** posição, nome de usuário, tempo, carro e a patente do lado.
 - **Abas:** a tela de Ranking ganha "Global" e "Neste aparelho"; Global é a padrão.
 - **Quando sobe:** um recorde sobe junto com o fim da partida, com `match_id` único.

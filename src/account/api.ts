@@ -55,7 +55,7 @@ export interface AccountApi {
   /** V3 delivery 2: sends a finished match to the global ranking; the answer is the player's position there.
    * Undefined when the server refused the record as malformed (it is dropped, never retried). */
   submitRecord(r: RecordIn & { sentAt: string }): Promise<Submitted | undefined>;
-  /** one board of the global ranking: top 100 plus the player's own line */
+  /** one board of the global ranking: the top 30 matches plus the player's best line when none of them made it */
   ranking(mode: Mode, side: Role, difficulty: Difficulty): Promise<GlobalBoard>;
   /** reports a name seen on the global ranking: saved, too many today, or the name is not in use (or is the player's own) */
   reportName(username: string): Promise<'ok' | 'limit' | 'unknown'>;

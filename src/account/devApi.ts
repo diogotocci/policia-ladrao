@@ -114,8 +114,10 @@ export function devApi(storage: Storage | undefined, opts: { startSignedOut: boo
       const records = s.records ?? [];
       if (!records.some((x) => x.matchId === r.matchId)) records.push({ ...r, suspect: !plausible(r) });
       save({ ...s, records });
+      // every match is its own line (like the server); the rivals seeded by tests share the board
+      const at = boardOf({ ...s, records }, r).findIndex((x) => x.matchId === r.matchId);
       const best = bestOf(records, r);
-      return Promise.resolve({ pos: best ? 1 : null, best: best?.matchId === r.matchId });
+      return Promise.resolve({ pos: at < 0 ? null : at + 1, best: best?.matchId === r.matchId });
     },
     async reportName(username) {
       const s = signedIn(); // async: signed out answers a rejected promise, like the real server
@@ -139,16 +141,10 @@ export function devApi(storage: Storage | undefined, opts: { startSignedOut: boo
       return Promise.resolve(v);
     },
     ranking(mode, side, difficulty) {
-      const s = load();
-      const best = s.signedIn && s.account.username ? bestOf(s.records ?? [], { mode, side, difficulty }) : undefined;
-      const mine: GlobalRow[] = best
-        ? [{ pos: 0, username: s.account.username!, time: best.time, hp: best.hp, how: best.how, car: best.car, rank: best.rank, me: true }]
-        : [];
-      const reported = new Set(s.signedIn ? s.reported : []);
-      const rows = [...(s.rivals ?? []).map((r) => (reported.has(r.username) ? { ...r, reported: true } : r)), ...mine]
-        .sort((a, b) => (better(mode, side, a, b) ? -1 : better(mode, side, b, a) ? 1 : 0))
-        .map((r, i) => ({ ...r, pos: i + 1 }));
-      return Promise.resolve({ rows: rows.slice(0, GLOBAL_TOP) });
+      const rows = boardOf(load(), { mode, side, difficulty }).map(({ matchId: _id, ...r }) => r);
+      const top = rows.slice(0, GLOBAL_TOP);
+      const mine = top.some((r) => r.me) ? undefined : rows.find((r) => r.me);
+      return Promise.resolve(mine ? { rows: top, me: mine } : { rows: top });
     },
   };
 }
@@ -158,4 +154,28 @@ function bestOf(list: (RecordIn & { suspect: boolean })[], b: Pick<RecordIn, 'mo
   return list
     .filter((x) => !x.suspect && x.mode === b.mode && x.side === b.side && x.difficulty === b.difficulty)
     .reduce<(RecordIn & { suspect: boolean }) | undefined>((top, x) => (!top || better(b.mode, b.side, x, top) ? x : top), undefined);
+}
+
+/** One board of the fake: the seeded rivals plus every shown match of the test account, each its own line. */
+function boardOf(s: DevServer, b: Pick<RecordIn, 'mode' | 'side' | 'difficulty'>): (GlobalRow & { matchId?: string })[] {
+  const reported = new Set(s.signedIn ? s.reported : []);
+  const mine: (GlobalRow & { matchId: string })[] =
+    s.signedIn && s.account.username
+      ? (s.records ?? [])
+          .filter((x) => !x.suspect && x.mode === b.mode && x.side === b.side && x.difficulty === b.difficulty)
+          .map((x) => ({
+            pos: 0,
+            username: s.account.username!,
+            time: x.time,
+            hp: x.hp,
+            how: x.how,
+            car: x.car,
+            rank: x.rank,
+            me: true,
+            matchId: x.matchId,
+          }))
+      : [];
+  return [...(s.rivals ?? []).map((r) => (reported.has(r.username) ? { ...r, reported: true } : r)), ...mine]
+    .sort((x, y) => (better(b.mode, b.side, x, y) ? -1 : better(b.mode, b.side, y, x) ? 1 : 0))
+    .map((r, i) => ({ ...r, pos: i + 1 }));
 }
