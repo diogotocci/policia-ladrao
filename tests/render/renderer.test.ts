@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { QUALITY, computeRenderSize, createQualityGovernor } from '../../src/render/renderer';
+import {
+  PROBE_EVERY,
+  QUALITY,
+  QUALITY_KEY,
+  computeRenderSize,
+  createQualityGovernor,
+  saveTier,
+  startTier,
+} from '../../src/render/renderer';
 
 describe('computeRenderSize', () => {
   it('uses the CSS size and caps the pixel ratio by quality tier', () => {
     expect(computeRenderSize(844, 390, 3, 'high')).toEqual({ width: 844, height: 390, pixelRatio: 2 });
     expect(computeRenderSize(844, 390, 3, 'medium')).toEqual({ width: 844, height: 390, pixelRatio: 1.5 });
     expect(computeRenderSize(844, 390, 3, 'low')).toEqual({ width: 844, height: 390, pixelRatio: 1 });
+    // lowest draws fewer pixels than the CSS size and the browser scales up
+    expect(computeRenderSize(844, 390, 2, 'lowest')).toEqual({ width: 844, height: 390, pixelRatio: 0.75 });
   });
 
   it('never upsamples beyond the device ratio', () => {
@@ -24,6 +34,51 @@ describe('QUALITY tiers', () => {
     expect(QUALITY.high.shadowMapSize).toBeGreaterThan(0);
     expect(QUALITY.medium.shadowMapSize).toBeGreaterThan(0);
     expect(QUALITY.low.shadowMapSize).toBe(0);
+    expect(QUALITY.lowest.shadowMapSize).toBe(0);
+  });
+
+  it('multisampling only on high and medium', () => {
+    expect([QUALITY.high, QUALITY.medium, QUALITY.low, QUALITY.lowest].map((q) => q.antialias)).toEqual([true, true, false, false]);
+  });
+});
+
+describe('startTier', () => {
+  const store = (v?: string) => {
+    const m = new Map<string, string>(v ? [[QUALITY_KEY, v]] : []);
+    return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, x: string) => void m.set(k, x), m };
+  };
+  it('a phone starts on medium and a computer on high the first time', () => {
+    expect(startTier(store(), true)).toBe('medium');
+    expect(startTier(store(), false)).toBe('high');
+  });
+  it('later matches start where the device settled; every few matches one tries a tier higher', () => {
+    const s = store();
+    saveTier(s, 'low');
+    const tiers = Array.from({ length: PROBE_EVERY * 2 }, () => startTier(s, true));
+    expect(tiers.filter((t) => t === 'medium')).toHaveLength(2);
+    expect(tiers.filter((t) => t === 'low')).toHaveLength(PROBE_EVERY * 2 - 2);
+    expect(tiers[PROBE_EVERY - 1]).toBe('medium');
+  });
+  it('a try that holds is remembered; high is never tried above', () => {
+    const s = store();
+    saveTier(s, 'low');
+    saveTier(s, 'medium');
+    expect(startTier(s, true)).toBe('medium');
+    const top = store('high|9');
+    expect(startTier(top, false)).toBe('high');
+  });
+  it('nonsense or blocked storage falls back', () => {
+    expect(startTier(store('ultra'), false)).toBe('high');
+    const blocked = {
+      getItem: () => {
+        throw new Error('blocked');
+      },
+      setItem: () => {
+        throw new Error('blocked');
+      },
+    };
+    expect(startTier(blocked, true)).toBe('medium');
+    saveTier(blocked, 'low'); // does not throw
   });
 });
 
@@ -64,9 +119,9 @@ describe('createQualityGovernor', () => {
     expect(feedJitter(g, 20, 1)).toBe('low');
   });
 
-  it('never goes below low', () => {
+  it('goes down to lowest at most', () => {
     const g = createQualityGovernor('high');
-    expect(feedJitter(g, 15, 40)).toBe('low');
+    expect(feedJitter(g, 15, 60)).toBe('lowest');
   });
 
   it('does not downgrade a device capped at a steady 30 Hz (battery saver)', () => {

@@ -30,6 +30,8 @@ export interface GameOptions {
   seed: number;
   debug: boolean;
   quality?: QualityTier;
+  /** ?fps: the frame-rate overlay alone (measuring on a real phone; the match rules stay the normal ones) */
+  fps?: boolean;
   debugHp?: { police?: number; thief?: number };
   debugGive?: ItemId[];
   traffic?: boolean;

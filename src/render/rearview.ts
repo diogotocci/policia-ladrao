@@ -4,12 +4,14 @@ import * as THREE from 'three';
 import { trackPos } from './trackFrame';
 import type { CarState } from '../sim/car';
 import type { QualityTier } from './renderer';
+import type { ExtraPass } from './warmup';
 
 /** per quality: rear view range, how many frames between scene redraws, and pixel density cap */
 const TIER: Record<QualityTier, { far: number; every: number; maxPr: number }> = {
   high: { far: 140, every: 1, maxPr: 3 },
   medium: { far: 110, every: 1, maxPr: 1.5 },
   low: { far: 80, every: 2, maxPr: 1 },
+  lowest: { far: 70, every: 3, maxPr: 0.75 },
 };
 
 /** m: the longest car's rear (Caveirão/van ~2.45 m from the centre) stays out of the mirror */
@@ -34,6 +36,8 @@ export function createRearview(): {
   place(car: CarState, originS: number): void;
   render(renderer: THREE.WebGLRenderer, scene: THREE.Scene, cssW: number, cssH: number): void;
   mirrorTexture(): THREE.Texture;
+  /** for the shader warm-up: the mirror's own drawing pass */
+  pass(): ExtraPass;
   /** weak phone: lighter mirror */
   setQuality(tier: QualityTier): void;
 } {
@@ -92,6 +96,7 @@ export function createRearview(): {
     mirrorTexture() {
       return target.texture;
     },
+    pass: () => ({ target, camera, overlay: { scene: quadScene, camera: quadCam } }),
     setQuality(q) {
       tier = TIER[q];
       camera.far = tier.far;

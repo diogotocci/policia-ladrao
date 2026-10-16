@@ -164,7 +164,7 @@ export function createParticles(scene: THREE.Scene, max = 160): Particles {
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     },
     setQuality(q) {
-      half = q === 'low';
+      half = q === 'low' || q === 'lowest';
     },
     emissionScale: () => (half ? 0.5 : 1),
     alive() {
