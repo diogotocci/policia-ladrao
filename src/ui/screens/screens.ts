@@ -184,7 +184,16 @@ export function renderPause(
 }
 
 // ---------- ranking ----------
-const TAB_LABEL: Record<Role, string> = { police: 'Polícia — mais rápidos', thief: 'Ladrão — mais rápidos a vencer' };
+const TAB_LABEL: Record<Role, string> = { police: 'Polícia', thief: 'Ladrão' };
+/** the line above the list: what this board ranks (layout B, mockup approved 2026-10-16) */
+const boardHint = (side: Role, mode: Mode) =>
+  side === 'police'
+    ? mode === 'survival'
+      ? 'Ranking da polícia: os mais rápidos a vencer'
+      : 'Ranking da polícia: os mais rápidos a prender'
+    : mode === 'survival'
+      ? 'Ranking do ladrão: quem ficou mais tempo vivo'
+      : 'Ranking do ladrão: os mais rápidos a vencer';
 
 const shortDate = (iso: string) => {
   const d = new Date(iso);
@@ -217,9 +226,9 @@ export function renderRanking(
     reportName?: (username: string) => Promise<ReportAnswer>;
   },
 ): Disposable {
+  // layout B (mockup approved 2026-10-16): one bar of filters on top, the list fills the rest of the screen
   const s = h('section', 'screen screen-ranking');
-  s.setAttribute('aria-label', 'Ranking'); // the visible heading hides on short screens
-  const card = h('div', 'screen-card is-wide');
+  s.setAttribute('aria-label', 'Ranking');
   const tabs = h('div', 'ranking-tabs');
   tabs.setAttribute('role', 'tablist');
   let selected: HTMLButtonElement | undefined;
@@ -262,22 +271,24 @@ export function renderRanking(
     row.append(h('span', 'ranking-pos', String(i + 1)), initials, time, h('span', 'ranking-date', shortDate(e.date)));
     list.append(row);
   });
-  const back = btn('Voltar', 'is-quiet', p.onBack);
+  const back = btn('', 'ranking-back', p.onBack, SCREEN_ICONS.back);
+  back.setAttribute('aria-label', 'Voltar');
   const picker = difficultyPicker(p.difficulty, p.onDifficulty);
   const modes = modePicker(p.mode, p.onMode);
-  const head = h('div', 'ranking-head');
-  head.append(h('h2', 'screen-heading', 'Ranking'));
+  const head = h('div', 'ranking-bar');
+  head.append(back, h('h2', 'sr-only', 'Ranking'));
   let scopeTab: HTMLElement | undefined;
   if (p.loadGlobal) {
     const scopes = h('div', 'ranking-scopes');
     scopes.setAttribute('role', 'radiogroup');
     scopes.setAttribute('aria-label', 'Qual ranking');
-    for (const [id, label] of [
-      ['global', 'Global'],
-      ['local', 'Neste aparelho'],
+    for (const [id, label, name] of [
+      ['global', 'Global', 'Global'],
+      ['local', 'Aparelho', 'Neste aparelho'],
     ] as const) {
       const on = (p.scope ?? 'global') === id;
       const b = btn(label, 'ranking-scope', () => p.onScope?.(id));
+      if (name !== label) b.setAttribute('aria-label', name);
       b.setAttribute('role', 'radio');
       b.setAttribute('aria-checked', String(on));
       if (on) scopeTab = b;
@@ -285,9 +296,13 @@ export function renderRanking(
     }
     head.append(scopes);
   }
-  card.append(head, modes, picker, tabs, list);
-  card.append(back);
-  s.append(card);
+  head.append(h('span', 'ranking-bar-gap'), modes, picker, tabs);
+  const panel = h('div', 'ranking-panel');
+  const hint = h('p', 'ranking-hint', boardHint(p.tab, p.mode));
+  hint.id = 'ranking-hint';
+  list.setAttribute('aria-describedby', hint.id); // the short tab labels lose the context the hint gives
+  panel.append(hint, list);
+  s.append(head, panel);
   // Play user-generated content policy: usernames are public, so each line of the Global ranking can be reported
   const send = p.reportName;
   const onReport: OnReport | undefined = send

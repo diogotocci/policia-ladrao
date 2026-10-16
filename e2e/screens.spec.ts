@@ -61,7 +61,7 @@ test('full product flow: title → choose thief → 3-2-1 → play → escape at
   await page.reload();
   await page.getByRole('button', { name: 'Ranking' }).click();
   await page.getByRole('radio', { name: 'Neste aparelho' }).click();
-  await page.getByRole('tab', { name: 'Ladrão — mais rápidos a vencer' }).click();
+  await page.getByRole('tab', { name: 'Ladrão', exact: true }).click();
   await expect(page.locator('.ranking-row').first()).toContainText('DIO');
 });
 

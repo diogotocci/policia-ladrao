@@ -85,9 +85,7 @@ export function fillGlobal(
     () => {
       if (!live) return;
       list.removeAttribute('aria-busy');
-      list.replaceChildren(
-        h('li', 'ranking-empty', 'Sem conexão. O ranking global precisa de internet; o "Neste aparelho" funciona offline.'),
-      );
+      list.replaceChildren(h('li', 'ranking-empty', 'Sem conexão. O ranking global precisa de internet; o do Aparelho funciona offline.'));
     },
   );
   return () => (live = false);
