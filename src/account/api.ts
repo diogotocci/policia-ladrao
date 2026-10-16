@@ -3,6 +3,7 @@
 import type { Profile } from '../meta/profile';
 import type { GlobalBoard, RecordIn } from '../meta/records';
 import type { AdminStats, ClientEvent, EventContext } from '../meta/events';
+import type { ModerationAction, ModerationView } from '../meta/moderation';
 import type { Difficulty, Mode, Role } from '../config/balance';
 
 export interface Account {
@@ -13,6 +14,10 @@ export interface Account {
   username: string | null;
   /** the shop's admin mode; the server sets it only for the admin account */
   admin?: boolean;
+  /** suspended from /admin: the game shows "Conta suspensa" */
+  banned?: boolean;
+  /** the name the admin took away: the username screen says why it asks for another */
+  notice?: string;
 }
 
 export type UsernameIssue = 'format' | 'blocked' | 'taken' | 'cooldown';
@@ -58,6 +63,10 @@ export interface AccountApi {
   sendEvents(events: ClientEvent[], context: EventContext): Promise<void>;
   /** the /admin panel's numbers; 'forbidden' for any account but the admin's */
   adminStats(days: number): Promise<AdminStats | 'forbidden'>;
+  /** the /admin "Denúncias" tab; 'forbidden' for any account but the admin's */
+  adminReports(): Promise<ModerationView | 'forbidden'>;
+  /** a decision on a reported account; the answer is the tab drawn again ('unknown': the account no longer exists) */
+  adminAct(userId: string, action: ModerationAction): Promise<ModerationView | 'unknown' | 'forbidden'>;
 }
 
 /** the player's place after sending a record (pos null: not on the board, e.g. a record the server finds suspect) */
@@ -87,6 +96,17 @@ export function httpApi(fetchFn: typeof fetch = (...a) => fetch(...a)): AccountA
   const isGone = async (res: Response) => ((await res.json().catch(() => ({}))) as { error?: string }).error === 'gone';
   const signedIn = async <T>(res: Response): Promise<T> => {
     if (res.status === 401) throw new SignedOutError(await isGone(res));
+    // banned meanwhile: back to the gate, which asks /api/me and shows "Conta suspensa"
+    if (
+      res.status === 403 &&
+      (
+        (await res
+          .clone()
+          .json()
+          .catch(() => ({}))) as { error?: string }
+      ).error === 'banned'
+    )
+      throw new SignedOutError();
     if (!res.ok) throw new OfflineError(); // anything else unexpected: try again later
     return read<T>(res);
   };
@@ -129,6 +149,17 @@ export function httpApi(fetchFn: typeof fetch = (...a) => fetch(...a)): AccountA
     },
     async sendEvents(events, context) {
       await signedIn<{ saved: number }>(await call('/api/events', send('POST', { events, context, sentAt: new Date().toISOString() })));
+    },
+    async adminReports() {
+      const res = await call('/api/admin/stats?view=reports');
+      if (res.status === 403) return 'forbidden';
+      return signedIn<ModerationView>(res);
+    },
+    async adminAct(userId, action) {
+      const res = await call('/api/admin/stats', send('POST', { userId, action }));
+      if (res.status === 403) return 'forbidden';
+      if (res.status === 404) return 'unknown';
+      return signedIn<ModerationView>(res);
     },
     async adminStats(days) {
       const res = await call(`/api/admin/stats?days=${days}`);

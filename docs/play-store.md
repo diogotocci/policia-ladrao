@@ -115,7 +115,7 @@ Sem anúncios e sem compras com dinheiro.
 | Política de privacidade | `https://policia-ladrao.xyz/privacidade` |
 | Acesso ao app | "Todas ou algumas funcionalidades são restritas": **login com Google obrigatório; qualquer conta Google entra**. Instrução para os revisores: "Toque em Fazer login com o Google, use qualquer conta Google e escolha um nome de usuário." |
 | Anúncios | Não contém anúncios |
-| Conteúdo gerado pelo usuário | Só o nome de usuário, visível no ranking. Ele passa por um filtro de palavrões ao ser escolhido, e cada linha do Ranking Global tem uma bandeira para denunciar o nome (com confirmação; a denúncia fica salva para revisão); os termos dizem que nomes ofensivos podem ser trocados ou removidos. |
+| Conteúdo gerado pelo usuário | Só o nome de usuário, visível no ranking. Ele passa por um filtro de palavrões ao ser escolhido, e cada linha do Ranking Global tem uma bandeira para denunciar o nome (com confirmação; a denúncia fica salva para revisão); o painel /admin tem a aba Denúncias para forçar a troca do nome ou suspender a conta; os termos dizem isso. |
 | Classificação do conteúdo (IARC) | Categoria Jogo. Violência: **sim, violência de desenho/fantasia** (carros batendo e tiros em carros, sem pessoas feridas, sem sangue). Medo, sexo, linguagem, drogas, jogos de azar: não. Interação entre usuários: **não há chat**; os usuários veem o nome de usuário dos outros no ranking. Compartilha localização: não. Compras digitais: não. |
 | Público-alvo | **13 a 15, 16 a 17 e 18+** (não marque menores de 13: o app fica fora do programa Família). O app não é feito para crianças. |
 | App de notícias | Não |

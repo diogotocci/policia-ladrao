@@ -150,11 +150,46 @@ export function usernameForm(p: {
 
 const USERNAME_HELP = 'Aparece no ranking global. De 3 a 16 letras, números ou _. Dá para trocar uma vez a cada 30 dias.';
 
-export function renderUsername(root: HTMLElement, p: Parameters<typeof usernameForm>[0]): Disposable {
+export function renderUsername(
+  root: HTMLElement,
+  p: Parameters<typeof usernameForm>[0] & {
+    /** the name the admin took away (mockup approved 2026-10-15): the screen says why it asks for another */
+    notice?: string;
+  },
+): Disposable {
   const card = h('div', 'screen-card account-card');
   const { form, input } = usernameForm(p);
-  card.append(h('h2', 'account-heading', 'Escolha seu nome de usuário'), h('p', 'account-text', USERNAME_HELP), form);
+  card.append(h('h2', 'account-heading', p.notice ? 'Escolha outro nome' : 'Escolha seu nome de usuário'));
+  if (p.notice) {
+    const notice = h('p', 'account-notice', 'Seu nome ');
+    notice.append(
+      h('b', '', `@${p.notice}`),
+      ' foi considerado ofensivo e saiu do ranking. Escolha outro para continuar; seu progresso e seus recordes continuam com você.',
+    );
+    card.append(notice);
+  }
+  card.append(h('p', 'account-text', USERNAME_HELP), form);
   return screen(root, 'screen-username', card, input);
+}
+
+// ---------- Conta suspensa ----------
+/** A banned account (mockup approved 2026-10-15): why, how to contest, another account, or deleting this one. */
+export function renderSuspended(root: HTMLElement, p: { username: string | null; onOtherAccount(): void }): Disposable {
+  const card = h('div', 'screen-card account-card');
+  const text = h('p', 'account-text', p.username ? 'A conta ' : 'Sua conta ');
+  if (p.username) text.append(h('b', '', `@${p.username}`), ' ');
+  const terms = h('a', 'account-link', 'Termos');
+  terms.href = '/termos';
+  terms.target = '_blank';
+  terms.rel = 'noopener';
+  text.append('foi suspensa por não seguir os ', terms, ' (nome ofensivo). Se acha que foi um engano, escreva para diogotocci@gmail.com.');
+  const other = btn('Entrar com outra conta', '', p.onOtherAccount);
+  const del = h('a', 'account-link account-note', 'Excluir esta conta');
+  del.href = '/excluir-conta';
+  del.target = '_blank';
+  del.rel = 'noopener';
+  card.append(h('h2', 'account-heading', 'Conta suspensa'), text, other, del);
+  return screen(root, 'screen-suspended', card, other, true);
 }
 
 /** "Trocar nome" from the profile dialog */

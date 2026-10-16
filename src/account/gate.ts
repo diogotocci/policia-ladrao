@@ -3,7 +3,7 @@
 // profile already replaced when the account's copy won.
 import type { Profile } from '../meta/profile';
 import { loadProfile, saveProfile } from '../storage/profileStore';
-import { renderChooseProgress, renderSignIn, renderUsername } from '../ui/screens/account';
+import { renderChooseProgress, renderSignIn, renderSuspended, renderUsername } from '../ui/screens/account';
 import type { Disposable } from '../ui/screens/dom';
 import { SignedOutError, type Account, type AccountApi } from './api';
 import { keepProgress, nextStep, type Step } from './boot';
@@ -33,6 +33,8 @@ export function runGate(container: HTMLElement, o: { api: AccountApi; storage: S
       } catch {
         s = { kind: 'signin' }; // unexpected answer: back to the start
       }
+      // the screen is drawn into the page, so its first button takes the focus
+      if (s.kind !== 'ready' && !layer.isConnected) container.append(layer);
       switch (s.kind) {
         case 'ready': {
           const profile = s.profile ?? local;
@@ -60,9 +62,23 @@ export function runGate(container: HTMLElement, o: { api: AccountApi; storage: S
             }),
           );
           return;
+        case 'banned':
+          show(
+            renderSuspended(layer, {
+              username: s.account.username,
+              // signs out here; the phone keeps this account's copy apart, as with any other account that signed out
+              onOtherAccount: () =>
+                void o.api.signOut().then(
+                  () => go(),
+                  () => go(),
+                ),
+            }),
+          );
+          return;
         case 'username':
           show(
             renderUsername(layer, {
+              notice: s.account.notice,
               label: 'Continuar',
               check: (name) => o.api.checkUsername(name),
               async submit(name) {

@@ -5,7 +5,8 @@ import { mergeProfiles } from '../meta/merge';
 import { parseProfile, type Profile } from '../meta/profile';
 import { better, GLOBAL_TOP, plausible, type GlobalRow, type RecordIn } from '../meta/records';
 import { usernameProblem } from '../meta/username';
-import { demoStats } from './devStats';
+import { demoAct, demoModeration, demoStats } from './devStats';
+import type { ModerationView } from '../meta/moderation';
 import { SignedOutError, type Account, type AccountApi, type Stored } from './api';
 
 export const DEV_API_KEY = 'pl.dev.api';
@@ -25,6 +26,8 @@ interface DevServer {
   rivals?: GlobalRow[];
   /** the names this account reported */
   reported?: string[];
+  /** the /admin "Denúncias" tab (example data until the first decision) */
+  moderation?: ModerationView;
 }
 
 const testAccount = (username: string | null): Account => ({
@@ -64,7 +67,7 @@ export function devApi(storage: Storage | undefined, opts: { startSignedOut: boo
   };
   const signedIn = () => {
     const s = load();
-    if (!s.signedIn) throw new SignedOutError();
+    if (!s.signedIn || s.account.banned) throw new SignedOutError(); // banned: like the server, only /api/me answers
     return s;
   };
   const issue = (name: string) => usernameProblem(name) ?? (DEV_TAKEN.includes(name.toLowerCase()) ? ('taken' as const) : null);
@@ -85,7 +88,8 @@ export function devApi(storage: Storage | undefined, opts: { startSignedOut: boo
       const s = signedIn();
       const problem = issue(name);
       if (problem) return Promise.resolve({ problem });
-      const account = { ...s.account, username: name };
+      const { notice: _gone, ...rest } = s.account;
+      const account = { ...rest, username: name };
       save({ ...s, account });
       return Promise.resolve({ account });
     },
@@ -127,6 +131,13 @@ export function devApi(storage: Storage | undefined, opts: { startSignedOut: boo
     },
     // localhost shows example numbers to every account (the real server shows them only to the admin)
     adminStats: (days) => Promise.resolve(demoStats(days)),
+    adminReports: () => Promise.resolve(load().moderation ?? demoModeration()),
+    adminAct(userId, action) {
+      const s = load();
+      const v = demoAct(s.moderation ?? demoModeration(), userId, action);
+      if (v !== 'unknown') save({ ...s, moderation: v });
+      return Promise.resolve(v);
+    },
     ranking(mode, side, difficulty) {
       const s = load();
       const best = s.signedIn && s.account.username ? bestOf(s.records ?? [], { mode, side, difficulty }) : undefined;

@@ -32,7 +32,7 @@ async function ranked(db: Db, where: { mode: Mode; side: Role; difficulty: Diffi
     `with best as (
        select distinct on (r.user_id) r.id, r.user_id, u.username, r.time_ms, r.hp, r.how, r.car, r.rank, r.ended_at
        from records r join users u on u.id = r.user_id
-       where r.mode = $1 and r.side = $2 and r.difficulty = $3 and not r.suspect and u.username is not null
+       where r.mode = $1 and r.side = $2 and r.difficulty = $3 and not r.suspect and u.username is not null and u.banned_at is null
          -- delivery 3: the record must match the match_end event of the same match (sent just before it)
          and (not r.needs_event or exists (
            select 1 from events e where e.user_id = r.user_id and e.type = 'match_end' and e.match_id = r.match_id

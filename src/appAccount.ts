@@ -90,7 +90,14 @@ export function createAppAccount(o: {
             check: (name) => o.api.checkUsername(name),
             async submit(name) {
               if (name === account.username) return (close(), null);
-              const r = await o.api.setUsername(name);
+              let r: Awaited<ReturnType<AccountApi['setUsername']>>;
+              try {
+                r = await o.api.setUsername(name);
+              } catch (e) {
+                if (!(e instanceof SignedOutError)) throw e;
+                leave(e.gone); // the session ended (or the account was banned): back to the gate
+                return null;
+              }
               if ('problem' in r) return r.problem;
               account = r.account;
               const st = loadAccountState(o.storage);
