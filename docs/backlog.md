@@ -23,7 +23,7 @@ Denúncia de nome pela bandeira de cada linha do Ranking Global, salva no banco 
 
 ## Feito
 
-- **Caixa da cor errada mais cara (playtest 2026-10-16):** pegar a do outro lado para tirar do adversário compensava (só 2 de vida). Agora tira 4 e dobra a cada uma na mesma partida (4, 8, 16, 32...); o "Como jogar" avisa que dobra, sem números (0.35).
+- **Caixa da cor errada mais cara (playtest 2026-10-16):** pegar a do outro lado para tirar do adversário compensava (só 2 de vida). Agora tira 4 e dobra a cada uma na mesma partida (4, 8, 16, 32...); o "Como jogar" avisa que dobra, sem números (0.35). Sem o aumento do caos e do lado por cima, para ser o dobro exato também na Sobrevivência (0.35.1).
 - **Ranking global com todas as partidas (pedido 2026-10-16):** cada partida é uma linha, o mesmo jogador pode repetir, 30 linhas por quadro em todos os modos, lados e dificuldades (0.34).
 - **Desempenho no celular (playtest 2026-10-15, Realme C61):** nível de qualidade lembrado por aparelho, nível `lowest`, shaders compilados na contagem, HUD sem trabalho à toa e ritmo estável em telas de 90/120 Hz (0.32; `docs/desempenho.md`). Tela "Preparando a partida…" antes do 3-2-1, que monta a partida antes de começar (0.33).
 - **Denúncias no /admin (anotado em 2026-10-13):** aba Denúncias com fila, histórico e as ações forçar troca de nome, banir (com desfazer) e descartar (0.31). Ficaram de fora: ocultar sozinho por número de denúncias, tirar só do ranking, suspensão com prazo e aviso por e-mail.
