@@ -168,3 +168,23 @@ test('mode screen after Jogar; the chosen mode is remembered after a reload', as
   await page.getByRole('button', { name: 'Jogar', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Jogar Sobrevivência' })).toBeFocused();
 });
+
+test('a match is set up behind "Preparando a partida…" before the 3-2-1', async ({ page }) => {
+  test.setTimeout(180_000);
+  await page.addInitScript(() => {
+    localStorage.setItem('pl.howto.v1', '1');
+    // what was on screen, in order (the setup may block the page for a moment on a software GPU)
+    const seen: string[] = [];
+    (window as unknown as { __seen: string[] }).__seen = seen;
+    new MutationObserver(() => {
+      const now = document.querySelector('.screen-loading') ? 'loading' : document.querySelector('.screen-countdown') ? 'countdown' : '';
+      if (now && seen[seen.length - 1] !== now) seen.push(now);
+    }).observe(document, { subtree: true, childList: true });
+  });
+  await page.goto('/?app&quality=low&mute');
+  await page.getByRole('button', { name: 'Jogar', exact: true }).click();
+  await page.getByRole('button', { name: 'Jogar Perseguição' }).click();
+  await page.locator('[data-role="police"]').click();
+  await expect(page.locator('.screen-countdown')).toBeVisible({ timeout: 60_000 });
+  expect(await page.evaluate(() => (window as unknown as { __seen: string[] }).__seen)).toEqual(['loading', 'countdown']);
+});

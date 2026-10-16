@@ -29,6 +29,8 @@ export type FlowState =
   | { screen: 'shop'; side: Role; from: 'title' | 'choose' }
   /** V2 part 5: challenges, achievements and ranks (from the title) */
   | { screen: 'career' }
+  /** the match is set up behind "Preparando a partida…" (shaders, textures) before the 3-2-1 */
+  | { screen: 'loading'; role: Role }
   | { screen: 'countdown'; role: Role; left: number }
   | { screen: 'playing'; role: Role }
   | { screen: 'paused'; role: Role }
@@ -55,6 +57,8 @@ export type FlowAction =
   | { type: 'pickMode' }
   | { type: 'choose'; role: Role }
   | { type: 'tick'; dt: number }
+  /** the match finished setting up: the 3-2-1 starts */
+  | { type: 'loaded' }
   | { type: 'pause' }
   | { type: 'resume' }
   | { type: 'restart' }
@@ -77,7 +81,8 @@ export type FlowAction =
 
 export const initialState = (): FlowState => ({ screen: 'title' });
 
-const countdown = (role: Role): FlowState => ({ screen: 'countdown', role, left: COUNTDOWN });
+/** a new match: it sets up first, then the countdown */
+const start = (role: Role): FlowState => ({ screen: 'loading', role });
 
 export function reduce(s: FlowState, a: FlowAction): FlowState {
   switch (s.screen) {
@@ -101,9 +106,13 @@ export function reduce(s: FlowState, a: FlowAction): FlowState {
       if (a.type === 'back' || a.type === 'quit') return initialState();
       return s;
     case 'choose':
-      if (a.type === 'choose') return countdown(a.role);
+      if (a.type === 'choose') return start(a.role);
       if (a.type === 'openShop') return { screen: 'shop', side: a.side ?? 'police', from: 'choose' };
       if (a.type === 'back') return { screen: 'mode' };
+      if (a.type === 'quit') return initialState();
+      return s;
+    case 'loading':
+      if (a.type === 'loaded') return { screen: 'countdown', role: s.role, left: COUNTDOWN };
       if (a.type === 'quit') return initialState();
       return s;
     case 'countdown':
@@ -120,11 +129,11 @@ export function reduce(s: FlowState, a: FlowAction): FlowState {
       return s;
     case 'paused':
       if (a.type === 'resume') return { screen: 'playing', role: s.role };
-      if (a.type === 'restart') return countdown(s.role);
+      if (a.type === 'restart') return start(s.role);
       if (a.type === 'quit') return initialState();
       return s;
     case 'end':
-      if (a.type === 'restart') return countdown(s.role);
+      if (a.type === 'restart') return start(s.role);
       if (a.type === 'quit' || a.type === 'back') return initialState();
       if (a.type === 'changeSide') return { screen: 'choose' };
       if (a.type === 'openRanking')

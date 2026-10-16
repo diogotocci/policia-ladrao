@@ -15,7 +15,7 @@ import { createParticles } from './render/particles';
 import { createCarSmoke } from './render/carSmoke';
 import { createOpponentMarker } from './render/opponentMarker';
 import { createRearview, isBehind, rearviewRect } from './render/rearview';
-import { warmUpShaders } from './render/warmup';
+import { prepareMatch, warmUpShaders } from './render/warmup';
 import { createFramePacer } from './render/pacer';
 import { createWorldProps } from './render/worldProps';
 import { updateCarModel } from './render/carFactory';
@@ -356,6 +356,10 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
       }
     }
     // draw-call count per pass: info accumulates over the frame and is reset here
+    if (preparing && idleFrames++ % 8 !== 0) {
+      raf = requestAnimationFrame(frame);
+      return;
+    }
     renderer.info.reset();
     renderer.render(scene, chase.camera);
     const mainCalls = renderer.info.render.calls;
@@ -374,12 +378,41 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
     debug?.frame(elapsed, { main: mainCalls, mirror: renderer.info.render.calls - mainCalls });
     raf = requestAnimationFrame(frame);
   };
-  // everything that can appear later in the match compiles now, during the countdown
-  void warmUpShaders(renderer, scene, chase.camera, [rearview.pass()]);
+  // everything that can appear later in the match is set up now, behind "Preparando a partida…" (the app waits for
+  // `ready` before the countdown). Started after two frames, so the loading screen is on screen first.
+  let stopped = false;
+  let prep: ReturnType<typeof prepareMatch> | undefined;
+  /** behind the loading screen: the track is drawn only now and then, leaving the phone to the setup */
+  let preparing = !opts.debug;
+  let idleFrames = 0;
+  let prepStart: () => void = () => undefined;
+  const prepared = new Promise<void>((resolve) => {
+    prepStart = () => {
+      prep = prepareMatch(
+        renderer,
+        scene,
+        chase.camera,
+        [rearview.pass()],
+        () => new THREE.WebGLRenderTarget(16, 16),
+        () => !stopped,
+      );
+      void prep.ready.then(resolve);
+    };
+    // ?debug (tests): no waiting screen; the shaders still compile during the countdown, as before
+    if (opts.debug) {
+      void warmUpShaders(renderer, scene, chase.camera, [rearview.pass()]);
+      resolve();
+    }
+  });
+  // a moment after the loading screen is on screen (the setup can hold the page for a while on a weak phone)
+  if (!opts.debug) requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(() => !stopped && prepStart(), 150)));
+  void prepared.then(() => (preparing = false));
   raf = requestAnimationFrame(frame);
 
   const handle: GameHandle = {
     pause: () => setPaused(true),
+    ready: () => prepared,
+    loadProgress: () => prep?.progress() ?? 0,
     resume() {
       setPaused(false);
       keyboard.dropTaps(); // taps made during the countdown/pause do not fire at the start
@@ -388,6 +421,7 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
     },
     isPaused: () => paused,
     stop() {
+      stopped = true;
       cancelAnimationFrame(raf);
       window.removeEventListener('keydown', onPauseKey);
       window.removeEventListener('resize', resize);

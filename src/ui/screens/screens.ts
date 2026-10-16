@@ -104,6 +104,39 @@ export function renderTitle(
   return { dispose: () => (toggle.dispose(), m.dispose()), previews };
 }
 
+// ---------- loading (mockup approved 2026-10-16) ----------
+/** "Preparando a partida…" over the darkened track, with a bar and a tip, until the match is set up. */
+export function renderLoading(
+  root: HTMLElement,
+  p: { tip: { title: string; text: string } },
+): Disposable & { set(progress: number): void } {
+  const s = h('section', 'screen screen-loading');
+  s.setAttribute('aria-live', 'polite');
+  s.setAttribute('aria-busy', 'true');
+  const title = h('div', 'loading-title', 'Preparando a partida…');
+  const bar = h('div', 'loading-bar');
+  bar.setAttribute('role', 'progressbar');
+  bar.setAttribute('aria-label', 'Preparando a partida');
+  bar.setAttribute('aria-valuemin', '0');
+  bar.setAttribute('aria-valuemax', '100');
+  const fill = h('div', 'loading-fill');
+  bar.append(fill);
+  const tip = h('p', 'loading-tip');
+  tip.append(h('b', '', 'Dica:'), ` ${p.tip.title}. ${p.tip.text}`);
+  s.append(title, bar, tip);
+  const m = mount(root, s);
+  let shown = -1;
+  const set = (progress: number) => {
+    const v = Math.round(Math.max(0, Math.min(1, progress)) * 100);
+    if (v === shown) return;
+    shown = v;
+    fill.style.width = `${v}%`;
+    bar.setAttribute('aria-valuenow', String(v));
+  };
+  set(0);
+  return { ...m, set };
+}
+
 // ---------- countdown ----------
 export function renderCountdown(root: HTMLElement): Disposable & { set(left: number): void; go(): void } {
   const s = h('section', 'screen screen-countdown');
