@@ -6,6 +6,9 @@ import { armorFactor } from './rules.js';
 import type { GameEvent, WorldState } from './types.js';
 import { policeOf, thiefOf, withCar } from './world.js';
 
+/** how far the car must steer into the other for a side hit (the arrows always give 1) */
+const RAM_STEER = 0.5;
+
 const EDGE = BALANCE.road.halfWidth - BALANCE.car.halfWidth;
 const EPS = 1e-9;
 const SEPARATION_SLACK = 0.02; // m
@@ -73,8 +76,9 @@ export function resolveCollisions(w: WorldState, dt: number): WorldState {
   if (Math.abs(ds) < L && Math.abs(dx) < 2 * W) {
     const side = Math.abs(dx) >= W; // side by side (not one behind the other)
     const dir = Math.sign(dx) || 1; // where the thief is, seen from the police
-    const policeIn = police.steer !== 0 && police.steer === dir;
-    const thiefIn = thief.steer !== 0 && thief.steer === -dir;
+    // a light touch of the analog stick (below RAM_STEER) is a lane change, not a ram
+    const policeIn = police.steer * dir >= RAM_STEER;
+    const thiefIn = thief.steer * -dir >= RAM_STEER;
     if ((immunity.cars ?? 0) <= EPS && side && (policeIn || thiefIn)) {
       // side hit (playtest 2026-10-08): whoever steers into the other hurts it; both at once, both get hurt
       const C = BALANCE.collision;

@@ -165,3 +165,52 @@
     display: none;
   }
 }
+
+/* analog steering (Opções › Analógico): the left half below the HUD bars takes the finger anywhere */
+.touch-stick-zone {
+  pointer-events: auto;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50%;
+  top: 30%;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.touch-controls[data-steering='stick'] {
+  justify-content: flex-end; /* no arrow pad: the right buttons keep their place */
+}
+.touch-controls[data-steering='stick'] .touch-pad--left {
+  display: none;
+}
+.touch-stick {
+  --r: 56px;
+  position: absolute;
+  /* resting place, a hint of where to steer: bottom left, where the arrows used to be */
+  left: max(18px, var(--safe-left));
+  bottom: max(14px, var(--safe-bottom));
+  width: calc(var(--r) * 2);
+  height: calc(var(--r) * 2);
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0.45;
+  pointer-events: none;
+}
+/* under the finger: centred on the inline left/top set by touchStick.ts */
+.touch-stick.is-on {
+  bottom: auto;
+  margin: calc(var(--r) * -1) 0 0 calc(var(--r) * -1);
+  opacity: 1;
+}
+.touch-stick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 52px;
+  height: 52px;
+  margin: -26px 0 0 -26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}

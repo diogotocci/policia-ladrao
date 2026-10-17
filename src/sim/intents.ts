@@ -5,6 +5,8 @@ export interface Intents {
   brake: boolean;
   fire: boolean;
   bomb: boolean;
+  /** analog steering from the on-screen stick (Opções › Analógico), -1 (left) .. 1 (right); left/right win over it */
+  steer?: number;
 }
 
 export const NO_INTENTS: Intents = Object.freeze({

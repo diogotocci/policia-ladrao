@@ -3,16 +3,25 @@ import { BALANCE } from '../../config/balance';
 import { gameDelta } from '../mobileShell';
 import { btn, h, openModal } from './dom';
 import { SCREEN_ICONS } from './icons';
+import type { Steering } from '../../input/touchButtons';
+import { loadSteering } from '../../storage/steering';
 
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 /** escape time as shown to players, e.g. "1:30" */
 export const ESCAPE = clock(BALANCE.match.escapeTime);
 
-type Tip = { icon: keyof typeof SCREEN_ICONS; title: string; text: string };
+type Tip = { icon: keyof typeof SCREEN_ICONS; title: string; text: string; steer?: true };
+
+/** the steering tip follows Opções (arrows or analog stick) */
+const STEER_TEXT: Record<Steering, string> = {
+  arrows: 'Use ◀ ▶ para trocar de faixa e o freio quando precisar.',
+  stick: 'Arraste o dedo na metade esquerda da tela para trocar de faixa e use o freio quando precisar.',
+};
+const textOf = (t: Tip) => (t.steer ? STEER_TEXT[loadSteering()] : t.text);
 const PAGES: { tips: Tip[] }[] = [
   {
     tips: [
-      { icon: 'auto', title: 'O carro acelera sozinho', text: 'Use ◀ ▶ para trocar de faixa e o freio quando precisar.' },
+      { icon: 'auto', title: 'O carro acelera sozinho', text: STEER_TEXT.arrows, steer: true },
       {
         icon: 'curve',
         title: 'Freie nas curvas fechadas',
@@ -114,7 +123,7 @@ function tipEl(t: Tip): HTMLElement {
   const el = h('div', 'howto-tip');
   const sign = h('div', 'road-sign');
   sign.innerHTML = SCREEN_ICONS[t.icon];
-  el.append(sign, h('b', 'howto-tip-title', t.title), h('span', 'howto-tip-text', t.text));
+  el.append(sign, h('b', 'howto-tip-title', t.title), h('span', 'howto-tip-text', textOf(t)));
   return el;
 }
 
@@ -201,5 +210,10 @@ export function openHowTo(host: HTMLElement, onClose: () => void): void {
 
 /** every tip of "Como jogar", one line each: the loading screen shows one at random */
 export const HOWTO_TIPS: readonly { title: string; text: string }[] = PAGES.flatMap((p) =>
-  p.tips.map(({ title, text }) => ({ title, text })),
+  p.tips.map((t) => ({
+    title: t.title,
+    get text() {
+      return textOf(t);
+    },
+  })),
 );

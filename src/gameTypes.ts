@@ -5,6 +5,7 @@ import type { CarLook } from './meta/shop';
 import type { MatchStats } from './meta/rewards';
 import type { QualityTier } from './render/renderer';
 import type { ItemId } from './sim/world';
+import type { Steering } from './input/touchButtons';
 
 export interface GameHandle {
   pause(): void;
@@ -54,6 +55,8 @@ export interface GameOptions {
   opponentLook?: CarLook;
   /** debug/e2e only: share of yellow boxes (?mystery=1) */
   mysteryShare?: number;
+  /** touch steering (Opções): the arrows (default) or the analog stick; ?stick forces the stick */
+  steering?: Steering;
   /** starts muted (?mute), without touching the saved preference */
   mute?: boolean;
   /** app audio session (without it the game creates its own) */

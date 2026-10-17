@@ -59,6 +59,8 @@ const escapeParam = Number(params.get('escape'));
 const escapeTime = debug && params.has('escape') && Number.isFinite(escapeParam) && escapeParam > 0 ? escapeParam : undefined;
 
 const mute = params.has('mute');
+// ?stick: the analog steering whatever Opções says (e2e and trying it on a phone)
+const steering = params.has('stick') ? ('stick' as const) : undefined;
 // V2 part 3 (debug only): ?mode=survival and ?chaosEvery=N for e2e
 const mode = debug && params.get('mode') === 'survival' ? ('survival' as const) : undefined;
 const chaosEvery = hpParam('chaosEvery'); // positive number, debug only
@@ -73,7 +75,22 @@ installFullscreenOnFirstTap(document, window);
 const direct = !params.has('app') && (debug || params.has('role') || params.has('seed'));
 if (app) {
   if (direct)
-    startGame(app, { role, seed, debug, quality, debugHp, debugGive, traffic, mute, curves, escapeTime, mode, chaosEvery, mysteryShare });
+    startGame(app, {
+      role,
+      seed,
+      debug,
+      quality,
+      debugHp,
+      debugGive,
+      traffic,
+      mute,
+      curves,
+      escapeTime,
+      mode,
+      chaosEvery,
+      mysteryShare,
+      steering,
+    });
   else void enter(app); // ?app forces the screens (product e2e)
 }
 
@@ -95,6 +112,7 @@ async function enter(container: HTMLElement): Promise<void> {
     escapeTime,
     mode,
     chaosEvery,
+    steering,
     account: createAppAccount({
       api,
       storage,

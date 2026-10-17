@@ -46,6 +46,7 @@ const anyOf = (a: Intents, b: Intents): Intents => ({
   brake: a.brake || b.brake,
   fire: a.fire || b.fire,
   bomb: a.bomb || b.bomb,
+  steer: a.steer ?? b.steer,
 });
 
 export function startGame(container: HTMLElement, opts: GameOptions): GameHandle {
@@ -126,7 +127,7 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
   ui.style.cssText = 'position:absolute;inset:0;pointer-events:none';
   container.append(ui);
   const keyboard = createKeyboardInput(window);
-  const touch = createTouchButtons(ui, { role: opts.role });
+  const touch = createTouchButtons(ui, { role: opts.role, steering: opts.steering });
   const { hint, flash, mirrorFrame } = createGameChrome(ui);
   // without the app (debug/e2e): "Jogar de novo" restarts right here, without reloading the page (no network in between)
   const hud = createHud(ui, opts.role, {

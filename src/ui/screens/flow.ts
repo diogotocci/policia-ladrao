@@ -29,6 +29,8 @@ export type FlowState =
   | { screen: 'shop'; side: Role; from: 'title' | 'choose' }
   /** V2 part 5: challenges, achievements and ranks (from the title) */
   | { screen: 'career' }
+  /** Opções (from the title): how the car is steered */
+  | { screen: 'options' }
   /** the match is set up behind "Preparando a partida…" (shaders, textures) before the 3-2-1 */
   | { screen: 'loading'; role: Role }
   | { screen: 'countdown'; role: Role; left: number }
@@ -53,6 +55,7 @@ export type EndState = {
 
 export type FlowAction =
   | { type: 'play' }
+  | { type: 'openOptions' }
   /** mode screen: a mode was picked (the app keeps which) */
   | { type: 'pickMode' }
   | { type: 'choose'; role: Role }
@@ -92,8 +95,10 @@ export function reduce(s: FlowState, a: FlowAction): FlowState {
         return { screen: 'ranking', tab: 'police', mode: a.mode ?? 'pursuit', difficulty: a.difficulty ?? 'normal', from: 'title' };
       if (a.type === 'openShop') return { screen: 'shop', side: a.side ?? 'police', from: 'title' };
       if (a.type === 'openCareer') return { screen: 'career' };
+      if (a.type === 'openOptions') return { screen: 'options' };
       return s;
     case 'career':
+    case 'options':
       if (a.type === 'back' || a.type === 'quit') return initialState();
       return s;
     case 'shop':
