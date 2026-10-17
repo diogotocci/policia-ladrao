@@ -66,6 +66,8 @@ const SCHEMA = [
   `create index if not exists events_match on events (user_id, match_id) where match_id is not null`,
   // records sent from 0.28 on must match their match_end event to show (older ones keep showing)
   `alter table records add column if not exists needs_event boolean not null default false`,
+  // 0.37.0: prestige stars on that side when the match was played
+  `alter table records add column if not exists prestige integer not null default 0`,
   // reports of a username from the global ranking, for review; one per reporter and player, gone with either account
   `create table if not exists reports (
     id bigserial primary key,

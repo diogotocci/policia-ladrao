@@ -70,7 +70,8 @@ export interface CarState {
   x: number;
   /** m/s */
   speed: number;
-  steer: -1 | 0 | 1;
+  /** -1 (full left) .. 1 (full right); the arrows give -1, 0 or 1, the analog stick anything in between */
+  steer: number;
   touchingEdge: boolean;
   hp: number;
   /** life cap: 100, or 200 in Sobrevivência (V2 part 3) */
@@ -130,6 +131,12 @@ export function cornering(speed: number, curvature: number): { drift: number; sk
   return { drift: -Math.sign(curvature) * mag, skidding };
 }
 
+/** -1..1: an arrow (or both, cancelling out) wins over the analog stick */
+function steerOf(i: Intents): number {
+  if (i.left || i.right) return i.left === i.right ? 0 : i.left ? -1 : 1;
+  return Math.max(-1, Math.min(1, i.steer ?? 0));
+}
+
 export function stepCar(
   car: CarState,
   intents: Intents,
@@ -152,7 +159,7 @@ export function stepCar(
   else if (car.speed < target) speed = Math.min(target, car.speed + accel * dt);
   else speed = Math.max(target, car.speed - accel * dt); // turbo ended (or slowed down): decelerates smoothly
 
-  const steer: CarState['steer'] = intents.left === intents.right ? 0 : intents.left ? -1 : 1;
+  const steer = steerOf(intents);
   const { drift, skidding } = cornering(speed, opts.curvature ?? 0);
   const oil = on(fx.skidUntil);
   const grip = (skidding ? BALANCE.curves.skidSteer : 1) * (oil ? BALANCE.items.oil.skidSteer : 1);

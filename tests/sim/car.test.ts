@@ -62,6 +62,15 @@ describe('stepCar', () => {
     expect(c.steer).toBe(-1);
   });
 
+  it('analog steering (Opções › Analógico): the lateral speed follows the stick, clamped to -1..1', () => {
+    const half = run(createCar('police', 2), { steer: 0.5 }, 0.5);
+    expect(half.x).toBeCloseTo(1.5 + 3.5 / 2, 5);
+    expect(half.steer).toBe(0.5);
+    expect(run(createCar('police', 2), { steer: -3 }, 0.5).x).toBeCloseTo(1.5 - 3.5, 5);
+    // an arrow (keyboard) wins over the stick
+    expect(run(createCar('police', 2), { steer: 0.5, left: true }, 0.5).steer).toBe(-1);
+  });
+
   it('left + right cancel out', () => {
     const c = run(createCar('police', 2), { left: true, right: true }, 0.5);
     expect(c.x).toBe(1.5);

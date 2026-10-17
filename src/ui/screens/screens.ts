@@ -53,6 +53,8 @@ export function renderTitle(
     onShop?(): void;
     /** V2 part 5: opens Carreira; `careerBadge` = things to see there; `streak` = days in a row */
     onCareer?(): void;
+    /** opens Opções (how the car is steered) */
+    onOptions?(): void;
     careerBadge?: number;
     streak?: number;
     coins?: number;
@@ -79,6 +81,11 @@ export function renderTitle(
   if (p.onShop) menu.append(btn('Loja', 'title-shop', p.onShop, SCREEN_ICONS.shop));
   menu.append(help, btn('Ranking', '', p.onRanking, SCREEN_ICONS.trophy));
   const sound = h('div', 'title-sound');
+  if (p.onOptions) {
+    const options = btn('', 'title-progress title-options', p.onOptions, SCREEN_ICONS.gear);
+    options.setAttribute('aria-label', 'Opções');
+    sound.append(options);
+  }
   if (p.onProgress) {
     const progress = btn('', 'title-progress', p.onProgress, SCREEN_ICONS.profile);
     progress.setAttribute('aria-label', 'Perfil');

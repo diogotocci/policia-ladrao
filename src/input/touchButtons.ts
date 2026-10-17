@@ -1,9 +1,10 @@
 import type { Role } from '../config/balance';
 import type { Intents } from '../sim/intents';
 import type { SpecialKind } from '../sim/types';
+import { createTouchStick, type TouchStick } from './touchStick';
 import './touchButtons.css';
 
-type IntentName = keyof Intents;
+type IntentName = Exclude<keyof Intents, 'steer'>;
 
 const svg = (body: string) =>
   `<svg viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
@@ -62,6 +63,9 @@ const BUTTONS: { name: IntentName; label: string; side: 'left' | 'right' }[] = [
   { name: 'fire', label: 'Atirar', side: 'right' },
 ];
 
+/** How the car is steered on touch screens (Opções): two arrow buttons or the analog stick. */
+export type Steering = 'arrows' | 'stick';
+
 const buzz = () => {
   try {
     navigator.vibrate?.(10);
@@ -72,7 +76,7 @@ const buzz = () => {
 
 export function createTouchButtons(
   root: HTMLElement,
-  opts: { role?: Role } = {},
+  opts: { role?: Role; steering?: Steering } = {},
 ): {
   read(): Intents;
   /** forgets stored quick taps (made during the countdown/pause); fingers still on the screen remain valid */
@@ -104,6 +108,7 @@ export function createTouchButtons(
   // (iOS edges, notifications) end a touch without pointerup/pointercancel. With no finger left on the screen nothing
   // can be held: drop every pressed button. Same when the page loses focus or gets hidden.
   const releaseAll = () => {
+    stick?.release();
     active.clear(); // quick taps already stored (tapped) still count once on the next read
     for (const [name, held] of pointers) {
       held.clear();
@@ -114,6 +119,7 @@ export function createTouchButtons(
   const onTouchEnd = (e: Event) => {
     const touches = [...((e as TouchEvent).touches ?? [])];
     if (touches.length === 0) return releaseAll();
+    stick?.checkTouches(touches.map((t) => t.identifier));
     if (typeof document.elementFromPoint !== 'function') return;
     const under = new Set(touches.map((t) => document.elementFromPoint(t.clientX, t.clientY)?.closest('.touch-btn')));
     for (const [name, held] of pointers) {
@@ -140,7 +146,10 @@ export function createTouchButtons(
   rightPad.className = 'touch-pad touch-pad--right';
   container.append(leftPad, rightPad);
 
+  const stick: TouchStick | null = opts.steering === 'stick' ? createTouchStick(container) : null;
+  if (stick) container.dataset.steering = 'stick';
   for (const { name, label, side } of BUTTONS) {
+    if (stick && (name === 'left' || name === 'right')) continue;
     const b = document.createElement('button');
     b.type = 'button';
     b.dataset.intent = name;
@@ -197,6 +206,7 @@ export function createTouchButtons(
       const out: Intents = { left: false, right: false, brake: false, fire: false, bomb: false };
       for (const [name, held] of pointers) out[name] = held.size > 0 || tapped.has(name);
       tapped.clear();
+      if (stick) out.steer = stick.read();
       return out;
     },
     dropTaps() {
@@ -248,6 +258,7 @@ export function createTouchButtons(
       document.removeEventListener('visibilitychange', onHidden);
       window.removeEventListener('blur', releaseAll);
       active.clear();
+      stick?.dispose();
       container.remove();
       for (const held of pointers.values()) held.clear();
     },

@@ -5,6 +5,7 @@ import { CARS, type CarId } from './cars.js';
 import type { Role } from '../config/balance.js';
 import { DAILY_COINS, arrested, dailiesFor, escaped, type MatchSummary } from './dailies.js';
 import { WHEEL_RANK, type WheelStyle } from './parts.js';
+import { PRESTIGE_MAX } from './records.js';
 import { MASTERY_CARS, MASTERY_MAX, masteryLevel, masteryLevelFor, rewardId } from './mastery.js';
 
 // ---------- ranks ----------
@@ -18,6 +19,32 @@ export const MAX_RANK = RANK_XP.length;
 export const RANK_COINS = [0, 0, 200, 400, 600, 1000, 1500, 2000] as const;
 /** rank 1..7 for an amount of XP */
 export const rankOf = (xp: number): number => RANK_XP.filter((t) => xp >= t).length;
+
+// ---------- prestige (mockup approved 2026-10-16) ----------
+/** stars a side can earn: each one sends the side back to rank 1 */
+export { PRESTIGE_MAX };
+/** coins paid by each prestige (climbing the ranks again pays nothing: RANK_COINS are paid once) */
+export const PRESTIGE_COINS = 3000;
+/** the side is at the top rank and still has a star to earn */
+export const canPrestige = (c: Career, side: Role): boolean => rankOf(c.xp[side]) >= MAX_RANK && c.prestige[side] < PRESTIGE_MAX;
+/**
+ * "Prestigiar": the side goes back to rank 1 with one more star and PRESTIGE_COINS. Rank rewards still waiting for
+ * "Resgatar" on that side are paid along (they could not be claimed after the XP goes back to zero).
+ */
+export function prestige(c: Career, side: Role): { career: Career; coins: number } {
+  if (!canPrestige(c, side)) return { career: c, coins: 0 };
+  const waiting = c.claims.filter((x) => x.startsWith(`rank:${side}:`));
+  const coins = PRESTIGE_COINS + waiting.reduce((t, id) => t + claimCoins(id), 0);
+  return {
+    career: {
+      ...c,
+      xp: { ...c.xp, [side]: 0 },
+      prestige: { ...c.prestige, [side]: c.prestige[side] + 1 },
+      claims: c.claims.filter((x) => !waiting.includes(x)),
+    },
+    coins,
+  };
+}
 
 // ---------- lifetime counters (achievements) ----------
 export interface Counters {
@@ -151,6 +178,8 @@ export interface Career {
   claims: string[];
   /** V2 part 6: mastery XP per car (the coins of the matches played with it) */
   carXp: Partial<Record<string, number>>;
+  /** stars per side (0..PRESTIGE_MAX); a side with a star already reached every rank once */
+  prestige: Record<Role, number>;
 }
 
 export const emptyCareer = (): Career => ({
@@ -161,6 +190,7 @@ export const emptyCareer = (): Career => ({
   streak: { last: '', days: 0 },
   claims: [],
   carXp: {},
+  prestige: { police: 0, thief: 0 },
 });
 
 /** Today's progress (a new day starts at zero). */
@@ -171,8 +201,10 @@ export const progressOf = (c: Career, a: Achievement): number => Math.min(a.targ
 
 export type CareerEvent =
   | { kind: 'streak'; days: number; coins: number }
-  | { kind: 'xp'; side: Role; gained: number; xp: number }
-  | { kind: 'rank'; side: Role; rank: number; coins: number }
+  /** `stars`: the side's prestige stars (the end screen says when a prestige is available) */
+  | { kind: 'xp'; side: Role; gained: number; xp: number; stars?: number }
+  /** `again`: climbed after a prestige (nothing to claim: rewards and coins came the first time) */
+  | { kind: 'rank'; side: Role; rank: number; coins: number; again?: boolean }
   | { kind: 'daily'; title: string; coins: number }
   | { kind: 'achievement'; title: string; unlock?: string; coins: number }
   /** V2 part 6: the car of the match went up a mastery level; `unlock` is the shop id it frees */
@@ -201,8 +233,13 @@ export function careerAfterMatch(c: Career, m: MatchSummary, today: string): { c
   // XP and rank of the side played
   const before = c.xp[m.role];
   const xp = { ...c.xp, [m.role]: before + Math.max(0, Math.floor(m.coins)) };
-  events.push({ kind: 'xp', side: m.role, gained: xp[m.role] - before, xp: xp[m.role] });
+  events.push({ kind: 'xp', side: m.role, gained: xp[m.role] - before, xp: xp[m.role], stars: c.prestige[m.role] });
+  const again = c.prestige[m.role] > 0;
   for (let r = rankOf(before) + 1; r <= rankOf(xp[m.role]); r++) {
+    if (again) {
+      events.push({ kind: 'rank', side: m.role, rank: r, coins: 0, again: true });
+      continue;
+    }
     claims.push(`rank:${m.role}:${r}`);
     events.push({ kind: 'rank', side: m.role, rank: r, coins: RANK_COINS[r] ?? 0 });
   }
@@ -267,7 +304,7 @@ export function careerAfterMatch(c: Career, m: MatchSummary, today: string): { c
   }
 
   return {
-    career: { xp, counters: k, achieved, daily: past ? c.daily : { date: today, progress }, streak, claims, carXp },
+    career: { xp, counters: k, achieved, daily: past ? c.daily : { date: today, progress }, streak, claims, carXp, prestige: c.prestige },
     coins,
     events,
   };
@@ -306,7 +343,8 @@ const paintSide = (car: string): Role => (car in CARS ? CARS[car as CarId].role 
 
 /** A rank counts once reached and claimed (every rank up to it on that side). */
 const rankClaimed = (c: Career, side: Role, rank: number) =>
-  rankOf(c.xp[side]) >= rank && !c.claims.some((x) => x.startsWith(`rank:${side}:`) && Number(x.split(':')[2]) <= rank);
+  c.prestige[side] > 0 || // every rank was reached (and paid) before the first star
+  (rankOf(c.xp[side]) >= rank && !c.claims.some((x) => x.startsWith(`rank:${side}:`) && Number(x.split(':')[2]) <= rank));
 
 /** Requirement met: the achievement done and claimed, or the rank reached and claimed. */
 export function meets(c: Career, r: Requirement): boolean {
@@ -358,6 +396,9 @@ export function parseCareer(raw: unknown): Career {
   if (s && isDate(s.last) && isCount(s.days)) out.streak = { last: s.last, days: s.days };
   const cx = r.carXp as Record<string, unknown> | undefined;
   if (cx && typeof cx === 'object') for (const car of MASTERY_CARS) if (isCount(cx[car]) && cx[car] > 0) out.carXp[car] = cx[car];
+  const pr = r.prestige as Record<string, unknown> | undefined;
+  const isStars = (n: unknown): n is number => isCount(n) && n <= PRESTIGE_MAX;
+  if (pr && isStars(pr.police) && isStars(pr.thief)) out.prestige = { police: pr.police, thief: pr.thief };
   if (Array.isArray(r.claims)) out.claims = [...new Set(r.claims.filter((x): x is string => typeof x === 'string' && validClaim(out, x)))];
   return out;
 }
@@ -380,7 +421,8 @@ function validClaim(c: Career, id: string): boolean {
   const [kind, a, b] = id.split(':');
   if (kind === 'daily') return isDate(a) && a !== '' && (b === '0' || b === '1' || b === '2');
   if (kind === 'ach') return c.achieved.includes(a!);
-  if (kind === 'rank' && (a === 'police' || a === 'thief')) return Number(b) >= 2 && Number(b) <= rankOf(c.xp[a]);
+  // a side with a star was paid every rank before it (a rank claim there would pay twice)
+  if (kind === 'rank' && (a === 'police' || a === 'thief')) return c.prestige[a] === 0 && Number(b) >= 2 && Number(b) <= rankOf(c.xp[a]);
   if (kind === 'mast') return masteryLevel(c.carXp[a!] ?? 0) >= MASTERY_MAX;
   return false;
 }

@@ -3,6 +3,9 @@
 import { BALANCE, DIFFICULTIES, MODES, type Difficulty, type Mode, type Role } from '../config/balance.js';
 import { CARS } from './cars.js';
 
+/** stars a side can earn (meta/career.ts PRESTIGE_MAX; kept here so the server does not load the whole career) */
+export const PRESTIGE_MAX = 10;
+
 /** one finished match that goes to the global ranking */
 export interface RecordIn {
   /** unique per match: sending it twice (offline queue, retries) keeps one */
@@ -19,6 +22,8 @@ export interface RecordIn {
   car: string;
   /** the player's rank on that side, 1..7 */
   rank: number;
+  /** prestige stars on that side, 0..10 (0.37.0; older phones send none) */
+  prestige?: number;
   /** when the match ended (ISO, phone clock), so records sent together after a while offline are still spaced like the matches were */
   endedAt: string;
   /** when the phone sent it (phone clock): the server takes the difference, so a phone clock that is off does not matter */
@@ -36,6 +41,8 @@ export interface GlobalRow {
   how?: 'escape' | 'kill' | 'caught';
   car: string;
   rank: number;
+  /** prestige stars on that side when the match was played (absent: none) */
+  prestige?: number;
   /** this is the signed-in player */
   me?: boolean;
   /** the signed-in player already reported this name */
@@ -68,7 +75,7 @@ export const goesGlobal = (mode: Mode, side: Role, won: boolean) => won || (mode
 /** The record as sent by a phone, or undefined when its shape is wrong (refused). */
 export function parseRecord(x: unknown): RecordIn | undefined {
   if (!isObj(x)) return undefined;
-  const { matchId, mode, side, difficulty, time, hp, how, car, rank, endedAt, sentAt } = x;
+  const { matchId, mode, side, difficulty, time, hp, how, car, rank, endedAt, sentAt, prestige } = x;
   if (typeof matchId !== 'string' || !/^[A-Za-z0-9-]{8,64}$/.test(matchId)) return undefined;
   if (!MODES.includes(mode as Mode) || (side !== 'police' && side !== 'thief') || !DIFFICULTIES.includes(difficulty as Difficulty))
     return undefined;
@@ -81,13 +88,30 @@ export function parseRecord(x: unknown): RecordIn | undefined {
   if (typeof endedAt !== 'string' || Number.isNaN(Date.parse(endedAt))) return undefined;
   const sent = typeof sentAt === 'string' && !Number.isNaN(Date.parse(sentAt)) ? { sentAt } : {};
   const ev = (x as { ev?: unknown }).ev === true ? { ev: true } : {};
-  return { matchId, mode: mode as Mode, side, difficulty: difficulty as Difficulty, time, hp, how, car, rank, endedAt, ...sent, ...ev };
+  if (prestige !== undefined && (typeof prestige !== 'number' || !Number.isInteger(prestige) || Math.abs(prestige) > 100)) return undefined;
+  const stars = typeof prestige === 'number' ? { prestige } : {};
+  return {
+    matchId,
+    mode: mode as Mode,
+    side,
+    difficulty: difficulty as Difficulty,
+    time,
+    hp,
+    how,
+    car,
+    rank,
+    endedAt,
+    ...sent,
+    ...ev,
+    ...stars,
+  };
 }
 
 /** Whether the numbers can come from a real match (spec §5). A record that fails is kept as suspect and never shown. */
 export function plausible(r: RecordIn): boolean {
   const car = (CARS as Record<string, { role: Role } | undefined>)[r.car];
   if (!car || car.role !== r.side || r.rank < 1 || r.rank > 7) return false;
+  if ((r.prestige ?? 0) < 0 || (r.prestige ?? 0) > PRESTIGE_MAX) return false;
   if (r.hp < 0 || r.hp > MAX_HP || r.time < MIN_TIME) return false;
   const escape = BALANCE.match.escapeTime;
   if (r.mode === 'survival') return r.time <= MAX_SURVIVAL && (r.side === 'police' ? r.how === undefined : r.how !== undefined);

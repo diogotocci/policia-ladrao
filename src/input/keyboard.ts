@@ -1,6 +1,6 @@
 import type { Intents } from '../sim/intents';
 
-type IntentName = keyof Intents;
+type IntentName = Exclude<keyof Intents, 'steer'>;
 
 const KEYMAP: Record<string, IntentName> = {
   ArrowLeft: 'left',

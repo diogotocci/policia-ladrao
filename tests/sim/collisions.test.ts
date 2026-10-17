@@ -78,7 +78,7 @@ describe('car × car collisions', () => {
 
   // side by side (playtest 2026-10-08): whoever steers into the other hurts it; both at once, both are hurt.
   // overlapping(dx > 0): the police is on the thief's right, so steering into the other is -1 (police), +1 (thief)
-  const side = (policeSteer: -1 | 0 | 1, thiefSteer: -1 | 0 | 1) => {
+  const side = (policeSteer: number, thiefSteer: number) => {
     const w = overlapping(BALANCE.car.halfWidth * 1.4, 0);
     return tick(withCar(withCar(w, 'police', { ...policeOf(w), steer: policeSteer }), 'thief', { ...thiefOf(w), steer: thiefSteer }));
   };
@@ -89,6 +89,11 @@ describe('car × car collisions', () => {
     expect(policeOf(w).hp).toBe(100);
     expect(policeOf(w).speed).toBeCloseTo(30 * (1 - BALANCE.collision.carCarPoliceSpeedLoss));
     expect(Math.abs(thiefOf(w).x - policeOf(w).x)).toBeGreaterThanOrEqual(BALANCE.car.halfWidth * 2 - 1e-9);
+  });
+
+  it('analog steering: a light touch of the stick does not ram, a firm one does', () => {
+    expect(thiefOf(side(-0.2, 0)).hp).toBe(100);
+    expect(thiefOf(side(-0.6, 0)).hp).toBe(100 - BALANCE.collision.sideHit);
   });
 
   it('side hit by the thief: the police is hurt, not the thief', () => {

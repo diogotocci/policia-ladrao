@@ -16,6 +16,8 @@ import { streakDays } from './ui/screens/careerScreen';
 import { loadProfile, saveProfile } from './storage/profileStore';
 import { loadDifficulty, saveDifficulty } from './storage/difficulty';
 import { loadMode, saveMode } from './storage/mode';
+import { loadSteering, saveSteering } from './storage/steering';
+import { renderOptions } from './ui/screens/options';
 import { renderMode } from './ui/screens/mode';
 import { countModeRecords, loadModeBoards, qualifies, saveModeBoards, type ModeBoards } from './storage/ranking';
 import { HOWTO_KEY, INITIALS_KEY, openStorage, readPref, writePref } from './storage/prefs';
@@ -44,7 +46,10 @@ const APP_VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : unde
 export function startApp(
   container: HTMLElement,
   /** debug/e2e only: mode, chaosEvery and the debug options */
-  opts: Pick<GameOptions, 'quality' | 'fps' | 'debugHp' | 'traffic' | 'mute' | 'curves' | 'escapeTime' | 'mode' | 'chaosEvery'> & {
+  opts: Pick<
+    GameOptions,
+    'quality' | 'fps' | 'debugHp' | 'traffic' | 'mute' | 'curves' | 'escapeTime' | 'mode' | 'chaosEvery' | 'steering'
+  > & {
     debug?: boolean;
     /** V3: the signed-in account (the gate ran before); absent in unit tests */
     account?: AppAccount;
@@ -152,6 +157,7 @@ export function startApp(
       opponentLook: opts.debug ? undefined : randomLook(role === 'police' ? 'thief' : 'police'),
       audio,
       startPaused: true,
+      steering: opts.steering ?? loadSteering(storage),
       onPauseRequest: () => dispatch({ type: 'pause' }),
       onEnd: (r) => {
         // credited and saved before the end screen shows: a reload right after cannot lose or repeat it
@@ -196,6 +202,7 @@ export function startApp(
           onProgress: openProgressDialog,
           onShop: () => press({ type: 'openShop' }),
           onCareer: () => press({ type: 'openCareer' }),
+          onOptions: () => press({ type: 'openOptions' }),
           careerBadge: profile.career.claims.length, // rewards waiting for Resgatar
           streak: streakDays(profile.career, today()),
           mountToggle: (p) => audio.mountToggle(p),
@@ -244,7 +251,16 @@ export function startApp(
           today: today(),
           onBack: () => press({ type: 'back' }),
           onClaim: actions.onClaim,
+          onPrestige: actions.onPrestige,
           cars: () => garageCars(profile), // V2 part 6: Garagem tab
+        });
+        break;
+      case 'options':
+        stopGame();
+        view = renderOptions(layer, {
+          steering: loadSteering(storage),
+          onSteering: (st) => saveSteering(storage, st),
+          onBack: () => press({ type: 'back' }),
         });
         break;
       case 'shop':

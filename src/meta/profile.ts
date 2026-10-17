@@ -11,6 +11,7 @@ import {
   claim,
   emptyCareer,
   parseCareer,
+  prestige,
   type Career,
   type CareerEvent,
   type MatchSummary,
@@ -128,6 +129,21 @@ export function settleCareer(p: Profile, m: MatchSummary, today: string): { prof
     },
     coins: r.coins,
     events: r.events,
+  };
+}
+
+/** "Prestigiar" (mockup approved 2026-10-16): the side back to rank 1 for a star; the coins go to the wallet. */
+export function prestigeSide(p: Profile, side: Role): { profile: Profile; coins: number } {
+  const r = prestige(p.career, side);
+  if (r.career === p.career) return { profile: p, coins: 0 };
+  return {
+    profile: {
+      ...p,
+      career: r.career,
+      coins: Math.min(MAX_VALUE, p.coins + r.coins),
+      stats: { ...p.stats, coinsEarned: Math.min(MAX_VALUE, p.stats.coinsEarned + r.coins) },
+    },
+    coins: r.coins,
   };
 }
 

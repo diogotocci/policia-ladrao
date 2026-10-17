@@ -47,7 +47,9 @@ function dial(level: number, frac: number): SVGSVGElement {
   const r = 78;
   const at = (t: number, rr: number) => [cx + Math.cos(Math.PI * (1 - t)) * rr, cy - Math.sin(Math.PI * (1 - t)) * rr] as const;
   const [ex, ey] = at(frac, r);
-  const [nx, ny] = at(frac, r - 16);
+  // the needle is a short mark on the arc (playtest 2026-10-16: a full needle crossed the level number)
+  const [sx, sy] = at(frac, r - 28);
+  const [nx, ny] = at(frac, r - 4);
   let ticks = '';
   for (let l = 1; l <= MASTERY_MAX; l++) {
     const t = (l - 1) / (MASTERY_MAX - 1);
@@ -62,7 +64,7 @@ function dial(level: number, frac: number): SVGSVGElement {
   svg.innerHTML = `<path d="M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}" class="garage-arc"/>
     ${frac > 0.001 ? `<path d="M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${ex} ${ey}" class="garage-arc is-on"/>` : ''}
     <g class="garage-ticks">${ticks}</g>
-    <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" class="garage-needle"/><circle cx="${cx}" cy="${cy}" r="6" class="garage-hub"/>`;
+    <line x1="${sx}" y1="${sy}" x2="${nx}" y2="${ny}" class="garage-needle"/>`;
   return svg;
 }
 
@@ -87,12 +89,25 @@ function card(car: GarageCar, career: Career, onClaim: (id: string) => void): HT
   const info = h('div', 'garage-info');
   const claimId = `mast:${car.id}`;
   // the reward box: the next one by default, or the one tapped on the dial
+  // the mastery and its XP live in the reward box (playtest 2026-10-16: inside the dial they ran over the needle)
+  const xpLine = () => {
+    const box = h('span', 'garage-xp');
+    box.append(
+      h('span', 'garage-xp-text', next === null ? `Maestria máxima · ${n(xp)} XP` : `Maestria ${level} · ${n(xp)} / ${n(next)} XP`),
+    );
+    const track = h('span', 'garage-xp-bar');
+    const fill = h('i');
+    fill.style.width = `${next === null ? 100 : Math.round(((xp - from) / (next - from)) * 100)}%`;
+    track.append(fill);
+    box.append(track);
+    return box;
+  };
   const show = (l: number) => {
     info.replaceChildren();
     if (level >= MASTERY_MAX && l === MASTERY_MAX && career.claims.includes(claimId)) {
       info.insertAdjacentHTML('afterbegin', rewardIcon(car, l));
       const t = h('div', 'garage-info-text');
-      t.append(h('b', '', `Pintura ${LEGENDARY[car.role].name.toLowerCase()}`), h('span', '', 'liberada'));
+      t.append(h('b', '', `Pintura ${LEGENDARY[car.role].name.toLowerCase()}`), h('span', '', 'liberada'), xpLine());
       info.append(
         t,
         btn('Resgatar', 'is-primary career-claim', () => onClaim(claimId)),
@@ -102,7 +117,7 @@ function card(car: GarageCar, career: Career, onClaim: (id: string) => void): HT
     info.insertAdjacentHTML('afterbegin', rewardIcon(car, l));
     const t = h('div', 'garage-info-text');
     const got = l <= level;
-    t.append(h('span', '', got ? `Nível ${l} · liberado` : `Nível ${l}`), h('b', '', rewardName(car.role, l)));
+    t.append(h('span', '', got ? `Nível ${l} · liberado` : `Nível ${l}`), h('b', '', rewardName(car.role, l)), xpLine());
     info.append(t);
   };
   // rewards around the dial: buttons that tell what they are
@@ -118,9 +133,7 @@ function card(car: GarageCar, career: Career, onClaim: (id: string) => void): HT
     b.style.top = `${((y + 20) / 140) * 100}%`;
     gauge.append(b);
   }
-  const lv = h('p', 'garage-level', String(level));
-  lv.append(h('small', '', next === null ? 'Maestria máxima' : `Maestria · ${n(xp)} / ${n(next)} XP`));
-  gauge.append(lv);
+  gauge.append(h('p', 'garage-level', String(level)));
   el.append(gauge, info);
   show(Math.min(MASTERY_MAX, level + (level >= MASTERY_MAX ? 0 : 1)));
   return el;

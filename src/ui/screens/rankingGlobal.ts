@@ -37,6 +37,19 @@ function reportButton(r: GlobalRow, onReport: OnReport): HTMLButtonElement {
   return flag;
 }
 
+/** "★2 Delegado": the prestige stars (mockup approved 2026-10-16) before the rank */
+function rankName(r: GlobalRow, side: Role): HTMLElement {
+  const el = h('span', 'ranking-rankname', RANK_NAMES[side][r.rank - 1] ?? '');
+  if (r.prestige) {
+    // the star sign is read as text: say what it is
+    const star = h('span', 'ranking-star');
+    star.append(h('span', '', `★${r.prestige}`), h('span', 'sr-only', ` prestígio ${r.prestige},`));
+    star.firstElementChild!.setAttribute('aria-hidden', 'true');
+    el.prepend(star, ' ');
+  }
+  return el;
+}
+
 function row(r: GlobalRow, side: Role, mode: Mode, onReport?: OnReport): HTMLElement {
   const li = h('li', 'ranking-row is-global');
   if (r.me) li.classList.add('is-me');
@@ -49,13 +62,7 @@ function row(r: GlobalRow, side: Role, mode: Mode, onReport?: OnReport): HTMLEle
     tag.setAttribute('aria-label', r.how === 'escape' ? `fugiu, vida ${Math.round(r.hp)}` : 'destruiu a viatura');
     time.append(tag);
   }
-  li.append(
-    h('span', 'ranking-pos', String(r.pos)),
-    name,
-    time,
-    h('span', 'ranking-car', carName(r.car)),
-    h('span', 'ranking-rankname', RANK_NAMES[side][r.rank - 1] ?? ''),
-  );
+  li.append(h('span', 'ranking-pos', String(r.pos)), name, time, h('span', 'ranking-car', carName(r.car)), rankName(r, side));
   if (onReport) {
     li.classList.add('has-report');
     li.append(r.me ? h('span', 'ranking-flag-gap') : reportButton(r, onReport));

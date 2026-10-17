@@ -128,6 +128,7 @@ const pack = (p: Profile) => {
       c.streak.days,
       c.claims,
       MASTERY_CARS.map((x) => c.carXp[x] ?? 0), // V2 part 6: mastery XP per car
+      [c.prestige.police, c.prestige.thief], // prestige stars per side (0.37.0)
     ],
   ];
 };
@@ -167,7 +168,13 @@ function unpack(a: unknown): unknown {
     equipped: { police: side(0), thief: side(3), paint, plate: eq[7], finish, sticker, ...unpackParts(eq[10]) },
   };
   if (a.length === 10) return out; // v2: the career starts from the stats
-  if (!Array.isArray(car) || (car.length !== 9 && car.length !== 10) || !Array.isArray(car[2]) || !Array.isArray(car[3])) return undefined;
+  if (
+    !Array.isArray(car) ||
+    (car.length !== 9 && car.length !== 10 && car.length !== 11) ||
+    !Array.isArray(car[2]) ||
+    !Array.isArray(car[3])
+  )
+    return undefined;
   const career = {
     xp: { police: car[0], thief: car[1] },
     counters: Object.fromEntries(COUNTER_KEYS.map((k, i) => [k, (car[2] as unknown[])[i]])),
@@ -176,6 +183,7 @@ function unpack(a: unknown): unknown {
     streak: { last: car[6], days: car[7] },
     claims: Array.isArray(car[8]) ? car[8] : [], // 0.17.0 kept a number here (no claims then)
     carXp: Array.isArray(car[9]) ? Object.fromEntries(MASTERY_CARS.map((c, i) => [c, (car[9] as unknown[])[i]])) : {},
+    prestige: Array.isArray(car[10]) ? { police: car[10][0], thief: car[10][1] } : undefined,
   };
   return { ...out, career };
 }

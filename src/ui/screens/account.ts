@@ -214,8 +214,15 @@ function progressCard(p: Profile, title: string, onPick: () => void): HTMLButton
   const coins = h('span', 'account-choice-coins');
   coins.insertAdjacentHTML('afterbegin', SCREEN_ICONS.coin);
   coins.append(n(p.coins));
-  const side = (role: 'police' | 'thief', label: string) =>
-    h('span', `account-choice-rank is-${role}`, `${label}: ${RANK_NAMES[role][rankOf(p.career.xp[role]) - 1] ?? ''}`);
+  // the prestige stars first: ★1 Recruta is ahead of a Delegado without stars
+  const side = (role: 'police' | 'thief', label: string) => {
+    const stars = p.career.prestige[role];
+    return h(
+      'span',
+      `account-choice-rank is-${role}`,
+      `${label}: ${stars ? `★${stars} ` : ''}${RANK_NAMES[role][rankOf(p.career.xp[role]) - 1] ?? ''}`,
+    );
+  };
   const cars = carCount(p);
   b.append(
     h('span', 'account-choice-title', title),

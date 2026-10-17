@@ -432,6 +432,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 .career-rank-big {
+  position: relative;
   width: 64px;
   flex: none;
 }
@@ -487,4 +488,95 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+}
+
+/* prestige (mockup approved 2026-10-16) */
+.career-star {
+  position: absolute;
+  right: -8px;
+  bottom: -4px;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: var(--sign);
+  color: #1a1a1a;
+  font:
+    900 12px/1 system-ui,
+    sans-serif;
+  box-shadow: 0 0 0 2px #16181c;
+}
+.career-rank-stars {
+  color: var(--sign);
+  font-weight: 900;
+}
+.career-rank-info {
+  flex: 1;
+  min-width: 0;
+}
+.career-rank-acts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: none;
+}
+.career-prestige.screen-btn {
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 14px;
+  line-height: 1.1;
+}
+.career-prestige small {
+  font-size: 11px;
+  opacity: 0.8;
+}
+.career-rank-card:focus {
+  outline: none;
+}
+.career-confirm {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-content: center;
+  background: rgba(0, 0, 0, 0.6);
+}
+.career-confirm-box {
+  max-width: 440px;
+  margin: 0 16px;
+  padding: 18px 20px;
+  border: 1px solid #3a3f48;
+  border-radius: 18px;
+  background: #23262c;
+  color: #fff;
+  text-align: left;
+}
+.career-confirm h3 {
+  margin: 0 0 6px;
+  font-size: 20px;
+}
+.career-confirm p,
+.career-confirm ul {
+  margin: 0 0 8px;
+  color: #cfd3da;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.career-confirm ul {
+  padding-left: 18px;
+}
+.career-confirm-acts {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.end-career-prestige {
+  margin: 6px 0 0;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 194, 26, 0.6);
+  border-radius: 10px;
+  background: rgba(255, 194, 26, 0.16);
+  color: #ffe08a;
+  font:
+    700 13px system-ui,
+    sans-serif;
 }
