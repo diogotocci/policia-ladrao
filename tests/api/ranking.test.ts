@@ -151,6 +151,20 @@ describe('global ranking', () => {
     expect((await board()).rows.map((x) => x.time)).toEqual([20]);
   });
 
+  it('prestige stars (0.37.0) show next to the rank; older phones send none; more than 10 is suspect', async () => {
+    const ana = await s.login('ana', 'Ana');
+    const bia = await s.login('bia', 'Bia_191');
+    await send(ana, rec({ time: 40, prestige: 2 }));
+    await send(bia, rec({ time: 45 })); // an older phone: no prestige field
+    await send(bia, rec({ time: 30, prestige: 11 }));
+    const rows = (await board()).rows;
+    expect(rows.map((r) => [r.username, r.prestige])).toEqual([
+      ['Ana', 2],
+      ['Bia_191', undefined],
+    ]);
+    expect((await recordPost(req('/api/records', 'POST', rec({ prestige: 1.5 }), ana), s.deps)).status).toBe(400);
+  });
+
   it('deleting the account takes its records off the boards; bad requests are refused', async () => {
     const ana = await s.login('ana', 'Ana');
     await send(ana, rec());

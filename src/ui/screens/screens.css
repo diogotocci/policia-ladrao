@@ -830,7 +830,11 @@
   font-size: 0.85em;
 }
 .ranking-rankname {
-  opacity: 0.7;
+  color: rgb(255 255 255 / 0.7);
+}
+.ranking-star {
+  color: var(--sign);
+  font-weight: 900;
 }
 .ranking-you {
   color: var(--sign);

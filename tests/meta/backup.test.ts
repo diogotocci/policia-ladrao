@@ -189,6 +189,7 @@ describe('backup code v3 (career, V2 part 5)', () => {
         streak: { last: '2026-10-08', days: 3 },
         claims: ['ach:arrest10', 'daily:2026-10-08:0'],
         carXp: {},
+        prestige: { police: 2, thief: 0 },
       },
     };
     const r = decodeBackup(encodeBackup(p));

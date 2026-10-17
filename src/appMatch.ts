@@ -84,6 +84,7 @@ export function globalRecord(
     ...(c.role === 'thief' ? { how: entry.how } : {}),
     car: profile.equipped[c.role].car,
     rank: rankOf(profile.career.xp[c.role]),
+    prestige: profile.career.prestige[c.role],
     endedAt: now.toISOString(),
   };
 }

@@ -171,6 +171,7 @@ function boardOf(s: DevServer, b: Pick<RecordIn, 'mode' | 'side' | 'difficulty'>
             how: x.how,
             car: x.car,
             rank: x.rank,
+            ...(x.prestige ? { prestige: x.prestige } : {}),
             me: true,
             matchId: x.matchId,
           }))

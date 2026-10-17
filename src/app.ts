@@ -251,6 +251,7 @@ export function startApp(
           today: today(),
           onBack: () => press({ type: 'back' }),
           onClaim: actions.onClaim,
+          onPrestige: actions.onPrestige,
           cars: () => garageCars(profile), // V2 part 6: Garagem tab
         });
         break;

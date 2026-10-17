@@ -7,7 +7,10 @@ import {
   DAILY_COINS,
   claimCoins,
   MAX_RANK,
+  PRESTIGE_COINS,
+  PRESTIGE_MAX,
   RANK_NAMES,
+  canPrestige,
   RANK_XP,
   STREAK_COINS,
   dailiesFor,
@@ -19,7 +22,7 @@ import {
   type CareerEvent,
 } from '../../meta/career';
 import { CARS, NEONS, SOUNDS, type CarId, type NeonColor, type SoundId } from '../../meta/shop';
-import { btn, h, mount, type Disposable } from './dom';
+import { btn, h, mount, openModal, type Disposable } from './dom';
 import { SCREEN_ICONS } from './icons';
 import { insignia } from './insignia';
 import './career.css';
@@ -185,25 +188,37 @@ function achievementsPanel(c: Career, side: Role | 'any', onSide: (s: Role | 'an
 }
 
 /** One card per side: the insignia, the XP bar, "Resgatar" for ranks reached, and the track of the 7 insignias. */
-function rankCard(c: Career, role: Role, onClaim: Claim): HTMLElement {
+function rankCard(c: Career, role: Role, onClaim: Claim, onPrestige?: (side: Role) => void): HTMLElement {
   const col = h('div', `career-col career-rank-col is-${role}`);
   const xp = c.xp[role];
   const r = rankOf(xp);
+  const stars = c.prestige[role];
   const card = h('div', 'career-rank-card');
   const big = h('div', 'career-rank-big');
   big.innerHTML = insignia(role, r, { label: RANK_NAMES[role][r - 1] });
+  // prestige (mockup approved 2026-10-16): the stars on the insignia and next to the side
+  if (stars) big.append(h('span', 'career-star', `★${stars}`));
   const info = h('div', 'career-rank-info');
-  info.append(h('small', 'career-rank-side', role === 'police' ? 'POLÍCIA' : 'LADRÃO'), h('b', '', RANK_NAMES[role][r - 1]!));
+  const sideName = h('small', 'career-rank-side', role === 'police' ? 'POLÍCIA' : 'LADRÃO');
+  if (stars) sideName.append(' · ', h('span', 'career-rank-stars', `PRESTÍGIO ★${stars}`));
+  info.append(sideName, h('b', '', RANK_NAMES[role][r - 1]!));
   if (r < MAX_RANK) {
     info.append(bar(xp - RANK_XP[r - 1]!, RANK_XP[r]! - RANK_XP[r - 1]!, `is-${role}`));
     info.append(h('small', '', `${n(xp)} / ${n(RANK_XP[r]!)} XP para ${RANK_NAMES[role][r]}`));
-  } else info.append(h('small', '', `${n(xp)} XP · patente máxima`));
+  } else info.append(h('small', '', `${n(xp)} XP · ${stars >= PRESTIGE_MAX ? 'prestígio máximo' : 'patente máxima'}`));
   card.append(big, info);
   const waiting = c.claims.filter((x) => x.startsWith(`rank:${role}:`)).sort();
+  const acts = h('div', 'career-rank-acts');
   if (waiting.length) {
     const coins = waiting.reduce((t, id) => t + claimCoins(id), 0);
-    card.append(btn(`Resgatar +${n(coins)}`, 'career-claim', () => waiting.forEach(onClaim)));
+    acts.append(btn(`Resgatar +${n(coins)}`, 'career-claim', () => waiting.forEach(onClaim)));
   }
+  if (onPrestige && canPrestige(c, role)) {
+    const go = btn(`Prestigiar ★${stars + 1}`, 'is-primary career-prestige', () => onPrestige(role));
+    go.append(h('small', '', `+${n(PRESTIGE_COINS)} moedas`));
+    acts.append(go);
+  }
+  if (acts.childElementCount) card.append(acts);
   const track = h('ol', 'career-track');
   RANK_NAMES[role].forEach((name, i) => {
     const li = h('li', `career-track-step${i + 1 === r ? ' is-current' : ''}${i + 1 > r ? ' is-locked' : ''}`);
@@ -212,7 +227,8 @@ function rankCard(c: Career, role: Role, onClaim: Claim): HTMLElement {
     li.title = `${name}: ${RANK_UNLOCKS[i]}`;
     track.append(li);
   });
-  const next = r < MAX_RANK ? h('small', 'career-note', `Próxima: ${RANK_NAMES[role][r]} · ${RANK_UNLOCKS[r]}`) : null;
+  // after a prestige the ranks pay nothing again and their items are already unlocked
+  const next = r < MAX_RANK ? h('small', 'career-note', `Próxima: ${RANK_NAMES[role][r]}${stars ? '' : ` · ${RANK_UNLOCKS[r]}`}`) : null;
   col.append(card, track);
   if (next) col.append(next);
   return col;
@@ -228,6 +244,8 @@ export function renderCareer(
     onBack(): void;
     /** "Resgatar": the app pays it and returns the new career and balance */
     onClaim(id: string): { career: Career; coins: number };
+    /** "Prestigiar" confirmed: the app applies it and returns the new career and balance */
+    onPrestige?(side: Role): { career: Career; coins: number };
     tab?: Tab;
     /** V2 part 6: the cars owned, for the Garagem tab (asked on every redraw: a claim changes their paint) */
     cars?: () => readonly GarageCar[];
@@ -254,6 +272,42 @@ export function renderCareer(
     draw();
     // keep the keyboard nearby: the next "Resgatar" or the active tab
     (body.querySelector<HTMLElement>('.career-claim') ?? tabs.querySelector<HTMLElement>('.is-on'))?.focus();
+  };
+  const askPrestige = (side: Role) => {
+    const dialog = h('div', 'career-confirm');
+    const stars = career.prestige[side] + 1;
+    const first = RANK_NAMES[side][0]!;
+    const text = h('p', '', 'Você volta para ');
+    text.append(h('b', '', first), ' e começa a subir de novo.');
+    const list = h('ul');
+    const star = h('li', '', 'Ganha a estrela ');
+    star.append(h('b', 'career-rank-stars', `★${stars}`), ' (aparece no ranking global)');
+    const coinsLi = h('li', '', 'Ganha ');
+    coinsLi.append(h('b', '', `${n(PRESTIGE_COINS)} moedas`));
+    list.append(
+      star,
+      coinsLi,
+      h('li', '', 'Carros, rodas e pinturas já liberados continuam seus'),
+      h('li', '', 'Subir de patente de novo não paga moedas outra vez'),
+    );
+    const row = h('div', 'career-confirm-acts');
+    const no = btn('Agora não', 'is-quiet', () => close());
+    const yes = btn('Prestigiar', 'is-primary', () => {
+      close();
+      const r = p.onPrestige!(side);
+      career = r.career;
+      coins = r.coins;
+      draw();
+      body.querySelector<HTMLElement>(`.career-rank-col.is-${side} .career-rank-card`)?.focus();
+    });
+    row.append(no, yes);
+    const box = h('div', 'career-confirm-box');
+    box.append(h('h3', '', `Prestigiar ${side === 'police' ? 'a polícia' : 'o ladrão'}?`), text, list, row);
+    dialog.append(box);
+    const close = openModal(s, dialog, 'Prestigiar', () => {
+      if (!dialog.isConnected) body.querySelector<HTMLElement>('.career-prestige')?.focus();
+    });
+    no.focus();
   };
   const waitingIn = (t: Tab) =>
     career.claims.some((x) => x.startsWith(t === 'today' ? 'daily:' : t === 'achievements' ? 'ach:' : t === 'garage' ? 'mast:' : 'rank:'));
@@ -299,7 +353,9 @@ export function renderCareer(
     else if (tab === 'garage') body.replaceChildren(garagePanel(p.cars?.() ?? [], career, onClaim));
     else {
       const two = h('div', 'career-today');
-      two.append(rankCard(career, 'police', onClaim), rankCard(career, 'thief', onClaim));
+      const pr = p.onPrestige ? askPrestige : undefined;
+      two.append(rankCard(career, 'police', onClaim, pr), rankCard(career, 'thief', onClaim, pr));
+      two.querySelectorAll<HTMLElement>('.career-rank-card').forEach((c) => (c.tabIndex = -1)); // focus lands here after a prestige
       body.replaceChildren(two);
     }
   }
@@ -323,8 +379,18 @@ export function careerStrip(events: readonly CareerEvent[], role: Role): HTMLEle
     h('span', '', `+${n(xp.gained)} XP`),
   );
   box.append(head, bar(r < MAX_RANK ? xp.xp - RANK_XP[r - 1]! : 1, r < MAX_RANK ? RANK_XP[r]! - RANK_XP[r - 1]! : 1, `is-${role}`));
-  if (up)
-    box.append(h('small', 'end-career-note', `Nova patente! Resgate na Carreira: ${ups.map((u) => RANK_UNLOCKS[u.rank - 1]).join(', ')}`));
+  const firstTime = ups.filter((u) => !u.again);
+  if (firstTime.length)
+    box.append(
+      h('small', 'end-career-note', `Nova patente! Resgate na Carreira: ${firstTime.map((u) => RANK_UNLOCKS[u.rank - 1]).join(', ')}`),
+    );
+  else if (up) box.append(h('small', 'end-career-note', 'Nova patente!'));
+  // prestige (mockup approved 2026-10-16): reaching the top rank this match, with a star still to earn
+  const stars = xp.stars ?? 0;
+  if (up?.rank === MAX_RANK && stars < PRESTIGE_MAX)
+    box.append(
+      h('p', 'end-career-prestige', `★ Patente máxima! Na Carreira você pode prestigiar: ★${stars + 1} e +${n(PRESTIGE_COINS)} moedas.`),
+    );
   // V2 part 6: the car went up a mastery level (the last one reached)
   const mastery = events.filter((e): e is Extract<CareerEvent, { kind: 'mastery' }> => e.kind === 'mastery').at(-1);
   const lines = events.filter((e) => e.kind === 'daily' || e.kind === 'achievement').slice(0, mastery ? 2 : 3);

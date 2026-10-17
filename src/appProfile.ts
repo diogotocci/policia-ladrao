@@ -1,5 +1,6 @@
 // Shop and Carreira actions on the profile: each one changes it, saves it and clicks; the screen gets the result.
-import { claimReward, type Profile } from './meta/profile';
+import { claimReward, prestigeSide, type Profile } from './meta/profile';
+import type { Role } from './config/balance';
 import { CARS, CAR_IDS, buy, lookOfCar, owns, setPlate, use } from './meta/shop';
 import { carThumb } from './render/carThumbs';
 import type { GarageCar } from './ui/screens/garage';
@@ -35,6 +36,13 @@ export function profileActions(p: {
       const r = claimReward(before, id);
       change(r.profile, r.coins > 0 || r.profile !== before);
       if (r.profile !== before) p.track?.('claim', { id, coins: r.coins });
+      return { career: p.get().career, coins: p.get().coins };
+    },
+    onPrestige(side: Role) {
+      const before = p.get();
+      const r = prestigeSide(before, side);
+      change(r.profile, r.profile !== before);
+      if (r.profile !== before) p.track?.('claim', { id: `prestige:${side}:${r.profile.career.prestige[side]}`, coins: r.coins });
       return { career: p.get().career, coins: p.get().coins };
     },
   };

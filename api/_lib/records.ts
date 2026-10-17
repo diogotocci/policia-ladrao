@@ -22,6 +22,7 @@ interface Row {
   how: string | null;
   car: string;
   rank: number;
+  prestige: number;
   id: string | number;
 }
 
@@ -33,7 +34,7 @@ async function ranked(db: Db, where: { mode: Mode; side: Role; difficulty: Diffi
   const ord = order(where.mode, where.side);
   return db.query<Row>(
     `with shown as (
-       select r.id, r.user_id, u.username, r.time_ms, r.hp, r.how, r.car, r.rank, r.ended_at
+       select r.id, r.user_id, u.username, r.time_ms, r.hp, r.how, r.car, r.rank, r.prestige, r.ended_at
        from records r join users u on u.id = r.user_id
        where r.mode = $1 and r.side = $2 and r.difficulty = $3 and not r.suspect and u.username is not null and u.banned_at is null
          -- delivery 3: the record must match the match_end event of the same match (sent just before it)
@@ -43,7 +44,7 @@ async function ranked(db: Db, where: { mode: Mode; side: Role; difficulty: Diffi
              and abs((e.data->>'time')::float8 * 1000 - r.time_ms) <= 5 and (e.data->>'won')::boolean = (r.how is distinct from 'caught')
          ))
      ), pos as (select *, row_number() over (order by ${ord}) as pos from shown)
-     select pos, user_id, username, time_ms, hp, how, car, rank, id from pos
+     select pos, user_id, username, time_ms, hp, how, car, rank, prestige, id from pos
      where pos <= $4
         or id::text = $6
         or (user_id::text = $5 and pos = (select min(pos) from pos where user_id::text = $5))
@@ -60,6 +61,7 @@ const toRow = (r: Row, me?: string): GlobalRow => ({
   ...(r.how ? { how: r.how as GlobalRow['how'] } : {}),
   car: r.car,
   rank: r.rank,
+  ...(r.prestige > 0 ? { prestige: r.prestige } : {}),
   ...(me !== undefined && String(r.user_id) === me ? { me: true } : {}),
 });
 
@@ -107,8 +109,8 @@ export async function submit(db: Db, userId: string, r: RecordIn, now = new Date
   const gap = prev ? (ended.getTime() - new Date(prev.ended_at).getTime()) / 1000 : Infinity;
   const suspect = !plausible(r) || gap < r.time * 0.8 || ago < 0 || ago > MAX_AGE_DAYS * 86400;
   const inserted = await db.query<{ id: string | number }>(
-    `insert into records (user_id, match_id, mode, side, difficulty, time_ms, hp, how, car, rank, suspect, ended_at, needs_event)
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+    `insert into records (user_id, match_id, mode, side, difficulty, time_ms, hp, how, car, rank, suspect, ended_at, needs_event, prestige)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
      on conflict (user_id, match_id) do nothing returning id`,
     [
       userId,
@@ -124,6 +126,7 @@ export async function submit(db: Db, userId: string, r: RecordIn, now = new Date
       suspect,
       ended.toISOString(),
       r.ev === true, // older phones send no match_end event: their records are not held back for it
+      r.prestige ?? 0,
     ],
   );
   const id =

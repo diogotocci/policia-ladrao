@@ -4,6 +4,7 @@
 import { rankOf } from './career.js';
 import { MASTERY_MAX, masteryLevel } from './mastery.js';
 import type { Profile } from './profile.js';
+import type { Role } from '../config/balance.js';
 
 const union = (a: readonly string[], b: readonly string[]) => [...new Set([...b, ...a])];
 const maxOf = <K extends string>(a: Partial<Record<K, number>>, b: Partial<Record<K, number>>) => {
@@ -16,23 +17,31 @@ const maxOf = <K extends string>(a: Partial<Record<K, number>>, b: Partial<Recor
 export function mergeProfiles(older: Profile, newer: Profile): Profile {
   const a = older.career;
   const b = newer.career;
-  const xp = { police: Math.max(a.xp.police, b.xp.police), thief: Math.max(a.xp.thief, b.xp.thief) };
+  // per side, the copy with more prestige stars wins (its XP restarted from zero); same stars: the most XP
+  const ahead = (side: Role) => (a.prestige[side] !== b.prestige[side] ? (a.prestige[side] > b.prestige[side] ? a : b) : null);
+  const sideXp = (side: Role) => (ahead(side) ?? (a.xp[side] > b.xp[side] ? a : b)).xp[side];
+  const xp = { police: sideXp('police'), thief: sideXp('thief') };
+  const prestige = { police: Math.max(a.prestige.police, b.prestige.police), thief: Math.max(a.prestige.thief, b.prestige.thief) };
   const carXp = maxOf(a.carXp, b.carXp);
   const achieved = union(a.achieved, b.achieved);
   // a reward still waiting in the older copy survives when the newer copy never earned it (it was not claimed there)
   const stillOwed = (id: string) => {
     const [kind, x, y] = id.split(':');
     if (kind === 'ach') return !b.achieved.includes(x!);
-    if (kind === 'rank') return rankOf(b.xp[x as 'police' | 'thief'] ?? 0) < Number(y);
+    if (kind === 'rank') return prestige[x as Role] === 0 && rankOf(b.xp[x as Role] ?? 0) < Number(y);
     if (kind === 'mast') return masteryLevel(b.carXp[x!] ?? 0) < MASTERY_MAX;
     return false; // the day's challenges belong to the newer copy
   };
-  const claims = union(a.claims.filter(stillOwed), b.claims);
+  // a rank reward of a side that earned a star in the other copy was paid by the prestige
+  const claims = union(a.claims.filter(stillOwed), b.claims).filter((id) => {
+    const [kind, x] = id.split(':');
+    return kind !== 'rank' || prestige[x as Role] === b.prestige[x as Role];
+  });
   return {
     ...newer,
     stats: maxOf(older.stats as never, newer.stats as never) as unknown as Profile['stats'],
     welcomeGranted: older.welcomeGranted || newer.welcomeGranted,
     owned: union(older.owned, newer.owned),
-    career: { ...b, xp, carXp, achieved, claims, counters: maxOf(a.counters as never, b.counters as never) as never },
+    career: { ...b, xp, prestige, carXp, achieved, claims, counters: maxOf(a.counters as never, b.counters as never) as never },
   };
 }
