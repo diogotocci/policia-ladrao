@@ -10,6 +10,7 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "e2e": "playwright test",
+    "e2e:mobile": "playwright test --project=mobile-landscape",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "prettier --check . && eslint . --cache",
