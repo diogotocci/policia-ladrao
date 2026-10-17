@@ -2,6 +2,7 @@
 // Maps on screen (mockups approved 2026-10-17): Loja › Mapas, the pill and sheet on the side screen, the end screen.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { settleEnd } from '../../src/appMatch';
+import { ADMIN_WINS } from '../../src/meta/maps';
 import { emptyProfile, type Profile } from '../../src/meta/profile';
 import { careerStrip } from '../../src/ui/screens/careerScreen';
 import { renderChoose, renderShop } from '../../src/ui/screens/screens';
@@ -46,6 +47,33 @@ describe('Loja › Mapas', () => {
     expect(root.querySelector<HTMLElement>('.shop-3d')!.hidden).toBe(true);
     row('Paris').click();
     expect(root.querySelector('.shop-map-pic')!.classList.contains('is-locked')).toBe(false);
+  });
+});
+
+describe('admin mode (testing)', () => {
+  it('every map is unlocked in the shop and in the sheet, with no wins', () => {
+    renderShop(root, {
+      profile: withWins(0),
+      side: 'police',
+      admin: true,
+      onSide: vi.fn(),
+      onBack: vi.fn(),
+      onBuy: vi.fn(),
+      onUse: vi.fn(),
+      onPlate: vi.fn(),
+      onListen: vi.fn(),
+    });
+    tab('Mapas').click();
+    expect(['Cidade', 'Paris', 'Rio de Janeiro', 'Nova York'].map((n) => row(n).textContent?.includes('Liberado'))).toEqual([
+      true,
+      true,
+      true,
+      true,
+    ]);
+    root.replaceChildren();
+    renderChoose(root, { onChoose: vi.fn(), onBack: vi.fn(), map: { current: 'city', wins: ADMIN_WINS, onPick: vi.fn() } });
+    root.querySelector<HTMLButtonElement>('.choose-map')!.click();
+    expect(root.querySelectorAll('[role="dialog"] [aria-disabled="true"]')).toHaveLength(0);
   });
 });
 

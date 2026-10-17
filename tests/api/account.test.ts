@@ -3,6 +3,7 @@ import { PGlite } from '@electric-sql/pglite';
 import { SignJWT, createLocalJWKSet, exportJWK, generateKeyPair } from 'jose';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ensureSchema, type Db } from '../../api/_lib/db';
+import { isAdminEmail } from '../../api/_lib/users';
 import { accountDelete, me, profileGet, profilePut, signIn, signOut, usernameCheck, usernameSet, type Deps } from '../../api/_lib/http';
 import { emptyProfile, type Profile } from '../../src/meta/profile';
 
@@ -87,6 +88,14 @@ describe('sign-in with Google', () => {
     const res = await me(req('/api/me', 'GET', undefined, (await login('g-9', 'diogotocci@gmail.com')).cookie), deps);
     expect(await res.json()).toMatchObject({ account: { admin: true } });
     expect((await login('g-8', 'diogotocci@gmail.com.evil.example')).body.account).toMatchObject({ admin: false });
+  });
+
+  it('the admin e-mail comes from ADMIN_EMAIL (Vercel); unset or empty, nobody is admin', () => {
+    expect(isAdminEmail(' DiogoTocci@Gmail.com ', { ADMIN_EMAIL: 'diogotocci@gmail.com' })).toBe(true);
+    expect(isAdminEmail('ana@example.com', { ADMIN_EMAIL: 'ana@example.com ' })).toBe(true);
+    expect(isAdminEmail('diogotocci@gmail.com', {})).toBe(false);
+    expect(isAdminEmail('', { ADMIN_EMAIL: '' })).toBe(false);
+    expect(isAdminEmail('diogotocci@gmail.com', { ADMIN_EMAIL: '   ' })).toBe(false);
   });
 
   it('without the database or the secret (local dev), the endpoints say so instead of failing', async () => {

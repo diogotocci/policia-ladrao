@@ -73,5 +73,8 @@ export const isMapId = (x: unknown): x is MapId => typeof x === 'string' && (MAP
 /** unlocked with that many wins */
 export const mapUnlocked = (map: MapId, wins: number): boolean => wins >= MAPS[map].wins;
 
+/** the admin account (testing) has every map, like the whole shop */
+export const ADMIN_WINS = Number.POSITIVE_INFINITY;
+
 /** "Vença 20 partidas" */
 export const mapNeed = (map: MapId): string => `Vença ${MAPS[map].wins} partidas`;

@@ -22,7 +22,7 @@ import {
   type SoundId,
 } from '../../meta/shop';
 import { STICKERS, STICKER_NAMES, masteryLevel, type FinishId } from '../../meta/mastery';
-import { MAPS, MAP_IDS, mapNeed, mapUnlocked, type MapId } from '../../meta/maps';
+import { ADMIN_WINS, MAPS, MAP_IDS, mapNeed, mapUnlocked, type MapId } from '../../meta/maps';
 import { drawMasteryBar, finishRowsFor } from './shopMastery';
 import { accessoryOn, accessoryRows, effectsRows, previewPart, shopTabs, wheelRows, type Tab } from './shopParts';
 import { btn, h, mount, openModal, type Disposable } from './dom';
@@ -165,7 +165,7 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
     }
   };
   const mapOf = (id: string) => id.split(':')[1] as MapId;
-  const wins = () => profile.stats.wins;
+  const wins = () => (p.admin ? ADMIN_WINS : profile.stats.wins); // admin mode: every map
 
   const finishRows = (): Row[] => finishRowsFor(profile, side, stageCar);
 
