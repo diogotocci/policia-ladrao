@@ -39,8 +39,10 @@ describe('Carreira › Garagem (V2 part 6, mockup C)', () => {
     expect(cards.map((c) => c.querySelector('.garage-name')!.textContent)).toEqual(['Esportivo', 'Sedã']);
     expect(cards[0]!.querySelector('img')).not.toBeNull();
     expect(cards[1]!.querySelector('img')).toBeNull(); // no picture without WebGL
-    expect(cards[0]!.querySelector('.garage-level')!.textContent).toContain('3');
-    expect(cards[0]!.textContent).toContain('1.100 / 1.500 XP');
+    expect(cards[0]!.querySelector('.garage-level')!.textContent).toBe('3'); // only the number on the dial
+    // the mastery and its XP sit in the reward box, with a bar (playtest 2026-10-16: on the dial they overlapped)
+    expect(cards[0]!.querySelector('.garage-info .garage-xp')!.textContent).toBe('Maestria 3 · 1.100 / 1.500 XP');
+    expect(cards[0]!.querySelector<HTMLElement>('.garage-xp-bar i')!.style.width).toBe('43%');
     expect(cards[0]!.querySelector('.garage-info')!.textContent).toContain('Acabamento fosco');
     expect(cards[0]!.querySelectorAll('.garage-reward')).toHaveLength(9);
     expect(cards[0]!.querySelectorAll('.garage-reward.is-got')).toHaveLength(2);
@@ -58,7 +60,7 @@ describe('Carreira › Garagem (V2 part 6, mockup C)', () => {
     });
     const card = root.querySelector('.garage-card')!;
     card.querySelector<HTMLButtonElement>('[aria-label="Nível 9: Adesivo xadrez"]')!.click();
-    expect(card.querySelector('.garage-info')!.textContent).toBe('Nível 9Adesivo xadrez');
+    expect(card.querySelector('.garage-info')!.textContent).toBe('Nível 9Adesivo xadrezMaestria 3 · 1.100 / 1.500 XP');
     card.querySelector<HTMLButtonElement>('[aria-label="Nível 2: Acabamento metálico"]')!.click();
     expect(card.querySelector('.garage-info')!.textContent).toContain('liberado');
   });

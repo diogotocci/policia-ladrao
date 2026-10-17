@@ -73,11 +73,8 @@
 }
 .garage-needle {
   stroke: #ff4d4d;
-  stroke-width: 4;
+  stroke-width: 6;
   stroke-linecap: round;
-}
-.garage-hub {
-  fill: #ff4d4d;
 }
 .screen-btn.garage-reward {
   position: absolute;
@@ -107,20 +104,12 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 38%;
+  top: 46%;
   margin: 0;
   text-align: center;
   font-size: 1.9em;
   font-weight: 900;
   line-height: 1;
-}
-.garage-level small {
-  display: block;
-  margin-top: 1.25em;
-  color: var(--muted);
-  font-size: 0.32em;
-  font-weight: 800;
-  text-transform: uppercase;
 }
 .garage-ico {
   display: inline-block;
@@ -174,4 +163,26 @@
 }
 .garage-reward * {
   pointer-events: none;
+}
+.garage-info-text {
+  flex: 1;
+  min-width: 0;
+}
+.garage-xp {
+  display: block;
+  margin-top: 0.2em;
+  font-size: 0.85em;
+}
+.garage-xp-bar {
+  display: block;
+  height: 5px;
+  margin-top: 0.25em;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #3a3f48;
+}
+.garage-xp-bar i {
+  display: block;
+  height: 100%;
+  background: var(--sign);
 }
