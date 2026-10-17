@@ -6,6 +6,7 @@ import type { Role } from '../config/balance.js';
 import { DAILY_COINS, arrested, dailiesFor, escaped, type MatchSummary } from './dailies.js';
 import { WHEEL_RANK, type WheelStyle } from './parts.js';
 import { PRESTIGE_MAX } from './records.js';
+import type { MapId } from './maps.js';
 import { MASTERY_CARS, MASTERY_MAX, masteryLevel, masteryLevelFor, rewardId } from './mastery.js';
 
 // ---------- ranks ----------
@@ -207,6 +208,8 @@ export type CareerEvent =
   | { kind: 'rank'; side: Role; rank: number; coins: number; again?: boolean }
   | { kind: 'daily'; title: string; coins: number }
   | { kind: 'achievement'; title: string; unlock?: string; coins: number }
+  /** maps (2026-10-17): this win unlocked a map */
+  | { kind: 'map'; map: MapId }
   /** V2 part 6: the car of the match went up a mastery level; `unlock` is the shop id it frees */
   | { kind: 'mastery'; car: string; level: number; gained: number; unlock: string | null };
 

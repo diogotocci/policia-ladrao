@@ -44,6 +44,7 @@ export const SCREEN_ICONS = {
   // V2 part 3: police items
   barrier: svg('<path d="M3 8h18v6H3z"/><path d="M7 8l-4 6M12 8l-4 6M17 8l-4 6M21 8l-4 6"/><path d="M6 14v6M18 14v6"/>'),
   // V2 part 4: shop; part 5: career
+  map: svg('<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>'),
   lock: svg('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
   flame: svg('<path d="M12 3c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-4 2-5 0 2 1 3 2 3-1-3 0-6 1-9z"/>', true),
   medal: svg('<circle cx="12" cy="15" r="5"/><path d="M9 3h6l-1.5 7h-3zM10.5 15h3"/>'),

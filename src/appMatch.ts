@@ -9,6 +9,7 @@ import { insert, recordEntry, type ModeBoards } from './storage/ranking';
 import type { Submitted } from './account/api';
 import type { MatchResult } from './ui/screens/flow';
 import { newMatchId } from './meta/ids';
+import { MAP_IDS, mapUnlocked } from './meta/maps';
 import { goesGlobal, type RecordIn } from './meta/records';
 
 type Ctx = { role: Role; mode: Mode; difficulty: Difficulty; today: string };
@@ -42,7 +43,13 @@ export function settleEnd(profile: Profile, r: MatchEnd, c: Ctx): { profile: Pro
     },
     c.today,
   );
-  return { profile: career.profile, reward: settled.reward, events: career.events };
+  // maps (2026-10-17): a win that reaches a map's number of wins unlocks it
+  const opened = MAP_IDS.filter((m) => !mapUnlocked(m, profile.stats.wins) && mapUnlocked(m, career.profile.stats.wins));
+  return {
+    profile: career.profile,
+    reward: settled.reward,
+    events: [...career.events, ...opened.map((map) => ({ kind: 'map' as const, map }))],
+  };
 }
 
 /** Puts the initials in the ranking of that mode and difficulty; rank 0 when it did not get in. */

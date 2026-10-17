@@ -1,23 +1,26 @@
 import * as THREE from 'three';
 import { QUALITY, type QualityTier } from './renderer';
-import { makeSkyTexture } from './textures';
+import type { MapLook } from './mapThemes';
+import { makeMapSky, makeSkyTexture } from './textures';
 
 /** Sky, fog, ambient light, reflections and a sun with a shadow that follows the car. */
 export function createLighting(
   scene: THREE.Scene,
   renderer: THREE.WebGLRenderer,
+  /** maps: sky, fog and light of the map (absent: the city) */
+  look?: MapLook,
 ): { reflections: THREE.Texture; follow(x: number, z: number, heading?: number): void; setQuality(tier: QualityTier): void } {
-  scene.background = makeSkyTexture();
-  scene.fog = new THREE.Fog(0xd3dbe2, 110, 300);
+  scene.background = look ? makeMapSky(...look.sky) : makeSkyTexture();
+  scene.fog = look ? new THREE.Fog(look.fog.color, look.fog.near, look.fog.far) : new THREE.Fog(0xd3dbe2, 110, 300);
 
   const pmrem = new THREE.PMREMGenerator(renderer);
   // reflections on cars only (applied by whoever creates the cars); buildings and street get diffuse light
   const reflections = pmrem.fromScene(makeStreetEnvironment(), 0.02).texture;
   pmrem.dispose();
 
-  scene.add(new THREE.HemisphereLight(0xe4eeff, 0x6a6052, 1.7));
+  scene.add(new THREE.HemisphereLight(look?.hemi.sky ?? 0xe4eeff, look?.hemi.ground ?? 0x6a6052, look?.hemi.intensity ?? 1.7));
 
-  const sun = new THREE.DirectionalLight(0xffe4bd, 3.0);
+  const sun = new THREE.DirectionalLight(look?.sun.color ?? 0xffe4bd, look?.sun.intensity ?? 3.0);
   sun.shadow.bias = -0.0004;
   sun.shadow.normalBias = 0.04;
   scene.add(sun, sun.target);

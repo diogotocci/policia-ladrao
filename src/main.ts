@@ -12,6 +12,7 @@ import { registerServiceWorker } from './pwa/register';
 import { hideSplash } from './ui/splash';
 import { QUALITY_TIERS, type QualityTier } from './render/renderer';
 import type { ItemId } from './sim/world';
+import { isMapId } from './meta/maps';
 
 declare const __APP_VERSION__: string | undefined;
 const APP_VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : undefined;
@@ -61,6 +62,10 @@ const escapeTime = debug && params.has('escape') && Number.isFinite(escapeParam)
 const mute = params.has('mute');
 // ?stick: the analog steering whatever Opções says (e2e and trying it on a phone)
 const steering = params.has('stick') ? ('stick' as const) : undefined;
+// ?debug&map=paris|rio|ny: that map whatever is unlocked (e2e)
+const mapParam = params.get('map');
+const map = debug && isMapId(mapParam) ? mapParam : undefined;
+const lapOffset = debug && params.has('lap') ? Math.max(0, Number(params.get('lap')) || 0) : undefined;
 // V2 part 3 (debug only): ?mode=survival and ?chaosEvery=N for e2e
 const mode = debug && params.get('mode') === 'survival' ? ('survival' as const) : undefined;
 const chaosEvery = hpParam('chaosEvery'); // positive number, debug only
@@ -90,6 +95,8 @@ if (app) {
       chaosEvery,
       mysteryShare,
       steering,
+      map,
+      lapOffset,
     });
   else void enter(app); // ?app forces the screens (product e2e)
 }
@@ -113,6 +120,7 @@ async function enter(container: HTMLElement): Promise<void> {
     mode,
     chaosEvery,
     steering,
+    map,
     account: createAppAccount({
       api,
       storage,

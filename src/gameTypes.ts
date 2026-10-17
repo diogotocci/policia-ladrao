@@ -6,6 +6,7 @@ import type { MatchStats } from './meta/rewards';
 import type { QualityTier } from './render/renderer';
 import type { ItemId } from './sim/world';
 import type { Steering } from './input/touchButtons';
+import type { MapId } from './meta/maps';
 
 export interface GameHandle {
   pause(): void;
@@ -55,6 +56,10 @@ export interface GameOptions {
   opponentLook?: CarLook;
   /** debug/e2e only: share of yellow boxes (?mystery=1) */
   mysteryShare?: number;
+  /** maps (2026-10-17): the scenery; absent: the city */
+  map?: MapId;
+  /** debug only (?lap=N): the map's scenery starts N m into its loop */
+  lapOffset?: number;
   /** touch steering (Opções): the arrows (default) or the analog stick; ?stick forces the stick */
   steering?: Steering;
   /** starts muted (?mute), without touching the saved preference */

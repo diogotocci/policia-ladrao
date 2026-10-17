@@ -13,7 +13,15 @@ vi.mock('../../src/render/textures', async () => {
     FACADE_TILE_METERS: { width: 8, height: 48 },
     makeGroundTexture: () => new T.Texture(),
     makeFacadeTexture: () => new T.Texture(),
+    OUTER_HALF_WIDTH: 130,
+    makeOuterTexture: () => new T.Texture(),
   };
+});
+
+vi.mock('../../src/render/mapDecor', async (orig) => {
+  const T = await import('three');
+  const real: Record<string, unknown> = await orig();
+  return { ...real, makeBillboardTexture: () => new T.Texture() };
 });
 
 describe('visibleChunkRange', () => {
@@ -114,5 +122,33 @@ describe('curved road chunks (Entrega 6)', () => {
     let n = 0;
     scene.traverse((o) => (o as THREE.Mesh).isMesh && n++);
     expect(n).toBe(7 * 3); // ground, poles, buildings per block
+  });
+
+  it('maps (2026-10-17): New York adds the wide ground per block and one shared mesh per prop kind', () => {
+    const scene = new THREE.Scene();
+    const road = createRoad(scene, 1, createTrackFrame(1, true), 'ny');
+    road.update(2700); // on the Brooklyn Bridge
+    const decor = scene.children.filter((o) => o.name.startsWith('decor-')).map((o) => o.name);
+    expect(decor.sort()).toEqual([
+      'decor-billboard',
+      'decor-bridgeTower',
+      'decor-railing',
+      'decor-rock',
+      'decor-suspender',
+      'decor-tree',
+      'decor-wall',
+      'decor-waterTower',
+    ]);
+    const count = (k: string) => (scene.getObjectByName(`decor-${k}`) as THREE.InstancedMesh).count;
+    expect(count('bridgeTower')).toBe(1);
+    expect(count('suspender')).toBeGreaterThan(20);
+    expect(count('billboard')).toBe(0); // Times Square is far behind
+    const outer = scene.getObjectByName('chunk-54')!.getObjectByName('outer')!;
+    expect(outer.visible).toBe(true); // the river
+    expect(scene.getObjectByName('decor-billboard')!.visible).toBe(false); // empty: no draw call
+    // the warm-up bank uses the same shader variant as the real buildings (instance colours)
+    const bank = scene.getObjectByName('map-material-bank')!;
+    for (const m of bank.children)
+      if ((m as THREE.InstancedMesh).isInstancedMesh) expect((m as THREE.InstancedMesh).instanceColor).not.toBeNull();
   });
 });

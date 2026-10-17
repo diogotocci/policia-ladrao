@@ -21,6 +21,8 @@ import { createWorldProps } from './render/worldProps';
 import { updateCarModel } from './render/carFactory';
 import { createQualityGovernor, createRenderer, saveTier, startTier } from './render/renderer';
 import { createLighting } from './render/scene';
+import { createBackdrop } from './render/backdrop';
+import { MAP_LOOKS } from './render/mapThemes';
 import { createRoad, renderOrigin } from './render/roadChunks';
 import { createTrackFrame, setActiveTrackFrame, trackPos } from './render/trackFrame';
 import { hpPct, type CarState } from './sim/car';
@@ -66,14 +68,16 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
   renderer.debug.checkShaderErrors = !import.meta.env.PROD || opts.debug === true;
   renderer.info.autoReset = false;
   const scene = new THREE.Scene();
-  const lighting = createLighting(scene, renderer);
+  const map = opts.map ?? 'city';
+  const lighting = createLighting(scene, renderer, map === 'city' ? undefined : MAP_LOOKS[map]);
   lighting.setQuality(view.quality);
   const governor = opts.quality ? undefined : createQualityGovernor(view.quality);
 
   const curvesOn = opts.curves ?? true;
   const trackFrame = createTrackFrame(opts.seed, curvesOn);
   setActiveTrackFrame(trackFrame); // all rendering positions along the track curve
-  const road = createRoad(scene, opts.seed, trackFrame);
+  const road = createRoad(scene, opts.seed, trackFrame, map, opts.debug ? (opts.lapOffset ?? 0) : 0);
+  const backdrop = createBackdrop(scene, map, MAP_LOOKS[map].fog.color);
   const withReflections = (m: THREE.Object3D) =>
     m.traverse((o) => {
       if (o.name === 'contact-shadow' || o.name === 'neon') return;
@@ -362,6 +366,7 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
       return;
     }
     renderer.info.reset();
+    backdrop?.update(chase.camera);
     renderer.render(scene, chase.camera);
     const mainCalls = renderer.info.render.calls;
     const showMirror = isBehind(car, foe) && !world.match.over;
@@ -437,6 +442,7 @@ export function startGame(container: HTMLElement, opts: GameOptions): GameHandle
       mixer.reset();
       if (ownAudio) audioSession.dispose();
       debug?.dispose();
+      backdrop?.dispose();
       ui.remove();
       renderer.dispose();
       renderer.forceContextLoss(); // frees the GPU now (the browser limits live WebGL contexts)

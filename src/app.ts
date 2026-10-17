@@ -17,6 +17,7 @@ import { loadProfile, saveProfile } from './storage/profileStore';
 import { loadDifficulty, saveDifficulty } from './storage/difficulty';
 import { loadMode, saveMode } from './storage/mode';
 import { loadSteering, saveSteering } from './storage/steering';
+import { loadMap, saveMap } from './storage/map';
 import { renderOptions } from './ui/screens/options';
 import { renderMode } from './ui/screens/mode';
 import { countModeRecords, loadModeBoards, qualifies, saveModeBoards, type ModeBoards } from './storage/ranking';
@@ -48,7 +49,7 @@ export function startApp(
   /** debug/e2e only: mode, chaosEvery and the debug options */
   opts: Pick<
     GameOptions,
-    'quality' | 'fps' | 'debugHp' | 'traffic' | 'mute' | 'curves' | 'escapeTime' | 'mode' | 'chaosEvery' | 'steering'
+    'quality' | 'fps' | 'debugHp' | 'traffic' | 'mute' | 'curves' | 'escapeTime' | 'mode' | 'chaosEvery' | 'steering' | 'map'
   > & {
     debug?: boolean;
     /** V3: the signed-in account (the gate ran before); absent in unit tests */
@@ -153,6 +154,7 @@ export function startApp(
       difficulty,
       mode,
       look: lookFor(profile, role),
+      map: opts.map ?? loadMap(storage, profile.stats.wins),
       // the computer drives a random car of its side (debug/e2e keep the default one: stable draw calls)
       opponentLook: opts.debug ? undefined : randomLook(role === 'police' ? 'thief' : 'police'),
       audio,
@@ -238,6 +240,7 @@ export function startApp(
           onHowToSeen: markHowToSeen,
           cars: { police: CARS[profile.equipped.police.car].name, thief: CARS[profile.equipped.thief.car].name },
           onShop: (side) => press({ type: 'openShop', side }),
+          map: { current: loadMap(storage, profile.stats.wins), wins: profile.stats.wins, onPick: (m) => saveMap(storage, m) },
         });
         const preview = createCarPreview(c.previews, looks());
         view = { dispose: () => (preview.dispose(), c.dispose()) };
