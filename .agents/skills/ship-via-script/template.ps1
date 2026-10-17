@@ -48,7 +48,8 @@ P typecheck; Check 'typecheck'
 P lint; Check 'lint'
 P test; Check 'unit tests'
 P exec playwright install chromium; Check 'install Playwright chromium'
-P e2e; Check 'e2e tests'
+# the phone project only (the game is mobile first); the full run, desktop included, is `pnpm e2e`
+P e2e:mobile --retries=1; Check 'e2e tests'
 P build; Check 'build'
 
 # ===== Graphify refresh (rules: .agents/rules/graphify.md) =====

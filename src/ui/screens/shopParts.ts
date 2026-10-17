@@ -23,7 +23,7 @@ const WHEEL_SWATCH: Record<WheelStyle | 'padrao', string> = {
   rodao: 'radial-gradient(circle, #ffffff 0 14%, #c9ced6 16% 70%, #1b1c1f 73%)',
 };
 
-export type Tab = 'cars' | 'paint' | 'sticker' | 'wheels' | 'acc' | 'effects' | 'sound' | 'plate';
+export type Tab = 'cars' | 'paint' | 'sticker' | 'wheels' | 'acc' | 'effects' | 'sound' | 'plate' | 'maps';
 
 /** The shop tabs of a side, with their icon (playtest 2026-10-10: a side rail, every tab named and in view). */
 export const shopTabs = (side: Role): [Tab, string, string][] => [
@@ -35,6 +35,7 @@ export const shopTabs = (side: Role): [Tab, string, string][] => [
   ['effects', 'Efeitos', SCREEN_ICONS.sparkle],
   ['sound', side === 'police' ? 'Sirene' : 'Buzina', side === 'police' ? SCREEN_ICONS.siren : SCREEN_ICONS.horn],
   ['plate', 'Placa', SCREEN_ICONS.plate],
+  ['maps', 'Mapas', SCREEN_ICONS.map],
 ];
 
 export function wheelRows(side: Role): Row[] {

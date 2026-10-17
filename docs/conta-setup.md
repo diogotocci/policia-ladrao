@@ -34,6 +34,7 @@ Em **Settings → Environment Variables**, no ambiente *Production*:
 | `DATABASE_URL` | a connection string do Neon |
 | `GOOGLE_CLIENT_ID` | o ID do cliente do passo 2 |
 | `SESSION_SECRET` | um texto aleatório longo (veja abaixo) |
+| `ADMIN_EMAIL` | o e-mail da conta Google do admin (`diogotocci@gmail.com`), em *Production* e *Preview* |
 
 Para gerar o `SESSION_SECRET` no PowerShell:
 
@@ -42,6 +43,8 @@ Para gerar o `SESSION_SECRET` no PowerShell:
 ```
 
 Trocar o `SESSION_SECRET` desconecta todo mundo (cada um entra de novo com o Google; o progresso fica).
+
+Sem `ADMIN_EMAIL` (ou vazia), ninguém é admin: o /admin responde 403 e a loja não abre o modo admin.
 
 Depois de salvar as variáveis, faça um **Redeploy** do último deploy de produção.
 

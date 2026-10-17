@@ -20,9 +20,15 @@ export interface Account {
   notice?: string;
 }
 
-/** The one admin account. Decided here on the server from the e-mail Google verified; no password, no other way in. */
-export const ADMIN_EMAIL = 'diogotocci@gmail.com';
-export const isAdminEmail = (email: string) => email.trim().toLowerCase() === ADMIN_EMAIL;
+/**
+ * The one admin account, from the ADMIN_EMAIL environment variable (Vercel). Decided here on the server from the
+ * e-mail Google verified; no password, no other way in. Unset or empty: nobody is admin (fails closed).
+ */
+export const adminEmail = (env: Record<string, string | undefined> = process.env): string => (env.ADMIN_EMAIL ?? '').trim().toLowerCase();
+export const isAdminEmail = (email: string, env?: Record<string, string | undefined>) => {
+  const admin = adminEmail(env);
+  return admin !== '' && email.trim().toLowerCase() === admin;
+};
 
 interface UserRow {
   id: string;

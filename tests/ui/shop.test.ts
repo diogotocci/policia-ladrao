@@ -114,11 +114,11 @@ describe('shop screen (spec §6)', () => {
     const tabs = () => [...root.querySelectorAll('[role="tab"]')].map((e) => e.textContent);
     open(unlocked(50_000));
     expect(root.querySelector('[role="tablist"]')!.getAttribute('aria-orientation')).toBe('vertical');
-    expect(tabs()).toEqual(['Carros', 'Pintura', 'Adesivos', 'Rodas', 'Efeitos', 'Sirene', 'Placa']);
+    expect(tabs()).toEqual(['Carros', 'Pintura', 'Adesivos', 'Rodas', 'Efeitos', 'Sirene', 'Placa', 'Mapas']);
     root.replaceChildren();
     const s = open(unlocked(50_000), 'thief');
-    expect(tabs()).toEqual(['Carros', 'Pintura', 'Adesivos', 'Rodas', 'Acessórios', 'Efeitos', 'Buzina', 'Placa']);
-    expect(root.querySelectorAll('[role="tab"] svg')).toHaveLength(8); // icon and name on every tab
+    expect(tabs()).toEqual(['Carros', 'Pintura', 'Adesivos', 'Rodas', 'Acessórios', 'Efeitos', 'Buzina', 'Placa', 'Mapas']);
+    expect(root.querySelectorAll('[role="tab"] svg')).toHaveLength(9); // icon and name on every tab
     button('Rodas').click();
     expect([...root.querySelectorAll('.shop-row-name')].map((e) => e.textContent)).toEqual([
       'Padrão',

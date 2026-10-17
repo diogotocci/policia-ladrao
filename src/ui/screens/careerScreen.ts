@@ -29,6 +29,7 @@ import './career.css';
 import './garage.css';
 import { garagePanel, type GarageCar } from './garage';
 import { MASTERY_MAX, rewardName } from '../../meta/mastery';
+import { MAPS } from '../../meta/maps';
 
 type Tab = 'today' | 'achievements' | 'ranks' | 'garage';
 const n = (v: number) => v.toLocaleString('pt-BR');
@@ -401,6 +402,10 @@ export function careerStrip(events: readonly CareerEvent[], role: Role): HTMLEle
     line.append(h('span', '', `${car.name}: maestria ${mastery.level}!`), h('b', '', what));
     box.append(line);
   }
+  // maps (2026-10-17): a new map to pick on the side screen
+  for (const e of events)
+    if (e.kind === 'map')
+      box.append(h('p', 'end-career-prestige', `Novo mapa liberado: ${MAPS[e.map].name}! Escolha antes da próxima partida.`));
   for (const e of lines) {
     const line = h('p', 'end-career-line');
     // completed here, paid in Carreira ("Resgatar", playtest 2026-10-08)

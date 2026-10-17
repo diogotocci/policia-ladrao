@@ -86,7 +86,7 @@ Só com `?debug`: `traffic=0` (sem tráfego), `escape=N` (fuga em N segundos), `
 
 Em `localhost` o jogo usa um servidor de conta falso (`src/account/devApi.ts`), guardado no próprio navegador: já entra numa "Conta de Teste" com o nome `Teste`, sem Google e sem banco. Com `?login` ele começa sem login, com o botão "Entrar (conta de teste)". Os testes e2e usam esse servidor.
 
-Os testes do servidor (`tests/api`) rodam num Postgres em memória (PGlite). Em produção, as funções em `api/` precisam das variáveis `DATABASE_URL` (Neon), `GOOGLE_CLIENT_ID` e `SESSION_SECRET` na Vercel; sem elas, as rotas respondem 503. Passo a passo em [docs/conta-setup.md](docs/conta-setup.md).
+Os testes do servidor (`tests/api`) rodam num Postgres em memória (PGlite). Em produção, as funções em `api/` precisam das variáveis `DATABASE_URL` (Neon), `GOOGLE_CLIENT_ID`, `SESSION_SECRET` e `ADMIN_EMAIL` na Vercel; sem elas, as rotas respondem 503. Passo a passo em [docs/conta-setup.md](docs/conta-setup.md).
 
 ### App Android (Google Play)
 

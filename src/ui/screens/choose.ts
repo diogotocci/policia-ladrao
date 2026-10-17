@@ -4,6 +4,8 @@ import { difficultyPicker } from './difficultyPicker';
 import { btn, h, mount, type Disposable } from './dom';
 import { openHowTo } from './howto';
 import { SCREEN_ICONS } from './icons';
+import { mapChip } from './mapPicker';
+import type { MapId } from '../../meta/maps';
 
 const ROLES: Record<Role, { title: string; boxes: string }> = {
   police: {
@@ -45,6 +47,8 @@ export function renderChoose(
     /** V2 part 4: the name of the car in use on each side and the "trocar" shortcut to the shop */
     cars?: Record<Role, string>;
     onShop?(role: Role): void;
+    /** maps (2026-10-17): the map of the next match, the player's wins (unlocks) and the pick */
+    map?: { current: MapId; wins: number; onPick(map: MapId): void };
   },
 ): Disposable & { previews: Record<Role, HTMLElement> } {
   const s = h('section', 'screen screen-choose');
@@ -75,7 +79,11 @@ export function renderChoose(
       cards.append(slot);
     } else cards.append(card);
   }
-  s.append(top, h('h2', 'screen-heading choose-heading', 'Escolha seu lado'), cards);
+  // with maps, the pill takes the heading's place (the cards already say what to choose)
+  const heading = h('h2', `screen-heading choose-heading${p.map ? ' sr-only' : ''}`, 'Escolha seu lado');
+  s.append(top, heading);
+  if (p.map) s.append(mapChip(s, { map: p.map.current, wins: p.map.wins, onPick: p.map.onPick }));
+  s.append(cards);
   const firstCard = cards.querySelector<HTMLElement>('.choose-card')!;
   const m = mount(root, s, firstCard);
   if (p.showHowTo) openHowTo(s, closedTo(firstCard));

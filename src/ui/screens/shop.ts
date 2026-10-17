@@ -22,6 +22,7 @@ import {
   type SoundId,
 } from '../../meta/shop';
 import { STICKERS, STICKER_NAMES, masteryLevel, type FinishId } from '../../meta/mastery';
+import { ADMIN_WINS, MAPS, MAP_IDS, mapNeed, mapUnlocked, type MapId } from '../../meta/maps';
 import { drawMasteryBar, finishRowsFor } from './shopMastery';
 import { accessoryOn, accessoryRows, effectsRows, previewPart, shopTabs, wheelRows, type Tab } from './shopParts';
 import { btn, h, mount, openModal, type Disposable } from './dom';
@@ -92,7 +93,11 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
   // V2 part 6: mastery of the car on the showcase (owned cars only)
   const mastery = h('div', 'shop-mastery');
   const drawMastery = () => drawMasteryBar(mastery, profile, stageCar);
-  stage.append(mastery, view3d, stageName, action);
+  // maps (2026-10-17): a picture of the map instead of the car, and what it takes to unlock it
+  const mapPic = h('div', 'shop-map-pic');
+  const mapText = h('p', 'shop-map-text');
+  const mapNeedEl = h('div', 'shop-map-need');
+  stage.append(mastery, view3d, mapPic, stageName, mapText, mapNeedEl, action);
   const preview = p.mountPreview?.(view3d);
   // ----- list -----
   const panel = h('div', 'shop-panel');
@@ -155,8 +160,12 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
         ];
       case 'plate':
         return [];
+      case 'maps':
+        return MAP_IDS.map((m) => ({ id: `map:${m}`, name: MAPS[m].name, swatch: `url(/maps/${m}.jpg) center 60% / cover`, price: 0 }));
     }
   };
+  const mapOf = (id: string) => id.split(':')[1] as MapId;
+  const wins = () => (p.admin ? ADMIN_WINS : profile.stats.wins); // admin mode: every map
 
   const finishRows = (): Row[] => finishRowsFor(profile, side, stageCar);
 
@@ -181,6 +190,16 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
 
   type State = { label: string; enabled: boolean; kind: 'use' | 'buy' | 'none' };
   const stateOf = (id: string): State => {
+    if (id.startsWith('map:')) {
+      const m = mapOf(id);
+      return mapUnlocked(m, wins())
+        ? { label: 'Liberado · escolha antes da partida', enabled: false, kind: 'none' }
+        : {
+            label: `Faltam ${MAPS[m].wins - wins()} ${MAPS[m].wins - wins() === 1 ? 'vitória' : 'vitórias'}`,
+            enabled: false,
+            kind: 'none',
+          };
+    }
     if (accessoryOn(profile, id)) return { label: 'Tirar', enabled: true, kind: 'use' };
     if (owns(profile, id))
       return inUse(profile, id) ? { label: 'Em uso', enabled: false, kind: 'none' } : { label: 'Usar', enabled: true, kind: 'use' };
@@ -236,6 +255,26 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
     const sw = h('span', r.swatch ? 'shop-swatch' : 'shop-swatch is-icon');
     if (r.swatch) sw.style.background = r.swatch;
     else sw.innerHTML = tab === 'sound' ? SCREEN_ICONS.siren : tab === 'acc' ? SCREEN_ICONS.wing : SCREEN_ICONS.car;
+    if (r.id.startsWith('map:')) {
+      const m = mapOf(r.id);
+      const open = mapUnlocked(m, wins());
+      el.classList.add('is-map');
+      const name = h('span', 'shop-row-name', r.name);
+      name.append(h('small', 'shop-row-need', open ? (MAPS[m].wins ? mapNeed(m) : 'Seu desde o começo') : mapNeed(m)));
+      const tag = h(
+        'span',
+        `shop-tag${open ? ' is-on' : ' is-locked'}`,
+        open ? 'Liberado' : `${Math.min(wins(), MAPS[m].wins)}/${MAPS[m].wins}`,
+      );
+      if (!open) tag.insertAdjacentHTML('afterbegin', SCREEN_ICONS.lock);
+      el.append(sw, name, tag);
+      el.addEventListener('click', () => {
+        selected = r.id;
+        draw();
+        list.querySelector<HTMLElement>(`[data-id="${r.id}"]`)?.focus();
+      });
+      return el;
+    }
     const st = stateOf(r.id);
     const tag = owns(profile, r.id) ? (inUse(profile, r.id) ? 'Em uso' : 'Seu') : r.price > 0 ? n(r.price) : '';
     const state = h(
@@ -326,6 +365,7 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
             tab = t;
             if (t === 'cars') selected = `car:${stageCar}`;
             else if (t === 'plate') selected = 'plate';
+            else if (t === 'maps') selected = `map:${MAP_IDS.find((m) => !mapUnlocked(m, wins())) ?? MAP_IDS[0]}`;
             else selected = rows().find((r) => inUse(profile, r.id))?.id ?? rows()[0]!.id;
             draw();
             tabs.querySelector<HTMLElement>('.is-on')?.focus();
@@ -343,18 +383,40 @@ export function renderShop(root: HTMLElement, p: ShopProps): Disposable {
         : rows().flatMap((r) => (r.section ? [h('p', 'shop-section', r.section), rowEl(r)] : [rowEl(r)]))),
     );
     drawMastery();
+    const onMaps = tab === 'maps';
+    s.classList.toggle('is-maps', onMaps);
+    view3d.hidden = onMaps;
+    mapPic.hidden = mapText.hidden = mapNeedEl.hidden = !onMaps;
+    if (onMaps) mastery.hidden = true;
+    if (onMaps && selected.startsWith('map:')) {
+      const m = mapOf(selected);
+      const open = mapUnlocked(m, wins());
+      mapPic.style.backgroundImage = `url(/maps/${m}.jpg)`;
+      mapPic.classList.toggle('is-locked', !open);
+      mapPic.innerHTML = open ? '' : SCREEN_ICONS.lock;
+      mapText.textContent = MAPS[m].text;
+      mapNeedEl.replaceChildren();
+      if (MAPS[m].wins) {
+        const bar = h('span', 'shop-map-bar');
+        const fill = h('i');
+        fill.style.width = `${Math.min(100, (wins() / MAPS[m].wins) * 100)}%`;
+        bar.append(fill);
+        mapNeedEl.append(h('span', '', `${mapNeed(m)} (${Math.min(wins(), MAPS[m].wins)}/${MAPS[m].wins})`), bar);
+      }
+    }
     const st = stateOf(selected);
     action.hidden = tab === 'plate';
     action.textContent = tab === 'plate' ? '' : st.label; // the plate tab has its own buttons
     action.disabled = !st.enabled;
     const paintName = CARS[stageCar].colorNames[profile.equipped.paint[stageCar] ?? 0];
-    stageName.textContent =
-      tab === 'cars'
+    stageName.textContent = onMaps
+      ? nameOf(selected)
+      : tab === 'cars'
         ? CARS[stageCar].name
         : tab === 'plate'
           ? CARS[stageCar].name
           : `${CARS[stageCar].name} · ${nameOf(selected) || paintName}`;
-    preview?.show(side, lookOf());
+    if (!onMaps) preview?.show(side, lookOf());
   }
 
   draw();
